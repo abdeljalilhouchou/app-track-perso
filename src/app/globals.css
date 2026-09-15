@@ -97,7 +97,10 @@ body {
 }
 
 .animate-fade-in {
-  animation: fade-in-up 0.35s ease-out both;
+  /* No fill-mode: a lingering `transform` after the animation ends would make this
+     element the containing block for any `position: fixed` descendant (e.g. modals),
+     breaking their viewport-relative positioning. */
+  animation: fade-in-up 0.35s ease-out;
 }
 
 /* iOS Safari auto-zooms the page on focus when a field's font-size is under 16px. */

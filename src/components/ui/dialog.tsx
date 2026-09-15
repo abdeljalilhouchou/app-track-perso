@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
 export function Dialog({
@@ -14,6 +15,14 @@ export function Dialog({
   children: React.ReactNode;
   widthClassName?: string;
 }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    // Portals need a browser `document`; this one-time mount flag avoids an
+    // SSR/hydration mismatch (server and first client render must agree).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     function onKey(e: KeyboardEvent) {
@@ -23,7 +32,9 @@ export function Dialog({
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {open && (
         <>
@@ -46,6 +57,7 @@ export function Dialog({
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
