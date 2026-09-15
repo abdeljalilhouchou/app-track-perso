@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { Resend } from "resend";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { computeStreak } from "@/lib/streak";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,20 @@ function nowInTimezone(timezone: string) {
 function isoWeekday(dateStr: string) {
   const day = new Date(`${dateStr}T00:00:00Z`).getUTCDay();
   return day === 0 ? 7 : day;
+}
+
+function daysAgoStr(days: number) {
+  return new Date(Date.now() - days * 86_400_000).toISOString().slice(0, 10);
+}
+
+const MOOD_EMOJI = ["", "😞", "😕", "😐", "🙂", "😄"];
+
+function habitRow(icon: string, name: string, tip: string) {
+  return `
+    <tr>
+      <td style="padding:8px 0;font-size:14px;">${icon} <strong>${name}</strong></td>
+      <td style="padding:8px 0;font-size:13px;color:#6b6b7b;text-align:right;">${tip}</td>
+    </tr>`;
 }
 
 export async function GET(request: NextRequest) {
@@ -57,14 +72,7 @@ export async function GET(request: NextRequest) {
     if (!profile.reminder_time || !profile.reminder_timezone) continue;
 
     const { date: todayLocal, time: nowLocal } = nowInTimezone(profile.reminder_timezone);
-    const step: Record<string, unknown> = {
-      profileId: profile.id,
-      reminder_time: profile.reminder_time,
-      reminder_timezone: profile.reminder_timezone,
-      reminded_date: profile.reminded_date,
-      todayLocal,
-      nowLocal,
-    };
+    const step: Record<string, unknown> = { profileId: profile.id, todayLocal, nowLocal };
 
     if (profile.reminded_date === todayLocal) {
       step.skipped = "already reminded today";
@@ -78,27 +86,42 @@ export async function GET(request: NextRequest) {
     }
 
     const weekday = isoWeekday(todayLocal);
+    const since = daysAgoStr(90);
 
-    const [{ data: habits, error: habitsError }, { data: todayLogs, error: logsError }] = await Promise.all([
+    const [
+      { data: habits },
+      { data: recentLogs },
+      { data: workoutsToday },
+      { data: moodToday },
+      { data: momentsToday },
+    ] = await Promise.all([
       supabase
         .from("habits")
         .select("id, name, icon, scheduled_days")
         .eq("user_id", profile.id)
         .eq("archived", false),
-      supabase.from("habit_logs").select("habit_id").eq("user_id", profile.id).eq("log_date", todayLocal),
+      supabase
+        .from("habit_logs")
+        .select("habit_id, log_date")
+        .eq("user_id", profile.id)
+        .gte("log_date", since),
+      supabase.from("workouts").select("activity, duration_minutes").eq("user_id", profile.id).eq("workout_date", todayLocal),
+      supabase.from("mood_entries").select("mood_score").eq("user_id", profile.id).eq("entry_date", todayLocal).maybeSingle(),
+      supabase.from("moments").select("icon, text").eq("user_id", profile.id).eq("entry_date", todayLocal),
     ]);
 
-    const doneIds = new Set((todayLogs ?? []).map((l) => l.habit_id));
-    const pending = (habits ?? []).filter(
-      (h) => h.scheduled_days.includes(weekday) && !doneIds.has(h.id)
-    );
+    const logsByHabit = new Map<string, Set<string>>();
+    for (const log of recentLogs ?? []) {
+      if (!logsByHabit.has(log.habit_id)) logsByHabit.set(log.habit_id, new Set());
+      logsByHabit.get(log.habit_id)!.add(log.log_date);
+    }
+    const doneToday = new Set((recentLogs ?? []).filter((l) => l.log_date === todayLocal).map((l) => l.habit_id));
 
-    step.weekday = weekday;
-    step.habitsCount = habits?.length ?? 0;
+    const scheduledToday = (habits ?? []).filter((h) => h.scheduled_days.includes(weekday));
+    const pending = scheduledToday.filter((h) => !doneToday.has(h.id));
+    const doneHabits = scheduledToday.filter((h) => doneToday.has(h.id));
+
     step.pendingCount = pending.length;
-    step.pendingNames = pending.map((h) => h.name);
-    step.habitsError = habitsError?.message ?? null;
-    step.logsError = logsError?.message ?? null;
 
     if (pending.length === 0) {
       step.skipped = "nothing pending";
@@ -106,37 +129,76 @@ export async function GET(request: NextRequest) {
       continue;
     }
 
-    const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(profile.id);
+    const { data: authUser } = await supabase.auth.admin.getUserById(profile.id);
     const email = authUser?.user?.email;
     step.email = email ?? null;
-    step.authError = authError?.message ?? null;
-
     if (!email) {
       step.skipped = "no email found";
       trace.push(step);
       continue;
     }
 
-    const listHtml = pending.map((h) => `<li>${h.icon} ${h.name}</li>`).join("");
+    // "Déjà fait" section
+    const doneRows: string[] = [];
+    for (const h of doneHabits) {
+      doneRows.push(`<li>${h.icon} ${h.name}</li>`);
+    }
+    for (const w of workoutsToday ?? []) {
+      doneRows.push(`<li>🏃 ${w.activity} (${w.duration_minutes} min)</li>`);
+    }
+    if (moodToday) {
+      doneRows.push(`<li>${MOOD_EMOJI[moodToday.mood_score] ?? "🙂"} Humeur notée (${moodToday.mood_score}/5)</li>`);
+    }
+    for (const m of momentsToday ?? []) {
+      doneRows.push(`<li>${m.icon} ${m.text}</li>`);
+    }
+
+    // "À faire" section with a per-habit tip based on its streak
+    const pendingRows = pending
+      .map((h) => {
+        const streak = computeStreak(logsByHabit.get(h.id) ?? new Set());
+        const tip =
+          streak >= 2
+            ? `🔥 série de ${streak} j — ne la casse pas !`
+            : streak === 1
+              ? "🔥 continue sur ta lancée"
+              : "à faire aujourd'hui";
+        return habitRow(h.icon, h.name, tip);
+      })
+      .join("");
+
     const subject =
       pending.length === 1
         ? `Il te reste "${pending[0].name}" à faire aujourd'hui`
         : `${pending.length} habitudes à faire aujourd'hui`;
+
+    const html = `
+      <div style="font-family:-apple-system,'Segoe UI',sans-serif;max-width:480px;margin:0 auto;color:#16161d;">
+        <h2 style="color:#6366f1;margin-bottom:4px;">Ton résumé du jour 👋</h2>
+        <p style="color:#6b6b7b;font-size:13px;margin-top:0;">${todayLocal}</p>
+
+        ${
+          doneRows.length > 0
+            ? `<h3 style="font-size:13px;text-transform:uppercase;letter-spacing:.03em;color:#10b981;margin-bottom:8px;">✅ Déjà fait aujourd'hui</h3>
+               <ul style="margin:0 0 20px;padding-left:20px;font-size:14px;line-height:1.7;">${doneRows.join("")}</ul>`
+            : ""
+        }
+
+        <h3 style="font-size:13px;text-transform:uppercase;letter-spacing:.03em;color:#f59e0b;margin-bottom:8px;">⏳ Il te reste</h3>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">${pendingRows}</table>
+
+        <a href="https://app-track-perso.vercel.app/habits" style="display:inline-block;background:#6366f1;color:#fff;text-decoration:none;padding:10px 18px;border-radius:10px;font-size:14px;font-weight:600;">
+          Ouvrir track.perso →
+        </a>
+      </div>
+    `;
 
     try {
       const sendResult = await resend.emails.send({
         from: fromAddress,
         to: email,
         subject: `track.perso — ${subject}`,
-        html: `
-          <div style="font-family: -apple-system, sans-serif; max-width: 480px; margin: 0 auto;">
-            <h2 style="color: #6366f1;">Il te reste des habitudes aujourd'hui 👋</h2>
-            <ul style="line-height: 1.8; font-size: 15px;">${listHtml}</ul>
-            <p>
-              <a href="https://app-track-perso.vercel.app/habits" style="color: #6366f1;">Ouvrir track.perso →</a>
-            </p>
-          </div>
-        `,
+        html,
       });
       step.sendResult = sendResult;
       await supabase.from("profiles").update({ reminded_date: todayLocal }).eq("id", profile.id);
