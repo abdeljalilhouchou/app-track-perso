@@ -151,7 +151,15 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
         </div>
 
         {showDetails ? (
-          <div className="space-y-2.5 rounded-xl bg-surface-muted p-3 sm:ml-13">
+          <div className="relative space-y-2.5 rounded-xl bg-surface-muted p-3 sm:ml-13">
+            <button
+              type="button"
+              onClick={() => setShowDetails(false)}
+              aria-label="Fermer les détails"
+              className="absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full text-foreground-muted transition hover:bg-border hover:text-foreground"
+            >
+              ✕
+            </button>
             <TimingFields defaultStart={nowLocal()} />
             <label className="flex max-w-35 flex-col gap-1">
               <span className="text-[10px] font-medium text-foreground-muted">Prix (MAD)</span>
