@@ -13,6 +13,7 @@ import { fr } from "date-fns/locale";
 import { createClient } from "@/lib/supabase/server";
 import { computeStreak, longestStreakEver } from "@/lib/streak";
 import { MonthCalendar } from "@/components/month-calendar";
+import { WEEKDAYS } from "@/lib/habit-categories";
 
 export default async function HabitDetailPage({
   params,
@@ -74,7 +75,12 @@ export default async function HabitDetailPage({
           {habit.icon} {habit.name}
         </h1>
         <p className="mt-1 text-sm text-foreground-muted">
-          {habit.category} · objectif {habit.target_per_week}x / semaine
+          {habit.category} · prévu le{" "}
+          {habit.scheduled_days.length === 7
+            ? "tous les jours"
+            : habit.scheduled_days
+                .map((d) => WEEKDAYS.find((w) => w.value === d)?.label)
+                .join(", ")}
         </p>
       </div>
 

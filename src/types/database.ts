@@ -21,6 +21,7 @@ export type Database = {
           color: string;
           category: string;
           target_per_week: number;
+          scheduled_days: number[];
           position: number;
           archived: boolean;
           created_at: string;

@@ -5,11 +5,21 @@ import { createClient } from "@/lib/supabase/server";
 
 const HABIT_COLORS = ["#8b5cf6", "#6366f1", "#ec4899", "#f97316", "#0ea5e9", "#14b8a6"];
 
+function parseScheduledDays(formData: FormData): number[] {
+  const raw = String(formData.get("scheduled_days") ?? "");
+  const days = raw
+    .split(",")
+    .map((d) => Number(d.trim()))
+    .filter((d) => Number.isInteger(d) && d >= 1 && d <= 7);
+  return days.length > 0 ? Array.from(new Set(days)).sort((a, b) => a - b) : [1, 2, 3, 4, 5, 6, 7];
+}
+
 export async function createHabit(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const icon = String(formData.get("icon") ?? "✨").trim() || "✨";
   const category = String(formData.get("category") ?? "Général").trim() || "Général";
-  const target_per_week = Math.min(7, Math.max(1, Number(formData.get("target_per_week") ?? 7)));
+  const scheduled_days = parseScheduledDays(formData);
+  const target_per_week = scheduled_days.length;
   if (!name) return;
 
   const supabase = await createClient();
@@ -32,6 +42,7 @@ export async function createHabit(formData: FormData) {
     color,
     category,
     target_per_week,
+    scheduled_days,
     position: count ?? 0,
   });
   revalidatePath("/habits");
@@ -42,13 +53,14 @@ export async function updateHabit(habitId: string, formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const icon = String(formData.get("icon") ?? "✨").trim() || "✨";
   const category = String(formData.get("category") ?? "Général").trim() || "Général";
-  const target_per_week = Math.min(7, Math.max(1, Number(formData.get("target_per_week") ?? 7)));
+  const scheduled_days = parseScheduledDays(formData);
+  const target_per_week = scheduled_days.length;
   if (!name) return;
 
   const supabase = await createClient();
   await supabase
     .from("habits")
-    .update({ name, icon, category, target_per_week })
+    .update({ name, icon, category, target_per_week, scheduled_days })
     .eq("id", habitId);
 
   revalidatePath("/habits");

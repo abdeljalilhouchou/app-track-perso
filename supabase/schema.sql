@@ -46,6 +46,7 @@ create table if not exists public.habits (
   color text not null default '#6366f1',
   category text not null default 'Général',
   target_per_week int not null default 7,
+  scheduled_days smallint[] not null default '{1,2,3,4,5,6,7}',
   position int not null default 0,
   archived boolean not null default false,
   created_at timestamptz not null default now()

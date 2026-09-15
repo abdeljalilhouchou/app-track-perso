@@ -2,7 +2,8 @@
 
 import { IconPicker } from "@/components/ui/icon-picker";
 import { CategoryPicker } from "@/components/ui/category-picker";
-import { TargetPicker } from "@/components/ui/target-picker";
+import { DayPicker } from "@/components/ui/day-picker";
+import { CATEGORY_META } from "@/lib/habit-categories";
 
 export function HabitForm({
   action,
@@ -11,14 +12,17 @@ export function HabitForm({
   onCancel,
 }: {
   action: (formData: FormData) => void;
-  defaultValues?: { icon?: string; name?: string; category?: string; target_per_week?: number };
+  defaultValues?: { icon?: string; name?: string; category?: string; scheduled_days?: number[] };
   submitLabel: string;
   onCancel?: () => void;
 }) {
+  const category = defaultValues?.category ?? "Général";
+  const color = CATEGORY_META[category]?.color ?? "var(--accent)";
+
   return (
     <form action={action} className="space-y-3">
       <div className="flex gap-2">
-        <IconPicker name="icon" defaultValue={defaultValues?.icon ?? "✨"} />
+        <IconPicker name="icon" defaultValue={defaultValues?.icon ?? "✨"} color={color} />
         <input
           name="name"
           required
@@ -28,11 +32,11 @@ export function HabitForm({
         />
       </div>
 
-      <div className="flex gap-2">
-        <CategoryPicker name="category" defaultValue={defaultValues?.category ?? "Général"} />
-        <div className="w-40">
-          <TargetPicker name="target_per_week" defaultValue={defaultValues?.target_per_week ?? 7} />
-        </div>
+      <CategoryPicker name="category" defaultValue={category} />
+
+      <div>
+        <p className="mb-1.5 text-xs text-foreground-muted">Jours prévus</p>
+        <DayPicker name="scheduled_days" defaultValue={defaultValues?.scheduled_days} color={color} />
       </div>
 
       <div className="flex gap-2">

@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { format } from "date-fns";
+import { addDays, format, startOfWeek } from "date-fns";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { toggleHabitLog, deleteHabit, moveHabit, updateHabit } from "@/lib/actions/habits";
 import { Heatmap } from "@/components/heatmap";
 import { HabitForm } from "@/components/habit-form";
-import { CATEGORY_META } from "@/lib/habit-categories";
+import { CATEGORY_META, WEEKDAYS } from "@/lib/habit-categories";
 import type { Habit } from "@/types/database";
 
 export function HabitCard({
@@ -30,8 +30,10 @@ export function HabitCard({
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
   const today = format(new Date(), "yyyy-MM-dd");
-  const progressPct = Math.min(100, Math.round((thisWeekCount / habit.target_per_week) * 100));
   const categoryMeta = CATEGORY_META[habit.category] ?? CATEGORY_META["Général"];
+
+  const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
   if (editing) {
     return (
@@ -51,7 +53,7 @@ export function HabitCard({
             icon: habit.icon,
             name: habit.name,
             category: habit.category,
-            target_per_week: habit.target_per_week,
+            scheduled_days: habit.scheduled_days,
           }}
           submitLabel="Enregistrer"
           onCancel={() => setEditing(false)}
@@ -113,20 +115,39 @@ export function HabitCard({
       </div>
 
       <div className="mt-3">
-        <div className="mb-1 flex items-center justify-between text-xs text-foreground-muted">
-          <span>Objectif de la semaine</span>
+        <div className="mb-1.5 flex items-center justify-between text-xs text-foreground-muted">
+          <span>Cette semaine</span>
           <span>
-            {thisWeekCount} / {habit.target_per_week}
+            {thisWeekCount} / {habit.target_per_week} jours prévus
           </span>
         </div>
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-muted">
-          <motion.div
-            className="h-full rounded-full"
-            style={{ background: habit.color }}
-            initial={{ width: 0 }}
-            animate={{ width: `${progressPct}%` }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          />
+        <div className="flex items-center gap-1">
+          {weekDays.map((date, i) => {
+            const dateStr = format(date, "yyyy-MM-dd");
+            const dayNum = i + 1;
+            const scheduled = habit.scheduled_days.includes(dayNum);
+            const done = values[dateStr] === 1;
+            const isToday = dateStr === today;
+
+            return (
+              <div key={dateStr} className="flex flex-1 flex-col items-center gap-1">
+                <span className="text-[10px] text-foreground-muted">{WEEKDAYS[i].short}</span>
+                <motion.span
+                  initial={false}
+                  animate={{ scale: done ? [1, 1.15, 1] : 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                  style={{
+                    background: !scheduled ? "transparent" : done ? habit.color : "var(--surface-muted)",
+                    border: scheduled && !done ? "1.5px solid var(--border)" : "none",
+                    boxShadow: isToday ? `0 0 0 2px var(--surface), 0 0 0 3.5px ${habit.color}` : undefined,
+                  }}
+                >
+                  {done ? "✓" : ""}
+                </motion.span>
+              </div>
+            );
+          })}
         </div>
       </div>
 

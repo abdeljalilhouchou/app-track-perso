@@ -1,4 +1,4 @@
-import { format, subDays, subWeeks } from "date-fns";
+import { format, getISODay, subDays, subWeeks } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { computeStreak } from "@/lib/streak";
 import { weeklyTotals } from "@/lib/weekly";
@@ -119,8 +119,9 @@ export default async function DashboardPage() {
 
   // Reminders: what's still missing today
   const todayStr = format(today, "yyyy-MM-dd");
+  const todayIsoDay = getISODay(today);
   const habitsNotDoneToday = (habits ?? []).filter(
-    (h) => !logsByHabit.get(h.id)?.has(todayStr)
+    (h) => h.scheduled_days.includes(todayIsoDay) && !logsByHabit.get(h.id)?.has(todayStr)
   );
   const moodLoggedToday = (moodEntries ?? []).some((e) => e.entry_date === todayStr);
   const hasReminders = habitsNotDoneToday.length > 0 || !moodLoggedToday;
