@@ -88,7 +88,7 @@ export default async function HabitsPage() {
     <div className="space-y-8 animate-fade-in">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-habit-soft text-xl">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-[1.5px] border-habit text-xl">
             ✨
           </span>
           <div>
@@ -113,7 +113,7 @@ export default async function HabitsPage() {
 
       <MomentsJournal moments={moments ?? []} />
 
-      <div className="rounded-2xl border border-border bg-surface p-5">
+      <div className="rounded-2xl border-[1.5px] border-habit/50 bg-surface p-5">
         <SuggestedHabits existingNames={allNames} />
       </div>
 

@@ -78,8 +78,8 @@ export function HabitCard({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.25 }}
-      className="group rounded-2xl border border-border bg-surface p-5 shadow-sm transition-shadow hover:shadow-lg"
-      style={{ perspective: 600 }}
+      className="group rounded-2xl border-[1.5px] bg-surface p-5 shadow-sm transition-shadow hover:shadow-lg"
+      style={{ perspective: 600, borderColor: `color-mix(in srgb, ${habit.color} 45%, var(--border))` }}
     >
       <div className="flex items-start justify-between gap-3">
         <Link href={`/habits/${habit.id}`} className="flex min-w-0 items-center gap-3">

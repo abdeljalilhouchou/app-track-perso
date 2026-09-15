@@ -96,7 +96,7 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
   const [showDetails, setShowDetails] = useState(false);
 
   return (
-    <div className="rounded-2xl border border-border bg-surface p-5">
+    <div className="rounded-2xl border-[1.5px] border-accent/50 bg-surface p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-lg">
