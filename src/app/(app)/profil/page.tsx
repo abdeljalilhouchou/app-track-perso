@@ -121,7 +121,7 @@ export default async function ProfilPage() {
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft">🔔</span>
           Rappel quotidien
         </h2>
-        <ReminderSettings initialTime={profile?.reminder_time ?? null} />
+        <ReminderSettings initialTime={profile?.reminder_time ?? null} email={user.email ?? ""} />
       </div>
 
       <div>

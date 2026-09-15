@@ -1,74 +1,24 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { enableReminders, updateReminderTime, disableReminders } from "@/lib/actions/reminders";
-import { urlBase64ToUint8Array } from "@/lib/push-helpers";
+import { enableEmailReminders, updateReminderTime, disableReminders } from "@/lib/actions/reminders";
 
-export function ReminderSettings({ initialTime }: { initialTime: string | null }) {
+export function ReminderSettings({ initialTime, email }: { initialTime: string | null; email: string }) {
   const [pending, startTransition] = useTransition();
   const [time, setTime] = useState(initialTime ?? "19:00");
   const [enabled, setEnabled] = useState(Boolean(initialTime));
-  const [error, setError] = useState<string | null>(null);
-  const [supported] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      "serviceWorker" in navigator &&
-      "PushManager" in window &&
-      "Notification" in window
-  );
 
-  async function handleEnable() {
-    setError(null);
-    try {
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
-        setError("Autorisation refusée. Active les notifications pour ce site dans les réglages de ton navigateur.");
-        return;
-      }
-
-      const registration = await navigator.serviceWorker.register("/sw.js");
-      await navigator.serviceWorker.ready;
-
-      const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-      if (!publicKey) {
-        setError("Configuration manquante côté serveur.");
-        return;
-      }
-
-      let subscription = await registration.pushManager.getSubscription();
-      if (!subscription) {
-        subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(publicKey) as BufferSource,
-        });
-      }
-
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-      startTransition(async () => {
-        await enableReminders(JSON.stringify(subscription), timezone, time);
-        setEnabled(true);
-      });
-    } catch {
-      setError("Impossible d'activer les rappels sur cet appareil.");
-    }
+  function handleEnable() {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    startTransition(async () => {
+      await enableEmailReminders(timezone, time);
+      setEnabled(true);
+    });
   }
 
-  async function handleDisable() {
-    setError(null);
-    let endpoint: string | null = null;
-    try {
-      const registration = await navigator.serviceWorker.getRegistration();
-      const subscription = await registration?.pushManager.getSubscription();
-      if (subscription) {
-        endpoint = subscription.endpoint;
-        await subscription.unsubscribe();
-      }
-    } catch {
-      // best-effort browser-side cleanup; the server-side row is removed regardless
-    }
+  function handleDisable() {
     startTransition(async () => {
-      await disableReminders(endpoint);
+      await disableReminders();
       setEnabled(false);
     });
   }
@@ -78,14 +28,6 @@ export function ReminderSettings({ initialTime }: { initialTime: string | null }
     if (enabled) {
       startTransition(() => updateReminderTime(newTime));
     }
-  }
-
-  if (!supported) {
-    return (
-      <p className="text-sm text-foreground-muted">
-        Les notifications ne sont pas prises en charge par ce navigateur.
-      </p>
-    );
   }
 
   return (
@@ -120,12 +62,11 @@ export function ReminderSettings({ initialTime }: { initialTime: string | null }
         )}
       </div>
 
-      {enabled && (
-        <p className="text-xs text-foreground-muted">
-          Tu recevras une notification à {time} s&apos;il te reste des habitudes prévues aujourd&apos;hui.
-        </p>
-      )}
-      {error && <p className="text-xs text-danger">{error}</p>}
+      <p className="text-xs text-foreground-muted">
+        {enabled
+          ? <>Un email sera envoyé à <span className="font-medium text-foreground">{email}</span> vers {time} s&apos;il te reste des habitudes prévues aujourd&apos;hui.</>
+          : "Reçois un email de rappel si des habitudes prévues aujourd'hui ne sont pas encore cochées."}
+      </p>
     </div>
   );
 }
