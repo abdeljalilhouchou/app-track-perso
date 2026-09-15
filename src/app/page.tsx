@@ -1,69 +1,95 @@
-import Image from "next/image";
+import Link from "next/link";
+
+const FEATURES = [
+  {
+    icon: "✨",
+    title: "Habitudes",
+    color: "var(--habit)",
+    soft: "var(--habit-soft)",
+    desc: "Construis ta constance avec des séries et une carte façon GitHub.",
+  },
+  {
+    icon: "🏃",
+    title: "Sport",
+    color: "var(--sport)",
+    soft: "var(--sport-soft)",
+    desc: "Logue tes séances et visualise ton volume hebdomadaire.",
+  },
+  {
+    icon: "🙂",
+    title: "Humeur",
+    color: "var(--mood)",
+    soft: "var(--mood-soft)",
+    desc: "Suis ton énergie et ton moral, jour après jour.",
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex min-h-screen flex-col">
+      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6">
+        <span className="text-lg font-semibold tracking-tight">
+          track<span className="text-accent">.perso</span>
+        </span>
+        <div className="flex items-center gap-3">
+          <Link href="/login" className="text-sm font-medium text-foreground-muted hover:text-foreground">
+            Se connecter
+          </Link>
+          <Link
+            href="/signup"
+            className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+          >
+            Commencer
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      </header>
+
+      <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center px-6 py-16 text-center">
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+          Tes habitudes, ton sport, ton humeur.
+          <br />
+          <span className="text-accent">Un seul endroit.</span>
+        </h1>
+        <p className="mt-5 max-w-xl text-balance text-foreground-muted">
+          Suis ce qui compte vraiment, repère les liens entre ce que tu fais et comment tu te sens,
+          et construis des séries dont tu es fier.
+        </p>
+
+        <div className="mt-8 flex gap-3">
+          <Link
+            href="/signup"
+            className="rounded-lg bg-accent px-6 py-3 text-sm font-medium text-white transition hover:opacity-90"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Créer un compte gratuit
+          </Link>
+          <Link
+            href="/login"
+            className="rounded-lg border border-border px-6 py-3 text-sm font-medium transition hover:bg-surface-muted"
           >
-            Documentation
-          </a>
+            J&apos;ai déjà un compte
+          </Link>
+        </div>
+
+        <div className="mt-20 grid w-full gap-4 sm:grid-cols-3">
+          {FEATURES.map((f) => (
+            <div
+              key={f.title}
+              className="rounded-2xl border border-border p-6 text-left"
+              style={{ background: f.soft }}
+            >
+              <span className="text-2xl">{f.icon}</span>
+              <h3 className="mt-3 font-semibold" style={{ color: f.color }}>
+                {f.title}
+              </h3>
+              <p className="mt-1 text-sm text-foreground-muted">{f.desc}</p>
+            </div>
+          ))}
         </div>
       </main>
+
+      <footer className="mx-auto w-full max-w-6xl px-6 py-6 text-center text-xs text-foreground-muted">
+        track.perso — fait pour toi.
+      </footer>
     </div>
   );
 }

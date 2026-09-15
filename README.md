@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# track.perso
 
-## Getting Started
+App web pour suivre tes **habitudes**, ton **sport** et ton **humeur** — avec comptes
+utilisateurs, visualisations (carte façon GitHub, graphiques hebdomadaires) et un insight
+automatique qui compare ton humeur les jours de sport vs les jours de repos.
 
-First, run the development server:
+Stack : Next.js (App Router) + TypeScript + Tailwind CSS + Supabase (auth + Postgres).
+
+## Mise en route
+
+### 1. Crée un projet Supabase
+
+1. Va sur [supabase.com](https://supabase.com), crée un compte et un nouveau projet (gratuit).
+2. Dans **Project Settings > API**, récupère l'**URL** du projet et la clé **anon public**.
+3. Dans **SQL Editor**, colle et exécute le contenu de [`supabase/schema.sql`](supabase/schema.sql).
+   Ça crée les tables `profiles`, `habits`, `habit_logs`, `workouts`, `mood_entries`, avec les
+   règles de sécurité (Row Level Security) : chaque utilisateur ne voit que ses propres données.
+4. Dans **Authentication > Settings**, tu peux désactiver la confirmation par email pour tester
+   plus vite (sinon il faudra confirmer via le lien reçu par email).
+
+### 2. Configure les variables d'environnement
+
+Copie `.env.local.example` en `.env.local` et remplis avec tes valeurs Supabase :
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.local.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-public-key
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Lance l'application
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+Ouvre [http://localhost:3000](http://localhost:3000). Crée un compte, et c'est parti.
 
-To learn more about Next.js, take a look at the following resources:
+## Structure du projet
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+  app/
+    (app)/          # Routes protégées (dashboard, habits, sport, humeur) + layout avec sidebar
+    login/ signup/   # Pages d'authentification
+    auth/callback/   # Callback de confirmation email Supabase
+  components/        # Composants UI (heatmap, graphiques, cartes)
+  lib/
+    actions/         # Server actions (create/toggle/delete...)
+    supabase/        # Clients Supabase (browser, server, middleware)
+  types/database.ts  # Types TypeScript de la base de données
+supabase/schema.sql   # Schéma SQL + politiques RLS à exécuter sur Supabase
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Fonctionnalités
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Habitudes** : créer des habitudes, cocher le jour, voir sa série (streak) et une carte de
+  chaleur des 18 dernières semaines, façon GitHub.
+- **Sport** : logger une séance (activité, durée, intensité), graphique du volume hebdomadaire.
+- **Humeur** : noter humeur + énergie chaque jour, courbe des 30 derniers jours.
+- **Dashboard** : vue d'ensemble avec les stats clés et un insight qui compare automatiquement
+  l'humeur moyenne les jours de sport vs les jours sans sport.
+- Chaque utilisateur ne voit que ses propres données (Row Level Security Supabase).
