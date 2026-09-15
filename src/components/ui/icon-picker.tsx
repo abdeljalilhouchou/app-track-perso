@@ -9,10 +9,12 @@ export function IconPicker({
   name,
   defaultValue,
   color = "var(--accent)",
+  choices = EMOJI_CHOICES,
 }: {
   name: string;
   defaultValue: string;
   color?: string;
+  choices?: string[];
 }) {
   const [value, setValue] = useState(defaultValue);
   const [open, setOpen] = useState(false);
@@ -44,7 +46,7 @@ export function IconPicker({
             transition={{ duration: 0.15, ease: "easeOut" }}
             className="absolute left-0 top-full z-30 mt-2 grid w-[220px] grid-cols-5 gap-1 rounded-2xl border border-border bg-surface p-2 shadow-xl"
           >
-            {EMOJI_CHOICES.map((emoji) => (
+            {choices.map((emoji) => (
               <button
                 key={emoji}
                 type="button"

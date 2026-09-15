@@ -1,9 +1,10 @@
 import { format, subDays } from "date-fns";
 import { fr } from "date-fns/locale";
 import { createClient } from "@/lib/supabase/server";
-import { logMood, deleteMoodEntry } from "@/lib/actions/mood";
+import { logMood } from "@/lib/actions/mood";
 import { MoodPicker } from "@/components/mood-picker";
 import { MoodLineChart } from "@/components/charts/mood-line-chart";
+import { MoodEntryList } from "@/components/mood-entry-list";
 
 export default async function HumeurPage() {
   const supabase = await createClient();
@@ -88,32 +89,7 @@ export default async function HumeurPage() {
       </div>
 
       {entries && entries.length > 0 && (
-        <ul className="divide-y divide-border rounded-2xl border border-border bg-surface">
-          {[...entries]
-            .reverse()
-            .slice(0, 10)
-            .map((e) => (
-              <li key={e.id} className="flex items-center justify-between gap-4 px-4 py-3">
-                <div className="min-w-0">
-                  <p className="font-medium">
-                    {format(new Date(e.entry_date), "EEEE d MMMM", { locale: fr })}
-                  </p>
-                  <p className="text-xs text-foreground-muted">
-                    Humeur {e.mood_score}/5 · Énergie {e.energy_level}/5
-                    {e.notes ? ` · ${e.notes}` : ""}
-                  </p>
-                </div>
-                <form action={deleteMoodEntry.bind(null, e.id)}>
-                  <button
-                    type="submit"
-                    className="shrink-0 text-xs text-foreground-muted hover:text-danger"
-                  >
-                    Supprimer
-                  </button>
-                </form>
-              </li>
-            ))}
-        </ul>
+        <MoodEntryList entries={[...entries].reverse().slice(0, 10)} />
       )}
     </div>
   );

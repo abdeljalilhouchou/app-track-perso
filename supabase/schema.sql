@@ -110,7 +110,25 @@ alter table public.mood_entries enable row level security;
 create policy "Mood entries are managed by owner" on public.mood_entries
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+-- ============================================================================
+-- Moments (activites ponctuelles, non recurrentes)
+-- ============================================================================
+create table if not exists public.moments (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  entry_date date not null,
+  icon text not null default '⚡',
+  text text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.moments enable row level security;
+
+create policy "Moments are managed by owner" on public.moments
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
 -- Indexes utiles pour les requetes par plage de dates
 create index if not exists habit_logs_user_date_idx on public.habit_logs (user_id, log_date);
 create index if not exists workouts_user_date_idx on public.workouts (user_id, workout_date);
 create index if not exists mood_entries_user_date_idx on public.mood_entries (user_id, entry_date);
+create index if not exists moments_user_date_idx on public.moments (user_id, entry_date);

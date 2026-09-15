@@ -1,4 +1,4 @@
-import { format, subWeeks } from "date-fns";
+import { format, subDays, subWeeks } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { createHabit } from "@/lib/actions/habits";
 import { computeStreak, countThisWeek } from "@/lib/streak";
@@ -6,6 +6,7 @@ import { HabitCreateForm } from "@/components/habit-create-form";
 import { HabitsBoard, type HabitCardData } from "@/components/habits-board";
 import { SuggestedHabits } from "@/components/suggested-habits";
 import { PausedHabits } from "@/components/paused-habits";
+import { MomentsJournal } from "@/components/moments-journal";
 
 export default async function HabitsPage() {
   const supabase = await createClient();
@@ -17,7 +18,9 @@ export default async function HabitsPage() {
   const since = format(subWeeks(new Date(), 18), "yyyy-MM-dd");
   const today = format(new Date(), "yyyy-MM-dd");
 
-  const [{ data: habits }, { data: pausedHabits }, { data: logs }, { data: todayLogs }] =
+  const momentsSince = format(subDays(new Date(), 7), "yyyy-MM-dd");
+
+  const [{ data: habits }, { data: pausedHabits }, { data: logs }, { data: todayLogs }, { data: moments }] =
     await Promise.all([
       supabase
         .from("habits")
@@ -37,6 +40,12 @@ export default async function HabitsPage() {
         .eq("user_id", user.id)
         .gte("log_date", since),
       supabase.from("habit_logs").select("habit_id, note").eq("user_id", user.id).eq("log_date", today),
+      supabase
+        .from("moments")
+        .select("*")
+        .eq("user_id", user.id)
+        .gte("entry_date", momentsSince)
+        .order("created_at", { ascending: false }),
     ]);
 
   const logsByHabit = new Map<string, Set<string>>();
@@ -84,6 +93,8 @@ export default async function HabitsPage() {
           Construis ta constance, un jour à la fois.
         </p>
       </div>
+
+      <MomentsJournal moments={moments ?? []} />
 
       <div className="space-y-4 rounded-2xl border border-border bg-surface p-5">
         <HabitCreateForm action={createHabit} />

@@ -87,6 +87,23 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["mood_entries"]["Row"]>;
         Relationships: [];
       };
+      moments: {
+        Row: {
+          id: string;
+          user_id: string;
+          entry_date: string;
+          icon: string;
+          text: string;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["moments"]["Row"]> & {
+          user_id: string;
+          entry_date: string;
+          text: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["moments"]["Row"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -100,3 +117,4 @@ export type HabitLog = Database["public"]["Tables"]["habit_logs"]["Row"];
 export type Workout = Database["public"]["Tables"]["workouts"]["Row"];
 export type MoodEntry = Database["public"]["Tables"]["mood_entries"]["Row"];
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+export type Moment = Database["public"]["Tables"]["moments"]["Row"];

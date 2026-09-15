@@ -4,6 +4,7 @@ import { useTransition } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { deleteWorkout } from "@/lib/actions/sport";
+import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import type { Workout } from "@/types/database";
 
 export function WorkoutList({ workouts }: { workouts: Workout[] }) {
@@ -28,13 +29,15 @@ export function WorkoutList({ workouts }: { workouts: Workout[] }) {
               {w.notes ? ` · ${w.notes}` : ""}
             </p>
           </div>
-          <button
+          <ConfirmDeleteButton
             disabled={pending}
-            onClick={() => startTransition(() => deleteWorkout(w.id))}
+            onConfirm={() => startTransition(() => deleteWorkout(w.id))}
+            title="Supprimer cette séance ?"
+            message={`"${w.activity}" du ${format(new Date(w.workout_date), "d MMMM", { locale: fr })} sera définitivement supprimée.`}
             className="shrink-0 text-xs text-foreground-muted hover:text-danger disabled:opacity-60"
           >
             Supprimer
-          </button>
+          </ConfirmDeleteButton>
         </li>
       ))}
     </ul>

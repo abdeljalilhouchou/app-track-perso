@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { deleteHabit, resumeHabit } from "@/lib/actions/habits";
 import { CATEGORY_META } from "@/lib/habit-categories";
+import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import type { Habit } from "@/types/database";
 
 export function PausedHabits({ habits }: { habits: Habit[] }) {
@@ -54,17 +55,15 @@ export function PausedHabits({ habits }: { habits: Habit[] }) {
                       >
                         Reprendre
                       </button>
-                      <button
+                      <ConfirmDeleteButton
                         disabled={pending}
-                        onClick={() => {
-                          if (confirm(`Supprimer définitivement "${habit.name}" et son historique ?`)) {
-                            startTransition(() => deleteHabit(habit.id));
-                          }
-                        }}
+                        onConfirm={() => startTransition(() => deleteHabit(habit.id))}
+                        title={`Supprimer "${habit.name}" ?`}
+                        message="Son historique complet sera définitivement perdu. Cette action est irréversible."
                         className="text-foreground-muted hover:text-danger disabled:opacity-50"
                       >
                         Supprimer
-                      </button>
+                      </ConfirmDeleteButton>
                     </div>
                   </li>
                 );

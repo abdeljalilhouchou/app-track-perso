@@ -5,6 +5,7 @@ import { addDays, format, startOfWeek } from "date-fns";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { toggleHabitLog, deleteHabit, pauseHabit, moveHabit, updateHabit, setHabitLogNote } from "@/lib/actions/habits";
+import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import { Heatmap } from "@/components/heatmap";
 import { HabitForm } from "@/components/habit-form";
 import { CATEGORY_META, WEEKDAYS } from "@/lib/habit-categories";
@@ -204,16 +205,14 @@ export function HabitCard({
           >
             Pause
           </button>
-          <button
-            onClick={() => {
-              if (confirm(`Supprimer "${habit.name}" et tout son historique ?`)) {
-                startTransition(() => deleteHabit(habit.id));
-              }
-            }}
+          <ConfirmDeleteButton
+            onConfirm={() => startTransition(() => deleteHabit(habit.id))}
+            title={`Supprimer "${habit.name}" ?`}
+            message="Tout son historique (séries, notes) sera définitivement perdu. Cette action est irréversible."
             className="text-foreground-muted hover:text-danger"
           >
             Supprimer
-          </button>
+          </ConfirmDeleteButton>
         </div>
       </div>
     </motion.div>

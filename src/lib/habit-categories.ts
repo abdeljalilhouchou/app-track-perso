@@ -24,6 +24,11 @@ export const EMOJI_CHOICES = [
   "🏃", "🏋️", "🚴", "🎨", "🎸", "🧠", "🌱", "💻", "📵", "☀️",
 ];
 
+export const MOMENT_EMOJI_CHOICES = [
+  "⚡", "☕", "🛍️", "🚶", "🎬", "🍽️", "🎉", "👥", "🚗", "💬",
+  "🎧", "🌳", "📸", "🛒", "🧹", "🐶", "🎮", "🍕", "🛌", "✨",
+];
+
 export const SUGGESTED_HABITS: {
   icon: string;
   name: string;
