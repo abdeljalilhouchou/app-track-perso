@@ -44,7 +44,9 @@ create table if not exists public.habits (
   name text not null,
   icon text not null default '✨',
   color text not null default '#6366f1',
+  category text not null default 'Général',
   target_per_week int not null default 7,
+  position int not null default 0,
   archived boolean not null default false,
   created_at timestamptz not null default now()
 );

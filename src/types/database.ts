@@ -19,7 +19,9 @@ export type Database = {
           name: string;
           icon: string;
           color: string;
+          category: string;
           target_per_week: number;
+          position: number;
           archived: boolean;
           created_at: string;
         };
