@@ -25,6 +25,27 @@ function detailsLabel(m: Moment) {
 
 const today = () => format(new Date(), "yyyy-MM-dd");
 
+const PencilIcon = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 20h9" />
+    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+  </svg>
+);
+
+const TrashIcon = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="3 6 5 6 21 6" />
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+  </svg>
+);
+
+const PlusIcon = () => (
+  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+    <line x1="12" y1="5" x2="12" y2="19" />
+    <line x1="5" y1="12" x2="19" y2="12" />
+  </svg>
+);
+
 export function MomentsJournal({ moments }: { moments: Moment[] }) {
   const [pending, startTransition] = useTransition();
   const [resetKey, setResetKey] = useState(0);
@@ -39,11 +60,16 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
 
   return (
     <div className="rounded-2xl border border-border bg-surface p-5">
-      <div>
-        <h2 className="text-sm font-medium">📝 Moments du jour</h2>
-        <p className="mt-0.5 text-xs text-foreground-muted">
-          Une sortie, un café, un imprévu — note-le sans en faire une habitude récurrente.
-        </p>
+      <div className="flex items-center gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-lg">
+          📝
+        </span>
+        <div>
+          <h2 className="text-sm font-semibold">Moments du jour</h2>
+          <p className="text-xs text-foreground-muted">
+            Une sortie, un café, un imprévu — sans en faire une habitude récurrente.
+          </p>
+        </div>
       </div>
 
       <form
@@ -55,7 +81,7 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
             setShowDetails(false);
           })
         }
-        className="mt-3 space-y-2"
+        className="mt-4 space-y-2.5"
       >
         <div className="flex gap-2">
           <IconPicker name="icon" defaultValue="⚡" choices={MOMENT_EMOJI_CHOICES} color="var(--accent)" />
@@ -63,49 +89,59 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
             name="text"
             required
             placeholder="Ex: Café avec Sarah, balade shopping..."
-            className="flex-1 rounded-xl border border-border bg-surface-muted px-3 py-2.5 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
+            className="flex-1 rounded-xl border border-border bg-surface-muted px-3.5 py-2.5 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
           />
           <button
             type="submit"
             disabled={pending}
-            className="rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+            className="rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90 active:scale-[0.98] disabled:opacity-60"
           >
             Ajouter
           </button>
         </div>
 
         {showDetails ? (
-          <div className="flex flex-wrap gap-2 pl-13">
-            <input
-              name="entry_date"
-              type="date"
-              defaultValue={today()}
-              max={today()}
-              className="rounded-lg border border-border bg-surface-muted px-2.5 py-1.5 text-xs outline-none focus:border-accent"
-            />
-            <input
-              name="duration_minutes"
-              type="number"
-              min={0}
-              placeholder="Durée (min)"
-              className="w-28 rounded-lg border border-border bg-surface-muted px-2.5 py-1.5 text-xs outline-none focus:border-accent"
-            />
-            <input
-              name="price"
-              type="number"
-              min={0}
-              step="0.01"
-              placeholder="Prix (€)"
-              className="w-24 rounded-lg border border-border bg-surface-muted px-2.5 py-1.5 text-xs outline-none focus:border-accent"
-            />
+          <div className="ml-13 flex flex-wrap items-end gap-3 rounded-xl bg-surface-muted p-3">
+            <label className="flex flex-col gap-1">
+              <span className="text-[10px] font-medium text-foreground-muted">Date</span>
+              <input
+                name="entry_date"
+                type="date"
+                defaultValue={today()}
+                max={today()}
+                className="rounded-lg border border-border bg-surface px-2.5 py-1.5 text-xs outline-none focus:border-accent"
+              />
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="text-[10px] font-medium text-foreground-muted">Durée</span>
+              <input
+                name="duration_minutes"
+                type="number"
+                min={0}
+                placeholder="min"
+                className="w-20 rounded-lg border border-border bg-surface px-2.5 py-1.5 text-xs outline-none focus:border-accent"
+              />
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="text-[10px] font-medium text-foreground-muted">Prix</span>
+              <input
+                name="price"
+                type="number"
+                min={0}
+                step="0.01"
+                placeholder="€"
+                className="w-20 rounded-lg border border-border bg-surface px-2.5 py-1.5 text-xs outline-none focus:border-accent"
+              />
+            </label>
           </div>
         ) : (
           <button
             type="button"
             onClick={() => setShowDetails(true)}
-            className="pl-13 text-xs font-medium text-accent hover:underline"
+            className="ml-13 flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-xs font-medium text-foreground-muted transition hover:border-accent/40 hover:text-accent"
           >
-            + Date, durée, prix (optionnel)
+            <PlusIcon />
+            Date, durée, prix
           </button>
         )}
       </form>
@@ -208,28 +244,34 @@ function MomentItem({ moment }: { moment: Moment }) {
       initial={{ opacity: 0, x: -8 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0 }}
-      className="flex items-center justify-between gap-3 rounded-xl bg-surface-muted px-3 py-2"
+      className="flex items-center gap-3 rounded-xl bg-surface-muted px-3 py-2.5 transition hover:bg-accent-soft/40"
     >
-      <span className="flex min-w-0 items-center gap-2 text-sm">
-        <span>{moment.icon}</span>
-        <span className="truncate">{moment.text}</span>
-        {details && <span className="shrink-0 text-xs text-foreground-muted">· {details}</span>}
-        <span className="shrink-0 text-xs text-foreground-muted">
-          {format(new Date(moment.created_at), "HH:mm")}
-        </span>
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-surface text-sm">
+        {moment.icon}
       </span>
-      <span className="flex shrink-0 gap-3 text-xs">
-        <button onClick={() => setEditing(true)} className="text-foreground-muted hover:text-foreground">
-          Modifier
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-medium">{moment.text}</p>
+        <p className="text-xs text-foreground-muted">
+          {format(new Date(moment.created_at), "HH:mm")}
+          {details && ` · ${details}`}
+        </p>
+      </div>
+      <span className="flex shrink-0 gap-1">
+        <button
+          onClick={() => setEditing(true)}
+          aria-label="Modifier"
+          className="flex h-7 w-7 items-center justify-center rounded-lg text-foreground-muted transition hover:bg-surface hover:text-foreground"
+        >
+          <PencilIcon />
         </button>
         <ConfirmDeleteButton
           disabled={pending}
           onConfirm={() => startTransition(() => deleteMoment(moment.id))}
           title="Supprimer ce moment ?"
           message={`"${moment.text}" sera définitivement supprimé.`}
-          className="text-foreground-muted hover:text-danger disabled:opacity-50"
+          className="flex h-7 w-7 items-center justify-center rounded-lg text-foreground-muted transition hover:bg-surface hover:text-danger disabled:opacity-50"
         >
-          ✕
+          <TrashIcon />
         </ConfirmDeleteButton>
       </span>
     </motion.li>
