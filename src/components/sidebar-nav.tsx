@@ -7,6 +7,7 @@ import { signOut } from "@/lib/actions/auth";
 
 const links = [
   { href: "/dashboard", label: "Vue d'ensemble", icon: "🏠" },
+  { href: "/journal", label: "Journal", icon: "📅" },
   { href: "/habits", label: "Habitudes", icon: "✨" },
   { href: "/sport", label: "Sport", icon: "🏃" },
   { href: "/humeur", label: "Humeur", icon: "🙂" },
