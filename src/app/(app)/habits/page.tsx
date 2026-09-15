@@ -1,9 +1,9 @@
 import { format, subWeeks } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { createHabit } from "@/lib/actions/habits";
-import { HabitCard } from "@/components/habit-card";
 import { computeStreak, countThisWeek } from "@/lib/streak";
-import { CATEGORY_PRESETS, EMOJI_CHOICES } from "@/lib/habit-categories";
+import { HabitCreateForm } from "@/components/habit-create-form";
+import { HabitsBoard, type HabitCardData } from "@/components/habits-board";
 
 export default async function HabitsPage() {
   const supabase = await createClient();
@@ -37,11 +37,27 @@ export default async function HabitsPage() {
   const today = format(new Date(), "yyyy-MM-dd");
   const orderedHabits = habits ?? [];
 
-  const groups = new Map<string, typeof orderedHabits>();
-  for (const habit of orderedHabits) {
-    if (!groups.has(habit.category)) groups.set(habit.category, []);
-    groups.get(habit.category)!.push(habit);
-  }
+  const groupsMap = new Map<string, HabitCardData[]>();
+  orderedHabits.forEach((habit, globalIndex) => {
+    const habitLogs = logsByHabit.get(habit.id) ?? new Set<string>();
+    const values: Record<string, number> = {};
+    habitLogs.forEach((d) => (values[d] = 1));
+
+    const data: HabitCardData = {
+      habit,
+      values,
+      doneToday: habitLogs.has(today),
+      streak: computeStreak(habitLogs),
+      thisWeekCount: countThisWeek(habitLogs),
+      isFirst: globalIndex === 0,
+      isLast: globalIndex === orderedHabits.length - 1,
+    };
+
+    if (!groupsMap.has(habit.category)) groupsMap.set(habit.category, []);
+    groupsMap.get(habit.category)!.push(data);
+  });
+
+  const groups = Array.from(groupsMap.entries()).map(([category, habits]) => ({ category, habits }));
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -52,90 +68,19 @@ export default async function HabitsPage() {
         </p>
       </div>
 
-      <form
-        action={createHabit}
-        className="grid gap-3 rounded-2xl border border-border bg-surface p-4 sm:grid-cols-2"
-      >
-        <div className="flex gap-2 sm:col-span-2">
-          <select
-            name="icon"
-            defaultValue="✨"
-            className="rounded-lg border border-border bg-surface-muted px-3 py-2 text-lg"
-          >
-            {EMOJI_CHOICES.map((e) => (
-              <option key={e} value={e}>
-                {e}
-              </option>
-            ))}
-          </select>
-          <input
-            name="name"
-            required
-            placeholder="Nouvelle habitude (ex: Lire 10 minutes)"
-            className="flex-1 rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-accent"
-          />
-        </div>
-        <select
-          name="category"
-          defaultValue="Général"
-          className="rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-accent"
-        >
-          {CATEGORY_PRESETS.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-        <select
-          name="target_per_week"
-          defaultValue={7}
-          className="rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-accent"
-        >
-          {[1, 2, 3, 4, 5, 6, 7].map((n) => (
-            <option key={n} value={n}>
-              {n}x / semaine
-            </option>
-          ))}
-        </select>
-        <button
-          type="submit"
-          className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 sm:col-span-2"
-        >
-          Ajouter
-        </button>
-      </form>
+      <div className="rounded-2xl border border-border bg-surface p-5">
+        <HabitCreateForm action={createHabit} />
+      </div>
 
       {orderedHabits.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-foreground-muted">
-          Aucune habitude pour le moment. Ajoute la première ci-dessus.
-        </p>
+        <div className="rounded-2xl border border-dashed border-border p-10 text-center">
+          <span className="text-4xl">🌱</span>
+          <p className="mt-3 text-sm text-foreground-muted">
+            Aucune habitude pour le moment. Ajoute la première ci-dessus.
+          </p>
+        </div>
       ) : (
-        Array.from(groups.entries()).map(([category, categoryHabits]) => (
-          <div key={category}>
-            <h2 className="mb-3 text-sm font-medium text-foreground-muted">{category}</h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {categoryHabits.map((habit) => {
-                const habitLogs = logsByHabit.get(habit.id) ?? new Set<string>();
-                const values: Record<string, number> = {};
-                habitLogs.forEach((d) => (values[d] = 1));
-                const globalIndex = orderedHabits.findIndex((h) => h.id === habit.id);
-
-                return (
-                  <HabitCard
-                    key={habit.id}
-                    habit={habit}
-                    values={values}
-                    doneToday={habitLogs.has(today)}
-                    streak={computeStreak(habitLogs)}
-                    thisWeekCount={countThisWeek(habitLogs)}
-                    isFirst={globalIndex === 0}
-                    isLast={globalIndex === orderedHabits.length - 1}
-                  />
-                );
-              })}
-            </div>
-          </div>
-        ))
+        <HabitsBoard groups={groups} />
       )}
     </div>
   );
