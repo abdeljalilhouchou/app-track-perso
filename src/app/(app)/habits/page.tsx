@@ -1,4 +1,4 @@
-import { format, subDays, subWeeks } from "date-fns";
+import { format, subWeeks } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { computeStreak, countThisWeek } from "@/lib/streak";
 import { HabitCreateModal } from "@/components/habit-create-modal";
@@ -16,8 +16,6 @@ export default async function HabitsPage() {
 
   const since = format(subWeeks(new Date(), 18), "yyyy-MM-dd");
   const today = format(new Date(), "yyyy-MM-dd");
-
-  const momentsSince = format(subDays(new Date(), 7), "yyyy-MM-dd");
 
   const [{ data: habits }, { data: pausedHabits }, { data: logs }, { data: todayLogs }, { data: moments }] =
     await Promise.all([
@@ -43,8 +41,8 @@ export default async function HabitsPage() {
         .from("moments")
         .select("*")
         .eq("user_id", user.id)
-        .gte("entry_date", momentsSince)
-        .order("created_at", { ascending: false }),
+        .eq("entry_date", today)
+        .order("occurred_at", { ascending: false }),
     ]);
 
   const logsByHabit = new Map<string, Set<string>>();

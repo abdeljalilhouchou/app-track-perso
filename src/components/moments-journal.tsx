@@ -1,20 +1,14 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { differenceInMinutes, format, isToday, parseISO } from "date-fns";
-import { fr } from "date-fns/locale";
+import { differenceInMinutes, format } from "date-fns";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { addMoment, deleteMoment, updateMoment } from "@/lib/actions/moments";
 import { IconPicker } from "@/components/ui/icon-picker";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import { MOMENT_EMOJI_CHOICES } from "@/lib/habit-categories";
 import type { Moment } from "@/types/database";
-
-function dayLabel(dateStr: string) {
-  const date = parseISO(dateStr);
-  if (isToday(date)) return "Aujourd'hui";
-  return format(date, "EEEE d MMMM", { locale: fr });
-}
 
 function detailsLabel(m: Moment) {
   const parts: string[] = [];
@@ -101,25 +95,26 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
   const [resetKey, setResetKey] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
 
-  const groups = new Map<string, Moment[]>();
-  for (const m of moments) {
-    if (!groups.has(m.entry_date)) groups.set(m.entry_date, []);
-    groups.get(m.entry_date)!.push(m);
-  }
-  const sortedDates = Array.from(groups.keys()).sort((a, b) => (a < b ? 1 : -1));
-
   return (
     <div className="rounded-2xl border border-border bg-surface p-5">
-      <div className="flex items-center gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-lg">
-          📝
-        </span>
-        <div>
-          <h2 className="text-sm font-semibold">Moments du jour</h2>
-          <p className="text-xs text-foreground-muted">
-            Une sortie, un café, un imprévu — sans en faire une habitude récurrente.
-          </p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-lg">
+            📝
+          </span>
+          <div>
+            <h2 className="text-sm font-semibold">Moments du jour</h2>
+            <p className="text-xs text-foreground-muted">
+              Une sortie, un café, un imprévu — sans en faire une habitude récurrente.
+            </p>
+          </div>
         </div>
+        <Link
+          href="/journal"
+          className="shrink-0 whitespace-nowrap text-xs font-medium text-accent hover:underline"
+        >
+          Historique →
+        </Link>
       </div>
 
       <form
@@ -185,18 +180,14 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
         )}
       </form>
 
-      {sortedDates.length > 0 && (
-        <div className="mt-5 space-y-4">
-          {sortedDates.map((date) => (
-            <div key={date}>
-              <p className="mb-1.5 text-xs font-medium capitalize text-foreground-muted">{dayLabel(date)}</p>
-              <ul className="space-y-1.5">
-                {groups.get(date)!.map((m) => (
-                  <MomentItem key={m.id} moment={m} />
-                ))}
-              </ul>
-            </div>
-          ))}
+      {moments.length > 0 && (
+        <div className="mt-5">
+          <p className="mb-1.5 text-xs font-medium text-foreground-muted">Aujourd&apos;hui</p>
+          <ul className="space-y-1.5">
+            {moments.map((m) => (
+              <MomentItem key={m.id} moment={m} />
+            ))}
+          </ul>
         </div>
       )}
     </div>
