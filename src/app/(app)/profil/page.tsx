@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { computeStreak } from "@/lib/streak";
 import { BADGES, computeLevel, computePoints, type Stats } from "@/lib/gamification";
+import { ReminderSettings } from "@/components/reminder-settings";
 
 export default async function ProfilPage() {
   const supabase = await createClient();
@@ -11,7 +12,7 @@ export default async function ProfilPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("display_name, created_at")
+    .select("display_name, created_at, reminder_time")
     .eq("id", user.id)
     .single();
 
@@ -113,6 +114,14 @@ export default async function ProfilPage() {
             {stats.moodEntriesCount}
           </p>
         </div>
+      </div>
+
+      <div className="rounded-2xl border border-border bg-surface p-5">
+        <h2 className="mb-3 flex items-center gap-2 text-sm font-medium">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft">🔔</span>
+          Rappel quotidien
+        </h2>
+        <ReminderSettings initialTime={profile?.reminder_time ?? null} />
       </div>
 
       <div>

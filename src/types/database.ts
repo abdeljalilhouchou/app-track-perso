@@ -6,6 +6,9 @@ export type Database = {
           id: string;
           display_name: string | null;
           avatar_url: string | null;
+          reminder_time: string | null;
+          reminder_timezone: string | null;
+          reminded_date: string | null;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["profiles"]["Row"]> & { id: string };
@@ -105,6 +108,24 @@ export type Database = {
           text: string;
         };
         Update: Partial<Database["public"]["Tables"]["moments"]["Row"]>;
+        Relationships: [];
+      };
+      push_subscriptions: {
+        Row: {
+          id: string;
+          user_id: string;
+          endpoint: string;
+          p256dh: string;
+          auth: string;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["push_subscriptions"]["Row"]> & {
+          user_id: string;
+          endpoint: string;
+          p256dh: string;
+          auth: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["push_subscriptions"]["Row"]>;
         Relationships: [];
       };
     };
