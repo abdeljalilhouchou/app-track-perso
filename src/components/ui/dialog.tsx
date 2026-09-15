@@ -40,7 +40,7 @@ export function Dialog({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
-            className={`fixed left-1/2 top-1/2 z-101 w-[92vw] -translate-x-1/2 -translate-y-1/2 ${widthClassName}`}
+            className={`fixed left-1/2 top-1/2 z-101 max-h-[85vh] w-[92vw] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl ${widthClassName}`}
           >
             {children}
           </motion.div>

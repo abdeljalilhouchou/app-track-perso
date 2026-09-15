@@ -61,8 +61,8 @@ export function HabitCreateModal() {
       </button>
 
       <Dialog open={open} onClose={close}>
-        <form action={submit} className="overflow-hidden rounded-2xl bg-surface shadow-2xl">
-          <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <form action={submit} className="rounded-2xl bg-surface shadow-2xl">
+          <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-border bg-surface px-5 py-4">
             <span className="text-sm font-semibold">Nouvelle habitude</span>
             <button
               type="button"
@@ -160,7 +160,7 @@ export function HabitCreateModal() {
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 border-t border-border bg-surface-muted px-5 py-4">
+          <div className="sticky bottom-0 z-10 flex justify-end gap-2 rounded-b-2xl border-t border-border bg-surface-muted px-5 py-4">
             <button
               type="button"
               onClick={close}
