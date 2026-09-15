@@ -33,6 +33,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
+  const debug = request.nextUrl.searchParams.get("debug") === "1";
+  const trace: Record<string, unknown>[] = [];
+
   const resendApiKey = process.env.RESEND_API_KEY;
   if (!resendApiKey) {
     return NextResponse.json({ error: "resend not configured" }, { status: 500 });
@@ -42,7 +45,7 @@ export async function GET(request: NextRequest) {
 
   const supabase = createAdminClient();
 
-  const { data: profiles } = await supabase
+  const { data: profiles, error: profilesError } = await supabase
     .from("profiles")
     .select("id, reminder_time, reminder_timezone, reminded_date")
     .not("reminder_time", "is", null)
@@ -54,12 +57,29 @@ export async function GET(request: NextRequest) {
     if (!profile.reminder_time || !profile.reminder_timezone) continue;
 
     const { date: todayLocal, time: nowLocal } = nowInTimezone(profile.reminder_timezone);
-    if (profile.reminded_date === todayLocal) continue;
-    if (nowLocal < profile.reminder_time) continue;
+    const step: Record<string, unknown> = {
+      profileId: profile.id,
+      reminder_time: profile.reminder_time,
+      reminder_timezone: profile.reminder_timezone,
+      reminded_date: profile.reminded_date,
+      todayLocal,
+      nowLocal,
+    };
+
+    if (profile.reminded_date === todayLocal) {
+      step.skipped = "already reminded today";
+      trace.push(step);
+      continue;
+    }
+    if (nowLocal < profile.reminder_time) {
+      step.skipped = "not time yet";
+      trace.push(step);
+      continue;
+    }
 
     const weekday = isoWeekday(todayLocal);
 
-    const [{ data: habits }, { data: todayLogs }] = await Promise.all([
+    const [{ data: habits, error: habitsError }, { data: todayLogs, error: logsError }] = await Promise.all([
       supabase
         .from("habits")
         .select("id, name, icon, scheduled_days")
@@ -73,18 +93,38 @@ export async function GET(request: NextRequest) {
       (h) => h.scheduled_days.includes(weekday) && !doneIds.has(h.id)
     );
 
-    if (pending.length === 0) continue;
+    step.weekday = weekday;
+    step.habitsCount = habits?.length ?? 0;
+    step.pendingCount = pending.length;
+    step.pendingNames = pending.map((h) => h.name);
+    step.habitsError = habitsError?.message ?? null;
+    step.logsError = logsError?.message ?? null;
 
-    const { data: authUser } = await supabase.auth.admin.getUserById(profile.id);
+    if (pending.length === 0) {
+      step.skipped = "nothing pending";
+      trace.push(step);
+      continue;
+    }
+
+    const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(profile.id);
     const email = authUser?.user?.email;
-    if (!email) continue;
+    step.email = email ?? null;
+    step.authError = authError?.message ?? null;
+
+    if (!email) {
+      step.skipped = "no email found";
+      trace.push(step);
+      continue;
+    }
 
     const listHtml = pending.map((h) => `<li>${h.icon} ${h.name}</li>`).join("");
     const subject =
-      pending.length === 1 ? `Il te reste "${pending[0].name}" à faire aujourd'hui` : `${pending.length} habitudes à faire aujourd'hui`;
+      pending.length === 1
+        ? `Il te reste "${pending[0].name}" à faire aujourd'hui`
+        : `${pending.length} habitudes à faire aujourd'hui`;
 
     try {
-      await resend.emails.send({
+      const sendResult = await resend.emails.send({
         from: fromAddress,
         to: email,
         subject: `track.perso — ${subject}`,
@@ -98,12 +138,19 @@ export async function GET(request: NextRequest) {
           </div>
         `,
       });
+      step.sendResult = sendResult;
       await supabase.from("profiles").update({ reminded_date: todayLocal }).eq("id", profile.id);
       notified += 1;
-    } catch {
-      // best-effort: skip this user, try again next run (reminded_date not set)
+    } catch (err) {
+      step.sendError = err instanceof Error ? err.message : String(err);
     }
+
+    trace.push(step);
   }
 
-  return NextResponse.json({ ok: true, notified });
+  return NextResponse.json({
+    ok: true,
+    notified,
+    ...(debug ? { profilesError: profilesError?.message ?? null, profilesCount: profiles?.length ?? 0, trace } : {}),
+  });
 }
