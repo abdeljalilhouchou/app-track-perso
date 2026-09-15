@@ -1,8 +1,7 @@
 import { format, subDays, subWeeks } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
-import { createHabit } from "@/lib/actions/habits";
 import { computeStreak, countThisWeek } from "@/lib/streak";
-import { HabitCreateForm } from "@/components/habit-create-form";
+import { HabitCreateModal } from "@/components/habit-create-modal";
 import { HabitsBoard, type HabitCardData } from "@/components/habits-board";
 import { SuggestedHabits } from "@/components/suggested-habits";
 import { PausedHabits } from "@/components/paused-habits";
@@ -87,20 +86,20 @@ export default async function HabitsPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Habitudes</h1>
-        <p className="mt-1 text-sm text-foreground-muted">
-          Construis ta constance, un jour à la fois.
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Habitudes</h1>
+          <p className="mt-1 text-sm text-foreground-muted">
+            Construis ta constance, un jour à la fois.
+          </p>
+        </div>
+        <HabitCreateModal />
       </div>
 
       <MomentsJournal moments={moments ?? []} />
 
-      <div className="space-y-4 rounded-2xl border border-border bg-surface p-5">
-        <HabitCreateForm action={createHabit} />
-        <div className="border-t border-border pt-4">
-          <SuggestedHabits existingNames={allNames} />
-        </div>
+      <div className="rounded-2xl border border-border bg-surface p-5">
+        <SuggestedHabits existingNames={allNames} />
       </div>
 
       {orderedHabits.length === 0 ? (

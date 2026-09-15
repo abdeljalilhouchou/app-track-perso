@@ -8,18 +8,29 @@ import { useClickOutside } from "@/lib/use-click-outside";
 export function IconPicker({
   name,
   defaultValue,
+  value: controlledValue,
+  onChange,
   color = "var(--accent)",
   choices = EMOJI_CHOICES,
 }: {
   name: string;
-  defaultValue: string;
+  defaultValue?: string;
+  value?: string;
+  onChange?: (value: string) => void;
   color?: string;
   choices?: string[];
 }) {
-  const [value, setValue] = useState(defaultValue);
+  const [internalValue, setInternalValue] = useState(defaultValue ?? choices[0]);
+  const value = controlledValue ?? internalValue;
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useClickOutside(ref, () => setOpen(false));
+
+  function select(emoji: string) {
+    if (onChange) onChange(emoji);
+    else setInternalValue(emoji);
+    setOpen(false);
+  }
 
   return (
     <div ref={ref} className="relative shrink-0">
@@ -50,10 +61,7 @@ export function IconPicker({
               <button
                 key={emoji}
                 type="button"
-                onClick={() => {
-                  setValue(emoji);
-                  setOpen(false);
-                }}
+                onClick={() => select(emoji)}
                 className={`flex h-9 w-9 items-center justify-center rounded-lg text-xl transition hover:scale-110 hover:bg-surface-muted ${
                   emoji === value ? "bg-accent-soft ring-2 ring-accent" : ""
                 }`}
