@@ -75,9 +75,9 @@ export function MonthCalendar({
               key={key}
               disabled={!inMonth}
               onClick={() => selectDay(key)}
-              className={`relative aspect-square rounded-lg text-sm font-medium transition disabled:cursor-default ${
+              className={`relative aspect-square rounded-xl text-sm font-medium transition-all disabled:cursor-default ${
                 !inMonth ? "opacity-0" : ""
-              } ${future ? "text-foreground-muted opacity-40" : "hover:opacity-80"} ${
+              } ${future ? "text-foreground-muted opacity-40" : "hover:scale-105 hover:opacity-80"} ${
                 isToday ? "ring-2 ring-accent" : ""
               } ${isSelected ? "outline-2 outline-offset-1" : ""}`}
               style={{

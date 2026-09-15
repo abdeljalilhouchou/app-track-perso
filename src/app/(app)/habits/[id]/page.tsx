@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { computeStreak, longestStreakEver } from "@/lib/streak";
 import { bestWeekday, successRate } from "@/lib/habit-insights";
 import { MonthCalendar } from "@/components/month-calendar";
-import { WEEKDAYS } from "@/lib/habit-categories";
+import { CATEGORY_META, WEEKDAYS } from "@/lib/habit-categories";
 
 export default async function HabitDetailPage({
   params,
@@ -66,6 +66,9 @@ export default async function HabitDetailPage({
 
   const prevMonth = format(subMonths(month, 1), "yyyy-MM");
   const nextMonth = format(addMonths(month, 1), "yyyy-MM");
+  const categoryMeta = CATEGORY_META[habit.category] ?? CATEGORY_META["Général"];
+  const streak = computeStreak(loggedDates);
+  const best = longestStreakEver(loggedDates);
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -73,67 +76,127 @@ export default async function HabitDetailPage({
         <Link href="/habits" className="text-sm text-foreground-muted hover:text-foreground">
           ← Retour aux habitudes
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight">
-          {habit.icon} {habit.name}
-        </h1>
-        <p className="mt-1 text-sm text-foreground-muted">
-          {habit.category} · prévu le{" "}
-          {habit.scheduled_days.length === 7
-            ? "tous les jours"
-            : habit.scheduled_days
-                .map((d) => WEEKDAYS.find((w) => w.value === d)?.label)
-                .join(", ")}
-        </p>
+
+        <div className="mt-3 flex items-start gap-4">
+          <span
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl shadow-sm"
+            style={{ background: `color-mix(in srgb, ${habit.color} 16%, var(--surface))` }}
+          >
+            {habit.icon}
+          </span>
+          <div className="min-w-0">
+            <h1 className="text-2xl font-semibold tracking-tight">{habit.name}</h1>
+            <span
+              className="mt-1 inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium"
+              style={{ background: `color-mix(in srgb, ${categoryMeta.color} 16%, transparent)`, color: categoryMeta.color }}
+            >
+              {categoryMeta.icon} {habit.category}
+            </span>
+
+            <div className="mt-3 flex gap-1.5">
+              {WEEKDAYS.map((d) => {
+                const scheduled = habit.scheduled_days.includes(d.value);
+                return (
+                  <span
+                    key={d.value}
+                    title={d.label}
+                    className="flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold"
+                    style={{
+                      background: scheduled ? habit.color : "var(--surface-muted)",
+                      color: scheduled ? "white" : "var(--foreground-muted)",
+                    }}
+                  >
+                    {d.short}
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-border bg-surface p-5">
-          <p className="text-sm text-foreground-muted">Total de fois faites</p>
-          <p className="mt-1 text-2xl font-semibold" style={{ color: habit.color }}>
+          <div className="flex items-center gap-2 text-sm text-foreground-muted">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg" style={{ background: `color-mix(in srgb, ${habit.color} 16%, transparent)` }}>
+              📊
+            </span>
+            Total de fois faites
+          </div>
+          <p className="mt-2 text-2xl font-semibold" style={{ color: habit.color }}>
             {loggedDates.size}
           </p>
         </div>
         <div className="rounded-2xl border border-border bg-surface p-5">
-          <p className="text-sm text-foreground-muted">Série actuelle</p>
-          <p className="mt-1 text-2xl font-semibold" style={{ color: habit.color }}>
-            {computeStreak(loggedDates)} j
+          <div className="flex items-center gap-2 text-sm text-foreground-muted">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg" style={{ background: `color-mix(in srgb, ${habit.color} 16%, transparent)` }}>
+              🔥
+            </span>
+            Série actuelle
+          </div>
+          <p className="mt-2 text-2xl font-semibold" style={{ color: habit.color }}>
+            {streak} j
           </p>
         </div>
         <div className="rounded-2xl border border-border bg-surface p-5">
-          <p className="text-sm text-foreground-muted">Meilleure série</p>
-          <p className="mt-1 text-2xl font-semibold" style={{ color: habit.color }}>
-            {longestStreakEver(loggedDates)} j
+          <div className="flex items-center gap-2 text-sm text-foreground-muted">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg" style={{ background: `color-mix(in srgb, ${habit.color} 16%, transparent)` }}>
+              🏆
+            </span>
+            Meilleure série
+          </div>
+          <p className="mt-2 text-2xl font-semibold" style={{ color: habit.color }}>
+            {best} j
           </p>
         </div>
       </div>
 
-      <div className="rounded-2xl border border-accent/30 bg-accent-soft p-5">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-accent">Insights</p>
-        <ul className="space-y-1.5 text-sm">
-          <li>
-            📊 Taux de réussite sur 3 mois : <strong>{threeMonthStats.rate}%</strong> (
-            {threeMonthStats.completed}/{threeMonthStats.expected} jours prévus)
-          </li>
-          {weekdayInsight && weekdayInsight.rate > 0 && (
-            <li>
-              🏆 Ton meilleur jour : <strong>{weekdayInsight.label}</strong> ({weekdayInsight.rate}% de
-              réussite)
-            </li>
-          )}
-          {prevMonthStats.expected > 0 && (
-            <li>
-              {monthDiff > 0 ? "📈" : monthDiff < 0 ? "📉" : "➡️"} Ce mois-ci :{" "}
-              <strong>{thisMonthStats.rate}%</strong> vs {prevMonthStats.rate}% le mois précédent
-            </li>
-          )}
-        </ul>
+      <div className="rounded-2xl border border-border bg-surface p-5">
+        <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-foreground-muted">Insights</p>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div>
+            <div className="mb-1.5 flex items-center justify-between text-xs text-foreground-muted">
+              <span>3 derniers mois</span>
+              <span className="font-semibold text-foreground">{threeMonthStats.rate}%</span>
+            </div>
+            <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-muted">
+              <div
+                className="h-full rounded-full"
+                style={{ width: `${threeMonthStats.rate}%`, background: habit.color }}
+              />
+            </div>
+            <p className="mt-1.5 text-xs text-foreground-muted">
+              {threeMonthStats.completed}/{threeMonthStats.expected} jours prévus
+            </p>
+          </div>
+
+          <div>
+            <p className="text-xs text-foreground-muted">Meilleur jour</p>
+            <p className="mt-1.5 text-lg font-semibold">
+              {weekdayInsight && weekdayInsight.rate > 0 ? weekdayInsight.label : "—"}
+            </p>
+            <p className="text-xs text-foreground-muted">
+              {weekdayInsight && weekdayInsight.rate > 0 ? `${weekdayInsight.rate}% de réussite` : "Pas encore assez de données"}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-xs text-foreground-muted">Tendance mensuelle</p>
+            <p className="mt-1.5 flex items-center gap-1.5 text-lg font-semibold">
+              {monthDiff > 0 ? "📈" : monthDiff < 0 ? "📉" : "➡️"} {thisMonthStats.rate}%
+            </p>
+            <p className="text-xs text-foreground-muted">
+              {prevMonthStats.expected > 0 ? `vs ${prevMonthStats.rate}% le mois précédent` : "Premier mois suivi"}
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="rounded-2xl border border-border bg-surface p-5">
         <div className="mb-4 flex items-center justify-between">
           <Link
             href={`/habits/${id}?month=${prevMonth}`}
-            className="rounded-lg border border-border px-3 py-1.5 text-sm text-foreground-muted transition hover:bg-surface-muted"
+            className="flex items-center gap-1 rounded-lg border-[1.5px] border-accent px-3 py-1.5 text-sm font-medium text-accent transition-colors hover:bg-accent hover:text-white"
           >
             ← Précédent
           </Link>
@@ -144,11 +207,11 @@ export default async function HabitDetailPage({
             </p>
           </div>
           {isCurrentMonth ? (
-            <span className="w-[86px]" />
+            <span className="w-23" />
           ) : (
             <Link
               href={`/habits/${id}?month=${nextMonth}`}
-              className="rounded-lg border border-border px-3 py-1.5 text-sm text-foreground-muted transition hover:bg-surface-muted"
+              className="flex items-center gap-1 rounded-lg border-[1.5px] border-accent px-3 py-1.5 text-sm font-medium text-accent transition-colors hover:bg-accent hover:text-white"
             >
               Suivant →
             </Link>
@@ -162,6 +225,18 @@ export default async function HabitDetailPage({
           loggedDates={loggedDates}
           notesByDate={notesByDate}
         />
+
+        <div className="mt-4 flex flex-wrap items-center gap-4 border-t border-border pt-4 text-xs text-foreground-muted">
+          <span className="flex items-center gap-1.5">
+            <span className="h-3 w-3 rounded-sm" style={{ background: habit.color }} /> Fait
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-3 w-3 rounded-sm bg-surface-muted" /> Prévu, pas fait
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: habit.color }} /> Avec une note
+          </span>
+        </div>
       </div>
     </div>
   );
