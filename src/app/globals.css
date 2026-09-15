@@ -99,3 +99,12 @@ body {
 .animate-fade-in {
   animation: fade-in-up 0.35s ease-out both;
 }
+
+/* iOS Safari auto-zooms the page on focus when a field's font-size is under 16px. */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
