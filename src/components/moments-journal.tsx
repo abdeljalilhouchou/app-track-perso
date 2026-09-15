@@ -139,7 +139,7 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
           <button
             type="submit"
             disabled={pending}
-            className="shrink-0 rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90 active:scale-[0.98] disabled:opacity-60"
+            className="shrink-0 rounded-xl border-[1.5px] border-accent px-4 py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-white active:scale-[0.98] disabled:opacity-60"
           >
             Ajouter
           </button>
