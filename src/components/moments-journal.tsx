@@ -133,20 +133,18 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
         }
         className="mt-4 space-y-2.5"
       >
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <div className="flex gap-2">
-            <IconPicker name="icon" defaultValue="⚡" choices={MOMENT_EMOJI_CHOICES} color="var(--accent)" />
-            <input
-              name="text"
-              required
-              placeholder="Ex: Café avec Sarah, balade shopping..."
-              className="flex-1 rounded-xl border border-border bg-surface-muted px-3.5 py-2.5 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30 sm:w-0 sm:flex-1"
-            />
-          </div>
+        <div className="flex gap-2">
+          <IconPicker name="icon" defaultValue="⚡" choices={MOMENT_EMOJI_CHOICES} color="var(--accent)" />
+          <input
+            name="text"
+            required
+            placeholder="Ex: Café avec Sarah, balade shopping..."
+            className="min-w-0 flex-1 rounded-xl border border-border bg-surface-muted px-3.5 py-2.5 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
+          />
           <button
             type="submit"
             disabled={pending}
-            className="rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90 active:scale-[0.98] disabled:opacity-60"
+            className="shrink-0 rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90 active:scale-[0.98] disabled:opacity-60"
           >
             Ajouter
           </button>
