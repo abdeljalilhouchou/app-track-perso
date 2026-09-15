@@ -74,12 +74,17 @@ export default async function JournalPage({
   }
 
   for (const mo of moments ?? []) {
+    const details = [
+      mo.duration_minutes ? `${mo.duration_minutes} min` : null,
+      mo.price != null ? `${mo.price}€` : null,
+    ].filter(Boolean);
     items.push({
       id: `moment-${mo.id}`,
       type: "moment",
       time: mo.created_at,
       icon: mo.icon,
       title: mo.text,
+      subtitle: details.length > 0 ? details.join(" · ") : undefined,
       href: "/habits",
     });
   }

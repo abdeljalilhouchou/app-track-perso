@@ -94,6 +94,8 @@ export type Database = {
           entry_date: string;
           icon: string;
           text: string;
+          duration_minutes: number | null;
+          price: number | null;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["moments"]["Row"]> & {
