@@ -4,6 +4,8 @@ import { createHabit } from "@/lib/actions/habits";
 import { computeStreak, countThisWeek } from "@/lib/streak";
 import { HabitCreateForm } from "@/components/habit-create-form";
 import { HabitsBoard, type HabitCardData } from "@/components/habits-board";
+import { SuggestedHabits } from "@/components/suggested-habits";
+import { PausedHabits } from "@/components/paused-habits";
 
 export default async function HabitsPage() {
   const supabase = await createClient();
@@ -13,20 +15,29 @@ export default async function HabitsPage() {
   if (!user) return null;
 
   const since = format(subWeeks(new Date(), 18), "yyyy-MM-dd");
+  const today = format(new Date(), "yyyy-MM-dd");
 
-  const [{ data: habits }, { data: logs }] = await Promise.all([
-    supabase
-      .from("habits")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("archived", false)
-      .order("position", { ascending: true }),
-    supabase
-      .from("habit_logs")
-      .select("habit_id, log_date")
-      .eq("user_id", user.id)
-      .gte("log_date", since),
-  ]);
+  const [{ data: habits }, { data: pausedHabits }, { data: logs }, { data: todayLogs }] =
+    await Promise.all([
+      supabase
+        .from("habits")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("archived", false)
+        .order("position", { ascending: true }),
+      supabase
+        .from("habits")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("archived", true)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("habit_logs")
+        .select("habit_id, log_date")
+        .eq("user_id", user.id)
+        .gte("log_date", since),
+      supabase.from("habit_logs").select("habit_id, note").eq("user_id", user.id).eq("log_date", today),
+    ]);
 
   const logsByHabit = new Map<string, Set<string>>();
   for (const log of logs ?? []) {
@@ -34,7 +45,11 @@ export default async function HabitsPage() {
     logsByHabit.get(log.habit_id)!.add(log.log_date);
   }
 
-  const today = format(new Date(), "yyyy-MM-dd");
+  const todayNoteByHabit = new Map<string, string | null>();
+  for (const log of todayLogs ?? []) {
+    todayNoteByHabit.set(log.habit_id, log.note);
+  }
+
   const orderedHabits = habits ?? [];
 
   const groupsMap = new Map<string, HabitCardData[]>();
@@ -49,6 +64,7 @@ export default async function HabitsPage() {
       doneToday: habitLogs.has(today),
       streak: computeStreak(habitLogs),
       thisWeekCount: countThisWeek(habitLogs),
+      todayNote: todayNoteByHabit.get(habit.id) ?? null,
       isFirst: globalIndex === 0,
       isLast: globalIndex === orderedHabits.length - 1,
     };
@@ -58,6 +74,7 @@ export default async function HabitsPage() {
   });
 
   const groups = Array.from(groupsMap.entries()).map(([category, habits]) => ({ category, habits }));
+  const allNames = [...orderedHabits, ...(pausedHabits ?? [])].map((h) => h.name);
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -68,8 +85,11 @@ export default async function HabitsPage() {
         </p>
       </div>
 
-      <div className="rounded-2xl border border-border bg-surface p-5">
+      <div className="space-y-4 rounded-2xl border border-border bg-surface p-5">
         <HabitCreateForm action={createHabit} />
+        <div className="border-t border-border pt-4">
+          <SuggestedHabits existingNames={allNames} />
+        </div>
       </div>
 
       {orderedHabits.length === 0 ? (
@@ -82,6 +102,8 @@ export default async function HabitsPage() {
       ) : (
         <HabitsBoard groups={groups} />
       )}
+
+      <PausedHabits habits={pausedHabits ?? []} />
     </div>
   );
 }

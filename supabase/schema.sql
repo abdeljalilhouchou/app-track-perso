@@ -62,6 +62,7 @@ create table if not exists public.habit_logs (
   habit_id uuid not null references public.habits(id) on delete cascade,
   user_id uuid not null references auth.users(id) on delete cascade,
   log_date date not null,
+  note text,
   created_at timestamptz not null default now(),
   unique (habit_id, log_date)
 );

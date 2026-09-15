@@ -39,6 +39,7 @@ export type Database = {
           habit_id: string;
           user_id: string;
           log_date: string;
+          note: string | null;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["habit_logs"]["Row"]> & {

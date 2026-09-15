@@ -11,6 +11,7 @@ export type HabitCardData = {
   doneToday: boolean;
   streak: number;
   thisWeekCount: number;
+  todayNote: string | null;
   isFirst: boolean;
   isLast: boolean;
 };

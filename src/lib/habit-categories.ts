@@ -23,3 +23,19 @@ export const EMOJI_CHOICES = [
   "✨", "📚", "💧", "🧘", "🥗", "🛏️", "🚭", "✍️", "💊", "🎯",
   "🏃", "🏋️", "🚴", "🎨", "🎸", "🧠", "🌱", "💻", "📵", "☀️",
 ];
+
+export const SUGGESTED_HABITS: {
+  icon: string;
+  name: string;
+  category: string;
+  scheduledDays: number[];
+}[] = [
+  { icon: "💧", name: "Boire de l'eau", category: "Santé", scheduledDays: [1, 2, 3, 4, 5, 6, 7] },
+  { icon: "🧘", name: "Méditer", category: "Bien-être", scheduledDays: [1, 2, 3, 4, 5, 6, 7] },
+  { icon: "📚", name: "Lire 10 minutes", category: "Général", scheduledDays: [1, 2, 3, 4, 5, 6, 7] },
+  { icon: "🏃", name: "Faire du sport", category: "Sport", scheduledDays: [1, 3, 5] },
+  { icon: "🛏️", name: "Dormir avant minuit", category: "Santé", scheduledDays: [1, 2, 3, 4, 5, 6, 7] },
+  { icon: "✍️", name: "Écrire son journal", category: "Bien-être", scheduledDays: [1, 2, 3, 4, 5, 6, 7] },
+  { icon: "📵", name: "Moins d'écran le soir", category: "Bien-être", scheduledDays: [1, 2, 3, 4, 5, 6, 7] },
+  { icon: "🥗", name: "Manger équilibré", category: "Santé", scheduledDays: [1, 2, 3, 4, 5] },
+];

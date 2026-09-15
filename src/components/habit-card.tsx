@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { addDays, format, startOfWeek } from "date-fns";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { toggleHabitLog, deleteHabit, moveHabit, updateHabit } from "@/lib/actions/habits";
+import { toggleHabitLog, deleteHabit, pauseHabit, moveHabit, updateHabit, setHabitLogNote } from "@/lib/actions/habits";
 import { Heatmap } from "@/components/heatmap";
 import { HabitForm } from "@/components/habit-form";
 import { CATEGORY_META, WEEKDAYS } from "@/lib/habit-categories";
@@ -16,6 +16,7 @@ export function HabitCard({
   doneToday,
   streak,
   thisWeekCount,
+  todayNote,
   isFirst,
   isLast,
 }: {
@@ -24,13 +25,20 @@ export function HabitCard({
   doneToday: boolean;
   streak: number;
   thisWeekCount: number;
+  todayNote: string | null;
   isFirst: boolean;
   isLast: boolean;
 }) {
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
+  const [note, setNote] = useState(todayNote ?? "");
   const today = format(new Date(), "yyyy-MM-dd");
   const categoryMeta = CATEGORY_META[habit.category] ?? CATEGORY_META["Général"];
+
+  function saveNote() {
+    if (note.trim() === (todayNote ?? "").trim()) return;
+    startTransition(() => setHabitLogNote(habit.id, today, note));
+  }
 
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
@@ -155,6 +163,18 @@ export function HabitCard({
         <Heatmap values={values} color={habit.color} />
       </div>
 
+      {doneToday && (
+        <div className="mt-3">
+          <input
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            onBlur={saveNote}
+            placeholder="+ note du jour (optionnel)"
+            className="w-full rounded-lg border border-transparent bg-surface-muted px-2.5 py-1.5 text-xs outline-none transition focus:border-accent"
+          />
+        </div>
+      )}
+
       <div className="mt-3 flex items-center justify-between">
         <div className="flex gap-1">
           <button
@@ -177,6 +197,12 @@ export function HabitCard({
         <div className="flex gap-3 text-xs">
           <button onClick={() => setEditing(true)} className="text-foreground-muted hover:text-foreground">
             Modifier
+          </button>
+          <button
+            onClick={() => startTransition(() => pauseHabit(habit.id))}
+            className="text-foreground-muted hover:text-foreground"
+          >
+            Pause
           </button>
           <button
             onClick={() => {

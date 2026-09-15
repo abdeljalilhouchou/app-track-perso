@@ -75,6 +75,35 @@ export async function deleteHabit(habitId: string) {
   revalidatePath("/dashboard");
 }
 
+export async function pauseHabit(habitId: string) {
+  const supabase = await createClient();
+  await supabase.from("habits").update({ archived: true }).eq("id", habitId);
+  revalidatePath("/habits");
+  revalidatePath("/dashboard");
+}
+
+export async function resumeHabit(habitId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const { count } = await supabase
+    .from("habits")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .eq("archived", false);
+
+  await supabase
+    .from("habits")
+    .update({ archived: false, position: count ?? 0 })
+    .eq("id", habitId);
+
+  revalidatePath("/habits");
+  revalidatePath("/dashboard");
+}
+
 export async function toggleHabitLog(habitId: string, date: string) {
   const supabase = await createClient();
   const {
@@ -94,6 +123,27 @@ export async function toggleHabitLog(habitId: string, date: string) {
   } else {
     await supabase.from("habit_logs").insert({ habit_id: habitId, user_id: user.id, log_date: date });
   }
+
+  revalidatePath("/habits");
+  revalidatePath("/dashboard");
+  revalidatePath(`/habits/${habitId}`);
+}
+
+export async function setHabitLogNote(habitId: string, date: string, note: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const trimmed = note.trim();
+
+  await supabase
+    .from("habit_logs")
+    .upsert(
+      { habit_id: habitId, user_id: user.id, log_date: date, note: trimmed || null },
+      { onConflict: "habit_id,log_date" }
+    );
 
   revalidatePath("/habits");
   revalidatePath("/dashboard");

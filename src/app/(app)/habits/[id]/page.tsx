@@ -1,17 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  addMonths,
-  endOfMonth,
-  format,
-  getDaysInMonth,
-  parse,
-  startOfMonth,
-  subMonths,
-} from "date-fns";
+import { addMonths, endOfMonth, format, parse, startOfMonth, subMonths } from "date-fns";
 import { fr } from "date-fns/locale";
 import { createClient } from "@/lib/supabase/server";
 import { computeStreak, longestStreakEver } from "@/lib/streak";
+import { bestWeekday, successRate } from "@/lib/habit-insights";
 import { MonthCalendar } from "@/components/month-calendar";
 import { WEEKDAYS } from "@/lib/habit-categories";
 
@@ -42,28 +35,37 @@ export default async function HabitDetailPage({
 
   const { data: allLogs } = await supabase
     .from("habit_logs")
-    .select("log_date")
+    .select("log_date, note")
     .eq("habit_id", id)
     .eq("user_id", user.id);
 
   const loggedDates = new Set((allLogs ?? []).map((l) => l.log_date));
+  const notesByDate: Record<string, string> = {};
+  for (const log of allLogs ?? []) {
+    if (log.note) notesByDate[log.log_date] = log.note;
+  }
 
-  const month = monthParam ? parse(monthParam, "yyyy-MM", new Date()) : new Date();
+  const today = new Date();
+  const month = monthParam ? parse(monthParam, "yyyy-MM", today) : today;
   const monthStart = startOfMonth(month);
   const monthEnd = endOfMonth(month);
-  const daysInMonth = getDaysInMonth(month);
+  const isCurrentMonth = format(month, "yyyy-MM") === format(today, "yyyy-MM");
+  const effectiveMonthEnd = monthEnd < today ? monthEnd : today;
 
-  let completedThisMonth = 0;
-  for (const d of loggedDates) {
-    if (d >= format(monthStart, "yyyy-MM-dd") && d <= format(monthEnd, "yyyy-MM-dd")) {
-      completedThisMonth += 1;
-    }
-  }
-  const completionRate = Math.round((completedThisMonth / daysInMonth) * 100);
+  const thisMonthStats = successRate(loggedDates, habit.scheduled_days, monthStart, effectiveMonthEnd);
+  const prevMonthDate = subMonths(month, 1);
+  const prevMonthStats = successRate(
+    loggedDates,
+    habit.scheduled_days,
+    startOfMonth(prevMonthDate),
+    endOfMonth(prevMonthDate) < today ? endOfMonth(prevMonthDate) : today
+  );
+  const threeMonthStats = successRate(loggedDates, habit.scheduled_days, subMonths(today, 3), today);
+  const weekdayInsight = bestWeekday(loggedDates, habit.scheduled_days);
+  const monthDiff = thisMonthStats.rate - prevMonthStats.rate;
 
   const prevMonth = format(subMonths(month, 1), "yyyy-MM");
   const nextMonth = format(addMonths(month, 1), "yyyy-MM");
-  const isCurrentMonth = format(month, "yyyy-MM") === format(new Date(), "yyyy-MM");
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -105,6 +107,28 @@ export default async function HabitDetailPage({
         </div>
       </div>
 
+      <div className="rounded-2xl border border-accent/30 bg-accent-soft p-5">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-accent">Insights</p>
+        <ul className="space-y-1.5 text-sm">
+          <li>
+            📊 Taux de réussite sur 3 mois : <strong>{threeMonthStats.rate}%</strong> (
+            {threeMonthStats.completed}/{threeMonthStats.expected} jours prévus)
+          </li>
+          {weekdayInsight && weekdayInsight.rate > 0 && (
+            <li>
+              🏆 Ton meilleur jour : <strong>{weekdayInsight.label}</strong> ({weekdayInsight.rate}% de
+              réussite)
+            </li>
+          )}
+          {prevMonthStats.expected > 0 && (
+            <li>
+              {monthDiff > 0 ? "📈" : monthDiff < 0 ? "📉" : "➡️"} Ce mois-ci :{" "}
+              <strong>{thisMonthStats.rate}%</strong> vs {prevMonthStats.rate}% le mois précédent
+            </li>
+          )}
+        </ul>
+      </div>
+
       <div className="rounded-2xl border border-border bg-surface p-5">
         <div className="mb-4 flex items-center justify-between">
           <Link
@@ -116,7 +140,7 @@ export default async function HabitDetailPage({
           <div className="text-center">
             <p className="font-medium capitalize">{format(month, "MMMM yyyy", { locale: fr })}</p>
             <p className="text-xs text-foreground-muted">
-              {completedThisMonth} / {daysInMonth} jours ({completionRate}%)
+              {thisMonthStats.completed} / {thisMonthStats.expected} jours prévus ({thisMonthStats.rate}%)
             </p>
           </div>
           {isCurrentMonth ? (
@@ -131,7 +155,13 @@ export default async function HabitDetailPage({
           )}
         </div>
 
-        <MonthCalendar habitId={id} month={month} color={habit.color} loggedDates={loggedDates} />
+        <MonthCalendar
+          habitId={id}
+          month={month}
+          color={habit.color}
+          loggedDates={loggedDates}
+          notesByDate={notesByDate}
+        />
       </div>
     </div>
   );
