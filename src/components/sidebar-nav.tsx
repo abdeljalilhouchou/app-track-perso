@@ -47,7 +47,7 @@ export function SidebarNav({ displayName }: { displayName: string }) {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 shrink-0 -translate-x-full flex-col border-r border-border bg-surface px-4 py-6 transition-transform duration-200 md:static md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 shrink-0 -translate-x-full flex-col border-r border-border bg-surface px-4 py-6 transition-transform duration-200 md:sticky md:top-0 md:translate-x-0 ${
           open ? "translate-x-0" : ""
         }`}
       >
