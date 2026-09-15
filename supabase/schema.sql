@@ -119,6 +119,7 @@ create table if not exists public.moments (
   entry_date date not null,
   icon text not null default '⚡',
   text text not null,
+  occurred_at timestamptz not null default now(),
   duration_minutes int,
   price numeric(10, 2),
   created_at timestamptz not null default now()

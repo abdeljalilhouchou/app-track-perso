@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { format, isToday, parseISO } from "date-fns";
+import { useMemo, useState, useTransition } from "react";
+import { differenceInMinutes, format, isToday, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { addMoment, deleteMoment, updateMoment } from "@/lib/actions/moments";
@@ -19,11 +19,21 @@ function dayLabel(dateStr: string) {
 function detailsLabel(m: Moment) {
   const parts: string[] = [];
   if (m.duration_minutes) parts.push(`${m.duration_minutes} min`);
-  if (m.price != null) parts.push(`${m.price}€`);
+  if (m.price != null) parts.push(`${m.price} MAD`);
   return parts.join(" · ");
 }
 
-const today = () => format(new Date(), "yyyy-MM-dd");
+const nowLocal = () => format(new Date(), "yyyy-MM-dd'T'HH:mm");
+const toLocalInput = (iso: string) => format(new Date(iso), "yyyy-MM-dd'T'HH:mm");
+
+function liveDuration(start: string, end: string): string | null {
+  if (!start || !end) return null;
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) return null;
+  const minutes = differenceInMinutes(endDate, startDate);
+  return minutes > 0 ? `${minutes} min` : null;
+}
 
 const PencilIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -45,6 +55,46 @@ const PlusIcon = () => (
     <line x1="5" y1="12" x2="19" y2="12" />
   </svg>
 );
+
+function TimingFields({
+  defaultStart,
+  defaultEnd,
+}: {
+  defaultStart: string;
+  defaultEnd?: string;
+}) {
+  const [start, setStart] = useState(defaultStart);
+  const [end, setEnd] = useState(defaultEnd ?? "");
+  const duration = useMemo(() => liveDuration(start, end), [start, end]);
+
+  return (
+    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+      <label className="flex flex-col gap-1">
+        <span className="text-[10px] font-medium text-foreground-muted">Début</span>
+        <input
+          name="occurred_at"
+          type="datetime-local"
+          value={start}
+          onChange={(e) => setStart(e.target.value)}
+          className="rounded-lg border border-border bg-surface px-2.5 py-1.5 text-xs outline-none focus:border-accent"
+        />
+      </label>
+      <label className="flex flex-col gap-1">
+        <span className="text-[10px] font-medium text-foreground-muted">
+          Fin {duration && <span className="text-accent">· {duration}</span>}
+        </span>
+        <input
+          name="ended_at"
+          type="datetime-local"
+          value={end}
+          min={start}
+          onChange={(e) => setEnd(e.target.value)}
+          className="rounded-lg border border-border bg-surface px-2.5 py-1.5 text-xs outline-none focus:border-accent"
+        />
+      </label>
+    </div>
+  );
+}
 
 export function MomentsJournal({ moments }: { moments: Moment[] }) {
   const [pending, startTransition] = useTransition();
@@ -83,14 +133,16 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
         }
         className="mt-4 space-y-2.5"
       >
-        <div className="flex gap-2">
-          <IconPicker name="icon" defaultValue="⚡" choices={MOMENT_EMOJI_CHOICES} color="var(--accent)" />
-          <input
-            name="text"
-            required
-            placeholder="Ex: Café avec Sarah, balade shopping..."
-            className="flex-1 rounded-xl border border-border bg-surface-muted px-3.5 py-2.5 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
-          />
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="flex gap-2">
+            <IconPicker name="icon" defaultValue="⚡" choices={MOMENT_EMOJI_CHOICES} color="var(--accent)" />
+            <input
+              name="text"
+              required
+              placeholder="Ex: Café avec Sarah, balade shopping..."
+              className="flex-1 rounded-xl border border-border bg-surface-muted px-3.5 py-2.5 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30 sm:w-0 sm:flex-1"
+            />
+          </div>
           <button
             type="submit"
             disabled={pending}
@@ -101,36 +153,17 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
         </div>
 
         {showDetails ? (
-          <div className="ml-13 flex flex-wrap items-end gap-3 rounded-xl bg-surface-muted p-3">
-            <label className="flex flex-col gap-1">
-              <span className="text-[10px] font-medium text-foreground-muted">Date</span>
-              <input
-                name="entry_date"
-                type="date"
-                defaultValue={today()}
-                max={today()}
-                className="rounded-lg border border-border bg-surface px-2.5 py-1.5 text-xs outline-none focus:border-accent"
-              />
-            </label>
-            <label className="flex flex-col gap-1">
-              <span className="text-[10px] font-medium text-foreground-muted">Durée</span>
-              <input
-                name="duration_minutes"
-                type="number"
-                min={0}
-                placeholder="min"
-                className="w-20 rounded-lg border border-border bg-surface px-2.5 py-1.5 text-xs outline-none focus:border-accent"
-              />
-            </label>
-            <label className="flex flex-col gap-1">
-              <span className="text-[10px] font-medium text-foreground-muted">Prix</span>
+          <div className="space-y-2.5 rounded-xl bg-surface-muted p-3 sm:ml-13">
+            <TimingFields defaultStart={nowLocal()} />
+            <label className="flex max-w-35 flex-col gap-1">
+              <span className="text-[10px] font-medium text-foreground-muted">Prix (MAD)</span>
               <input
                 name="price"
                 type="number"
                 min={0}
                 step="0.01"
-                placeholder="€"
-                className="w-20 rounded-lg border border-border bg-surface px-2.5 py-1.5 text-xs outline-none focus:border-accent"
+                placeholder="0"
+                className="rounded-lg border border-border bg-surface px-2.5 py-1.5 text-xs outline-none focus:border-accent"
               />
             </label>
           </div>
@@ -138,10 +171,10 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
           <button
             type="button"
             onClick={() => setShowDetails(true)}
-            className="ml-13 flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-xs font-medium text-foreground-muted transition hover:border-accent/40 hover:text-accent"
+            className="flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-xs font-medium text-foreground-muted transition hover:border-accent/40 hover:text-accent sm:ml-13"
           >
             <PlusIcon />
-            Date, durée, prix
+            Horaires, durée, prix
           </button>
         )}
       </form>
@@ -169,6 +202,13 @@ function MomentItem({ moment }: { moment: Moment }) {
   const [editing, setEditing] = useState(false);
 
   if (editing) {
+    const defaultEnd = moment.duration_minutes
+      ? format(
+          new Date(new Date(moment.occurred_at).getTime() + moment.duration_minutes * 60000),
+          "yyyy-MM-dd'T'HH:mm"
+        )
+      : undefined;
+
     return (
       <motion.li layout className="rounded-xl border border-accent/40 bg-surface p-3">
         <form
@@ -178,7 +218,7 @@ function MomentItem({ moment }: { moment: Moment }) {
               setEditing(false);
             })
           }
-          className="space-y-2"
+          className="space-y-2.5"
         >
           <div className="flex gap-2">
             <IconPicker name="icon" defaultValue={moment.icon} choices={MOMENT_EMOJI_CHOICES} color="var(--accent)" />
@@ -189,32 +229,19 @@ function MomentItem({ moment }: { moment: Moment }) {
               className="flex-1 rounded-lg border border-border bg-surface-muted px-2.5 py-2 text-sm outline-none focus:border-accent"
             />
           </div>
-          <div className="flex flex-wrap gap-2">
-            <input
-              name="entry_date"
-              type="date"
-              defaultValue={moment.entry_date}
-              max={today()}
-              className="rounded-lg border border-border bg-surface-muted px-2.5 py-1.5 text-xs outline-none focus:border-accent"
-            />
-            <input
-              name="duration_minutes"
-              type="number"
-              min={0}
-              defaultValue={moment.duration_minutes ?? ""}
-              placeholder="Durée (min)"
-              className="w-28 rounded-lg border border-border bg-surface-muted px-2.5 py-1.5 text-xs outline-none focus:border-accent"
-            />
+          <TimingFields defaultStart={toLocalInput(moment.occurred_at)} defaultEnd={defaultEnd} />
+          <label className="flex max-w-35 flex-col gap-1">
+            <span className="text-[10px] font-medium text-foreground-muted">Prix (MAD)</span>
             <input
               name="price"
               type="number"
               min={0}
               step="0.01"
               defaultValue={moment.price ?? ""}
-              placeholder="Prix (€)"
-              className="w-24 rounded-lg border border-border bg-surface-muted px-2.5 py-1.5 text-xs outline-none focus:border-accent"
+              placeholder="0"
+              className="rounded-lg border border-border bg-surface-muted px-2.5 py-1.5 text-xs outline-none focus:border-accent"
             />
-          </div>
+          </label>
           <div className="flex gap-2">
             <button
               type="submit"
@@ -252,7 +279,7 @@ function MomentItem({ moment }: { moment: Moment }) {
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">{moment.text}</p>
         <p className="text-xs text-foreground-muted">
-          {format(new Date(moment.created_at), "HH:mm")}
+          {format(new Date(moment.occurred_at), "HH:mm")}
           {details && ` · ${details}`}
         </p>
       </div>

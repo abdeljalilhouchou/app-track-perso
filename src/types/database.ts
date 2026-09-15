@@ -94,6 +94,7 @@ export type Database = {
           entry_date: string;
           icon: string;
           text: string;
+          occurred_at: string;
           duration_minutes: number | null;
           price: number | null;
           created_at: string;
