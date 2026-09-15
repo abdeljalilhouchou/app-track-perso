@@ -2,55 +2,65 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { motion } from "framer-motion";
 import { signOut } from "@/lib/actions/auth";
 
 const links = [
-  { href: "/dashboard", label: "Vue d'ensemble", icon: "🏠" },
-  { href: "/journal", label: "Journal", icon: "📅" },
-  { href: "/habits", label: "Habitudes", icon: "✨" },
-  { href: "/sport", label: "Sport", icon: "🏃" },
-  { href: "/humeur", label: "Humeur", icon: "🙂" },
-  { href: "/profil", label: "Profil", icon: "🏆" },
+  { href: "/dashboard", label: "Vue d'ensemble", shortLabel: "Accueil", icon: "🏠" },
+  { href: "/journal", label: "Journal", shortLabel: "Journal", icon: "📅" },
+  { href: "/habits", label: "Habitudes", shortLabel: "Habitudes", icon: "✨" },
+  { href: "/sport", label: "Sport", shortLabel: "Sport", icon: "🏃" },
+  { href: "/humeur", label: "Humeur", shortLabel: "Humeur", icon: "🙂" },
+  { href: "/profil", label: "Profil", shortLabel: "Profil", icon: "🏆" },
 ];
 
 export function SidebarNav({ displayName }: { displayName: string }) {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
-  const [lastPathname, setLastPathname] = useState(pathname);
-
-  if (pathname !== lastPathname) {
-    setLastPathname(pathname);
-    setOpen(false);
-  }
 
   return (
     <>
-      <div className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-surface px-4 py-3 md:hidden">
+      {/* Mobile top bar */}
+      <div className="sticky top-0 z-30 flex items-center justify-center border-b border-border bg-surface px-4 py-3 md:hidden">
         <Link href="/dashboard" className="text-lg font-semibold tracking-tight">
           track<span className="text-accent">.perso</span>
         </Link>
-        <button
-          onClick={() => setOpen(true)}
-          aria-label="Ouvrir le menu"
-          className="rounded-lg border border-border p-2 text-foreground-muted"
-        >
-          ☰
-        </button>
       </div>
 
-      {open && (
-        <div
-          className="fixed inset-0 z-40 bg-black/40 md:hidden"
-          onClick={() => setOpen(false)}
-        />
-      )}
-
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 shrink-0 -translate-x-full flex-col border-r border-border bg-surface px-4 py-6 transition-transform duration-200 md:sticky md:top-0 md:translate-x-0 ${
-          open ? "translate-x-0" : ""
-        }`}
+      {/* Mobile bottom tab bar */}
+      <nav
+        className="fixed inset-x-0 bottom-0 z-40 flex items-stretch border-t border-border bg-surface md:hidden"
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
+        {links.map((link) => {
+          const active = pathname === link.href;
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5"
+            >
+              {active && (
+                <motion.span
+                  layoutId="bottom-nav-active"
+                  className="absolute inset-x-2 top-1 h-8 rounded-xl bg-accent-soft"
+                  transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                />
+              )}
+              <span className={`relative z-10 text-lg ${active ? "" : "opacity-70"}`}>{link.icon}</span>
+              <span
+                className={`relative z-10 text-[10px] font-medium ${
+                  active ? "text-accent" : "text-foreground-muted"
+                }`}
+              >
+                {link.shortLabel}
+              </span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Desktop sidebar */}
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border bg-surface px-4 py-6 md:flex">
         <Link href="/dashboard" className="px-2 text-lg font-semibold tracking-tight">
           track<span className="text-accent">.perso</span>
         </Link>

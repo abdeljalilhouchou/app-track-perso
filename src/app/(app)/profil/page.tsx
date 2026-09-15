@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { computeStreak } from "@/lib/streak";
 import { BADGES, computeLevel, computePoints, type Stats } from "@/lib/gamification";
 import { ReminderSettings } from "@/components/reminder-settings";
+import { signOut } from "@/lib/actions/auth";
 
 export default async function ProfilPage() {
   const supabase = await createClient();
@@ -146,6 +147,15 @@ export default async function ProfilPage() {
           })}
         </div>
       </div>
+
+      <form action={signOut} className="md:hidden">
+        <button
+          type="submit"
+          className="w-full rounded-2xl border border-border bg-surface px-4 py-3 text-center text-sm font-medium text-foreground-muted transition hover:bg-surface-muted"
+        >
+          Se déconnecter
+        </button>
+      </form>
     </div>
   );
 }
