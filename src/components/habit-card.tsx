@@ -21,7 +21,7 @@ export function HabitCard({
   const today = format(new Date(), "yyyy-MM-dd");
 
   return (
-    <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
+    <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <span className="text-2xl">{habit.icon}</span>
@@ -36,9 +36,9 @@ export function HabitCard({
         <button
           disabled={pending}
           onClick={() => startTransition(() => toggleHabitLog(habit.id, today))}
-          className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition disabled:opacity-60 ${
+          className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-150 active:scale-90 disabled:opacity-60 ${
             doneToday
-              ? "text-white"
+              ? "scale-105 text-white"
               : "border border-border text-foreground-muted hover:bg-surface-muted"
           }`}
           style={doneToday ? { background: habit.color } : undefined}

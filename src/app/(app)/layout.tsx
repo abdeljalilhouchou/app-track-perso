@@ -21,10 +21,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const displayName = profile?.display_name || user.email?.split("@")[0] || "toi";
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen flex-col md:flex-row">
       <SidebarNav displayName={displayName} />
       <main className="flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-6xl px-6 py-8 md:px-10">{children}</div>
+        <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 md:px-10">{children}</div>
       </main>
     </div>
   );

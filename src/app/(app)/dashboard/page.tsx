@@ -117,14 +117,50 @@ export default async function DashboardPage() {
 
   const displayName = profile?.display_name || user.email?.split("@")[0] || "toi";
 
+  // Reminders: what's still missing today
+  const todayStr = format(today, "yyyy-MM-dd");
+  const habitsNotDoneToday = (habits ?? []).filter(
+    (h) => !logsByHabit.get(h.id)?.has(todayStr)
+  );
+  const moodLoggedToday = (moodEntries ?? []).some((e) => e.entry_date === todayStr);
+  const hasReminders = habitsNotDoneToday.length > 0 || !moodLoggedToday;
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fade-in">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Salut {displayName} 👋</h1>
         <p className="mt-1 text-sm text-foreground-muted">
           {format(today, "EEEE d MMMM yyyy", { locale: fr })}
         </p>
       </div>
+
+      {hasReminders && (habits?.length ?? 0) > 0 && (
+        <div className="rounded-2xl border border-dashed border-mood/40 bg-mood-soft p-5">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--mood)" }}>
+            À faire aujourd&apos;hui
+          </p>
+          <ul className="space-y-1.5 text-sm">
+            {habitsNotDoneToday.map((h) => (
+              <li key={h.id} className="flex items-center justify-between gap-3">
+                <span>
+                  {h.icon} {h.name}
+                </span>
+                <Link href="/habits" className="text-xs font-medium text-accent hover:underline">
+                  Cocher
+                </Link>
+              </li>
+            ))}
+            {!moodLoggedToday && (
+              <li className="flex items-center justify-between gap-3">
+                <span>🙂 Noter ton humeur du jour</span>
+                <Link href="/humeur" className="text-xs font-medium text-accent hover:underline">
+                  Noter
+                </Link>
+              </li>
+            )}
+          </ul>
+        </div>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard label="Plus longue série active" value={`${longestStreak} j`} accent="var(--habit)" />

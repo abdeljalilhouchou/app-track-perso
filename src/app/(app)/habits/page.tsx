@@ -38,7 +38,7 @@ export default async function HabitsPage() {
   const today = format(new Date(), "yyyy-MM-dd");
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fade-in">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Habitudes</h1>
         <p className="mt-1 text-sm text-foreground-muted">
