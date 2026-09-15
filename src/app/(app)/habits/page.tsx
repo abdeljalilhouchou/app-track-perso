@@ -82,14 +82,31 @@ export default async function HabitsPage() {
   const groups = Array.from(groupsMap.entries()).map(([category, habits]) => ({ category, habits }));
   const allNames = [...orderedHabits, ...(pausedHabits ?? [])].map((h) => h.name);
 
+  const doneTodayCount = orderedHabits.filter((h) => logsByHabit.get(h.id)?.has(today)).length;
+
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Habitudes</h1>
-          <p className="mt-1 text-sm text-foreground-muted">
-            Construis ta constance, un jour à la fois.
-          </p>
+        <div className="flex items-center gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-habit-soft text-xl">
+            ✨
+          </span>
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight">Habitudes</h1>
+            <p className="mt-0.5 text-sm text-foreground-muted">
+              {orderedHabits.length > 0 ? (
+                <>
+                  {orderedHabits.length} habitude{orderedHabits.length > 1 ? "s" : ""} active
+                  {orderedHabits.length > 1 ? "s" : ""} ·{" "}
+                  <span className="font-medium" style={{ color: "var(--habit)" }}>
+                    {doneTodayCount} faite{doneTodayCount > 1 ? "s" : ""} aujourd&apos;hui
+                  </span>
+                </>
+              ) : (
+                "Construis ta constance, un jour à la fois."
+              )}
+            </p>
+          </div>
         </div>
         <HabitCreateModal />
       </div>
