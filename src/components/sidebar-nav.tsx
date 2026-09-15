@@ -4,14 +4,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { signOut } from "@/lib/actions/auth";
+import {
+  HomeIcon,
+  CalendarIcon,
+  SparkleIcon,
+  ActivityIcon,
+  SmileIcon,
+  UserCircleIcon,
+} from "@/components/ui/nav-icons";
 
 const links = [
-  { href: "/dashboard", label: "Vue d'ensemble", shortLabel: "Accueil", icon: "🏠" },
-  { href: "/journal", label: "Journal", shortLabel: "Journal", icon: "📅" },
-  { href: "/habits", label: "Habitudes", shortLabel: "Habitudes", icon: "✨" },
-  { href: "/sport", label: "Sport", shortLabel: "Sport", icon: "🏃" },
-  { href: "/humeur", label: "Humeur", shortLabel: "Humeur", icon: "🙂" },
-  { href: "/profil", label: "Profil", shortLabel: "Profil", icon: "🏆" },
+  { href: "/dashboard", label: "Vue d'ensemble", shortLabel: "Accueil", Icon: HomeIcon },
+  { href: "/journal", label: "Journal", shortLabel: "Journal", Icon: CalendarIcon },
+  { href: "/habits", label: "Habitudes", shortLabel: "Habitudes", Icon: SparkleIcon },
+  { href: "/sport", label: "Sport", shortLabel: "Sport", Icon: ActivityIcon },
+  { href: "/humeur", label: "Humeur", shortLabel: "Humeur", Icon: SmileIcon },
+  { href: "/profil", label: "Profil", shortLabel: "Profil", Icon: UserCircleIcon },
 ];
 
 export function SidebarNav({ displayName }: { displayName: string }) {
@@ -31,28 +39,28 @@ export function SidebarNav({ displayName }: { displayName: string }) {
         className="fixed inset-x-0 bottom-0 z-40 flex items-stretch border-t border-border bg-surface md:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        {links.map((link) => {
-          const active = pathname === link.href;
+        {links.map(({ href, shortLabel, Icon }) => {
+          const active = pathname === href;
           return (
             <Link
-              key={link.href}
-              href={link.href}
-              className="relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5"
+              key={href}
+              href={href}
+              className="relative flex flex-1 flex-col items-center justify-center gap-1 py-2.5"
             >
               {active && (
                 <motion.span
                   layoutId="bottom-nav-active"
-                  className="absolute inset-x-2 top-1 h-8 rounded-xl bg-accent-soft"
+                  className="absolute inset-x-2 top-0.5 h-9 rounded-xl bg-accent-soft"
                   transition={{ type: "spring", stiffness: 420, damping: 32 }}
                 />
               )}
-              <span className={`relative z-10 text-lg ${active ? "" : "opacity-70"}`}>{link.icon}</span>
+              <Icon className={`relative z-10 h-5.5 w-5.5 ${active ? "text-accent" : "text-foreground-muted"}`} />
               <span
                 className={`relative z-10 text-[10px] font-medium ${
                   active ? "text-accent" : "text-foreground-muted"
                 }`}
               >
-                {link.shortLabel}
+                {shortLabel}
               </span>
             </Link>
           );
@@ -66,20 +74,20 @@ export function SidebarNav({ displayName }: { displayName: string }) {
         </Link>
 
         <nav className="mt-8 flex flex-1 flex-col gap-1">
-          {links.map((link) => {
-            const active = pathname === link.href;
+          {links.map(({ href, label, Icon }) => {
+            const active = pathname === href;
             return (
               <Link
-                key={link.href}
-                href={link.href}
+                key={href}
+                href={href}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
                   active
                     ? "bg-accent-soft text-accent"
                     : "text-foreground-muted hover:bg-surface-muted hover:text-foreground"
                 }`}
               >
-                <span>{link.icon}</span>
-                {link.label}
+                <Icon className="h-4.5 w-4.5" />
+                {label}
               </Link>
             );
           })}
