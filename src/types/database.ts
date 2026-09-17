@@ -131,6 +131,11 @@ export type Database = {
           protein: number;
           carbs: number;
           fat: number;
+          fiber: number;
+          sugar: number;
+          sodium: number;
+          portion_label: string | null;
+          portion_grams: number | null;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["foods"]["Row"]> & {
@@ -154,6 +159,9 @@ export type Database = {
           protein: number;
           carbs: number;
           fat: number;
+          fiber: number;
+          sugar: number;
+          sodium: number;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["meal_entries"]["Row"]> & {
@@ -164,6 +172,78 @@ export type Database = {
           calories: number;
         };
         Update: Partial<Database["public"]["Tables"]["meal_entries"]["Row"]>;
+        Relationships: [];
+      };
+      weight_logs: {
+        Row: {
+          id: string;
+          user_id: string;
+          entry_date: string;
+          weight_kg: number;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["weight_logs"]["Row"]> & {
+          user_id: string;
+          entry_date: string;
+          weight_kg: number;
+        };
+        Update: Partial<Database["public"]["Tables"]["weight_logs"]["Row"]>;
+        Relationships: [];
+      };
+      water_logs: {
+        Row: {
+          user_id: string;
+          entry_date: string;
+          ml: number;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["water_logs"]["Row"]> & {
+          user_id: string;
+          entry_date: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["water_logs"]["Row"]>;
+        Relationships: [];
+      };
+      meal_templates: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string;
+          icon: string;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["meal_templates"]["Row"]> & {
+          user_id: string;
+          name: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["meal_templates"]["Row"]>;
+        Relationships: [];
+      };
+      meal_template_items: {
+        Row: {
+          id: string;
+          template_id: string;
+          user_id: string;
+          food_id: string | null;
+          food_name: string;
+          icon: string;
+          quantity_grams: number;
+          calories: number;
+          protein: number;
+          carbs: number;
+          fat: number;
+          fiber: number;
+          sugar: number;
+          sodium: number;
+        };
+        Insert: Partial<Database["public"]["Tables"]["meal_template_items"]["Row"]> & {
+          template_id: string;
+          user_id: string;
+          food_name: string;
+          quantity_grams: number;
+          calories: number;
+        };
+        Update: Partial<Database["public"]["Tables"]["meal_template_items"]["Row"]>;
         Relationships: [];
       };
     };
@@ -182,3 +262,7 @@ export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Moment = Database["public"]["Tables"]["moments"]["Row"];
 export type MealEntry = Database["public"]["Tables"]["meal_entries"]["Row"];
 export type Food = Database["public"]["Tables"]["foods"]["Row"];
+export type WeightLog = Database["public"]["Tables"]["weight_logs"]["Row"];
+export type WaterLog = Database["public"]["Tables"]["water_logs"]["Row"];
+export type MealTemplate = Database["public"]["Tables"]["meal_templates"]["Row"];
+export type MealTemplateItem = Database["public"]["Tables"]["meal_template_items"]["Row"];

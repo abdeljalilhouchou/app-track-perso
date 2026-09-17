@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { logMeal } from "@/lib/actions/nutrition";
+import { searchOpenFoodFacts, type OffResult } from "@/lib/actions/openfoodfacts";
 import { computeMacros } from "@/lib/food-database";
 import { useClickOutside } from "@/lib/use-click-outside";
 import type { Food } from "@/types/database";
@@ -14,14 +15,63 @@ const MEAL_TYPES = [
   { value: "collation", label: "Collation", icon: "🍎" },
 ] as const;
 
-export function MealForm({ foods }: { foods: Food[] }) {
+type SelectedFood = {
+  id: string;
+  name: string;
+  icon: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  sugar: number;
+  sodium: number;
+  portion_label?: string | null;
+  portion_grams?: number | null;
+};
+
+function fromFood(f: Food): SelectedFood {
+  return {
+    id: f.id,
+    name: f.name,
+    icon: f.icon,
+    calories: f.calories,
+    protein: f.protein,
+    carbs: f.carbs,
+    fat: f.fat,
+    fiber: f.fiber,
+    sugar: f.sugar,
+    sodium: f.sodium,
+    portion_label: f.portion_label,
+    portion_grams: f.portion_grams,
+  };
+}
+
+function fromOff(r: OffResult): SelectedFood {
+  return {
+    id: `off-${r.id}`,
+    name: r.brand ? `${r.name} (${r.brand})` : r.name,
+    icon: "🌍",
+    calories: r.calories,
+    protein: r.protein,
+    carbs: r.carbs,
+    fat: r.fat,
+    fiber: r.fiber,
+    sugar: r.sugar,
+    sodium: r.sodium,
+  };
+}
+
+export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods?: Food[] }) {
   const [pending, startTransition] = useTransition();
+  const [offPending, startOffTransition] = useTransition();
   const [resetKey, setResetKey] = useState(0);
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<Food | null>(null);
+  const [selected, setSelected] = useState<SelectedFood | null>(null);
   const [grams, setGrams] = useState(100);
   const [mealType, setMealType] = useState<(typeof MEAL_TYPES)[number]["value"]>("dejeuner");
+  const [offResults, setOffResults] = useState<OffResult[] | null>(null);
 
   const ref = useRef<HTMLDivElement>(null);
   useClickOutside(ref, () => setOpen(false));
@@ -38,7 +88,24 @@ export function MealForm({ foods }: { foods: Food[] }) {
     setQuery("");
     setSelected(null);
     setGrams(100);
+    setOffResults(null);
     setResetKey((k) => k + 1);
+  }
+
+  function selectFood(f: Food) {
+    setSelected(fromFood(f));
+    setQuery(f.name);
+    setOpen(false);
+    setOffResults(null);
+  }
+
+  function runOffSearch() {
+    const q = query.trim();
+    if (q.length < 2) return;
+    startOffTransition(async () => {
+      const results = await searchOpenFoodFacts(q);
+      setOffResults(results);
+    });
   }
 
   return (
@@ -52,6 +119,22 @@ export function MealForm({ foods }: { foods: Food[] }) {
       }
       className="space-y-3"
     >
+      {quickFoods.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {quickFoods.map((f) => (
+            <button
+              key={f.id}
+              type="button"
+              onClick={() => selectFood(f)}
+              className="flex items-center gap-1 rounded-full border border-border bg-surface-muted px-2.5 py-1 text-xs transition hover:border-accent/40 hover:text-accent"
+            >
+              <span>{f.icon}</span>
+              <span>{f.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
       <div ref={ref} className="relative">
         <label className="mb-1.5 block text-xs font-medium text-foreground-muted">Aliment</label>
         <input
@@ -59,12 +142,12 @@ export function MealForm({ foods }: { foods: Food[] }) {
           onChange={(e) => {
             setQuery(e.target.value);
             setSelected(null);
+            setOffResults(null);
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
           placeholder={foods.length > 0 ? "Ex: poitrine de poulet, pain..." : "Aucun aliment — ouvre Paramètres pour en ajouter"}
-          disabled={foods.length === 0}
-          className="w-full rounded-xl border border-border bg-surface-muted px-3.5 py-2.5 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30 disabled:opacity-50"
+          className="w-full rounded-xl border border-border bg-surface-muted px-3.5 py-2.5 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
         />
         <AnimatePresence>
           {open && matches.length > 0 && (
@@ -79,11 +162,7 @@ export function MealForm({ foods }: { foods: Food[] }) {
                 <button
                   key={f.id}
                   type="button"
-                  onClick={() => {
-                    setSelected(f);
-                    setQuery(f.name);
-                    setOpen(false);
-                  }}
+                  onClick={() => selectFood(f)}
                   className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition hover:bg-surface-muted"
                 >
                   <span className="text-lg">{f.icon}</span>
@@ -94,10 +173,45 @@ export function MealForm({ foods }: { foods: Food[] }) {
             </motion.div>
           )}
         </AnimatePresence>
-        {open && query.trim() && matches.length === 0 && (
-          <p className="mt-1.5 text-xs text-foreground-muted">
-            Aucun résultat — ajoute-le via le bouton ⚙️ Paramètres ci-dessus.
-          </p>
+        {open && query.trim() && matches.length === 0 && !offResults && (
+          <div className="mt-1.5 space-y-1.5">
+            <p className="text-xs text-foreground-muted">
+              Aucun résultat dans ta base — ajoute-le via ⚙️ Paramètres, ou cherche en ligne :
+            </p>
+            <button
+              type="button"
+              onClick={runOffSearch}
+              disabled={offPending}
+              className="rounded-lg border border-dashed border-accent/50 px-2.5 py-1.5 text-xs font-medium text-accent transition hover:bg-accent-soft disabled:opacity-60"
+            >
+              {offPending ? "Recherche..." : "🌍 Rechercher sur Open Food Facts"}
+            </button>
+          </div>
+        )}
+        {offResults && (
+          <div className="mt-1.5 max-h-64 overflow-y-auto rounded-xl border border-border bg-surface p-1.5 shadow-xl">
+            {offResults.length === 0 ? (
+              <p className="px-2.5 py-2 text-xs text-foreground-muted">Aucun résultat en ligne.</p>
+            ) : (
+              offResults.map((r) => (
+                <button
+                  key={r.id}
+                  type="button"
+                  onClick={() => {
+                    setSelected(fromOff(r));
+                    setQuery(r.name);
+                    setOpen(false);
+                    setOffResults(null);
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition hover:bg-surface-muted"
+                >
+                  <span className="text-lg">🌍</span>
+                  <span className="min-w-0 flex-1 truncate">{r.name}{r.brand ? ` (${r.brand})` : ""}</span>
+                  <span className="text-xs text-foreground-muted">{r.calories} kcal/100g</span>
+                </button>
+              ))
+            )}
+          </div>
         )}
       </div>
 
@@ -131,8 +245,18 @@ export function MealForm({ foods }: { foods: Food[] }) {
         </div>
       </div>
 
+      {selected?.portion_grams ? (
+        <button
+          type="button"
+          onClick={() => setGrams(selected.portion_grams!)}
+          className="rounded-full border border-border px-2.5 py-1 text-xs text-foreground-muted transition hover:border-accent/40 hover:text-accent"
+        >
+          Portion : {selected.portion_label ?? `${selected.portion_grams}g`}
+        </button>
+      ) : null}
+
       {preview && (
-        <div className="flex flex-wrap gap-3 rounded-xl bg-surface-muted p-3 text-xs">
+        <div className="flex flex-wrap gap-x-3 gap-y-1.5 rounded-xl bg-surface-muted p-3 text-xs">
           <span><strong>{preview.calories}</strong> kcal</span>
           <span className="text-foreground-muted">·</span>
           <span><strong>{preview.protein}g</strong> protéines</span>
@@ -140,6 +264,12 @@ export function MealForm({ foods }: { foods: Food[] }) {
           <span><strong>{preview.carbs}g</strong> glucides</span>
           <span className="text-foreground-muted">·</span>
           <span><strong>{preview.fat}g</strong> lipides</span>
+          {(preview.fiber > 0 || preview.sugar > 0 || preview.sodium > 0) && (
+            <>
+              <span className="w-full" />
+              <span className="text-foreground-muted">{preview.fiber}g fibres · {preview.sugar}g sucres · {preview.sodium}mg sodium</span>
+            </>
+          )}
         </div>
       )}
 
@@ -151,6 +281,9 @@ export function MealForm({ foods }: { foods: Food[] }) {
       <input type="hidden" name="protein" value={preview?.protein ?? 0} />
       <input type="hidden" name="carbs" value={preview?.carbs ?? 0} />
       <input type="hidden" name="fat" value={preview?.fat ?? 0} />
+      <input type="hidden" name="fiber" value={preview?.fiber ?? 0} />
+      <input type="hidden" name="sugar" value={preview?.sugar ?? 0} />
+      <input type="hidden" name="sodium" value={preview?.sodium ?? 0} />
 
       <button
         type="submit"

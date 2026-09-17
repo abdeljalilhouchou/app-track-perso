@@ -23,6 +23,9 @@ export default async function ProfilPage() {
     { count: moodEntriesCount },
     { count: activeHabitsCount },
     { data: allLogs },
+    { count: mealEntriesCount },
+    { data: mealDates },
+    { data: profileGoals },
   ] = await Promise.all([
     supabase.from("habit_logs").select("*", { count: "exact", head: true }).eq("user_id", user.id),
     supabase.from("workouts").select("*", { count: "exact", head: true }).eq("user_id", user.id),
@@ -33,6 +36,9 @@ export default async function ProfilPage() {
       .eq("user_id", user.id)
       .eq("archived", false),
     supabase.from("habit_logs").select("habit_id, log_date").eq("user_id", user.id),
+    supabase.from("meal_entries").select("*", { count: "exact", head: true }).eq("user_id", user.id),
+    supabase.from("meal_entries").select("entry_date, protein").eq("user_id", user.id),
+    supabase.from("profiles").select("goal_protein").eq("id", user.id).single(),
   ]);
 
   const logsByHabit = new Map<string, Set<string>>();
@@ -45,12 +51,25 @@ export default async function ProfilPage() {
     ...Array.from(logsByHabit.values()).map((dates) => computeStreak(dates))
   );
 
+  const proteinByDate = new Map<string, number>();
+  for (const m of mealDates ?? []) {
+    proteinByDate.set(m.entry_date, (proteinByDate.get(m.entry_date) ?? 0) + m.protein);
+  }
+  const nutritionLoggingStreak = computeStreak(new Set(proteinByDate.keys()));
+  const goalProtein = profileGoals?.goal_protein ?? null;
+  const proteinGoalHitDays = goalProtein
+    ? Array.from(proteinByDate.values()).filter((p) => p >= goalProtein).length
+    : 0;
+
   const stats: Stats = {
     habitLogsCount: habitLogsCount ?? 0,
     workoutsCount: workoutsCount ?? 0,
     moodEntriesCount: moodEntriesCount ?? 0,
     activeHabitsCount: activeHabitsCount ?? 0,
     bestStreak,
+    mealEntriesCount: mealEntriesCount ?? 0,
+    nutritionLoggingStreak,
+    proteinGoalHitDays,
   };
 
   const points = computePoints(stats);
@@ -96,7 +115,7 @@ export default async function ProfilPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-2xl border border-border bg-surface p-5">
           <p className="text-sm text-foreground-muted">Habitudes cochées</p>
           <p className="mt-1 text-2xl font-semibold" style={{ color: "var(--habit)" }}>
@@ -113,6 +132,12 @@ export default async function ProfilPage() {
           <p className="text-sm text-foreground-muted">Humeurs notées</p>
           <p className="mt-1 text-2xl font-semibold" style={{ color: "var(--mood)" }}>
             {stats.moodEntriesCount}
+          </p>
+        </div>
+        <div className="rounded-2xl border border-border bg-surface p-5">
+          <p className="text-sm text-foreground-muted">Repas notés</p>
+          <p className="mt-1 text-2xl font-semibold" style={{ color: "var(--nutrition)" }}>
+            {stats.mealEntriesCount}
           </p>
         </div>
       </div>

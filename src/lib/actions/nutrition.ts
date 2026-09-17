@@ -9,18 +9,22 @@ import type { MealEntry } from "@/types/database";
 
 const MEAL_TYPES: MealEntry["meal_type"][] = ["petit-dejeuner", "dejeuner", "diner", "collation", "autre"];
 
+function parseMealType(raw: string): MealEntry["meal_type"] {
+  return MEAL_TYPES.includes(raw as MealEntry["meal_type"]) ? (raw as MealEntry["meal_type"]) : "autre";
+}
+
 export async function logMeal(formData: FormData) {
   const food_name = String(formData.get("food_name") ?? "").trim();
   const icon = String(formData.get("icon") ?? "🍽️").trim() || "🍽️";
-  const rawMealType = String(formData.get("meal_type") ?? "autre");
-  const meal_type: MealEntry["meal_type"] = MEAL_TYPES.includes(rawMealType as MealEntry["meal_type"])
-    ? (rawMealType as MealEntry["meal_type"])
-    : "autre";
+  const meal_type = parseMealType(String(formData.get("meal_type") ?? "autre"));
   const quantity_grams = Number(formData.get("quantity_grams") ?? 0);
   const calories = Number(formData.get("calories") ?? 0);
   const protein = Number(formData.get("protein") ?? 0);
   const carbs = Number(formData.get("carbs") ?? 0);
   const fat = Number(formData.get("fat") ?? 0);
+  const fiber = Number(formData.get("fiber") ?? 0);
+  const sugar = Number(formData.get("sugar") ?? 0);
+  const sodium = Number(formData.get("sodium") ?? 0);
   const entry_date = String(formData.get("entry_date") ?? "").trim() || format(new Date(), "yyyy-MM-dd");
 
   if (!food_name || quantity_grams <= 0) return;
@@ -42,6 +46,9 @@ export async function logMeal(formData: FormData) {
     protein,
     carbs,
     fat,
+    fiber,
+    sugar,
+    sodium,
   });
 
   revalidatePath("/nutrition");
@@ -89,6 +96,14 @@ export async function saveNutritionProfile(formData: FormData) {
     })
     .eq("id", user.id);
 
+  // Keep the weight log in sync with the calculator's current weight.
+  await supabase
+    .from("weight_logs")
+    .upsert(
+      { user_id: user.id, entry_date: format(new Date(), "yyyy-MM-dd"), weight_kg: weightKg },
+      { onConflict: "user_id,entry_date" }
+    );
+
   revalidatePath("/nutrition");
 }
 
@@ -100,6 +115,11 @@ export async function addFood(formData: FormData) {
   const protein = Number(formData.get("protein") ?? 0);
   const carbs = Number(formData.get("carbs") ?? 0);
   const fat = Number(formData.get("fat") ?? 0);
+  const fiber = Number(formData.get("fiber") ?? 0);
+  const sugar = Number(formData.get("sugar") ?? 0);
+  const sodium = Number(formData.get("sodium") ?? 0);
+  const portion_label = String(formData.get("portion_label") ?? "").trim() || null;
+  const portion_grams = Number(formData.get("portion_grams") ?? 0) || null;
 
   if (!name) return;
 
@@ -109,7 +129,9 @@ export async function addFood(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) return;
 
-  await supabase.from("foods").insert({ user_id: user.id, name, icon, category, calories, protein, carbs, fat });
+  await supabase
+    .from("foods")
+    .insert({ user_id: user.id, name, icon, category, calories, protein, carbs, fat, fiber, sugar, sodium, portion_label, portion_grams });
   revalidatePath("/nutrition");
 }
 
@@ -121,11 +143,19 @@ export async function updateFood(id: string, formData: FormData) {
   const protein = Number(formData.get("protein") ?? 0);
   const carbs = Number(formData.get("carbs") ?? 0);
   const fat = Number(formData.get("fat") ?? 0);
+  const fiber = Number(formData.get("fiber") ?? 0);
+  const sugar = Number(formData.get("sugar") ?? 0);
+  const sodium = Number(formData.get("sodium") ?? 0);
+  const portion_label = String(formData.get("portion_label") ?? "").trim() || null;
+  const portion_grams = Number(formData.get("portion_grams") ?? 0) || null;
 
   if (!name) return;
 
   const supabase = await createClient();
-  await supabase.from("foods").update({ name, icon, category, calories, protein, carbs, fat }).eq("id", id);
+  await supabase
+    .from("foods")
+    .update({ name, icon, category, calories, protein, carbs, fat, fiber, sugar, sodium, portion_label, portion_grams })
+    .eq("id", id);
   revalidatePath("/nutrition");
 }
 
@@ -165,4 +195,147 @@ export async function updateGoalsManually(formData: FormData) {
     .eq("id", user.id);
 
   revalidatePath("/nutrition");
+}
+
+// --- Water ---
+
+export async function addWater(amountMl: number) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const today = format(new Date(), "yyyy-MM-dd");
+  const { data: existing } = await supabase
+    .from("water_logs")
+    .select("ml")
+    .eq("user_id", user.id)
+    .eq("entry_date", today)
+    .maybeSingle();
+
+  const newMl = Math.max(0, (existing?.ml ?? 0) + amountMl);
+
+  await supabase
+    .from("water_logs")
+    .upsert({ user_id: user.id, entry_date: today, ml: newMl }, { onConflict: "user_id,entry_date" });
+
+  revalidatePath("/nutrition");
+}
+
+// --- Body weight ---
+
+export async function logWeight(formData: FormData) {
+  const weight_kg = Number(formData.get("weight_kg") ?? 0);
+  const entry_date = String(formData.get("entry_date") ?? "").trim() || format(new Date(), "yyyy-MM-dd");
+  if (!weight_kg) return;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  await supabase
+    .from("weight_logs")
+    .upsert({ user_id: user.id, entry_date, weight_kg }, { onConflict: "user_id,entry_date" });
+
+  await supabase.from("profiles").update({ weight_kg }).eq("id", user.id);
+
+  revalidatePath("/nutrition");
+}
+
+export async function deleteWeightLog(id: string) {
+  const supabase = await createClient();
+  await supabase.from("weight_logs").delete().eq("id", id);
+  revalidatePath("/nutrition");
+}
+
+// --- Meal templates (saved combos of foods) ---
+
+export type TemplateItemInput = {
+  food_id: string | null;
+  food_name: string;
+  icon: string;
+  quantity_grams: number;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  sugar: number;
+  sodium: number;
+};
+
+export async function createMealTemplate(name: string, icon: string, items: TemplateItemInput[]) {
+  if (!name.trim() || items.length === 0) return;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const { data: template } = await supabase
+    .from("meal_templates")
+    .insert({ user_id: user.id, name: name.trim(), icon })
+    .select("id")
+    .single();
+
+  if (!template) return;
+
+  await supabase.from("meal_template_items").insert(
+    items.map((item) => ({
+      template_id: template.id,
+      user_id: user.id,
+      ...item,
+    }))
+  );
+
+  revalidatePath("/nutrition");
+}
+
+export async function deleteMealTemplate(id: string) {
+  const supabase = await createClient();
+  await supabase.from("meal_templates").delete().eq("id", id);
+  revalidatePath("/nutrition");
+}
+
+export async function logMealTemplate(templateId: string, mealType: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const { data: items } = await supabase
+    .from("meal_template_items")
+    .select("*")
+    .eq("template_id", templateId);
+
+  if (!items || items.length === 0) return;
+
+  const entry_date = format(new Date(), "yyyy-MM-dd");
+  const meal_type = parseMealType(mealType);
+
+  await supabase.from("meal_entries").insert(
+    items.map((item) => ({
+      user_id: user.id,
+      entry_date,
+      meal_type,
+      food_name: item.food_name,
+      icon: item.icon,
+      quantity_grams: item.quantity_grams,
+      calories: item.calories,
+      protein: item.protein,
+      carbs: item.carbs,
+      fat: item.fat,
+      fiber: item.fiber,
+      sugar: item.sugar,
+      sodium: item.sodium,
+    }))
+  );
+
+  revalidatePath("/nutrition");
+  revalidatePath("/journal");
 }

@@ -50,6 +50,11 @@ export function MealList({ meals }: { meals: MealEntry[] }) {
                   <p className="text-xs text-foreground-muted">
                     {m.quantity_grams}g · {m.calories} kcal · {m.protein}g P · {m.carbs}g G · {m.fat}g L
                   </p>
+                  {(m.fiber > 0 || m.sugar > 0 || m.sodium > 0) && (
+                    <p className="text-[10px] text-foreground-muted/70">
+                      {m.fiber}g fibres · {m.sugar}g sucres · {m.sodium}mg sodium
+                    </p>
+                  )}
                 </div>
                 <span className="shrink-0 text-xs text-foreground-muted">
                   {format(new Date(m.occurred_at), "HH:mm")}

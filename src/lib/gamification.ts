@@ -4,6 +4,9 @@ export type Stats = {
   moodEntriesCount: number;
   activeHabitsCount: number;
   bestStreak: number;
+  mealEntriesCount: number;
+  nutritionLoggingStreak: number;
+  proteinGoalHitDays: number;
 };
 
 export type Badge = {
@@ -71,18 +74,55 @@ export const BADGES: Badge[] = [
     description: "Atteins 100 entrées au total, toutes catégories confondues.",
     unlocked: (s) => s.habitLogsCount + s.workoutsCount + s.moodEntriesCount >= 100,
   },
+  {
+    id: "nutrition-starter",
+    icon: "🥗",
+    title: "Journal alimentaire",
+    description: "Enregistre ton premier repas.",
+    unlocked: (s) => s.mealEntriesCount >= 1,
+  },
+  {
+    id: "nutrition-week",
+    icon: "📒",
+    title: "Semaine bien nourrie",
+    description: "Note tes repas 7 jours d'affilée.",
+    unlocked: (s) => s.nutritionLoggingStreak >= 7,
+  },
+  {
+    id: "nutrition-month",
+    icon: "📚",
+    title: "Rigueur alimentaire",
+    description: "Note tes repas 30 jours d'affilée.",
+    unlocked: (s) => s.nutritionLoggingStreak >= 30,
+  },
+  {
+    id: "protein-target",
+    icon: "💪",
+    title: "Objectif protéines",
+    description: "Atteins ton objectif de protéines 10 jours.",
+    unlocked: (s) => s.proteinGoalHitDays >= 10,
+  },
+  {
+    id: "nutrition-100",
+    icon: "🍽️",
+    title: "Gourmet assidu",
+    description: "Enregistre 100 repas dans ton journal.",
+    unlocked: (s) => s.mealEntriesCount >= 100,
+  },
 ];
 
 const POINTS_PER_HABIT_LOG = 10;
 const POINTS_PER_WORKOUT = 15;
 const POINTS_PER_MOOD_ENTRY = 5;
+const POINTS_PER_MEAL_LOG = 3;
 const POINTS_PER_LEVEL = 150;
 
 export function computePoints(s: Stats): number {
   return (
     s.habitLogsCount * POINTS_PER_HABIT_LOG +
     s.workoutsCount * POINTS_PER_WORKOUT +
-    s.moodEntriesCount * POINTS_PER_MOOD_ENTRY
+    s.moodEntriesCount * POINTS_PER_MOOD_ENTRY +
+    s.mealEntriesCount * POINTS_PER_MEAL_LOG
   );
 }
 

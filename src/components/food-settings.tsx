@@ -68,6 +68,30 @@ function FoodRow({ food }: { food: Food }) {
               <input name="fat" type="number" min={0} step="0.1" defaultValue={food.fat} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
             </label>
           </div>
+          <div className="grid grid-cols-3 gap-2">
+            <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
+              Fibres
+              <input name="fiber" type="number" min={0} step="0.1" defaultValue={food.fiber} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
+            </label>
+            <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
+              Sucres
+              <input name="sugar" type="number" min={0} step="0.1" defaultValue={food.sugar} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
+            </label>
+            <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
+              Sodium (mg)
+              <input name="sodium" type="number" min={0} step="1" defaultValue={food.sodium} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
+            </label>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
+              Portion (libellé)
+              <input name="portion_label" type="text" placeholder="Ex: 1 tranche" defaultValue={food.portion_label ?? ""} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
+            </label>
+            <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
+              Portion (g)
+              <input name="portion_grams" type="number" min={0} step="1" placeholder="Ex: 30" defaultValue={food.portion_grams ?? ""} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
+            </label>
+          </div>
           <div className="flex gap-2">
             <button type="submit" disabled={pending} className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-60">
               Enregistrer
@@ -90,6 +114,7 @@ function FoodRow({ food }: { food: Food }) {
         <p className="truncate text-sm font-medium">{food.name}</p>
         <p className="text-xs text-foreground-muted">
           {food.calories} kcal · {food.protein}g P · {food.carbs}g G · {food.fat}g L (/100g)
+          {food.portion_grams ? ` · portion : ${food.portion_label ?? `${food.portion_grams}g`}` : ""}
         </p>
       </div>
       <button onClick={() => setEditing(true)} className="shrink-0 text-xs text-foreground-muted hover:text-foreground">
@@ -193,6 +218,30 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
                   <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
                     Lip.
                     <input name="fat" type="number" min={0} step="0.1" defaultValue={0} className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
+                  </label>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
+                    Fibres
+                    <input name="fiber" type="number" min={0} step="0.1" defaultValue={0} className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
+                  </label>
+                  <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
+                    Sucres
+                    <input name="sugar" type="number" min={0} step="0.1" defaultValue={0} className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
+                  </label>
+                  <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
+                    Sodium (mg)
+                    <input name="sodium" type="number" min={0} step="1" defaultValue={0} className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
+                  </label>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
+                    Portion (libellé)
+                    <input name="portion_label" type="text" placeholder="Ex: 1 tranche" className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
+                  </label>
+                  <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
+                    Portion (g)
+                    <input name="portion_grams" type="number" min={0} step="1" placeholder="Ex: 30" className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
                   </label>
                 </div>
                 <div className="flex gap-2">
