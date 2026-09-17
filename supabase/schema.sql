@@ -11,6 +11,16 @@ create table if not exists public.profiles (
   reminder_time text,
   reminder_timezone text,
   reminded_date date,
+  height_cm numeric(5, 1),
+  weight_kg numeric(5, 1),
+  age int,
+  sex text check (sex in ('homme', 'femme')),
+  activity_level text check (activity_level in ('sedentaire', 'leger', 'modere', 'actif', 'tres_actif')),
+  nutrition_goal text check (nutrition_goal in ('perdre', 'maintenir', 'prendre')),
+  goal_calories int,
+  goal_protein numeric(6, 1),
+  goal_carbs numeric(6, 1),
+  goal_fat numeric(6, 1),
   created_at timestamptz not null default now()
 );
 
@@ -133,8 +143,33 @@ alter table public.moments enable row level security;
 create policy "Moments are managed by owner" on public.moments
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+-- ============================================================================
+-- Nutrition (journal alimentaire)
+-- ============================================================================
+create table if not exists public.meal_entries (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  entry_date date not null,
+  occurred_at timestamptz not null default now(),
+  meal_type text not null default 'autre' check (meal_type in ('petit-dejeuner', 'dejeuner', 'diner', 'collation', 'autre')),
+  food_name text not null,
+  icon text not null default '🍽️',
+  quantity_grams numeric(7, 1) not null,
+  calories numeric(7, 1) not null,
+  protein numeric(6, 1) not null default 0,
+  carbs numeric(6, 1) not null default 0,
+  fat numeric(6, 1) not null default 0,
+  created_at timestamptz not null default now()
+);
+
+alter table public.meal_entries enable row level security;
+
+create policy "Meal entries are managed by owner" on public.meal_entries
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
 -- Indexes utiles pour les requetes par plage de dates
 create index if not exists habit_logs_user_date_idx on public.habit_logs (user_id, log_date);
 create index if not exists workouts_user_date_idx on public.workouts (user_id, workout_date);
 create index if not exists mood_entries_user_date_idx on public.mood_entries (user_id, entry_date);
 create index if not exists moments_user_date_idx on public.moments (user_id, entry_date);
+create index if not exists meal_entries_user_date_idx on public.meal_entries (user_id, entry_date);

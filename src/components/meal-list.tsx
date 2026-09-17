@@ -1,0 +1,73 @@
+"use client";
+
+import { useTransition } from "react";
+import { format } from "date-fns";
+import { deleteMeal } from "@/lib/actions/nutrition";
+import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
+import type { MealEntry } from "@/types/database";
+
+const MEAL_LABELS: Record<string, string> = {
+  "petit-dejeuner": "🌅 Petit-déjeuner",
+  dejeuner: "☀️ Déjeuner",
+  diner: "🌙 Dîner",
+  collation: "🍎 Collation",
+  autre: "🍽️ Autre",
+};
+
+export function MealList({ meals }: { meals: MealEntry[] }) {
+  const [pending, startTransition] = useTransition();
+
+  if (meals.length === 0) {
+    return (
+      <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-foreground-muted">
+        Rien enregistré aujourd&apos;hui.
+      </p>
+    );
+  }
+
+  const groups = new Map<string, MealEntry[]>();
+  for (const m of meals) {
+    if (!groups.has(m.meal_type)) groups.set(m.meal_type, []);
+    groups.get(m.meal_type)!.push(m);
+  }
+
+  return (
+    <div className="space-y-4">
+      {Array.from(groups.entries()).map(([type, entries]) => (
+        <div key={type}>
+          <p className="mb-1.5 text-xs font-medium text-foreground-muted">{MEAL_LABELS[type] ?? type}</p>
+          <ul className="space-y-1.5">
+            {entries.map((m) => (
+              <li
+                key={m.id}
+                className="flex items-center gap-3 rounded-xl bg-surface-muted px-3 py-2.5"
+              >
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-surface text-sm">
+                  {m.icon}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">{m.food_name}</p>
+                  <p className="text-xs text-foreground-muted">
+                    {m.quantity_grams}g · {m.calories} kcal · {m.protein}g P · {m.carbs}g G · {m.fat}g L
+                  </p>
+                </div>
+                <span className="shrink-0 text-xs text-foreground-muted">
+                  {format(new Date(m.occurred_at), "HH:mm")}
+                </span>
+                <ConfirmDeleteButton
+                  disabled={pending}
+                  onConfirm={() => startTransition(() => deleteMeal(m.id))}
+                  title="Supprimer cet aliment ?"
+                  message={`"${m.food_name}" sera retiré du journal du jour.`}
+                  className="shrink-0 text-foreground-muted hover:text-danger"
+                >
+                  ✕
+                </ConfirmDeleteButton>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}

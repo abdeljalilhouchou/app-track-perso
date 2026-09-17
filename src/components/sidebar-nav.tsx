@@ -9,6 +9,7 @@ import {
   CalendarIcon,
   SparkleIcon,
   ActivityIcon,
+  UtensilsIcon,
   SmileIcon,
   UserCircleIcon,
 } from "@/components/ui/nav-icons";
@@ -18,6 +19,7 @@ const links = [
   { href: "/journal", label: "Journal", shortLabel: "Journal", Icon: CalendarIcon },
   { href: "/habits", label: "Habitudes", shortLabel: "Habitudes", Icon: SparkleIcon },
   { href: "/sport", label: "Sport", shortLabel: "Sport", Icon: ActivityIcon },
+  { href: "/nutrition", label: "Nutrition", shortLabel: "Nutrition", Icon: UtensilsIcon },
   { href: "/humeur", label: "Humeur", shortLabel: "Humeur", Icon: SmileIcon },
   { href: "/profil", label: "Profil", shortLabel: "Profil", Icon: UserCircleIcon },
 ];
@@ -54,9 +56,9 @@ export function SidebarNav({ displayName }: { displayName: string }) {
                   transition={{ type: "spring", stiffness: 420, damping: 32 }}
                 />
               )}
-              <Icon className={`relative z-10 h-5.5 w-5.5 ${active ? "text-accent" : "text-foreground-muted"}`} />
+              <Icon className={`relative z-10 h-5 w-5 ${active ? "text-accent" : "text-foreground-muted"}`} />
               <span
-                className={`relative z-10 text-[10px] font-medium ${
+                className={`relative z-10 text-[9px] font-medium ${
                   active ? "text-accent" : "text-foreground-muted"
                 }`}
               >

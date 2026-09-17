@@ -56,6 +56,16 @@ export function SmileIcon({ className }: IconProps) {
   );
 }
 
+export function UtensilsIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M6 2.5v8a2 2 0 0 0 4 0v-8" />
+      <line x1="8" y1="2.5" x2="8" y2="21.5" />
+      <path d="M18 2.5c-1.7 0-3 2-3 5s1.3 5 3 5v9" />
+    </svg>
+  );
+}
+
 export function UserCircleIcon({ className }: IconProps) {
   return (
     <svg {...base} className={className}>

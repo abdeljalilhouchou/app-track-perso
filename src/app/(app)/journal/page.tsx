@@ -18,7 +18,7 @@ export default async function JournalPage({
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const [{ data: habitLogs }, { data: habits }, { data: workouts }, { data: moodEntries }, { data: moments }] =
+  const [{ data: habitLogs }, { data: habits }, { data: workouts }, { data: moodEntries }, { data: moments }, { data: meals }] =
     await Promise.all([
       supabase
         .from("habit_logs")
@@ -29,6 +29,7 @@ export default async function JournalPage({
       supabase.from("workouts").select("*").eq("user_id", user.id).eq("workout_date", selectedDate),
       supabase.from("mood_entries").select("*").eq("user_id", user.id).eq("entry_date", selectedDate),
       supabase.from("moments").select("*").eq("user_id", user.id).eq("entry_date", selectedDate),
+      supabase.from("meal_entries").select("*").eq("user_id", user.id).eq("entry_date", selectedDate),
     ]);
 
   const habitById = new Map((habits ?? []).map((h) => [h.id, h]));
@@ -86,6 +87,18 @@ export default async function JournalPage({
       title: mo.text,
       subtitle: details.length > 0 ? details.join(" · ") : undefined,
       href: "/habits",
+    });
+  }
+
+  for (const meal of meals ?? []) {
+    items.push({
+      id: `meal-${meal.id}`,
+      type: "meal",
+      time: meal.occurred_at,
+      icon: meal.icon,
+      title: meal.food_name,
+      subtitle: `${meal.quantity_grams}g · ${meal.calories} kcal · ${meal.protein}g P · ${meal.carbs}g G · ${meal.fat}g L`,
+      href: "/nutrition",
     });
   }
 
