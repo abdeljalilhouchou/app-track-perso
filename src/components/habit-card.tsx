@@ -9,6 +9,7 @@ import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import { Heatmap } from "@/components/heatmap";
 import { HabitForm } from "@/components/habit-form";
 import { CATEGORY_META, WEEKDAYS } from "@/lib/habit-categories";
+import { StreakFlame } from "@/components/ui/streak-flame";
 import type { Habit } from "@/types/database";
 
 export function HabitCard({
@@ -103,7 +104,7 @@ export function HabitCard({
               >
                 {categoryMeta.icon} {habit.category}
               </span>
-              {streak > 0 && <span>🔥 {streak} j</span>}
+              {streak > 0 && <StreakFlame streak={streak} size="sm" />}
             </div>
           </div>
         </Link>

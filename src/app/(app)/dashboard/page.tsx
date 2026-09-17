@@ -4,17 +4,19 @@ import { computeStreak } from "@/lib/streak";
 import { weeklyTotals } from "@/lib/weekly";
 import { WeeklyBarChart } from "@/components/charts/weekly-bar-chart";
 import { MoodLineChart } from "@/components/charts/mood-line-chart";
+import { TiltCard } from "@/components/ui/tilt-card";
+import { InViewFade } from "@/components/ui/in-view-fade";
 import { fr } from "date-fns/locale";
 import Link from "next/link";
 
 function StatCard({ label, value, accent }: { label: string; value: string; accent: string }) {
   return (
-    <div className="rounded-2xl border border-border bg-surface p-5">
+    <TiltCard className="rounded-2xl border border-border bg-surface p-5">
       <p className="text-sm text-foreground-muted">{label}</p>
       <p className="mt-1 text-2xl font-semibold" style={{ color: accent }}>
         {value}
       </p>
-    </div>
+    </TiltCard>
   );
 }
 
@@ -177,7 +179,7 @@ export default async function DashboardPage() {
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-2xl border border-border bg-surface p-5">
+        <InViewFade className="rounded-2xl border border-border bg-surface p-5">
           <div className="mb-2 flex items-center justify-between">
             <h2 className="text-sm font-medium text-foreground-muted">Sport · minutes / semaine</h2>
             <Link href="/sport" className="text-xs text-accent hover:underline">
@@ -185,9 +187,9 @@ export default async function DashboardPage() {
             </Link>
           </div>
           <WeeklyBarChart data={sportChart} color="var(--sport)" unit="min" />
-        </div>
+        </InViewFade>
 
-        <div className="rounded-2xl border border-border bg-surface p-5">
+        <InViewFade className="rounded-2xl border border-border bg-surface p-5" delay={0.1}>
           <div className="mb-2 flex items-center justify-between">
             <h2 className="text-sm font-medium text-foreground-muted">Humeur · 30 derniers jours</h2>
             <Link href="/humeur" className="text-xs text-accent hover:underline">
@@ -199,7 +201,7 @@ export default async function DashboardPage() {
           ) : (
             <p className="py-16 text-center text-sm text-foreground-muted">Aucune donnée pour l&apos;instant.</p>
           )}
-        </div>
+        </InViewFade>
       </div>
 
       {(!habits || habits.length === 0) && (

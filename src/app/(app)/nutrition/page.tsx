@@ -10,6 +10,7 @@ import { WeightTracker } from "@/components/weight-tracker";
 import { WeeklyBarChart } from "@/components/charts/weekly-bar-chart";
 import { MacroRings } from "@/components/macro-rings";
 import { NutritionTabs } from "@/components/nutrition-tabs";
+import { InViewFade } from "@/components/ui/in-view-fade";
 import { weeklyTotals } from "@/lib/weekly";
 
 export default async function NutritionPage() {
@@ -149,12 +150,12 @@ export default async function NutritionPage() {
               <NutritionGoalsCalculator profile={profile} />
             </div>
 
-            <div className="rounded-2xl border border-border bg-surface p-5">
+            <InViewFade className="rounded-2xl border border-border bg-surface p-5">
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
                 Tendance calorique (10 dernières semaines)
               </p>
               <WeeklyBarChart data={caloriesChart} color="var(--nutrition)" unit="kcal" />
-            </div>
+            </InViewFade>
 
             <WeightTracker logs={weightLogs ?? []} />
           </>

@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { HabitCard } from "@/components/habit-card";
+import { ConfettiBurst } from "@/components/ui/confetti-burst";
 import { CATEGORY_META } from "@/lib/habit-categories";
 import type { Habit } from "@/types/database";
 
@@ -17,8 +19,29 @@ export type HabitCardData = {
 };
 
 export function HabitsBoard({ groups }: { groups: { category: string; habits: HabitCardData[] }[] }) {
+  const [burst, setBurst] = useState(0);
+  const wasAllDone = useRef<boolean | null>(null);
+
+  const jsDay = new Date().getDay();
+  const todayDayNum = jsDay === 0 ? 7 : jsDay;
+  const allHabits = groups.flatMap((g) => g.habits);
+  const scheduledToday = allHabits.filter((h) => h.habit.scheduled_days.includes(todayDayNum));
+  const allDone = scheduledToday.length > 0 && scheduledToday.every((h) => h.doneToday);
+
+  useEffect(() => {
+    if (wasAllDone.current === null) {
+      wasAllDone.current = allDone;
+      return;
+    }
+    if (allDone && !wasAllDone.current) {
+      setBurst((b) => b + 1);
+    }
+    wasAllDone.current = allDone;
+  }, [allDone]);
+
   return (
     <div className="space-y-8">
+      <ConfettiBurst trigger={burst} />
       {groups.map(({ category, habits }) => {
         const meta = CATEGORY_META[category] ?? CATEGORY_META["Général"];
         return (

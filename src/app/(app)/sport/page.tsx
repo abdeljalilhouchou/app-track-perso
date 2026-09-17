@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { logWorkout } from "@/lib/actions/sport";
 import { WorkoutList } from "@/components/workout-list";
 import { WeeklyBarChart } from "@/components/charts/weekly-bar-chart";
+import { InViewFade } from "@/components/ui/in-view-fade";
 import { weeklyTotals } from "@/lib/weekly";
 
 export default async function SportPage() {
@@ -35,10 +36,10 @@ export default async function SportPage() {
         <p className="mt-1 text-sm text-foreground-muted">Chaque séance compte.</p>
       </div>
 
-      <div className="rounded-2xl border border-border bg-surface p-5">
+      <InViewFade className="rounded-2xl border border-border bg-surface p-5">
         <h2 className="text-sm font-medium text-foreground-muted">Minutes par semaine</h2>
         <WeeklyBarChart data={chartData} color="var(--sport)" unit="min" />
-      </div>
+      </InViewFade>
 
       <form
         action={logWorkout}

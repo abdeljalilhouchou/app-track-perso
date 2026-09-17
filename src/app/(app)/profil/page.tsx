@@ -3,6 +3,10 @@ import { computeStreak } from "@/lib/streak";
 import { BADGES, computeLevel, computePoints, type Stats } from "@/lib/gamification";
 import { ReminderSettings } from "@/components/reminder-settings";
 import { signOut } from "@/lib/actions/auth";
+import { ProfileStats } from "@/components/profile-stats";
+import { BadgeGrid } from "@/components/badge-grid";
+import { StreakFlame } from "@/components/ui/streak-flame";
+import { AnimatedCounter } from "@/components/ui/animated-counter";
 
 export default async function ProfilPage() {
   const supabase = await createClient();
@@ -96,8 +100,9 @@ export default async function ProfilPage() {
         </div>
         <div className="flex-1">
           <div className="flex items-center justify-between">
-            <p className="font-medium">
+            <p className="flex items-center gap-2 font-medium">
               {displayName} · <span className="text-accent">Niveau {level}</span>
+              {bestStreak > 0 && <StreakFlame streak={bestStreak} size="sm" />}
             </p>
             <p className="text-xs text-foreground-muted">
               {pointsIntoLevel} / {pointsForNextLevel} pts
@@ -110,37 +115,19 @@ export default async function ProfilPage() {
             />
           </div>
           <p className="mt-2 text-xs text-foreground-muted">
-            {points} points au total · {unlockedBadges.length} / {BADGES.length} badges débloqués
+            <AnimatedCounter value={points} /> points au total · {unlockedBadges.length} / {BADGES.length} badges débloqués
           </p>
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-2xl border border-border bg-surface p-5">
-          <p className="text-sm text-foreground-muted">Habitudes cochées</p>
-          <p className="mt-1 text-2xl font-semibold" style={{ color: "var(--habit)" }}>
-            {stats.habitLogsCount}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-border bg-surface p-5">
-          <p className="text-sm text-foreground-muted">Séances de sport</p>
-          <p className="mt-1 text-2xl font-semibold" style={{ color: "var(--sport)" }}>
-            {stats.workoutsCount}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-border bg-surface p-5">
-          <p className="text-sm text-foreground-muted">Humeurs notées</p>
-          <p className="mt-1 text-2xl font-semibold" style={{ color: "var(--mood)" }}>
-            {stats.moodEntriesCount}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-border bg-surface p-5">
-          <p className="text-sm text-foreground-muted">Repas notés</p>
-          <p className="mt-1 text-2xl font-semibold" style={{ color: "var(--nutrition)" }}>
-            {stats.mealEntriesCount}
-          </p>
-        </div>
-      </div>
+      <ProfileStats
+        stats={[
+          { label: "Habitudes cochées", value: stats.habitLogsCount, color: "var(--habit)" },
+          { label: "Séances de sport", value: stats.workoutsCount, color: "var(--sport)" },
+          { label: "Humeurs notées", value: stats.moodEntriesCount, color: "var(--mood)" },
+          { label: "Repas notés", value: stats.mealEntriesCount, color: "var(--nutrition)" },
+        ]}
+      />
 
       <div className="rounded-2xl border border-border bg-surface p-5">
         <h2 className="mb-3 flex items-center gap-2 text-sm font-medium">
@@ -152,25 +139,15 @@ export default async function ProfilPage() {
 
       <div>
         <h2 className="mb-3 text-sm font-medium text-foreground-muted">Badges</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {[...unlockedBadges, ...lockedBadges].map((badge) => {
-            const unlocked = unlockedBadges.includes(badge);
-            return (
-              <div
-                key={badge.id}
-                className={`rounded-2xl border p-4 text-center transition ${
-                  unlocked
-                    ? "border-accent/30 bg-accent-soft"
-                    : "border-dashed border-border opacity-50 grayscale"
-                }`}
-              >
-                <span className="text-3xl">{badge.icon}</span>
-                <p className="mt-2 text-sm font-medium">{badge.title}</p>
-                <p className="mt-1 text-xs text-foreground-muted">{badge.description}</p>
-              </div>
-            );
-          })}
-        </div>
+        <BadgeGrid
+          badges={[...unlockedBadges, ...lockedBadges].map((badge) => ({
+            id: badge.id,
+            icon: badge.icon,
+            title: badge.title,
+            description: badge.description,
+            unlocked: unlockedBadges.includes(badge),
+          }))}
+        />
       </div>
 
       <form action={signOut} className="md:hidden">
