@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { Dialog } from "@/components/ui/dialog";
 import { IconPicker } from "@/components/ui/icon-picker";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import { createMealTemplate, deleteMealTemplate, logMealTemplate, type TemplateItemInput } from "@/lib/actions/nutrition";
@@ -205,54 +204,42 @@ function TemplateRow({ template }: { template: TemplateWithItems }) {
   );
 }
 
-export function MealTemplates({ templates, foods }: { templates: TemplateWithItems[]; foods: Food[] }) {
-  const [open, setOpen] = useState(false);
+export function MealTemplatesPanel({ templates, foods }: { templates: TemplateWithItems[]; foods: Food[] }) {
   const [showBuilder, setShowBuilder] = useState(false);
 
   return (
-    <>
-      <button
-        onClick={() => setOpen(true)}
-        className="flex items-center gap-1.5 rounded-lg border-[1.5px] border-accent px-3 py-1.5 text-xs font-semibold text-accent transition-colors hover:bg-accent hover:text-white"
-      >
-        📖 Mes recettes
-      </button>
+    <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
+      <div className="mb-4 flex items-center justify-between">
+        <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">
+          📖 Mes recettes ({templates.length})
+        </p>
+        {!showBuilder && (
+          <button
+            onClick={() => setShowBuilder(true)}
+            className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-foreground-muted transition hover:border-accent/40 hover:text-accent"
+          >
+            + Nouvelle recette
+          </button>
+        )}
+      </div>
 
-      <Dialog open={open} onClose={() => setOpen(false)} widthClassName="max-w-lg">
-        <div className="rounded-2xl bg-surface shadow-2xl">
-          <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-border bg-surface px-5 py-4">
-            <span className="text-sm font-semibold">Mes recettes ({templates.length})</span>
-            <button onClick={() => setOpen(false)} aria-label="Fermer" className="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-surface-muted text-foreground-muted transition hover:bg-border">
-              ✕
-            </button>
-          </div>
-
-          <div className="space-y-4 px-5 py-4">
-            {!showBuilder ? (
-              <button
-                onClick={() => setShowBuilder(true)}
-                className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-foreground-muted transition hover:border-accent/40 hover:text-accent"
-              >
-                + Nouvelle recette
-              </button>
-            ) : (
-              <TemplateBuilder foods={foods} onDone={() => setShowBuilder(false)} />
-            )}
-
-            {templates.length === 0 ? (
-              <p className="rounded-xl border border-dashed border-border p-4 text-center text-xs text-foreground-muted">
-                Aucune recette enregistrée pour l&apos;instant.
-              </p>
-            ) : (
-              <ul className="max-h-96 space-y-2 overflow-y-auto">
-                {templates.map((t) => (
-                  <TemplateRow key={t.id} template={t} />
-                ))}
-              </ul>
-            )}
-          </div>
+      {showBuilder && (
+        <div className="mb-4">
+          <TemplateBuilder foods={foods} onDone={() => setShowBuilder(false)} />
         </div>
-      </Dialog>
-    </>
+      )}
+
+      {templates.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-border p-6 text-center text-xs text-foreground-muted">
+          Aucune recette enregistrée pour l&apos;instant. Combine des aliments en une recette pour la journaliser en un clic.
+        </p>
+      ) : (
+        <ul className="space-y-2">
+          {templates.map((t) => (
+            <TemplateRow key={t.id} template={t} />
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }

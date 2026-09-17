@@ -72,6 +72,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
   const [grams, setGrams] = useState(100);
   const [mealType, setMealType] = useState<(typeof MEAL_TYPES)[number]["value"]>("dejeuner");
   const [offResults, setOffResults] = useState<OffResult[] | null>(null);
+  const [justAdded, setJustAdded] = useState(false);
 
   const ref = useRef<HTMLDivElement>(null);
   useClickOutside(ref, () => setOpen(false));
@@ -115,6 +116,8 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
         startTransition(async () => {
           await logMeal(formData);
           reset();
+          setJustAdded(true);
+          setTimeout(() => setJustAdded(false), 1500);
         })
       }
       className="space-y-3"
@@ -285,13 +288,30 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
       <input type="hidden" name="sugar" value={preview?.sugar ?? 0} />
       <input type="hidden" name="sodium" value={preview?.sodium ?? 0} />
 
-      <button
+      <motion.button
         type="submit"
         disabled={!selected || pending}
-        className="w-full rounded-xl border-[1.5px] border-accent px-4 py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-white disabled:opacity-40"
+        whileTap={{ scale: 0.98 }}
+        animate={justAdded ? { scale: [1, 1.03, 1] } : {}}
+        className={`relative w-full overflow-hidden rounded-xl border-[1.5px] px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-40 ${
+          justAdded
+            ? "border-nutrition bg-nutrition text-white"
+            : "border-accent text-accent hover:bg-accent hover:text-white"
+        }`}
       >
-        Ajouter au journal
-      </button>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.span
+            key={justAdded ? "done" : "idle"}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.15 }}
+            className="block"
+          >
+            {justAdded ? "Ajouté ✓" : "Ajouter au journal"}
+          </motion.span>
+        </AnimatePresence>
+      </motion.button>
     </form>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { format } from "date-fns";
+import { motion } from "framer-motion";
 import { deleteMeal } from "@/lib/actions/nutrition";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import type { MealEntry } from "@/types/database";
@@ -37,9 +38,13 @@ export function MealList({ meals }: { meals: MealEntry[] }) {
         <div key={type}>
           <p className="mb-1.5 text-xs font-medium text-foreground-muted">{MEAL_LABELS[type] ?? type}</p>
           <ul className="space-y-1.5">
-            {entries.map((m) => (
-              <li
+            {entries.map((m, i) => (
+              <motion.li
                 key={m.id}
+                layout
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, delay: i * 0.03, ease: "easeOut" }}
                 className="flex items-center gap-3 rounded-xl bg-surface-muted px-3 py-2.5"
               >
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-surface text-sm">
@@ -68,7 +73,7 @@ export function MealList({ meals }: { meals: MealEntry[] }) {
                 >
                   ✕
                 </ConfirmDeleteButton>
-              </li>
+              </motion.li>
             ))}
           </ul>
         </div>

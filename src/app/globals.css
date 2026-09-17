@@ -19,6 +19,10 @@
   --mood-soft: #fef6e7;
   --nutrition: #f97316;
   --nutrition-soft: #fff0e5;
+  --water: #0ea5e9;
+  --water-soft: #e6f6fe;
+  --weight: #a855f7;
+  --weight-soft: #f6ecfe;
 
   --danger: #ef4444;
 }
@@ -42,6 +46,10 @@
   --color-mood-soft: var(--mood-soft);
   --color-nutrition: var(--nutrition);
   --color-nutrition-soft: var(--nutrition-soft);
+  --color-water: var(--water);
+  --color-water-soft: var(--water-soft);
+  --color-weight: var(--weight);
+  --color-weight-soft: var(--weight-soft);
 
   --color-danger: var(--danger);
 
@@ -69,6 +77,10 @@
     --mood-soft: #2c2312;
     --nutrition: #fb923c;
     --nutrition-soft: #2c1d10;
+    --water: #38bdf8;
+    --water-soft: #0c2433;
+    --weight: #c084fc;
+    --weight-soft: #2a1c38;
   }
 }
 
