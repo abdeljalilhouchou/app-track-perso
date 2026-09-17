@@ -137,6 +137,7 @@ export function HabitCard({
             const scheduled = habit.scheduled_days.includes(dayNum);
             const done = values[dateStr] === 1;
             const isToday = dateStr === today;
+            const missed = scheduled && !done && dateStr < today;
 
             return (
               <div key={dateStr} className="flex flex-1 flex-col items-center gap-1">
@@ -145,14 +146,21 @@ export function HabitCard({
                   initial={false}
                   animate={{ scale: done ? [1, 1.15, 1] : 1 }}
                   transition={{ duration: 0.3 }}
-                  className="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                  className="flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold"
                   style={{
-                    background: !scheduled ? "transparent" : done ? habit.color : "var(--surface-muted)",
-                    border: scheduled && !done ? "1.5px solid var(--border)" : "none",
+                    background: !scheduled
+                      ? "transparent"
+                      : done
+                        ? habit.color
+                        : missed
+                          ? "color-mix(in srgb, var(--danger) 14%, var(--surface-muted))"
+                          : "var(--surface-muted)",
+                    border: scheduled && !done ? `1.5px solid ${missed ? "var(--danger)" : "var(--border)"}` : "none",
+                    color: done ? "white" : missed ? "var(--danger)" : undefined,
                     boxShadow: isToday ? `0 0 0 2px var(--surface), 0 0 0 3.5px ${habit.color}` : undefined,
                   }}
                 >
-                  {done ? "✓" : ""}
+                  {done ? "✓" : missed ? "✕" : ""}
                 </motion.span>
               </div>
             );
