@@ -120,6 +120,26 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["moments"]["Row"]>;
         Relationships: [];
       };
+      foods: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string;
+          icon: string;
+          category: string;
+          calories: number;
+          protein: number;
+          carbs: number;
+          fat: number;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["foods"]["Row"]> & {
+          user_id: string;
+          name: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["foods"]["Row"]>;
+        Relationships: [];
+      };
       meal_entries: {
         Row: {
           id: string;
@@ -161,3 +181,4 @@ export type MoodEntry = Database["public"]["Tables"]["mood_entries"]["Row"];
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Moment = Database["public"]["Tables"]["moments"]["Row"];
 export type MealEntry = Database["public"]["Tables"]["meal_entries"]["Row"];
+export type Food = Database["public"]["Tables"]["foods"]["Row"];

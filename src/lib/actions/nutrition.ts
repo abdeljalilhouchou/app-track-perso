@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { format } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { computeNutritionTargets, type ActivityLevel, type NutritionGoal } from "@/lib/nutrition-calculator";
+import { DEFAULT_FOODS } from "@/lib/food-database";
 import type { MealEntry } from "@/types/database";
 
 const MEAL_TYPES: MealEntry["meal_type"][] = ["petit-dejeuner", "dejeuner", "diner", "collation", "autre"];
@@ -88,6 +89,61 @@ export async function saveNutritionProfile(formData: FormData) {
     })
     .eq("id", user.id);
 
+  revalidatePath("/nutrition");
+}
+
+export async function addFood(formData: FormData) {
+  const name = String(formData.get("name") ?? "").trim();
+  const icon = String(formData.get("icon") ?? "🍽️").trim() || "🍽️";
+  const category = String(formData.get("category") ?? "Autres").trim() || "Autres";
+  const calories = Number(formData.get("calories") ?? 0);
+  const protein = Number(formData.get("protein") ?? 0);
+  const carbs = Number(formData.get("carbs") ?? 0);
+  const fat = Number(formData.get("fat") ?? 0);
+
+  if (!name) return;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  await supabase.from("foods").insert({ user_id: user.id, name, icon, category, calories, protein, carbs, fat });
+  revalidatePath("/nutrition");
+}
+
+export async function updateFood(id: string, formData: FormData) {
+  const name = String(formData.get("name") ?? "").trim();
+  const icon = String(formData.get("icon") ?? "🍽️").trim() || "🍽️";
+  const category = String(formData.get("category") ?? "Autres").trim() || "Autres";
+  const calories = Number(formData.get("calories") ?? 0);
+  const protein = Number(formData.get("protein") ?? 0);
+  const carbs = Number(formData.get("carbs") ?? 0);
+  const fat = Number(formData.get("fat") ?? 0);
+
+  if (!name) return;
+
+  const supabase = await createClient();
+  await supabase.from("foods").update({ name, icon, category, calories, protein, carbs, fat }).eq("id", id);
+  revalidatePath("/nutrition");
+}
+
+export async function deleteFood(id: string) {
+  const supabase = await createClient();
+  await supabase.from("foods").delete().eq("id", id);
+  revalidatePath("/nutrition");
+}
+
+export async function seedDefaultFoods() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const rows = DEFAULT_FOODS.map((f) => ({ user_id: user.id, ...f }));
+  await supabase.from("foods").insert(rows);
   revalidatePath("/nutrition");
 }
 

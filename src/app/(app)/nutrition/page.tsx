@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { MealForm } from "@/components/meal-form";
 import { MealList } from "@/components/meal-list";
 import { NutritionGoalsCalculator } from "@/components/nutrition-goals-calculator";
+import { FoodSettings } from "@/components/food-settings";
 
 function ProgressBar({ label, value, goal, unit, color }: { label: string; value: number; goal: number | null; unit: string; color: string }) {
   const pct = goal ? Math.min(100, Math.round((value / goal) * 100)) : 0;
@@ -31,7 +32,7 @@ export default async function NutritionPage() {
 
   const today = format(new Date(), "yyyy-MM-dd");
 
-  const [{ data: profile }, { data: meals }] = await Promise.all([
+  const [{ data: profile }, { data: meals }, { data: foods }] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", user.id).single(),
     supabase
       .from("meal_entries")
@@ -39,6 +40,7 @@ export default async function NutritionPage() {
       .eq("user_id", user.id)
       .eq("entry_date", today)
       .order("occurred_at", { ascending: true }),
+    supabase.from("foods").select("*").eq("user_id", user.id).order("name", { ascending: true }),
   ]);
 
   const totals = (meals ?? []).reduce(
@@ -53,14 +55,17 @@ export default async function NutritionPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex items-center gap-3">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-[1.5px] border-nutrition text-xl">
-          🍽️
-        </span>
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Nutrition</h1>
-          <p className="mt-0.5 text-sm text-foreground-muted">Journal alimentaire et macros du jour.</p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-[1.5px] border-nutrition text-xl">
+            🍽️
+          </span>
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight">Nutrition</h1>
+            <p className="mt-0.5 text-sm text-foreground-muted">Journal alimentaire et macros du jour.</p>
+          </div>
         </div>
+        <FoodSettings foods={foods ?? []} />
       </div>
 
       <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
@@ -86,7 +91,7 @@ export default async function NutritionPage() {
         <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
           Ajouter un aliment
         </p>
-        <MealForm />
+        <MealForm foods={foods ?? []} />
       </div>
 
       <div>
