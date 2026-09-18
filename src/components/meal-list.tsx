@@ -15,13 +15,13 @@ const MEAL_LABELS: Record<string, string> = {
   autre: "🍽️ Autre",
 };
 
-export function MealList({ meals }: { meals: MealEntry[] }) {
+export function MealList({ meals, emptyLabel = "Rien enregistré aujourd'hui." }: { meals: MealEntry[]; emptyLabel?: string }) {
   const [pending, startTransition] = useTransition();
 
   if (meals.length === 0) {
     return (
       <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-foreground-muted">
-        Rien enregistré aujourd&apos;hui.
+        {emptyLabel}
       </p>
     );
   }
@@ -69,7 +69,7 @@ export function MealList({ meals }: { meals: MealEntry[] }) {
                   disabled={pending}
                   onConfirm={() => startTransition(() => deleteMeal(m.id))}
                   title="Supprimer cet aliment ?"
-                  message={`"${m.food_name}" sera retiré du journal du jour.`}
+                  message={`"${m.food_name}" sera retiré du journal.`}
                   className="shrink-0 text-foreground-muted hover:text-danger"
                 >
                   ✕

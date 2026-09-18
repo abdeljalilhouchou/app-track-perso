@@ -1,7 +1,7 @@
 import { format, subDays } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { MealForm } from "@/components/meal-form";
-import { MealList } from "@/components/meal-list";
+import { NutritionJournal } from "@/components/nutrition-journal";
 import { NutritionGoalsCalculator } from "@/components/nutrition-goals-calculator";
 import { FoodSettings } from "@/components/food-settings";
 import { MealTemplatesPanel } from "@/components/meal-templates";
@@ -26,7 +26,7 @@ export default async function NutritionPage() {
 
   const [
     { data: profile },
-    { data: meals },
+    { data: journalMeals },
     { data: foods },
     { data: recentMeals },
     { data: favoriteMeals },
@@ -39,7 +39,7 @@ export default async function NutritionPage() {
       .from("meal_entries")
       .select("*")
       .eq("user_id", user.id)
-      .eq("entry_date", today)
+      .gte("entry_date", thirtyDaysAgo)
       .order("occurred_at", { ascending: true }),
     supabase.from("foods").select("*").eq("user_id", user.id).order("name", { ascending: true }),
     supabase
@@ -65,7 +65,19 @@ export default async function NutritionPage() {
       .order("created_at", { ascending: false }),
   ]);
 
-  const totals = (meals ?? []).reduce(
+  const meals = (journalMeals ?? []).filter((m) => m.entry_date === today);
+
+  const mealsByDate = new Map<string, typeof meals>();
+  for (const m of journalMeals ?? []) {
+    if (!mealsByDate.has(m.entry_date)) mealsByDate.set(m.entry_date, []);
+    mealsByDate.get(m.entry_date)!.push(m);
+  }
+  mealsByDate.set(today, meals);
+  const journalDays = Array.from(mealsByDate.entries())
+    .sort((a, b) => b[0].localeCompare(a[0]))
+    .map(([date, dayMeals]) => ({ date, meals: dayMeals }));
+
+  const totals = meals.reduce(
     (acc, m) => ({
       calories: acc.calories + m.calories,
       protein: acc.protein + m.protein,
@@ -75,8 +87,8 @@ export default async function NutritionPage() {
     { calories: 0, protein: 0, carbs: 0, fat: 0 }
   );
 
-  const drinksMl = (meals ?? []).filter((m) => m.unit === "ml").reduce((sum, m) => sum + m.quantity_grams, 0);
-  const caffeineMg = Math.round((meals ?? []).reduce((sum, m) => sum + m.caffeine, 0));
+  const drinksMl = meals.filter((m) => m.unit === "ml").reduce((sum, m) => sum + m.quantity_grams, 0);
+  const caffeineMg = Math.round(meals.reduce((sum, m) => sum + m.caffeine, 0));
   const CAFFEINE_LIMIT_MG = 400;
 
   const caloriesChart = weeklyTotals(
@@ -165,14 +177,15 @@ export default async function NutritionPage() {
               </p>
               <MealForm foods={foods ?? []} quickFoods={quickFoods} />
             </div>
-
-            <div>
-              <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                Journal du jour
-              </p>
-              <MealList meals={meals ?? []} />
-            </div>
           </>
+        }
+        journal={
+          <div>
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
+              Journal alimentaire · 30 derniers jours
+            </p>
+            <NutritionJournal days={journalDays} />
+          </div>
         }
         trends={
           <>

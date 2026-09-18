@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 
 const TABS = [
   { id: "today", label: "Aujourd'hui", icon: "📅" },
+  { id: "journal", label: "Journal", icon: "📒" },
   { id: "trends", label: "Tendances", icon: "📈" },
   { id: "recipes", label: "Recettes", icon: "📖" },
 ] as const;
@@ -13,25 +14,27 @@ type TabId = (typeof TABS)[number]["id"];
 
 export function NutritionTabs({
   today,
+  journal,
   trends,
   recipes,
 }: {
   today: ReactNode;
+  journal: ReactNode;
   trends: ReactNode;
   recipes: ReactNode;
 }) {
   const [active, setActive] = useState<TabId>("today");
-  const content = { today, trends, recipes }[active];
+  const content = { today, journal, trends, recipes }[active];
 
   return (
     <div>
-      <div className="mb-6 inline-flex gap-1 rounded-xl border border-border bg-surface-muted p-1">
+      <div className="mb-6 inline-flex max-w-full gap-1 overflow-x-auto rounded-xl border border-border bg-surface-muted p-1">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActive(tab.id)}
-            className="relative rounded-lg px-3.5 py-2 text-sm font-medium transition-colors"
+            className="relative shrink-0 rounded-lg px-3 py-2 text-sm font-medium transition-colors sm:px-3.5"
             style={{ color: active === tab.id ? "white" : "var(--foreground-muted)" }}
           >
             {active === tab.id && (

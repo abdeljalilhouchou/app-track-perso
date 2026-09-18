@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export type FeedItem = {
   id: string;
-  type: "habit" | "sport" | "mood" | "moment" | "meal";
+  type: "habit" | "sport" | "mood" | "moment";
   time: string;
   icon: string;
   title: string;
@@ -18,7 +18,6 @@ const TYPE_META = {
   sport: { color: "var(--sport)", soft: "var(--sport-soft)", label: "Sport" },
   mood: { color: "#b45309", soft: "var(--mood-soft)", label: "Humeur" },
   moment: { color: "var(--accent)", soft: "var(--accent-soft)", label: "Moment" },
-  meal: { color: "var(--nutrition)", soft: "var(--nutrition-soft)", label: "Repas" },
 } as const;
 
 export function DayFeed({ items }: { items: FeedItem[] }) {
