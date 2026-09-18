@@ -52,7 +52,7 @@ export function WaterTracker({ ml, drinksMl = 0, goalMl = 2000 }: { ml: number; 
             disabled={pending}
             whileTap={{ scale: 0.92 }}
             onClick={() => startTransition(() => addWater(amount))}
-            className="rounded-full border border-border px-3 py-1.5 text-xs font-medium transition-colors hover:border-water/50 hover:text-water disabled:opacity-60"
+            className="rounded-full border border-water/40 px-3 py-1.5 text-xs font-medium transition-colors hover:border-water/50 hover:text-water disabled:opacity-60"
           >
             + {amount} ml
           </motion.button>
@@ -62,7 +62,7 @@ export function WaterTracker({ ml, drinksMl = 0, goalMl = 2000 }: { ml: number; 
           disabled={pending || ml === 0}
           whileTap={{ scale: 0.92 }}
           onClick={() => startTransition(() => addWater(-250))}
-          className="rounded-full border border-dashed border-border px-3 py-1.5 text-xs text-foreground-muted transition-colors hover:border-danger/40 hover:text-danger disabled:opacity-40"
+          className="rounded-full border border-dashed border-water/40 px-3 py-1.5 text-xs text-foreground-muted transition-colors hover:border-danger/40 hover:text-danger disabled:opacity-40"
         >
           − 250 ml
         </motion.button>

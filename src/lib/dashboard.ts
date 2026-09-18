@@ -64,7 +64,7 @@ export function computeWeekRecap(input: {
   };
 }
 
-export type Insight = { icon: string; title: string; text: string };
+export type Insight = { icon: string; title: string; text: string; color: string };
 
 function moodDiffText(withLabel: string, without: string, a: number, b: number) {
   const diff = a - b;
@@ -91,6 +91,7 @@ export function buildInsights(input: {
   if (onSport.length >= 2 && offSport.length >= 2) {
     insights.push({
       icon: "🏃",
+      color: "var(--sport)",
       title: "Sport et humeur",
       text: moodDiffText("les jours de sport", "les autres jours", meanMood(onSport)!, meanMood(offSport)!),
     });
@@ -110,6 +111,7 @@ export function buildInsights(input: {
     if (hit.length >= 2 && miss.length >= 2) {
       insights.push({
         icon: "🥗",
+        color: "var(--nutrition)",
         title: "Protéines et humeur",
         text: moodDiffText(
           "les jours où tu atteins ton objectif de protéines",
@@ -134,6 +136,7 @@ export function buildInsights(input: {
     const sign = delta > 0 ? "+" : delta < 0 ? "−" : "";
     insights.push({
       icon: "⚖️",
+      color: "var(--weight)",
       title: "Évolution du poids",
       text: `${sign}${Math.abs(delta)} kg en ${days} jour${days > 1 ? "s" : ""} (${first.weight_kg} → ${last.weight_kg} kg), avec ${minutes} min de sport sur la période.`,
     });

@@ -136,7 +136,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
               key={f.id}
               type="button"
               onClick={() => selectFood(f)}
-              className="flex items-center gap-1 rounded-full border border-border bg-surface-muted px-2.5 py-1 text-xs transition hover:border-accent/40 hover:text-accent"
+              className="flex items-center gap-1 rounded-full border border-nutrition/40 bg-surface-muted px-2.5 py-1 text-xs transition hover:border-nutrition hover:text-accent"
             >
               <span>{f.icon}</span>
               <span>{f.name}</span>
@@ -166,7 +166,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.12 }}
-              className="absolute left-0 right-0 top-full z-20 mt-1.5 max-h-64 overflow-y-auto rounded-xl border border-border bg-surface p-1.5 shadow-xl"
+              className="absolute left-0 right-0 top-full z-20 mt-1.5 max-h-64 overflow-y-auto rounded-xl border border-nutrition/40 bg-surface p-1.5 shadow-xl"
             >
               {matches.map((f) => (
                 <button
@@ -199,7 +199,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
           </div>
         )}
         {offResults && (
-          <div className="mt-1.5 max-h-64 overflow-y-auto rounded-xl border border-border bg-surface p-1.5 shadow-xl">
+          <div className="mt-1.5 max-h-64 overflow-y-auto rounded-xl border border-nutrition/40 bg-surface p-1.5 shadow-xl">
             {offResults.length === 0 ? (
               <p className="px-2.5 py-2 text-xs text-foreground-muted">Aucun résultat en ligne.</p>
             ) : (
@@ -238,7 +238,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
         </label>
         <div className="flex flex-col gap-1">
           <span className="text-xs font-medium text-foreground-muted">Repas</span>
-          <div className="flex gap-1 rounded-xl border border-border bg-surface-muted p-1">
+          <div className="flex gap-1 rounded-xl border border-nutrition/40 bg-surface-muted p-1">
             {MEAL_TYPES.map((m) => (
               <button
                 key={m.value}
@@ -259,7 +259,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
         <button
           type="button"
           onClick={() => setGrams(selected.portion_grams!)}
-          className="rounded-full border border-border px-2.5 py-1 text-xs text-foreground-muted transition hover:border-accent/40 hover:text-accent"
+          className="rounded-full border border-nutrition/40 px-2.5 py-1 text-xs text-foreground-muted transition hover:border-nutrition hover:text-accent"
         >
           Portion : {selected.portion_label ? `${selected.portion_label} · ` : ""}
           {selected.portion_grams}

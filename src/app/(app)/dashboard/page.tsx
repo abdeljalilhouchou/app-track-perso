@@ -195,8 +195,15 @@ export default async function DashboardPage() {
         {insights.length > 0 ? (
           <div className="grid gap-3 lg:grid-cols-3">
             {insights.map((i) => (
-              <div key={i.title} className="rounded-2xl border border-accent/30 bg-accent-soft p-5 text-sm">
-                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-accent">
+              <div
+                key={i.title}
+                className="rounded-2xl border-[1.5px] p-5 text-sm"
+                style={{
+                  borderColor: `color-mix(in srgb, ${i.color} 50%, var(--border))`,
+                  background: `color-mix(in srgb, ${i.color} 8%, var(--surface))`,
+                }}
+              >
+                <p className="mb-1 text-xs font-semibold uppercase tracking-wide" style={{ color: i.color }}>
                   {i.icon} {i.title}
                 </p>
                 {i.text}
@@ -204,7 +211,7 @@ export default async function DashboardPage() {
             ))}
           </div>
         ) : (
-          <p className="rounded-2xl border border-dashed border-border p-5 text-sm text-foreground-muted">
+          <p className="rounded-2xl border border-dashed border-accent/40 p-5 text-sm text-foreground-muted">
             Continue à noter humeur, sport, repas et poids : les liens entre tes modules apparaîtront ici dès qu&apos;il y
             aura assez de données.
           </p>
@@ -212,7 +219,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <InViewFade className="rounded-2xl border border-border bg-surface p-5">
+        <InViewFade className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5">
           <div className="mb-2 flex items-center justify-between">
             <h2 className="text-sm font-medium text-foreground-muted">Sport · minutes / semaine</h2>
             <Link href="/sport" className="text-xs text-accent hover:underline">
@@ -222,7 +229,7 @@ export default async function DashboardPage() {
           <WeeklyBarChart data={sportChart} color="var(--sport)" unit="min" />
         </InViewFade>
 
-        <InViewFade className="rounded-2xl border border-border bg-surface p-5" delay={0.1}>
+        <InViewFade className="rounded-2xl border-[1.5px] border-mood/50 bg-surface p-5" delay={0.1}>
           <div className="mb-2 flex items-center justify-between">
             <h2 className="text-sm font-medium text-foreground-muted">Humeur · 30 derniers jours</h2>
             <Link href="/humeur" className="text-xs text-accent hover:underline">
@@ -238,7 +245,7 @@ export default async function DashboardPage() {
       </div>
 
       {(!habits || habits.length === 0) && (
-        <div className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-foreground-muted">
+        <div className="rounded-2xl border border-dashed border-habit/40 p-6 text-center text-sm text-foreground-muted">
           Tu n&apos;as pas encore d&apos;habitude.{" "}
           <Link href="/habits" className="font-medium text-accent hover:underline">
             Crée ta première habitude

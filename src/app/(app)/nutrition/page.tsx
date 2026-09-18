@@ -138,7 +138,7 @@ export default async function NutritionPage({
         initialTab={date ? "journal" : "today"}
         today={
           <>
-            <div className="rounded-2xl border border-border bg-surface p-5">
+            <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
               <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
                 Aujourd&apos;hui
               </p>
@@ -176,7 +176,7 @@ export default async function NutritionPage({
 
             <WaterTracker ml={todayWater?.ml ?? 0} drinksMl={drinksMl} />
 
-            <div className="rounded-2xl border border-border bg-surface p-5">
+            <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
                 Ajouter un aliment
               </p>
@@ -200,7 +200,7 @@ export default async function NutritionPage({
               <NutritionGoalsCalculator profile={profile} />
             </div>
 
-            <InViewFade className="rounded-2xl border border-border bg-surface p-5">
+            <InViewFade className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
                 Tendance calorique (10 dernières semaines)
               </p>

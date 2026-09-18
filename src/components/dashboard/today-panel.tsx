@@ -159,7 +159,7 @@ export function TodayPanel({
                 aria-label={`Humeur ${m.value} sur 5`}
                 className="flex h-11 w-11 items-center justify-center rounded-xl border text-2xl transition-colors"
                 style={{
-                  borderColor: selected ? "var(--mood)" : "var(--border)",
+                  borderColor: selected ? "var(--mood)" : "color-mix(in srgb, var(--mood) 35%, var(--border))",
                   background: selected ? "var(--mood-soft)" : "transparent",
                 }}
               >
@@ -201,7 +201,7 @@ export function TodayPanel({
                   await addWater(ml);
                 })
               }
-              className="rounded-full border border-border px-3 py-1.5 text-xs font-medium transition-colors hover:border-water/50 hover:text-water"
+              className="rounded-full border border-water/40 px-3 py-1.5 text-xs font-medium transition-colors hover:border-water hover:text-water"
             >
               + {ml} ml
             </motion.button>

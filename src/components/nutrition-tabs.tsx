@@ -30,7 +30,7 @@ export function NutritionTabs({
 
   return (
     <div>
-      <div className="mb-6 inline-flex max-w-full gap-1 overflow-x-auto rounded-xl border border-border bg-surface-muted p-1">
+      <div className="mb-6 inline-flex max-w-full gap-1 overflow-x-auto rounded-xl border border-nutrition/40 bg-surface-muted p-1">
         {TABS.map((tab) => (
           <button
             key={tab.id}

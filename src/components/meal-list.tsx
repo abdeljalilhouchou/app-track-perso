@@ -20,7 +20,7 @@ export function MealList({ meals, emptyLabel = "Rien enregistré aujourd'hui." }
 
   if (meals.length === 0) {
     return (
-      <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-foreground-muted">
+      <p className="rounded-xl border border-dashed border-nutrition/40 p-6 text-center text-sm text-foreground-muted">
         {emptyLabel}
       </p>
     );

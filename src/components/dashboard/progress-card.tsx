@@ -69,7 +69,7 @@ export function ProgressCard({
       </div>
 
       {nextBadge && (
-        <p className="mt-3 rounded-xl border border-dashed border-border px-3 py-2 text-xs text-foreground-muted">
+        <p className="mt-3 rounded-xl border border-dashed border-habit/40 px-3 py-2 text-xs text-foreground-muted">
           Prochain objectif : <span className="text-foreground">{nextBadge.icon} {nextBadge.title}</span> —{" "}
           {nextBadge.description}
         </p>

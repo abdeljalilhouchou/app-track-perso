@@ -50,7 +50,7 @@ export function WeightTracker({ logs }: { logs: WeightLog[] }) {
       {chartData.length >= 2 ? (
         <WeeklyLineChart data={chartData} color="var(--weight)" unit="kg" />
       ) : (
-        <p className="rounded-xl border border-dashed border-border p-4 text-center text-xs text-foreground-muted">
+        <p className="rounded-xl border border-dashed border-weight/40 p-4 text-center text-xs text-foreground-muted">
           Note ton poids régulièrement pour voir la tendance.
         </p>
       )}
@@ -93,7 +93,7 @@ export function WeightTracker({ logs }: { logs: WeightLog[] }) {
             .map((l) => (
               <li
                 key={l.id}
-                className="flex items-center gap-1.5 rounded-full border border-border bg-surface-muted px-2.5 py-1 text-[11px] text-foreground-muted"
+                className="flex items-center gap-1.5 rounded-full border border-weight/40 bg-surface-muted px-2.5 py-1 text-[11px] text-foreground-muted"
               >
                 {format(new Date(l.entry_date), "d MMM", { locale: fr })} · {l.weight_kg}kg
                 <ConfirmDeleteButton

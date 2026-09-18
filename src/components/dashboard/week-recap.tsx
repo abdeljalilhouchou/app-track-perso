@@ -30,7 +30,10 @@ function Tile({
   children: React.ReactNode;
 }) {
   return (
-    <TiltCard className="rounded-2xl border border-border bg-surface p-5">
+    <TiltCard
+      className="rounded-2xl border-[1.5px] bg-surface p-5"
+      style={{ borderColor: `color-mix(in srgb, ${color} 50%, var(--border))` }}
+    >
       <p className="text-sm text-foreground-muted">{label}</p>
       <p className="mt-1 text-2xl font-semibold" style={{ color }}>
         {value}

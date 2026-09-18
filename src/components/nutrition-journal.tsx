@@ -26,7 +26,7 @@ export function NutritionJournal({
   const heading = format(parseISO(selectedDate), "EEEE d MMMM", { locale: fr });
 
   return (
-    <div className="rounded-2xl border border-border bg-surface p-5">
+    <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
       <DayNavigator selectedDate={selectedDate} basePath="/nutrition" markedDates={markedDates} />
 
       <div className="mb-4 mt-6">

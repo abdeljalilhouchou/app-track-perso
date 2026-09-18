@@ -208,7 +208,7 @@ function TemplateBuilder({
         />
       </div>
       {matches.length > 0 && (
-        <ul className="max-h-48 space-y-1 overflow-y-auto rounded-xl border border-border bg-surface p-1.5">
+        <ul className="max-h-48 space-y-1 overflow-y-auto rounded-xl border border-nutrition/40 bg-surface p-1.5">
           {matches.map((f) => (
             <li key={f.id}>
               <button
@@ -276,7 +276,7 @@ function TemplateCard({ template, foods }: { template: TemplateWithItems; foods:
   const expanded = open || editing;
 
   return (
-    <div className="rounded-2xl border border-border bg-surface">
+    <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface">
       <button
         type="button"
         onClick={() => !editing && setOpen((o) => !o)}
@@ -397,7 +397,7 @@ export function MealTemplatesPanel({ templates, foods }: { templates: TemplateWi
         {!showBuilder && (
           <button
             onClick={() => setShowBuilder(true)}
-            className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-foreground-muted transition hover:border-accent/40 hover:text-accent"
+            className="flex items-center gap-1.5 rounded-full border border-nutrition/40 px-3 py-1.5 text-xs font-medium text-foreground-muted transition hover:border-accent/40 hover:text-accent"
           >
             + Nouvelle recette
           </button>
@@ -405,13 +405,13 @@ export function MealTemplatesPanel({ templates, foods }: { templates: TemplateWi
       </div>
 
       {showBuilder && (
-        <div className="rounded-2xl border border-border bg-surface p-5">
+        <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
           <TemplateBuilder foods={foods} onDone={() => setShowBuilder(false)} />
         </div>
       )}
 
       {templates.length === 0 && !showBuilder ? (
-        <p className="rounded-2xl border border-dashed border-border p-6 text-center text-xs text-foreground-muted">
+        <p className="rounded-2xl border border-dashed border-nutrition/40 p-6 text-center text-xs text-foreground-muted">
           Aucune recette enregistrée pour l&apos;instant. Combine des aliments en une recette pour la journaliser en un clic.
         </p>
       ) : (

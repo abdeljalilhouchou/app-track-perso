@@ -4,7 +4,15 @@ import { useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 /** Wraps children in a card that tilts in 3D toward the cursor/finger position. */
-export function TiltCard({ children, className }: { children: React.ReactNode; className?: string }) {
+export function TiltCard({
+  children,
+  className,
+  style,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0.5);
   const y = useMotionValue(0.5);
@@ -32,7 +40,7 @@ export function TiltCard({ children, className }: { children: React.ReactNode; c
       ref={ref}
       onPointerMove={handlePointerMove}
       onPointerLeave={reset}
-      style={{ rotateX, rotateY, transformPerspective: 700 }}
+      style={{ rotateX, rotateY, transformPerspective: 700, ...style }}
       className={`relative overflow-hidden ${className ?? ""}`}
     >
       <motion.div

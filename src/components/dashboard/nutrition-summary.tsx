@@ -26,7 +26,7 @@ export function NutritionSummary({
       {hasMeals ? (
         <MacroRings rings={rings} />
       ) : (
-        <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-foreground-muted">
+        <p className="rounded-xl border border-dashed border-nutrition/40 p-6 text-center text-sm text-foreground-muted">
           Rien enregistré aujourd&apos;hui.{" "}
           <Link href="/nutrition" className="font-medium text-accent hover:underline">
             Ajouter un repas
@@ -36,10 +36,10 @@ export function NutritionSummary({
 
       <div className="mt-4 flex flex-wrap gap-2 text-xs">
         {caffeineMg > 0 && (
-          <span className="rounded-full border border-border bg-surface-muted px-2.5 py-1">☕ {caffeineMg} mg de caféine</span>
+          <span className="rounded-full border border-nutrition/40 bg-surface-muted px-2.5 py-1">☕ {caffeineMg} mg de caféine</span>
         )}
         {weightKg !== null && (
-          <span className="rounded-full border border-border bg-surface-muted px-2.5 py-1">
+          <span className="rounded-full border border-nutrition/40 bg-surface-muted px-2.5 py-1">
             ⚖️ {weightKg} kg
             {weightDelta !== null && weightDelta !== 0 && (
               <span style={{ color: weightDelta > 0 ? "var(--danger)" : "#16a34a" }}>
