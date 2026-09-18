@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { format } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { computeNutritionTargets, type ActivityLevel, type NutritionGoal } from "@/lib/nutrition-calculator";
-import { DEFAULT_DRINKS, DEFAULT_FOODS } from "@/lib/food-database";
+import { DEFAULT_DRINKS, DEFAULT_FOODS, type SeedFood } from "@/lib/food-database";
 import type { MealEntry } from "@/types/database";
 
 const MEAL_TYPES: MealEntry["meal_type"][] = ["petit-dejeuner", "dejeuner", "diner", "collation", "autre"];
@@ -191,36 +191,63 @@ export async function deleteFood(id: string) {
   revalidatePath("/nutrition");
 }
 
-export async function seedDefaultFoods() {
+// Every column is set explicitly: a bulk insert with heterogeneous keys makes
+// PostgREST send NULL for the missing ones, which the NOT NULL columns reject.
+function toFoodRow(userId: string, f: SeedFood) {
+  return {
+    user_id: userId,
+    name: f.name,
+    icon: f.icon,
+    category: f.category,
+    calories: f.calories,
+    protein: f.protein,
+    carbs: f.carbs,
+    fat: f.fat,
+    fiber: f.fiber ?? 0,
+    sugar: f.sugar ?? 0,
+    sodium: f.sodium ?? 0,
+    caffeine: f.caffeine ?? 0,
+    unit: f.unit ?? "g",
+    portion_label: f.portion_label ?? null,
+    portion_grams: f.portion_grams ?? null,
+  };
+}
+
+export type SeedResult = { added: number; error: string | null };
+
+export async function seedDefaultFoods(): Promise<SeedResult> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return { added: 0, error: "Non connecté." };
 
-  const rows = [...DEFAULT_FOODS, ...DEFAULT_DRINKS].map((f) => ({ user_id: user.id, ...f }));
-  await supabase.from("foods").insert(rows);
+  const rows = [...DEFAULT_FOODS, ...DEFAULT_DRINKS].map((f) => toFoodRow(user.id, f));
+  const { error } = await supabase.from("foods").insert(rows);
+  if (error) return { added: 0, error: error.message };
+
   revalidatePath("/nutrition");
+  return { added: rows.length, error: null };
 }
 
 // Adds the default drinks the user doesn't already have (matched by name).
-export async function seedDefaultDrinks() {
+export async function seedDefaultDrinks(): Promise<SeedResult> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return { added: 0, error: "Non connecté." };
 
   const { data: existing } = await supabase.from("foods").select("name").eq("user_id", user.id);
   const existingNames = new Set((existing ?? []).map((f) => f.name.toLowerCase()));
-  const rows = DEFAULT_DRINKS.filter((d) => !existingNames.has(d.name.toLowerCase())).map((d) => ({
-    user_id: user.id,
-    ...d,
-  }));
-  if (rows.length === 0) return;
+  const rows = DEFAULT_DRINKS.filter((d) => !existingNames.has(d.name.toLowerCase())).map((d) => toFoodRow(user.id, d));
+  if (rows.length === 0) return { added: 0, error: null };
 
-  await supabase.from("foods").insert(rows);
+  const { error } = await supabase.from("foods").insert(rows);
+  if (error) return { added: 0, error: error.message };
+
   revalidatePath("/nutrition");
+  return { added: rows.length, error: null };
 }
 
 export async function updateGoalsManually(formData: FormData) {

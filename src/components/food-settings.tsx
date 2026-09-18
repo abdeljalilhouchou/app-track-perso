@@ -170,6 +170,15 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
   const [showAdd, setShowAdd] = useState(false);
   const [pending, startTransition] = useTransition();
   const [addResetKey, setAddResetKey] = useState(0);
+  const [seedError, setSeedError] = useState<string | null>(null);
+
+  function runSeed(action: () => Promise<{ added: number; error: string | null }>) {
+    setSeedError(null);
+    startTransition(async () => {
+      const result = await action();
+      if (result.error) setSeedError(result.error);
+    });
+  }
 
   const groups = new Map<string, Food[]>();
   for (const f of foods) {
@@ -198,7 +207,7 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
           <div className="space-y-4 px-5 py-4">
             {foods.length === 0 && (
               <button
-                onClick={() => startTransition(() => seedDefaultFoods())}
+                onClick={() => runSeed(seedDefaultFoods)}
                 disabled={pending}
                 className="w-full rounded-xl border-[1.5px] border-dashed border-accent px-4 py-3 text-sm font-medium text-accent transition hover:bg-accent-soft disabled:opacity-60"
               >
@@ -208,12 +217,18 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
 
             {foods.length > 0 && !foods.some((f) => f.category === "Boissons") && (
               <button
-                onClick={() => startTransition(() => seedDefaultDrinks())}
+                onClick={() => runSeed(seedDefaultDrinks)}
                 disabled={pending}
                 className="w-full rounded-xl border-[1.5px] border-dashed border-accent px-4 py-3 text-sm font-medium text-accent transition hover:bg-accent-soft disabled:opacity-60"
               >
                 {pending ? "Import..." : "☕ Importer les boissons (café, thé, jus, sodas…)"}
               </button>
+            )}
+
+            {seedError && (
+              <p className="rounded-lg border border-danger/40 bg-surface-muted px-3 py-2 text-xs text-danger">
+                Import impossible : {seedError}
+              </p>
             )}
 
             {!showAdd ? (
