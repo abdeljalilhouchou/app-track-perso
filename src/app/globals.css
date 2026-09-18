@@ -84,8 +84,11 @@
   }
 }
 
-* {
-  border-color: var(--border);
+/* In the base layer so Tailwind's border-<color> utilities can override it (unlayered CSS always wins). */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
 }
 
 body {
