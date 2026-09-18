@@ -1,24 +1,18 @@
 import { format, getISODay, subDays, subWeeks } from "date-fns";
-import { createClient } from "@/lib/supabase/server";
-import { computeStreak } from "@/lib/streak";
-import { weeklyTotals } from "@/lib/weekly";
-import { WeeklyBarChart } from "@/components/charts/weekly-bar-chart";
-import { MoodLineChart } from "@/components/charts/mood-line-chart";
-import { TiltCard } from "@/components/ui/tilt-card";
-import { InViewFade } from "@/components/ui/in-view-fade";
 import { fr } from "date-fns/locale";
 import Link from "next/link";
-
-function StatCard({ label, value, accent }: { label: string; value: string; accent: string }) {
-  return (
-    <TiltCard className="rounded-2xl border border-border bg-surface p-5">
-      <p className="text-sm text-foreground-muted">{label}</p>
-      <p className="mt-1 text-2xl font-semibold" style={{ color: accent }}>
-        {value}
-      </p>
-    </TiltCard>
-  );
-}
+import { createClient } from "@/lib/supabase/server";
+import { weeklyTotals } from "@/lib/weekly";
+import { buildInsights, computeWeekRecap } from "@/lib/dashboard";
+import { computeProfileStats, summarizeProgress } from "@/lib/profile-stats";
+import { BADGES } from "@/lib/gamification";
+import { WeeklyBarChart } from "@/components/charts/weekly-bar-chart";
+import { MoodLineChart } from "@/components/charts/mood-line-chart";
+import { InViewFade } from "@/components/ui/in-view-fade";
+import { TodayPanel } from "@/components/dashboard/today-panel";
+import { NutritionSummary } from "@/components/dashboard/nutrition-summary";
+import { ProgressCard } from "@/components/dashboard/progress-card";
+import { WeekRecap } from "@/components/dashboard/week-recap";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -27,156 +21,195 @@ export default async function DashboardPage() {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("display_name")
-    .eq("id", user.id)
-    .single();
-
   const today = new Date();
+  const todayStr = format(today, "yyyy-MM-dd");
   const since30 = format(subDays(today, 30), "yyyy-MM-dd");
+  const since60 = format(subDays(today, 60), "yyyy-MM-dd");
   const since10w = format(subWeeks(today, 10), "yyyy-MM-dd");
 
-  const [{ data: habits }, { data: habitLogs }, { data: workouts }, { data: moodEntries }] =
-    await Promise.all([
-      supabase.from("habits").select("*").eq("user_id", user.id).eq("archived", false),
-      supabase
-        .from("habit_logs")
-        .select("habit_id, log_date")
-        .eq("user_id", user.id)
-        .gte("log_date", since10w),
-      supabase
-        .from("workouts")
-        .select("*")
-        .eq("user_id", user.id)
-        .gte("workout_date", since10w)
-        .order("workout_date", { ascending: false }),
-      supabase
-        .from("mood_entries")
-        .select("*")
-        .eq("user_id", user.id)
-        .gte("entry_date", since30)
-        .order("entry_date", { ascending: true }),
-    ]);
+  const [
+    { data: profile },
+    { data: habits },
+    { data: habitLogs },
+    { data: workouts },
+    { data: moodEntries },
+    { data: meals },
+    { data: todayWater },
+    { data: weightLogs },
+    stats,
+  ] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("display_name, goal_calories, goal_protein, goal_carbs, goal_fat")
+      .eq("id", user.id)
+      .single(),
+    supabase.from("habits").select("*").eq("user_id", user.id).eq("archived", false),
+    supabase.from("habit_logs").select("habit_id, log_date").eq("user_id", user.id).gte("log_date", since10w),
+    supabase
+      .from("workouts")
+      .select("*")
+      .eq("user_id", user.id)
+      .gte("workout_date", since10w)
+      .order("workout_date", { ascending: false }),
+    supabase
+      .from("mood_entries")
+      .select("*")
+      .eq("user_id", user.id)
+      .gte("entry_date", since30)
+      .order("entry_date", { ascending: true }),
+    supabase
+      .from("meal_entries")
+      .select("entry_date, calories, protein, carbs, fat, caffeine, unit, quantity_grams")
+      .eq("user_id", user.id)
+      .gte("entry_date", since30),
+    supabase.from("water_logs").select("ml").eq("user_id", user.id).eq("entry_date", todayStr).maybeSingle(),
+    supabase
+      .from("weight_logs")
+      .select("*")
+      .eq("user_id", user.id)
+      .gte("entry_date", since60)
+      .order("entry_date", { ascending: true }),
+    computeProfileStats(supabase, user.id),
+  ]);
 
-  // Streaks
+  const displayName = profile?.display_name || user.email?.split("@")[0] || "toi";
+
   const logsByHabit = new Map<string, Set<string>>();
   for (const log of habitLogs ?? []) {
     if (!logsByHabit.has(log.habit_id)) logsByHabit.set(log.habit_id, new Set());
     logsByHabit.get(log.habit_id)!.add(log.log_date);
   }
-  const longestStreak = Math.max(
-    0,
-    ...Array.from(logsByHabit.values()).map((dates) => computeStreak(dates))
+
+  // Today
+  const todayIsoDay = getISODay(today);
+  const todayHabits = (habits ?? [])
+    .filter((h) => h.scheduled_days.includes(todayIsoDay))
+    .map((h) => ({
+      id: h.id,
+      icon: h.icon,
+      name: h.name,
+      color: h.color,
+      done: logsByHabit.get(h.id)?.has(todayStr) ?? false,
+    }));
+  const moodToday = (moodEntries ?? []).find((e) => e.entry_date === todayStr)?.mood_score ?? null;
+
+  const todayMeals = (meals ?? []).filter((m) => m.entry_date === todayStr);
+  const totals = todayMeals.reduce(
+    (acc, m) => ({
+      calories: acc.calories + m.calories,
+      protein: acc.protein + m.protein,
+      carbs: acc.carbs + m.carbs,
+      fat: acc.fat + m.fat,
+    }),
+    { calories: 0, protein: 0, carbs: 0, fat: 0 }
   );
-
-  // Sport this week
-  const startOfThisWeek = subDays(today, today.getDay() === 0 ? 6 : today.getDay() - 1);
-  const workoutsThisWeek = (workouts ?? []).filter(
-    (w) => new Date(w.workout_date) >= startOfThisWeek
+  const drinksMl = Math.round(
+    todayMeals.filter((m) => m.unit === "ml").reduce((sum, m) => sum + m.quantity_grams, 0)
   );
-  const minutesThisWeek = workoutsThisWeek.reduce((sum, w) => sum + w.duration_minutes, 0);
+  const caffeineMg = Math.round(todayMeals.reduce((sum, m) => sum + m.caffeine, 0));
+  const round1 = (n: number) => Math.round(n * 10) / 10;
 
-  // Mood average
-  const moodAvg =
-    moodEntries && moodEntries.length > 0
-      ? (moodEntries.reduce((s, e) => s + e.mood_score, 0) / moodEntries.length).toFixed(1)
-      : "—";
+  const rings = [
+    { label: "Calories", value: Math.round(totals.calories), goal: profile?.goal_calories ?? null, unit: "kcal", color: "var(--nutrition)" },
+    { label: "Protéines", value: round1(totals.protein), goal: profile?.goal_protein ?? null, unit: "g", color: "var(--habit)" },
+    { label: "Glucides", value: round1(totals.carbs), goal: profile?.goal_carbs ?? null, unit: "g", color: "var(--mood)" },
+    { label: "Lipides", value: round1(totals.fat), goal: profile?.goal_fat ?? null, unit: "g", color: "var(--accent)" },
+  ];
 
-  // Insight: mood on workout days vs non-workout days (last 30 days)
-  const workoutDateSet = new Set((workouts ?? []).map((w) => w.workout_date));
-  const moodOnWorkoutDays = (moodEntries ?? []).filter((e) => workoutDateSet.has(e.entry_date));
-  const moodOnRestDays = (moodEntries ?? []).filter((e) => !workoutDateSet.has(e.entry_date));
+  const latestWeight = weightLogs && weightLogs.length > 0 ? weightLogs[weightLogs.length - 1] : null;
+  const previousWeight = weightLogs && weightLogs.length > 1 ? weightLogs[weightLogs.length - 2] : null;
+  const weightDelta = latestWeight && previousWeight ? round1(latestWeight.weight_kg - previousWeight.weight_kg) : null;
 
-  const avg = (arr: typeof moodOnWorkoutDays) =>
-    arr.length ? arr.reduce((s, e) => s + e.mood_score, 0) / arr.length : null;
+  // Progression
+  const progress = summarizeProgress(stats);
 
-  const avgWorkoutMood = avg(moodOnWorkoutDays);
-  const avgRestMood = avg(moodOnRestDays);
+  // Weekly recap + cross-module insights
+  const recap = computeWeekRecap({
+    habits: habits ?? [],
+    logsByHabit,
+    workouts: workouts ?? [],
+    moods: moodEntries ?? [],
+    meals: meals ?? [],
+  });
 
-  let insight: string | null = null;
-  if (avgWorkoutMood !== null && avgRestMood !== null && moodOnWorkoutDays.length >= 2 && moodOnRestDays.length >= 2) {
-    const diff = avgWorkoutMood - avgRestMood;
-    if (diff > 0.3) {
-      insight = `Ton humeur est en moyenne ${diff.toFixed(1)} point${diff >= 1.5 ? "s" : ""} plus haute les jours où tu fais du sport (${avgWorkoutMood.toFixed(1)}/5 vs ${avgRestMood.toFixed(1)}/5). Continue comme ça ! 💪`;
-    } else if (diff < -0.3) {
-      insight = `Ton humeur est légèrement plus basse les jours de sport (${avgWorkoutMood.toFixed(1)}/5 vs ${avgRestMood.toFixed(1)}/5) — peut-être des séances trop intenses ?`;
-    } else {
-      insight = `Pas de lien net entre sport et humeur pour l'instant (${avgWorkoutMood.toFixed(1)}/5 vs ${avgRestMood.toFixed(1)}/5). Continue à logger pour affiner l'analyse.`;
-    }
-  }
+  const insights = buildInsights({
+    moods: moodEntries ?? [],
+    workoutDates: new Set((workouts ?? []).map((w) => w.workout_date)),
+    meals: meals ?? [],
+    goalProtein: profile?.goal_protein ?? null,
+    weights: weightLogs ?? [],
+    workouts: workouts ?? [],
+  });
 
+  // Charts
   const sportChart = weeklyTotals(
     (workouts ?? []).map((w) => ({ date: w.workout_date, value: w.duration_minutes })),
     10
   );
-
   const moodChart = (moodEntries ?? []).map((e) => ({
     label: format(new Date(e.entry_date), "d MMM", { locale: fr }),
     mood: e.mood_score,
     energy: e.energy_level,
   }));
 
-  const displayName = profile?.display_name || user.email?.split("@")[0] || "toi";
-
-  // Reminders: what's still missing today
-  const todayStr = format(today, "yyyy-MM-dd");
-  const todayIsoDay = getISODay(today);
-  const habitsNotDoneToday = (habits ?? []).filter(
-    (h) => h.scheduled_days.includes(todayIsoDay) && !logsByHabit.get(h.id)?.has(todayStr)
-  );
-  const moodLoggedToday = (moodEntries ?? []).some((e) => e.entry_date === todayStr);
-  const hasReminders = habitsNotDoneToday.length > 0 || !moodLoggedToday;
-
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Salut {displayName} 👋</h1>
-        <p className="mt-1 text-sm text-foreground-muted">
-          {format(today, "EEEE d MMMM yyyy", { locale: fr })}
-        </p>
+        <p className="mt-1 text-sm text-foreground-muted">{format(today, "EEEE d MMMM yyyy", { locale: fr })}</p>
       </div>
 
-      {hasReminders && (habits?.length ?? 0) > 0 && (
-        <div className="rounded-2xl border border-dashed border-mood/40 bg-mood-soft p-5">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--mood)" }}>
-            À faire aujourd&apos;hui
-          </p>
-          <ul className="space-y-1.5 text-sm">
-            {habitsNotDoneToday.map((h) => (
-              <li key={h.id} className="flex items-center justify-between gap-3">
-                <span>
-                  {h.icon} {h.name}
-                </span>
-                <Link href="/habits" className="text-xs font-medium text-accent hover:underline">
-                  Cocher
-                </Link>
-              </li>
+      <TodayPanel
+        date={todayStr}
+        habits={todayHabits}
+        moodToday={moodToday}
+        waterMl={todayWater?.ml ?? 0}
+        drinksMl={drinksMl}
+      />
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <NutritionSummary
+          rings={rings}
+          caffeineMg={caffeineMg}
+          weightKg={latestWeight?.weight_kg ?? null}
+          weightDelta={weightDelta}
+          hasMeals={todayMeals.length > 0}
+        />
+        <ProgressCard
+          level={progress.level}
+          points={progress.points}
+          pointsIntoLevel={progress.pointsIntoLevel}
+          pointsForNextLevel={progress.pointsForNextLevel}
+          progressPct={progress.progressPct}
+          bestStreak={stats.bestStreak}
+          unlocked={progress.unlocked}
+          totalBadges={BADGES.length}
+          nextBadge={progress.locked[0] ?? null}
+        />
+      </div>
+
+      <WeekRecap recap={recap} />
+
+      <div>
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">Insights</h2>
+        {insights.length > 0 ? (
+          <div className="grid gap-3 lg:grid-cols-3">
+            {insights.map((i) => (
+              <div key={i.title} className="rounded-2xl border border-accent/30 bg-accent-soft p-5 text-sm">
+                <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-accent">
+                  {i.icon} {i.title}
+                </p>
+                {i.text}
+              </div>
             ))}
-            {!moodLoggedToday && (
-              <li className="flex items-center justify-between gap-3">
-                <span>🙂 Noter ton humeur du jour</span>
-                <Link href="/humeur" className="text-xs font-medium text-accent hover:underline">
-                  Noter
-                </Link>
-              </li>
-            )}
-          </ul>
-        </div>
-      )}
-
-      <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard label="Plus longue série active" value={`${longestStreak} j`} accent="var(--habit)" />
-        <StatCard label="Sport cette semaine" value={`${minutesThisWeek} min`} accent="var(--sport)" />
-        <StatCard label="Humeur moyenne (30j)" value={`${moodAvg} / 5`} accent="var(--mood)" />
+          </div>
+        ) : (
+          <p className="rounded-2xl border border-dashed border-border p-5 text-sm text-foreground-muted">
+            Continue à noter humeur, sport, repas et poids : les liens entre tes modules apparaîtront ici dès qu&apos;il y
+            aura assez de données.
+          </p>
+        )}
       </div>
-
-      {insight && (
-        <div className="rounded-2xl border border-accent/30 bg-accent-soft p-5 text-sm text-foreground">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-accent">Insight</p>
-          {insight}
-        </div>
-      )}
 
       <div className="grid gap-4 lg:grid-cols-2">
         <InViewFade className="rounded-2xl border border-border bg-surface p-5">

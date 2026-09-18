@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { computeStreak } from "@/lib/streak";
-import { BADGES, computeLevel, computePoints, type Stats } from "@/lib/gamification";
+import { BADGES } from "@/lib/gamification";
+import { computeProfileStats, summarizeProgress } from "@/lib/profile-stats";
 import { ReminderSettings } from "@/components/reminder-settings";
 import { signOut } from "@/lib/actions/auth";
 import { ProfileStats } from "@/components/profile-stats";
@@ -21,65 +21,10 @@ export default async function ProfilPage() {
     .eq("id", user.id)
     .single();
 
-  const [
-    { count: habitLogsCount },
-    { count: workoutsCount },
-    { count: moodEntriesCount },
-    { count: activeHabitsCount },
-    { data: allLogs },
-    { count: mealEntriesCount },
-    { data: mealDates },
-    { data: profileGoals },
-  ] = await Promise.all([
-    supabase.from("habit_logs").select("*", { count: "exact", head: true }).eq("user_id", user.id),
-    supabase.from("workouts").select("*", { count: "exact", head: true }).eq("user_id", user.id),
-    supabase.from("mood_entries").select("*", { count: "exact", head: true }).eq("user_id", user.id),
-    supabase
-      .from("habits")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .eq("archived", false),
-    supabase.from("habit_logs").select("habit_id, log_date").eq("user_id", user.id),
-    supabase.from("meal_entries").select("*", { count: "exact", head: true }).eq("user_id", user.id),
-    supabase.from("meal_entries").select("entry_date, protein").eq("user_id", user.id),
-    supabase.from("profiles").select("goal_protein").eq("id", user.id).single(),
-  ]);
-
-  const logsByHabit = new Map<string, Set<string>>();
-  for (const log of allLogs ?? []) {
-    if (!logsByHabit.has(log.habit_id)) logsByHabit.set(log.habit_id, new Set());
-    logsByHabit.get(log.habit_id)!.add(log.log_date);
-  }
-  const bestStreak = Math.max(
-    0,
-    ...Array.from(logsByHabit.values()).map((dates) => computeStreak(dates))
-  );
-
-  const proteinByDate = new Map<string, number>();
-  for (const m of mealDates ?? []) {
-    proteinByDate.set(m.entry_date, (proteinByDate.get(m.entry_date) ?? 0) + m.protein);
-  }
-  const nutritionLoggingStreak = computeStreak(new Set(proteinByDate.keys()));
-  const goalProtein = profileGoals?.goal_protein ?? null;
-  const proteinGoalHitDays = goalProtein
-    ? Array.from(proteinByDate.values()).filter((p) => p >= goalProtein).length
-    : 0;
-
-  const stats: Stats = {
-    habitLogsCount: habitLogsCount ?? 0,
-    workoutsCount: workoutsCount ?? 0,
-    moodEntriesCount: moodEntriesCount ?? 0,
-    activeHabitsCount: activeHabitsCount ?? 0,
-    bestStreak,
-    mealEntriesCount: mealEntriesCount ?? 0,
-    nutritionLoggingStreak,
-    proteinGoalHitDays,
-  };
-
-  const points = computePoints(stats);
-  const { level, pointsIntoLevel, pointsForNextLevel, progressPct } = computeLevel(points);
-  const unlockedBadges = BADGES.filter((b) => b.unlocked(stats));
-  const lockedBadges = BADGES.filter((b) => !b.unlocked(stats));
+  const stats = await computeProfileStats(supabase, user.id);
+  const { points, level, pointsIntoLevel, pointsForNextLevel, progressPct, unlocked: unlockedBadges, locked: lockedBadges } =
+    summarizeProgress(stats);
+  const bestStreak = stats.bestStreak;
 
   const displayName = profile?.display_name || user.email?.split("@")[0] || "toi";
   const initial = displayName.charAt(0).toUpperCase();

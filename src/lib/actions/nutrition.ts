@@ -294,6 +294,7 @@ export async function addWater(amountMl: number) {
     .upsert({ user_id: user.id, entry_date: today, ml: newMl }, { onConflict: "user_id,entry_date" });
 
   revalidatePath("/nutrition");
+  revalidatePath("/dashboard");
 }
 
 // --- Body weight ---

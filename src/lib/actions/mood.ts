@@ -28,6 +28,33 @@ export async function logMood(formData: FormData) {
   revalidatePath("/dashboard");
 }
 
+// Updates only the mood score when today's entry exists, so energy and notes are kept.
+export async function quickLogMood(entry_date: string, mood_score: number) {
+  if (!entry_date || mood_score < 1 || mood_score > 5) return;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const { data: existing } = await supabase
+    .from("mood_entries")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("entry_date", entry_date)
+    .maybeSingle();
+
+  if (existing) {
+    await supabase.from("mood_entries").update({ mood_score }).eq("id", existing.id);
+  } else {
+    await supabase.from("mood_entries").insert({ user_id: user.id, entry_date, mood_score, energy_level: 3 });
+  }
+
+  revalidatePath("/humeur");
+  revalidatePath("/dashboard");
+}
+
 export async function deleteMoodEntry(id: string) {
   const supabase = await createClient();
   await supabase.from("mood_entries").delete().eq("id", id);
