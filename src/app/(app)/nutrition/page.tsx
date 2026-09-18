@@ -4,6 +4,7 @@ import { MealForm } from "@/components/meal-form";
 import { NutritionJournal } from "@/components/nutrition-journal";
 import { NutritionGoalsCalculator } from "@/components/nutrition-goals-calculator";
 import { FoodSettings } from "@/components/food-settings";
+import { DailyLimits } from "@/components/daily-limits";
 import { MealTemplatesPanel } from "@/components/meal-templates";
 import { WaterTracker } from "@/components/water-tracker";
 import { WeightTracker } from "@/components/weight-tracker";
@@ -93,7 +94,7 @@ export default async function NutritionPage({
 
   const drinksMl = (meals ?? []).filter((m) => m.unit === "ml").reduce((sum, m) => sum + m.quantity_grams, 0);
   const caffeineMg = Math.round((meals ?? []).reduce((sum, m) => sum + m.caffeine, 0));
-  const CAFFEINE_LIMIT_MG = 400;
+  const CAFFEINE_LIMIT_MG = profile?.caffeine_limit_mg ?? 400;
 
   const caloriesChart = weeklyTotals(
     (recentMeals ?? []).map((m) => ({ date: m.entry_date, value: m.calories })),
@@ -169,12 +170,12 @@ export default async function NutritionPage({
                   />
                 </div>
                 <p className="mt-2 text-[11px] text-foreground-muted">
-                  Repère courant : ne pas dépasser ~400 mg de caféine par jour (environ 4 tasses de café).
+                  Ta limite quotidienne : {CAFFEINE_LIMIT_MG} mg (environ {Math.max(1, Math.round(CAFFEINE_LIMIT_MG / 100))} tasses de café). Modifiable dans l&apos;onglet Tendances.
                 </p>
               </div>
             )}
 
-            <WaterTracker ml={todayWater?.ml ?? 0} drinksMl={drinksMl} />
+            <WaterTracker ml={todayWater?.ml ?? 0} drinksMl={drinksMl} goalMl={profile?.water_goal_ml ?? 2000} />
 
             <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
@@ -198,6 +199,7 @@ export default async function NutritionPage({
                 Objectifs quotidiens
               </p>
               <NutritionGoalsCalculator profile={profile} />
+              <DailyLimits waterGoalMl={profile?.water_goal_ml ?? 2000} caffeineLimitMg={profile?.caffeine_limit_mg ?? 400} />
             </div>
 
             <InViewFade className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">

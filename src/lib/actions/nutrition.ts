@@ -270,6 +270,23 @@ export async function updateGoalsManually(formData: FormData) {
   revalidatePath("/nutrition");
 }
 
+export async function saveDailyLimits(formData: FormData) {
+  const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, Math.round(n)));
+  const water_goal_ml = clamp(Number(formData.get("water_goal_ml")) || 2000, 500, 10000);
+  const caffeine_limit_mg = clamp(Number(formData.get("caffeine_limit_mg")) || 400, 50, 1000);
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  await supabase.from("profiles").update({ water_goal_ml, caffeine_limit_mg }).eq("id", user.id);
+
+  revalidatePath("/nutrition");
+  revalidatePath("/dashboard");
+}
+
 // --- Water ---
 
 export async function addWater(amountMl: number) {

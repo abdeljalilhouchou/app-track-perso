@@ -18,8 +18,6 @@ const MOODS = [
   { value: 5, emoji: "😄" },
 ];
 
-const WATER_GOAL_ML = 2000;
-
 function HabitRing({ done, total }: { done: number; total: number }) {
   const r = 22;
   const c = 2 * Math.PI * r;
@@ -54,12 +52,14 @@ export function TodayPanel({
   moodToday,
   waterMl,
   drinksMl,
+  waterGoalMl,
 }: {
   date: string;
   habits: TodayHabit[];
   moodToday: number | null;
   waterMl: number;
   drinksMl: number;
+  waterGoalMl: number;
 }) {
   const [, startTransition] = useTransition();
   const [burst, setBurst] = useState(0);
@@ -73,7 +73,7 @@ export function TodayPanel({
 
   const doneCount = habits.filter((h) => doneMap[h.id]).length;
   const totalWater = water + drinksMl;
-  const waterPct = Math.min(100, Math.round((totalWater / WATER_GOAL_ML) * 100));
+  const waterPct = Math.min(100, Math.round((totalWater / waterGoalMl) * 100));
 
   function toggle(habit: TodayHabit) {
     const willBeDone = !doneMap[habit.id];
@@ -177,7 +177,7 @@ export function TodayPanel({
         <div className="mb-3 flex items-center justify-between">
           <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">💧 Hydratation</p>
           <span className="text-sm">
-            <span className="font-semibold">{totalWater}</span> / {WATER_GOAL_ML} ml
+            <span className="font-semibold">{totalWater}</span> / {waterGoalMl} ml
           </span>
         </div>
         <div className="mb-3 h-1.5 w-full overflow-hidden rounded-full bg-surface-muted">

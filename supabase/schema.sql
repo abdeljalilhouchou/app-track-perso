@@ -21,6 +21,8 @@ create table if not exists public.profiles (
   goal_protein numeric(6, 1),
   goal_carbs numeric(6, 1),
   goal_fat numeric(6, 1),
+  water_goal_ml int not null default 2000,
+  caffeine_limit_mg int not null default 400,
   created_at timestamptz not null default now()
 );
 

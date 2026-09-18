@@ -40,7 +40,7 @@ export default async function DashboardPage() {
   ] = await Promise.all([
     supabase
       .from("profiles")
-      .select("display_name, goal_calories, goal_protein, goal_carbs, goal_fat")
+      .select("display_name, goal_calories, goal_protein, goal_carbs, goal_fat, water_goal_ml")
       .eq("id", user.id)
       .single(),
     supabase.from("habits").select("*").eq("user_id", user.id).eq("archived", false),
@@ -165,6 +165,7 @@ export default async function DashboardPage() {
         moodToday={moodToday}
         waterMl={todayWater?.ml ?? 0}
         drinksMl={drinksMl}
+        waterGoalMl={profile?.water_goal_ml ?? 2000}
       />
 
       <div className="grid gap-4 lg:grid-cols-2">
