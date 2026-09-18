@@ -24,8 +24,17 @@ import { useClickOutside } from "@/lib/use-click-outside";
 
 const WEEKDAY_LABELS = ["L", "M", "M", "J", "V", "S", "D"];
 
-export function DayNavigator({ selectedDate }: { selectedDate: string }) {
+export function DayNavigator({
+  selectedDate,
+  basePath = "/journal",
+  markedDates,
+}: {
+  selectedDate: string;
+  basePath?: string;
+  markedDates?: string[];
+}) {
   const router = useRouter();
+  const marked = new Set(markedDates ?? []);
   const selected = parseISO(selectedDate);
   const todayStr = format(new Date(), "yyyy-MM-dd");
 
@@ -43,7 +52,7 @@ export function DayNavigator({ selectedDate }: { selectedDate: string }) {
 
   function goToDate(date: Date) {
     setOpen(false);
-    router.push(`/journal?date=${format(date, "yyyy-MM-dd")}`);
+    router.push(`${basePath}?date=${format(date, "yyyy-MM-dd")}`, { scroll: false });
   }
 
   return (
@@ -55,7 +64,8 @@ export function DayNavigator({ selectedDate }: { selectedDate: string }) {
           return (
             <Link
               key={dateStr}
-              href={`/journal?date=${dateStr}`}
+              href={`${basePath}?date=${dateStr}`}
+              scroll={false}
               className="flex w-11 shrink-0 flex-col items-center gap-1 rounded-xl py-2 transition"
               style={{ background: isSelected ? "var(--accent-soft)" : "transparent" }}
             >
@@ -69,6 +79,10 @@ export function DayNavigator({ selectedDate }: { selectedDate: string }) {
               >
                 {format(day, "d")}
               </span>
+              <span
+                className="h-1 w-1 rounded-full"
+                style={{ background: marked.has(dateStr) ? "var(--nutrition)" : "transparent" }}
+              />
             </Link>
           );
         })}
@@ -132,13 +146,19 @@ export function DayNavigator({ selectedDate }: { selectedDate: string }) {
                       key={day.toISOString()}
                       disabled={!inMonth}
                       onClick={() => goToDate(day)}
-                      className="flex aspect-square items-center justify-center rounded-lg text-xs font-medium transition disabled:opacity-0"
+                      className="relative flex aspect-square items-center justify-center rounded-lg text-xs font-medium transition disabled:opacity-0"
                       style={{
                         background: isSel ? "var(--accent)" : "transparent",
                         color: isSel ? "white" : isToday(day) ? "var(--accent)" : "var(--foreground)",
                       }}
                     >
                       {format(day, "d")}
+                      {marked.has(format(day, "yyyy-MM-dd")) && (
+                        <span
+                          className="absolute bottom-0.5 h-1 w-1 rounded-full"
+                          style={{ background: isSel ? "white" : "var(--nutrition)" }}
+                        />
+                      )}
                     </button>
                   );
                 })}

@@ -17,13 +17,15 @@ export function NutritionTabs({
   journal,
   trends,
   recipes,
+  initialTab = "today",
 }: {
   today: ReactNode;
   journal: ReactNode;
   trends: ReactNode;
   recipes: ReactNode;
+  initialTab?: TabId;
 }) {
-  const [active, setActive] = useState<TabId>("today");
+  const [active, setActive] = useState<TabId>(initialTab);
   const content = { today, journal, trends, recipes }[active];
 
   return (

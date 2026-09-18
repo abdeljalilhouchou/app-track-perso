@@ -13,7 +13,12 @@ import { NutritionTabs } from "@/components/nutrition-tabs";
 import { InViewFade } from "@/components/ui/in-view-fade";
 import { weeklyTotals } from "@/lib/weekly";
 
-export default async function NutritionPage() {
+export default async function NutritionPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const { date } = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -23,10 +28,14 @@ export default async function NutritionPage() {
   const today = format(new Date(), "yyyy-MM-dd");
   const seventyDaysAgo = format(subDays(new Date(), 70), "yyyy-MM-dd");
   const thirtyDaysAgo = format(subDays(new Date(), 30), "yyyy-MM-dd");
+  const fourMonthsAgo = format(subDays(new Date(), 120), "yyyy-MM-dd");
+  const selectedDate = date && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : today;
 
   const [
     { data: profile },
-    { data: journalMeals },
+    { data: meals },
+    { data: selectedDayMeals },
+    { data: loggedDates },
     { data: foods },
     { data: recentMeals },
     { data: favoriteMeals },
@@ -39,8 +48,15 @@ export default async function NutritionPage() {
       .from("meal_entries")
       .select("*")
       .eq("user_id", user.id)
-      .gte("entry_date", thirtyDaysAgo)
+      .eq("entry_date", today)
       .order("occurred_at", { ascending: true }),
+    supabase
+      .from("meal_entries")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("entry_date", selectedDate)
+      .order("occurred_at", { ascending: true }),
+    supabase.from("meal_entries").select("entry_date").eq("user_id", user.id).gte("entry_date", fourMonthsAgo),
     supabase.from("foods").select("*").eq("user_id", user.id).order("name", { ascending: true }),
     supabase
       .from("meal_entries")
@@ -65,19 +81,7 @@ export default async function NutritionPage() {
       .order("created_at", { ascending: false }),
   ]);
 
-  const meals = (journalMeals ?? []).filter((m) => m.entry_date === today);
-
-  const mealsByDate = new Map<string, typeof meals>();
-  for (const m of journalMeals ?? []) {
-    if (!mealsByDate.has(m.entry_date)) mealsByDate.set(m.entry_date, []);
-    mealsByDate.get(m.entry_date)!.push(m);
-  }
-  mealsByDate.set(today, meals);
-  const journalDays = Array.from(mealsByDate.entries())
-    .sort((a, b) => b[0].localeCompare(a[0]))
-    .map(([date, dayMeals]) => ({ date, meals: dayMeals }));
-
-  const totals = meals.reduce(
+  const totals = (meals ?? []).reduce(
     (acc, m) => ({
       calories: acc.calories + m.calories,
       protein: acc.protein + m.protein,
@@ -87,8 +91,8 @@ export default async function NutritionPage() {
     { calories: 0, protein: 0, carbs: 0, fat: 0 }
   );
 
-  const drinksMl = meals.filter((m) => m.unit === "ml").reduce((sum, m) => sum + m.quantity_grams, 0);
-  const caffeineMg = Math.round(meals.reduce((sum, m) => sum + m.caffeine, 0));
+  const drinksMl = (meals ?? []).filter((m) => m.unit === "ml").reduce((sum, m) => sum + m.quantity_grams, 0);
+  const caffeineMg = Math.round((meals ?? []).reduce((sum, m) => sum + m.caffeine, 0));
   const CAFFEINE_LIMIT_MG = 400;
 
   const caloriesChart = weeklyTotals(
@@ -131,6 +135,7 @@ export default async function NutritionPage() {
       </div>
 
       <NutritionTabs
+        initialTab={date ? "journal" : "today"}
         today={
           <>
             <div className="rounded-2xl border border-border bg-surface p-5">
@@ -180,12 +185,11 @@ export default async function NutritionPage() {
           </>
         }
         journal={
-          <div>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-              Journal alimentaire · 30 derniers jours
-            </p>
-            <NutritionJournal days={journalDays} />
-          </div>
+          <NutritionJournal
+            selectedDate={selectedDate}
+            meals={selectedDayMeals ?? []}
+            markedDates={Array.from(new Set((loggedDates ?? []).map((d) => d.entry_date)))}
+          />
         }
         trends={
           <>
