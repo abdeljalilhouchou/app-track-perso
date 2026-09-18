@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { IconPicker } from "@/components/ui/icon-picker";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
-import { addFood, updateFood, deleteFood, seedDefaultFoods } from "@/lib/actions/nutrition";
+import { addFood, updateFood, deleteFood, seedDefaultFoods, seedDefaultDrinks } from "@/lib/actions/nutrition";
 import { FOOD_CATEGORIES } from "@/lib/food-database";
 import type { Food } from "@/types/database";
 
@@ -13,8 +13,34 @@ const FOOD_ICON_CHOICES = [
   "🍝", "🍞", "🥔", "🍟", "🌾", "🫘", "🍅", "🥒", "🥕", "🧅",
   "🥦", "🥬", "🫑", "🍆", "🍎", "🍌", "🍊", "🌴", "🍇", "🍓",
   "🍉", "🥑", "🥭", "🫒", "🧈", "🌰", "🥜", "🍯", "🧂", "🍫",
-  "🍽️",
+  "☕", "🍵", "🥤", "🧃", "💧", "🧋", "🍹", "🍽️",
 ];
+
+function UnitCaffeineFields({
+  defaultUnit,
+  defaultCaffeine,
+  fieldClass,
+}: {
+  defaultUnit: "g" | "ml";
+  defaultCaffeine: number;
+  fieldClass: string;
+}) {
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
+        Type
+        <select name="unit" defaultValue={defaultUnit} className={fieldClass}>
+          <option value="g">Solide (g)</option>
+          <option value="ml">Liquide (ml)</option>
+        </select>
+      </label>
+      <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
+        Caféine (mg/100)
+        <input name="caffeine" type="number" min={0} step="0.1" defaultValue={defaultCaffeine} className={fieldClass} />
+      </label>
+    </div>
+  );
+}
 
 function FoodRow({ food }: { food: Food }) {
   const [pending, startTransition] = useTransition();
@@ -52,7 +78,7 @@ function FoodRow({ food }: { food: Food }) {
           </select>
           <div className="grid grid-cols-4 gap-2">
             <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-              Kcal/100g
+              Kcal/100
               <input name="calories" type="number" min={0} step="0.1" defaultValue={food.calories} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
             </label>
             <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
@@ -82,13 +108,18 @@ function FoodRow({ food }: { food: Food }) {
               <input name="sodium" type="number" min={0} step="1" defaultValue={food.sodium} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
             </label>
           </div>
+          <UnitCaffeineFields
+            defaultUnit={food.unit}
+            defaultCaffeine={food.caffeine}
+            fieldClass="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent"
+          />
           <div className="grid grid-cols-2 gap-2">
             <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
               Portion (libellé)
               <input name="portion_label" type="text" placeholder="Ex: 1 tranche" defaultValue={food.portion_label ?? ""} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
             </label>
             <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-              Portion (g)
+              Portion (g/ml)
               <input name="portion_grams" type="number" min={0} step="1" placeholder="Ex: 30" defaultValue={food.portion_grams ?? ""} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
             </label>
           </div>
@@ -113,8 +144,9 @@ function FoodRow({ food }: { food: Food }) {
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">{food.name}</p>
         <p className="text-xs text-foreground-muted">
-          {food.calories} kcal · {food.protein}g P · {food.carbs}g G · {food.fat}g L (/100g)
-          {food.portion_grams ? ` · portion : ${food.portion_label ?? `${food.portion_grams}g`}` : ""}
+          {food.calories} kcal · {food.protein}g P · {food.carbs}g G · {food.fat}g L (/100{food.unit})
+          {food.caffeine > 0 ? ` · ☕ ${food.caffeine}mg` : ""}
+          {food.portion_grams ? ` · portion : ${food.portion_label ?? `${food.portion_grams}${food.unit}`}` : ""}
         </p>
       </div>
       <button onClick={() => setEditing(true)} className="shrink-0 text-xs text-foreground-muted hover:text-foreground">
@@ -170,7 +202,17 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
                 disabled={pending}
                 className="w-full rounded-xl border-[1.5px] border-dashed border-accent px-4 py-3 text-sm font-medium text-accent transition hover:bg-accent-soft disabled:opacity-60"
               >
-                {pending ? "Import..." : "📥 Importer la liste de base (~65 aliments)"}
+                {pending ? "Import..." : "📥 Importer la liste de base (~90 aliments et boissons)"}
+              </button>
+            )}
+
+            {foods.length > 0 && !foods.some((f) => f.category === "Boissons") && (
+              <button
+                onClick={() => startTransition(() => seedDefaultDrinks())}
+                disabled={pending}
+                className="w-full rounded-xl border-[1.5px] border-dashed border-accent px-4 py-3 text-sm font-medium text-accent transition hover:bg-accent-soft disabled:opacity-60"
+              >
+                {pending ? "Import..." : "☕ Importer les boissons (café, thé, jus, sodas…)"}
               </button>
             )}
 
@@ -204,7 +246,7 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
                 </select>
                 <div className="grid grid-cols-4 gap-2">
                   <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-                    Kcal/100g
+                    Kcal/100
                     <input name="calories" type="number" min={0} step="0.1" required className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
                   </label>
                   <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
@@ -234,13 +276,18 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
                     <input name="sodium" type="number" min={0} step="1" defaultValue={0} className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
                   </label>
                 </div>
+                <UnitCaffeineFields
+                  defaultUnit="g"
+                  defaultCaffeine={0}
+                  fieldClass="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent"
+                />
                 <div className="grid grid-cols-2 gap-2">
                   <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
                     Portion (libellé)
                     <input name="portion_label" type="text" placeholder="Ex: 1 tranche" className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
                   </label>
                   <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-                    Portion (g)
+                    Portion (g/ml)
                     <input name="portion_grams" type="number" min={0} step="1" placeholder="Ex: 30" className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
                   </label>
                 </div>

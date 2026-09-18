@@ -6,9 +6,10 @@ import { addWater } from "@/lib/actions/nutrition";
 
 const QUICK_AMOUNTS = [250, 330, 500];
 
-export function WaterTracker({ ml, goalMl = 2000 }: { ml: number; goalMl?: number }) {
+export function WaterTracker({ ml, drinksMl = 0, goalMl = 2000 }: { ml: number; drinksMl?: number; goalMl?: number }) {
   const [pending, startTransition] = useTransition();
-  const pct = Math.min(100, Math.round((ml / goalMl) * 100));
+  const totalMl = ml + drinksMl;
+  const pct = Math.min(100, Math.round((totalMl / goalMl) * 100));
 
   return (
     <div className="rounded-2xl border-[1.5px] border-water/50 bg-surface p-5">
@@ -17,18 +18,23 @@ export function WaterTracker({ ml, goalMl = 2000 }: { ml: number; goalMl?: numbe
         <span className="text-sm">
           <AnimatePresence mode="popLayout">
             <motion.span
-              key={ml}
+              key={totalMl}
               initial={{ opacity: 0, y: -6, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
               className="inline-block font-semibold text-foreground"
             >
-              {ml}
+              {totalMl}
             </motion.span>
           </AnimatePresence>
           {" "}/ {goalMl} ml
         </span>
       </div>
+      {drinksMl > 0 && (
+        <p className="-mt-1.5 mb-3 text-[11px] text-foreground-muted">
+          dont {drinksMl} ml de boissons du journal (café, thé, jus…)
+        </p>
+      )}
       <div className="mb-3 h-1.5 w-full overflow-hidden rounded-full bg-surface-muted">
         <motion.div
           className="h-full rounded-full"

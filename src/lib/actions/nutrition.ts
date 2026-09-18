@@ -4,13 +4,17 @@ import { revalidatePath } from "next/cache";
 import { format } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { computeNutritionTargets, type ActivityLevel, type NutritionGoal } from "@/lib/nutrition-calculator";
-import { DEFAULT_FOODS } from "@/lib/food-database";
+import { DEFAULT_DRINKS, DEFAULT_FOODS } from "@/lib/food-database";
 import type { MealEntry } from "@/types/database";
 
 const MEAL_TYPES: MealEntry["meal_type"][] = ["petit-dejeuner", "dejeuner", "diner", "collation", "autre"];
 
 function parseMealType(raw: string): MealEntry["meal_type"] {
   return MEAL_TYPES.includes(raw as MealEntry["meal_type"]) ? (raw as MealEntry["meal_type"]) : "autre";
+}
+
+function parseUnit(raw: FormDataEntryValue | null): "g" | "ml" {
+  return raw === "ml" ? "ml" : "g";
 }
 
 export async function logMeal(formData: FormData) {
@@ -25,6 +29,8 @@ export async function logMeal(formData: FormData) {
   const fiber = Number(formData.get("fiber") ?? 0);
   const sugar = Number(formData.get("sugar") ?? 0);
   const sodium = Number(formData.get("sodium") ?? 0);
+  const caffeine = Number(formData.get("caffeine") ?? 0);
+  const unit = parseUnit(formData.get("unit"));
   const entry_date = String(formData.get("entry_date") ?? "").trim() || format(new Date(), "yyyy-MM-dd");
 
   if (!food_name || quantity_grams <= 0) return;
@@ -49,6 +55,8 @@ export async function logMeal(formData: FormData) {
     fiber,
     sugar,
     sodium,
+    caffeine,
+    unit,
   });
 
   revalidatePath("/nutrition");
@@ -118,6 +126,8 @@ export async function addFood(formData: FormData) {
   const fiber = Number(formData.get("fiber") ?? 0);
   const sugar = Number(formData.get("sugar") ?? 0);
   const sodium = Number(formData.get("sodium") ?? 0);
+  const caffeine = Number(formData.get("caffeine") ?? 0);
+  const unit = parseUnit(formData.get("unit"));
   const portion_label = String(formData.get("portion_label") ?? "").trim() || null;
   const portion_grams = Number(formData.get("portion_grams") ?? 0) || null;
 
@@ -129,9 +139,23 @@ export async function addFood(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) return;
 
-  await supabase
-    .from("foods")
-    .insert({ user_id: user.id, name, icon, category, calories, protein, carbs, fat, fiber, sugar, sodium, portion_label, portion_grams });
+  await supabase.from("foods").insert({
+    user_id: user.id,
+    name,
+    icon,
+    category,
+    calories,
+    protein,
+    carbs,
+    fat,
+    fiber,
+    sugar,
+    sodium,
+    caffeine,
+    unit,
+    portion_label,
+    portion_grams,
+  });
   revalidatePath("/nutrition");
 }
 
@@ -146,6 +170,8 @@ export async function updateFood(id: string, formData: FormData) {
   const fiber = Number(formData.get("fiber") ?? 0);
   const sugar = Number(formData.get("sugar") ?? 0);
   const sodium = Number(formData.get("sodium") ?? 0);
+  const caffeine = Number(formData.get("caffeine") ?? 0);
+  const unit = parseUnit(formData.get("unit"));
   const portion_label = String(formData.get("portion_label") ?? "").trim() || null;
   const portion_grams = Number(formData.get("portion_grams") ?? 0) || null;
 
@@ -154,7 +180,7 @@ export async function updateFood(id: string, formData: FormData) {
   const supabase = await createClient();
   await supabase
     .from("foods")
-    .update({ name, icon, category, calories, protein, carbs, fat, fiber, sugar, sodium, portion_label, portion_grams })
+    .update({ name, icon, category, calories, protein, carbs, fat, fiber, sugar, sodium, caffeine, unit, portion_label, portion_grams })
     .eq("id", id);
   revalidatePath("/nutrition");
 }
@@ -172,7 +198,27 @@ export async function seedDefaultFoods() {
   } = await supabase.auth.getUser();
   if (!user) return;
 
-  const rows = DEFAULT_FOODS.map((f) => ({ user_id: user.id, ...f }));
+  const rows = [...DEFAULT_FOODS, ...DEFAULT_DRINKS].map((f) => ({ user_id: user.id, ...f }));
+  await supabase.from("foods").insert(rows);
+  revalidatePath("/nutrition");
+}
+
+// Adds the default drinks the user doesn't already have (matched by name).
+export async function seedDefaultDrinks() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const { data: existing } = await supabase.from("foods").select("name").eq("user_id", user.id);
+  const existingNames = new Set((existing ?? []).map((f) => f.name.toLowerCase()));
+  const rows = DEFAULT_DRINKS.filter((d) => !existingNames.has(d.name.toLowerCase())).map((d) => ({
+    user_id: user.id,
+    ...d,
+  }));
+  if (rows.length === 0) return;
+
   await supabase.from("foods").insert(rows);
   revalidatePath("/nutrition");
 }
@@ -265,6 +311,8 @@ export type TemplateItemInput = {
   fiber: number;
   sugar: number;
   sodium: number;
+  caffeine: number;
+  unit: "g" | "ml";
 };
 
 export async function createMealTemplate(name: string, icon: string, items: TemplateItemInput[]) {
@@ -333,6 +381,8 @@ export async function logMealTemplate(templateId: string, mealType: string) {
       fiber: item.fiber,
       sugar: item.sugar,
       sodium: item.sodium,
+      caffeine: item.caffeine,
+      unit: item.unit,
     }))
   );
 

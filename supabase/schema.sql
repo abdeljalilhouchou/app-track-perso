@@ -159,6 +159,8 @@ create table if not exists public.foods (
   fiber numeric(6, 1) not null default 0,
   sugar numeric(6, 1) not null default 0,
   sodium numeric(6, 1) not null default 0,
+  caffeine numeric(6, 1) not null default 0,
+  unit text not null default 'g' check (unit in ('g', 'ml')),
   portion_label text,
   portion_grams numeric(7, 1),
   created_at timestamptz not null default now()
@@ -187,6 +189,8 @@ create table if not exists public.meal_entries (
   fiber numeric(6, 1) not null default 0,
   sugar numeric(6, 1) not null default 0,
   sodium numeric(6, 1) not null default 0,
+  caffeine numeric(6, 1) not null default 0,
+  unit text not null default 'g' check (unit in ('g', 'ml')),
   created_at timestamptz not null default now()
 );
 
@@ -249,7 +253,9 @@ create table if not exists public.meal_template_items (
   fat numeric(6, 1) not null default 0,
   fiber numeric(6, 1) not null default 0,
   sugar numeric(6, 1) not null default 0,
-  sodium numeric(6, 1) not null default 0
+  sodium numeric(6, 1) not null default 0,
+  caffeine numeric(6, 1) not null default 0,
+  unit text not null default 'g' check (unit in ('g', 'ml'))
 );
 
 alter table public.meal_template_items enable row level security;

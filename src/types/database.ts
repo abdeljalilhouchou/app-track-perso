@@ -134,6 +134,8 @@ export type Database = {
           fiber: number;
           sugar: number;
           sodium: number;
+          caffeine: number;
+          unit: "g" | "ml";
           portion_label: string | null;
           portion_grams: number | null;
           created_at: string;
@@ -162,6 +164,8 @@ export type Database = {
           fiber: number;
           sugar: number;
           sodium: number;
+          caffeine: number;
+          unit: "g" | "ml";
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["meal_entries"]["Row"]> & {
@@ -235,6 +239,8 @@ export type Database = {
           fiber: number;
           sugar: number;
           sodium: number;
+          caffeine: number;
+          unit: "g" | "ml";
         };
         Insert: Partial<Database["public"]["Tables"]["meal_template_items"]["Row"]> & {
           template_id: string;

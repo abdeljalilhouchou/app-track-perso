@@ -10,6 +10,11 @@ export type SeedFood = {
   fiber?: number;
   sugar?: number;
   sodium?: number;
+  // mg per 100g/ml
+  caffeine?: number;
+  unit?: "g" | "ml";
+  portion_label?: string;
+  portion_grams?: number;
 };
 
 export const FOOD_CATEGORIES = [
@@ -21,6 +26,7 @@ export const FOOD_CATEGORIES = [
   "Légumes",
   "Fruits",
   "Matières grasses & oléagineux",
+  "Boissons",
   "Autres",
 ] as const;
 
@@ -117,7 +123,46 @@ export const DEFAULT_FOODS: SeedFood[] = [
   { name: "Olives", icon: "🫒", category: "Autres", calories: 115, protein: 0.8, carbs: 6, fat: 11, fiber: 3.2, sodium: 1500 },
 ];
 
-type Macros = { calories: number; protein: number; carbs: number; fat: number; fiber?: number; sugar?: number; sodium?: number };
+const DRINK = "Boissons";
+
+// Per 100 ml
+export const DEFAULT_DRINKS: SeedFood[] = [
+  { name: "Espresso", icon: "☕", category: DRINK, unit: "ml", calories: 9, protein: 0.1, carbs: 1.7, fat: 0.2, sodium: 14, caffeine: 212, portion_label: "1 espresso", portion_grams: 30 },
+  { name: "Espresso double", icon: "☕", category: DRINK, unit: "ml", calories: 9, protein: 0.1, carbs: 1.7, fat: 0.2, sodium: 14, caffeine: 212, portion_label: "1 double", portion_grams: 60 },
+  { name: "Café noir (filtre)", icon: "☕", category: DRINK, unit: "ml", calories: 1, protein: 0.1, carbs: 0, fat: 0, sodium: 2, caffeine: 40, portion_label: "1 tasse", portion_grams: 240 },
+  { name: "Café américano / allongé", icon: "☕", category: DRINK, unit: "ml", calories: 1, protein: 0.1, carbs: 0, fat: 0, sodium: 3, caffeine: 32, portion_label: "1 tasse", portion_grams: 240 },
+  { name: "Café au lait", icon: "☕", category: DRINK, unit: "ml", calories: 40, protein: 2, carbs: 3.5, fat: 2, sugar: 3.5, sodium: 30, caffeine: 20, portion_label: "1 tasse", portion_grams: 200 },
+  { name: "Cappuccino", icon: "☕", category: DRINK, unit: "ml", calories: 40, protein: 2.2, carbs: 3.7, fat: 2.2, sugar: 3.5, sodium: 30, caffeine: 42, portion_label: "1 tasse", portion_grams: 180 },
+  { name: "Latte", icon: "☕", category: DRINK, unit: "ml", calories: 45, protein: 2.6, carbs: 3.7, fat: 2.4, sugar: 3.6, sodium: 35, caffeine: 25, portion_label: "1 grande tasse", portion_grams: 300 },
+  { name: "Thé noir (nature)", icon: "🍵", category: DRINK, unit: "ml", calories: 1, protein: 0, carbs: 0.3, fat: 0, sodium: 3, caffeine: 20, portion_label: "1 tasse", portion_grams: 240 },
+  { name: "Thé vert (nature)", icon: "🍵", category: DRINK, unit: "ml", calories: 1, protein: 0, carbs: 0.2, fat: 0, sodium: 1, caffeine: 12, portion_label: "1 tasse", portion_grams: 240 },
+  { name: "Thé à la menthe (sucré)", icon: "🍵", category: DRINK, unit: "ml", calories: 30, protein: 0, carbs: 7.5, fat: 0, sugar: 7.5, sodium: 2, caffeine: 10, portion_label: "1 verre", portion_grams: 150 },
+  { name: "Tisane", icon: "🍵", category: DRINK, unit: "ml", calories: 0, protein: 0, carbs: 0, fat: 0, sodium: 1, portion_label: "1 tasse", portion_grams: 240 },
+  { name: "Chocolat chaud", icon: "☕", category: DRINK, unit: "ml", calories: 80, protein: 3.4, carbs: 11, fat: 2.6, sugar: 9, sodium: 50, caffeine: 3, portion_label: "1 tasse", portion_grams: 250 },
+  { name: "Eau", icon: "💧", category: DRINK, unit: "ml", calories: 0, protein: 0, carbs: 0, fat: 0, sodium: 2, portion_label: "1 verre", portion_grams: 250 },
+  { name: "Jus d'orange", icon: "🧃", category: DRINK, unit: "ml", calories: 45, protein: 0.7, carbs: 10.4, fat: 0.2, fiber: 0.2, sugar: 8.4, sodium: 1, portion_label: "1 verre", portion_grams: 200 },
+  { name: "Jus de pomme", icon: "🧃", category: DRINK, unit: "ml", calories: 46, protein: 0.1, carbs: 11.3, fat: 0.1, sugar: 9.6, sodium: 4, portion_label: "1 verre", portion_grams: 200 },
+  { name: "Smoothie aux fruits", icon: "🥤", category: DRINK, unit: "ml", calories: 55, protein: 0.6, carbs: 12.5, fat: 0.3, fiber: 1, sugar: 11, sodium: 5, portion_label: "1 verre", portion_grams: 250 },
+  { name: "Cola", icon: "🥤", category: DRINK, unit: "ml", calories: 42, protein: 0, carbs: 10.6, fat: 0, sugar: 10.6, sodium: 4, caffeine: 10, portion_label: "1 canette", portion_grams: 330 },
+  { name: "Cola zéro", icon: "🥤", category: DRINK, unit: "ml", calories: 0, protein: 0, carbs: 0, fat: 0, sodium: 12, caffeine: 10, portion_label: "1 canette", portion_grams: 330 },
+  { name: "Soda citron / limonade", icon: "🥤", category: DRINK, unit: "ml", calories: 40, protein: 0, carbs: 10, fat: 0, sugar: 10, sodium: 8, portion_label: "1 canette", portion_grams: 330 },
+  { name: "Boisson énergisante", icon: "🥤", category: DRINK, unit: "ml", calories: 45, protein: 0, carbs: 11, fat: 0, sugar: 11, sodium: 40, caffeine: 32, portion_label: "1 canette", portion_grams: 250 },
+  { name: "Lait d'amande", icon: "🥛", category: DRINK, unit: "ml", calories: 15, protein: 0.5, carbs: 0.3, fat: 1.2, sodium: 70, portion_label: "1 verre", portion_grams: 250 },
+  { name: "Lait d'avoine", icon: "🥛", category: DRINK, unit: "ml", calories: 45, protein: 1, carbs: 6.7, fat: 1.5, fiber: 0.8, sugar: 4, sodium: 40, portion_label: "1 verre", portion_grams: 250 },
+  { name: "Lben (lait fermenté)", icon: "🥛", category: DRINK, unit: "ml", calories: 40, protein: 3.2, carbs: 4.5, fat: 1, sugar: 4.5, sodium: 50, portion_label: "1 verre", portion_grams: 200 },
+  { name: "Shake protéiné (à l'eau)", icon: "🥤", category: DRINK, unit: "ml", calories: 40, protein: 8, carbs: 1, fat: 0.7, sodium: 60, portion_label: "1 shaker", portion_grams: 300 },
+];
+
+type Macros = {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber?: number;
+  sugar?: number;
+  sodium?: number;
+  caffeine?: number;
+};
 
 export function computeMacros(food: Macros, grams: number) {
   const ratio = grams / 100;
@@ -129,5 +174,6 @@ export function computeMacros(food: Macros, grams: number) {
     fiber: Math.round((food.fiber ?? 0) * ratio * 10) / 10,
     sugar: Math.round((food.sugar ?? 0) * ratio * 10) / 10,
     sodium: Math.round((food.sodium ?? 0) * ratio),
+    caffeine: Math.round((food.caffeine ?? 0) * ratio),
   };
 }

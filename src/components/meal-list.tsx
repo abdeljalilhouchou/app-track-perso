@@ -53,11 +53,12 @@ export function MealList({ meals }: { meals: MealEntry[] }) {
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{m.food_name}</p>
                   <p className="text-xs text-foreground-muted">
-                    {m.quantity_grams}g · {m.calories} kcal · {m.protein}g P · {m.carbs}g G · {m.fat}g L
+                    {m.quantity_grams}{m.unit} · {m.calories} kcal · {m.protein}g P · {m.carbs}g G · {m.fat}g L
                   </p>
-                  {(m.fiber > 0 || m.sugar > 0 || m.sodium > 0) && (
+                  {(m.fiber > 0 || m.sugar > 0 || m.sodium > 0 || m.caffeine > 0) && (
                     <p className="text-[10px] text-foreground-muted/70">
                       {m.fiber}g fibres · {m.sugar}g sucres · {m.sodium}mg sodium
+                      {m.caffeine > 0 ? ` · ☕ ${m.caffeine}mg caféine` : ""}
                     </p>
                   )}
                 </div>

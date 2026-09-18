@@ -26,6 +26,8 @@ type SelectedFood = {
   fiber: number;
   sugar: number;
   sodium: number;
+  caffeine: number;
+  unit: "g" | "ml";
   portion_label?: string | null;
   portion_grams?: number | null;
 };
@@ -42,6 +44,8 @@ function fromFood(f: Food): SelectedFood {
     fiber: f.fiber,
     sugar: f.sugar,
     sodium: f.sodium,
+    caffeine: f.caffeine,
+    unit: f.unit,
     portion_label: f.portion_label,
     portion_grams: f.portion_grams,
   };
@@ -59,6 +63,8 @@ function fromOff(r: OffResult): SelectedFood {
     fiber: r.fiber,
     sugar: r.sugar,
     sodium: r.sodium,
+    caffeine: 0,
+    unit: "g",
   };
 }
 
@@ -95,6 +101,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
 
   function selectFood(f: Food) {
     setSelected(fromFood(f));
+    if (f.unit === "ml" && f.portion_grams) setGrams(f.portion_grams);
     setQuery(f.name);
     setOpen(false);
     setOffResults(null);
@@ -149,7 +156,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
-          placeholder={foods.length > 0 ? "Ex: poitrine de poulet, pain..." : "Aucun aliment — ouvre Paramètres pour en ajouter"}
+          placeholder={foods.length > 0 ? "Ex: poitrine de poulet, espresso, jus d'orange..." : "Aucun aliment — ouvre Paramètres pour en ajouter"}
           className="w-full rounded-xl border border-border bg-surface-muted px-3.5 py-2.5 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
         />
         <AnimatePresence>
@@ -170,7 +177,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
                 >
                   <span className="text-lg">{f.icon}</span>
                   <span className="flex-1">{f.name}</span>
-                  <span className="text-xs text-foreground-muted">{f.calories} kcal/100g</span>
+                  <span className="text-xs text-foreground-muted">{f.calories} kcal/100{f.unit}</span>
                 </button>
               ))}
             </motion.div>
@@ -220,7 +227,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
 
       <div className="grid grid-cols-2 gap-3">
         <label className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-foreground-muted">Quantité (g)</span>
+          <span className="text-xs font-medium text-foreground-muted">Quantité ({selected?.unit ?? "g"})</span>
           <input
             type="number"
             min={1}
@@ -254,7 +261,9 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
           onClick={() => setGrams(selected.portion_grams!)}
           className="rounded-full border border-border px-2.5 py-1 text-xs text-foreground-muted transition hover:border-accent/40 hover:text-accent"
         >
-          Portion : {selected.portion_label ?? `${selected.portion_grams}g`}
+          Portion : {selected.portion_label ? `${selected.portion_label} · ` : ""}
+          {selected.portion_grams}
+          {selected.unit}
         </button>
       ) : null}
 
@@ -267,10 +276,13 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
           <span><strong>{preview.carbs}g</strong> glucides</span>
           <span className="text-foreground-muted">·</span>
           <span><strong>{preview.fat}g</strong> lipides</span>
-          {(preview.fiber > 0 || preview.sugar > 0 || preview.sodium > 0) && (
+          {(preview.fiber > 0 || preview.sugar > 0 || preview.sodium > 0 || preview.caffeine > 0) && (
             <>
               <span className="w-full" />
-              <span className="text-foreground-muted">{preview.fiber}g fibres · {preview.sugar}g sucres · {preview.sodium}mg sodium</span>
+              <span className="text-foreground-muted">
+                {preview.fiber}g fibres · {preview.sugar}g sucres · {preview.sodium}mg sodium
+                {preview.caffeine > 0 ? ` · ☕ ${preview.caffeine}mg caféine` : ""}
+              </span>
             </>
           )}
         </div>
@@ -287,6 +299,8 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
       <input type="hidden" name="fiber" value={preview?.fiber ?? 0} />
       <input type="hidden" name="sugar" value={preview?.sugar ?? 0} />
       <input type="hidden" name="sodium" value={preview?.sodium ?? 0} />
+      <input type="hidden" name="caffeine" value={preview?.caffeine ?? 0} />
+      <input type="hidden" name="unit" value={selected?.unit ?? "g"} />
 
       <motion.button
         type="submit"

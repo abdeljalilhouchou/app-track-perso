@@ -75,6 +75,10 @@ export default async function NutritionPage() {
     { calories: 0, protein: 0, carbs: 0, fat: 0 }
   );
 
+  const drinksMl = (meals ?? []).filter((m) => m.unit === "ml").reduce((sum, m) => sum + m.quantity_grams, 0);
+  const caffeineMg = Math.round((meals ?? []).reduce((sum, m) => sum + m.caffeine, 0));
+  const CAFFEINE_LIMIT_MG = 400;
+
   const caloriesChart = weeklyTotals(
     (recentMeals ?? []).map((m) => ({ date: m.entry_date, value: m.calories })),
     10
@@ -124,7 +128,36 @@ export default async function NutritionPage() {
               <MacroRings rings={rings} />
             </div>
 
-            <WaterTracker ml={todayWater?.ml ?? 0} />
+            {caffeineMg > 0 && (
+              <div className="rounded-2xl border-[1.5px] border-mood/50 bg-surface p-5">
+                <div className="mb-3 flex items-center justify-between">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">☕ Caféine</p>
+                  <span className="text-sm">
+                    <span
+                      className="font-semibold"
+                      style={{ color: caffeineMg > CAFFEINE_LIMIT_MG ? "var(--danger)" : "var(--foreground)" }}
+                    >
+                      {caffeineMg}
+                    </span>{" "}
+                    / {CAFFEINE_LIMIT_MG} mg
+                  </span>
+                </div>
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-muted">
+                  <div
+                    className="h-full rounded-full transition-all"
+                    style={{
+                      width: `${Math.min(100, Math.round((caffeineMg / CAFFEINE_LIMIT_MG) * 100))}%`,
+                      background: caffeineMg > CAFFEINE_LIMIT_MG ? "var(--danger)" : "var(--mood)",
+                    }}
+                  />
+                </div>
+                <p className="mt-2 text-[11px] text-foreground-muted">
+                  Repère courant : ne pas dépasser ~400 mg de caféine par jour (environ 4 tasses de café).
+                </p>
+              </div>
+            )}
+
+            <WaterTracker ml={todayWater?.ml ?? 0} drinksMl={drinksMl} />
 
             <div className="rounded-2xl border border-border bg-surface p-5">
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">

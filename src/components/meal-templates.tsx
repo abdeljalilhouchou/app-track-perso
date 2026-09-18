@@ -48,6 +48,8 @@ function TemplateBuilder({ foods, onDone }: { foods: Food[]; onDone: () => void 
         fiber: m.fiber,
         sugar: m.sugar,
         sodium: m.sodium,
+        caffeine: m.caffeine,
+        unit: food.unit,
       },
     ]);
     setQuery("");
@@ -110,7 +112,7 @@ function TemplateBuilder({ foods, onDone }: { foods: Food[]; onDone: () => void 
             {items.map((it, i) => (
               <li key={i} className="flex items-center gap-2 rounded-lg bg-surface px-2.5 py-1.5 text-xs">
                 <span>{it.icon}</span>
-                <span className="flex-1">{it.food_name} · {it.quantity_grams}g</span>
+                <span className="flex-1">{it.food_name} · {it.quantity_grams}{it.unit}</span>
                 <span className="text-foreground-muted">{it.calories} kcal</span>
                 <button
                   type="button"

@@ -97,7 +97,7 @@ export default async function JournalPage({
       time: meal.occurred_at,
       icon: meal.icon,
       title: meal.food_name,
-      subtitle: `${meal.quantity_grams}g · ${meal.calories} kcal · ${meal.protein}g P · ${meal.carbs}g G · ${meal.fat}g L`,
+      subtitle: `${meal.quantity_grams}${meal.unit} ·${meal.calories} kcal · ${meal.protein}g P · ${meal.carbs}g G · ${meal.fat}g L`,
       href: "/nutrition",
     });
   }
