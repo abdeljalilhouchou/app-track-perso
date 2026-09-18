@@ -370,6 +370,45 @@ export async function createMealTemplate(name: string, icon: string, items: Temp
   revalidatePath("/nutrition");
 }
 
+export async function updateMealTemplate(
+  id: string,
+  name: string,
+  icon: string,
+  items: TemplateItemInput[]
+): Promise<{ error: string | null }> {
+  if (!name.trim() || items.length === 0) return { error: "Nom et au moins un aliment requis." };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Non connecté." };
+
+  const { error: updateError } = await supabase
+    .from("meal_templates")
+    .update({ name: name.trim(), icon })
+    .eq("id", id);
+  if (updateError) return { error: updateError.message };
+
+  // Insert the new items first, then drop the old ones, so a failed insert never loses the recipe.
+  const { data: oldItems } = await supabase.from("meal_template_items").select("id").eq("template_id", id);
+
+  const { error: insertError } = await supabase.from("meal_template_items").insert(
+    items.map((item) => ({
+      template_id: id,
+      user_id: user.id,
+      ...item,
+    }))
+  );
+  if (insertError) return { error: insertError.message };
+
+  const oldIds = (oldItems ?? []).map((o) => o.id);
+  if (oldIds.length > 0) await supabase.from("meal_template_items").delete().in("id", oldIds);
+
+  revalidatePath("/nutrition");
+  return { error: null };
+}
+
 export async function deleteMealTemplate(id: string) {
   const supabase = await createClient();
   await supabase.from("meal_templates").delete().eq("id", id);

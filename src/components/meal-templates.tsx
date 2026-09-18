@@ -3,7 +3,13 @@
 import { useMemo, useState, useTransition } from "react";
 import { IconPicker } from "@/components/ui/icon-picker";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
-import { createMealTemplate, deleteMealTemplate, logMealTemplate, type TemplateItemInput } from "@/lib/actions/nutrition";
+import {
+  createMealTemplate,
+  deleteMealTemplate,
+  logMealTemplate,
+  updateMealTemplate,
+  type TemplateItemInput,
+} from "@/lib/actions/nutrition";
 import { computeMacros } from "@/lib/food-database";
 import type { Food, MealTemplate, MealTemplateItem } from "@/types/database";
 
@@ -18,13 +24,64 @@ const MEAL_TYPES = [
 
 type TemplateWithItems = MealTemplate & { meal_template_items: MealTemplateItem[] };
 
-function TemplateBuilder({ foods, onDone }: { foods: Food[]; onDone: () => void }) {
+// `base` holds the macros for `base.quantity_grams`; the edited quantity scales them proportionally.
+type DraftItem = { base: TemplateItemInput; qty: number };
+
+const round1 = (n: number) => Math.round(n * 10) / 10;
+
+function scaleItem({ base, qty }: DraftItem): TemplateItemInput {
+  const r = base.quantity_grams > 0 ? qty / base.quantity_grams : 1;
+  return {
+    ...base,
+    quantity_grams: qty,
+    calories: round1(base.calories * r),
+    protein: round1(base.protein * r),
+    carbs: round1(base.carbs * r),
+    fat: round1(base.fat * r),
+    fiber: round1(base.fiber * r),
+    sugar: round1(base.sugar * r),
+    sodium: round1(base.sodium * r),
+    caffeine: round1(base.caffeine * r),
+  };
+}
+
+function toDraft(item: MealTemplateItem): DraftItem {
+  return {
+    base: {
+      food_id: item.food_id,
+      food_name: item.food_name,
+      icon: item.icon,
+      quantity_grams: item.quantity_grams,
+      calories: item.calories,
+      protein: item.protein,
+      carbs: item.carbs,
+      fat: item.fat,
+      fiber: item.fiber,
+      sugar: item.sugar,
+      sodium: item.sodium,
+      caffeine: item.caffeine,
+      unit: item.unit,
+    },
+    qty: item.quantity_grams,
+  };
+}
+
+function TemplateBuilder({
+  foods,
+  onDone,
+  initial,
+}: {
+  foods: Food[];
+  onDone: () => void;
+  initial?: TemplateWithItems;
+}) {
   const [pending, startTransition] = useTransition();
-  const [name, setName] = useState("");
-  const [icon, setIcon] = useState("🍽️");
-  const [items, setItems] = useState<TemplateItemInput[]>([]);
+  const [name, setName] = useState(initial?.name ?? "");
+  const [icon, setIcon] = useState(initial?.icon ?? "🍽️");
+  const [items, setItems] = useState<DraftItem[]>(() => (initial?.meal_template_items ?? []).map(toDraft));
   const [query, setQuery] = useState("");
   const [grams, setGrams] = useState(100);
+  const [error, setError] = useState<string | null>(null);
 
   const matches = useMemo(() => {
     if (!query.trim()) return [];
@@ -37,29 +94,54 @@ function TemplateBuilder({ foods, onDone }: { foods: Food[]; onDone: () => void 
     setItems((prev) => [
       ...prev,
       {
-        food_id: food.id,
-        food_name: food.name,
-        icon: food.icon,
-        quantity_grams: grams,
-        calories: m.calories,
-        protein: m.protein,
-        carbs: m.carbs,
-        fat: m.fat,
-        fiber: m.fiber,
-        sugar: m.sugar,
-        sodium: m.sodium,
-        caffeine: m.caffeine,
-        unit: food.unit,
+        qty: grams,
+        base: {
+          food_id: food.id,
+          food_name: food.name,
+          icon: food.icon,
+          quantity_grams: grams,
+          calories: m.calories,
+          protein: m.protein,
+          carbs: m.carbs,
+          fat: m.fat,
+          fiber: m.fiber,
+          sugar: m.sugar,
+          sodium: m.sodium,
+          caffeine: m.caffeine,
+          unit: food.unit,
+        },
       },
     ]);
     setQuery("");
     setGrams(100);
   }
 
-  const totals = items.reduce(
+  function setQty(index: number, qty: number) {
+    setItems((prev) => prev.map((it, i) => (i === index ? { ...it, qty } : it)));
+  }
+
+  const scaled = items.map(scaleItem);
+  const totals = scaled.reduce(
     (acc, it) => ({ calories: acc.calories + it.calories, protein: acc.protein + it.protein }),
     { calories: 0, protein: 0 }
   );
+  const hasInvalidQty = items.some((it) => !(it.qty > 0));
+
+  function save() {
+    setError(null);
+    startTransition(async () => {
+      if (initial) {
+        const result = await updateMealTemplate(initial.id, name, icon, scaled);
+        if (result.error) {
+          setError(result.error);
+          return;
+        }
+      } else {
+        await createMealTemplate(name, icon, scaled);
+      }
+      onDone();
+    });
+  }
 
   return (
     <div className="space-y-3 rounded-xl bg-surface-muted p-3">
@@ -85,6 +167,7 @@ function TemplateBuilder({ foods, onDone }: { foods: Food[]; onDone: () => void 
           min={1}
           value={grams}
           onChange={(e) => setGrams(Number(e.target.value))}
+          aria-label="Quantité à ajouter"
           className="w-20 rounded-lg border border-border bg-surface px-2 py-2 text-xs outline-none focus:border-accent"
         />
       </div>
@@ -99,7 +182,7 @@ function TemplateBuilder({ foods, onDone }: { foods: Food[]; onDone: () => void 
               >
                 <span>{f.icon}</span>
                 <span className="flex-1">{f.name}</span>
-                <span className="text-foreground-muted">+ ajouter</span>
+                <span className="text-foreground-muted">+ ajouter ({grams}{f.unit})</span>
               </button>
             </li>
           ))}
@@ -111,12 +194,22 @@ function TemplateBuilder({ foods, onDone }: { foods: Food[]; onDone: () => void 
           <ul className="space-y-1">
             {items.map((it, i) => (
               <li key={i} className="flex items-center gap-2 rounded-lg bg-surface px-2.5 py-1.5 text-xs">
-                <span>{it.icon}</span>
-                <span className="flex-1">{it.food_name} · {it.quantity_grams}{it.unit}</span>
-                <span className="text-foreground-muted">{it.calories} kcal</span>
+                <span>{it.base.icon}</span>
+                <span className="min-w-0 flex-1 truncate">{it.base.food_name}</span>
+                <input
+                  type="number"
+                  min={1}
+                  value={it.qty}
+                  onChange={(e) => setQty(i, Number(e.target.value))}
+                  aria-label={`Quantité de ${it.base.food_name}`}
+                  className="w-16 rounded-md border border-border bg-surface-muted px-1.5 py-1 text-xs outline-none focus:border-accent"
+                />
+                <span className="w-5 text-foreground-muted">{it.base.unit}</span>
+                <span className="w-16 text-right text-foreground-muted">{scaled[i].calories} kcal</span>
                 <button
                   type="button"
                   onClick={() => setItems((prev) => prev.filter((_, idx) => idx !== i))}
+                  aria-label={`Retirer ${it.base.food_name}`}
                   className="text-foreground-muted hover:text-danger"
                 >
                   ✕
@@ -130,19 +223,16 @@ function TemplateBuilder({ foods, onDone }: { foods: Food[]; onDone: () => void 
         </div>
       )}
 
+      {error && <p className="text-xs text-danger">Enregistrement impossible : {error}</p>}
+
       <div className="flex gap-2">
         <button
           type="button"
-          disabled={pending || !name.trim() || items.length === 0}
-          onClick={() =>
-            startTransition(async () => {
-              await createMealTemplate(name, icon, items);
-              onDone();
-            })
-          }
+          disabled={pending || !name.trim() || items.length === 0 || hasInvalidQty}
+          onClick={save}
           className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-50"
         >
-          Enregistrer la recette
+          {initial ? "Enregistrer les modifications" : "Enregistrer la recette"}
         </button>
         <button
           type="button"
@@ -156,10 +246,19 @@ function TemplateBuilder({ foods, onDone }: { foods: Food[]; onDone: () => void 
   );
 }
 
-function TemplateRow({ template }: { template: TemplateWithItems }) {
+function TemplateRow({ template, foods }: { template: TemplateWithItems; foods: Food[] }) {
   const [pending, startTransition] = useTransition();
+  const [editing, setEditing] = useState(false);
   const [mealType, setMealType] = useState<(typeof MEAL_TYPES)[number]["value"]>("dejeuner");
   const totalCalories = template.meal_template_items.reduce((sum, it) => sum + it.calories, 0);
+
+  if (editing) {
+    return (
+      <li>
+        <TemplateBuilder foods={foods} initial={template} onDone={() => setEditing(false)} />
+      </li>
+    );
+  }
 
   return (
     <li className="rounded-xl bg-surface-muted p-3">
@@ -173,6 +272,13 @@ function TemplateRow({ template }: { template: TemplateWithItems }) {
             {template.meal_template_items.length} aliments · {Math.round(totalCalories)} kcal
           </p>
         </div>
+        <button
+          type="button"
+          onClick={() => setEditing(true)}
+          className="shrink-0 text-xs text-foreground-muted hover:text-foreground"
+        >
+          Modifier
+        </button>
         <ConfirmDeleteButton
           disabled={pending}
           onConfirm={() => startTransition(() => deleteMealTemplate(template.id))}
@@ -238,7 +344,7 @@ export function MealTemplatesPanel({ templates, foods }: { templates: TemplateWi
       ) : (
         <ul className="space-y-2">
           {templates.map((t) => (
-            <TemplateRow key={t.id} template={t} />
+            <TemplateRow key={t.id} template={t} foods={foods} />
           ))}
         </ul>
       )}
