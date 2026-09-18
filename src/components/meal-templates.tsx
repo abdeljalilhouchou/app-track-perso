@@ -241,7 +241,7 @@ function TemplateBuilder({
           type="button"
           disabled={pending || !name.trim() || items.length === 0 || hasInvalidQty}
           onClick={save}
-          className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-50"
+          className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-on-accent transition hover:opacity-90 disabled:opacity-50"
         >
           {initial ? "Enregistrer les modifications" : "Enregistrer la recette"}
         </button>
@@ -354,7 +354,7 @@ function TemplateCard({ template, foods }: { template: TemplateWithItems; foods:
                       type="button"
                       disabled={pending}
                       onClick={() => startTransition(() => logMealTemplate(template.id, mealType))}
-                      className="flex-1 rounded-lg border-[1.5px] border-accent px-3 py-1.5 text-xs font-semibold text-accent transition-colors hover:bg-accent hover:text-white disabled:opacity-50"
+                      className="flex-1 rounded-lg border-[1.5px] border-accent px-3 py-1.5 text-xs font-semibold text-accent transition-colors hover:bg-accent hover:text-on-accent disabled:opacity-50"
                     >
                       Journaliser cette recette
                     </button>

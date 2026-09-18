@@ -124,7 +124,7 @@ function FoodRow({ food }: { food: Food }) {
             </label>
           </div>
           <div className="flex gap-2">
-            <button type="submit" disabled={pending} className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-60">
+            <button type="submit" disabled={pending} className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-on-accent transition hover:opacity-90 disabled:opacity-60">
               Enregistrer
             </button>
             <button type="button" onClick={() => setEditing(false)} className="rounded-lg border border-border px-3 py-1.5 text-xs text-foreground-muted transition hover:bg-surface-muted">
@@ -190,7 +190,7 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-1.5 rounded-lg border-[1.5px] border-accent px-3 py-1.5 text-xs font-semibold text-accent transition-colors hover:bg-accent hover:text-white"
+        className="flex items-center gap-1.5 rounded-lg border-[1.5px] border-accent px-3 py-1.5 text-xs font-semibold text-accent transition-colors hover:bg-accent hover:text-on-accent"
       >
         ⚙️ Paramètres
       </button>
@@ -307,7 +307,7 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
                   </label>
                 </div>
                 <div className="flex gap-2">
-                  <button type="submit" disabled={pending} className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-white transition hover:opacity-90 disabled:opacity-60">
+                  <button type="submit" disabled={pending} className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-on-accent transition hover:opacity-90 disabled:opacity-60">
                     Ajouter
                   </button>
                   <button type="button" onClick={() => setShowAdd(false)} className="rounded-lg border border-border px-3 py-1.5 text-xs text-foreground-muted transition hover:bg-surface">

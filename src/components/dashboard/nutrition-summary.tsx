@@ -42,7 +42,7 @@ export function NutritionSummary({
           <span className="rounded-full border border-nutrition/40 bg-surface-muted px-2.5 py-1">
             ⚖️ {weightKg} kg
             {weightDelta !== null && weightDelta !== 0 && (
-              <span style={{ color: weightDelta > 0 ? "var(--danger)" : "#16a34a" }}>
+              <span style={{ color: weightDelta > 0 ? "var(--danger)" : "var(--success)" }}>
                 {" "}
                 ({weightDelta > 0 ? "+" : ""}
                 {weightDelta})

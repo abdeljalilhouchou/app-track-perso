@@ -37,7 +37,7 @@ export function NutritionTabs({
             type="button"
             onClick={() => setActive(tab.id)}
             className="relative shrink-0 rounded-lg px-3 py-2 text-sm font-medium transition-colors sm:px-3.5"
-            style={{ color: active === tab.id ? "white" : "var(--foreground-muted)" }}
+            style={{ color: active === tab.id ? "var(--on-accent)" : "var(--foreground-muted)" }}
           >
             {active === tab.id && (
               <motion.span

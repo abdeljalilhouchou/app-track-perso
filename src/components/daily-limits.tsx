@@ -50,7 +50,7 @@ export function DailyLimits({ waterGoalMl, caffeineLimitMg }: { waterGoalMl: num
       <button
         type="submit"
         disabled={pending}
-        className="mt-3 rounded-xl border-[1.5px] border-accent px-4 py-2 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-white disabled:opacity-60"
+        className="mt-3 rounded-xl border-[1.5px] border-accent px-4 py-2 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-on-accent disabled:opacity-60"
       >
         {pending ? "Enregistrement..." : saved ? "Enregistré ✓" : "Enregistrer mes limites"}
       </button>

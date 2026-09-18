@@ -25,6 +25,11 @@
   --weight-soft: #f6ecfe;
 
   --danger: #ef4444;
+  --success: #16a34a;
+  --mood-text: #b45309;
+  --on-accent: #ffffff;
+
+  color-scheme: light;
 }
 
 @theme inline {
@@ -52,19 +57,55 @@
   --color-weight-soft: var(--weight-soft);
 
   --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-on-accent: var(--on-accent);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+/* Dark palette. Applied when the user picks "Sombre", or when they follow the device (no data-theme
+   attribute) and the device is dark. An explicit "Clair" sets data-theme="light" and wins over the device. */
+:root[data-theme="dark"] {
+  --background: #0b0b10;
+  --surface: #16161e;
+  --surface-muted: #1d1d27;
+  --foreground: #f2f2f7;
+  --foreground-muted: #9a9aab;
+  --border: #2b2b37;
+
+  --accent: #818cf8;
+  --accent-soft: #23233a;
+
+  --habit: #a78bfa;
+  --habit-soft: #251f3d;
+  --sport: #34d399;
+  --sport-soft: #10261f;
+  --mood: #fbbf24;
+  --mood-soft: #2c2312;
+  --nutrition: #fb923c;
+  --nutrition-soft: #2c1d10;
+  --water: #38bdf8;
+  --water-soft: #0c2433;
+  --weight: #c084fc;
+  --weight-soft: #2a1c38;
+
+  --danger: #f87171;
+  --success: #4ade80;
+  --mood-text: #fbbf24;
+  --on-accent: #0b0b10;
+
+  color-scheme: dark;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     --background: #0b0b10;
     --surface: #16161e;
     --surface-muted: #1d1d27;
     --foreground: #f2f2f7;
     --foreground-muted: #9a9aab;
-    --border: #26262f;
+    --border: #2b2b37;
 
     --accent: #818cf8;
     --accent-soft: #23233a;
@@ -81,6 +122,13 @@
     --water-soft: #0c2433;
     --weight: #c084fc;
     --weight-soft: #2a1c38;
+
+    --danger: #f87171;
+    --success: #4ade80;
+    --mood-text: #fbbf24;
+    --on-accent: #0b0b10;
+
+    color-scheme: dark;
   }
 }
 

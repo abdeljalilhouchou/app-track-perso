@@ -112,8 +112,11 @@ export function MonthCalendar({
           <button
             disabled={selectedIsFuture || pending}
             onClick={() => startTransition(() => toggleHabitLog(habitId, selected))}
-            className="rounded-full px-3 py-1 text-xs font-medium text-white transition disabled:opacity-40"
-            style={{ background: selectedDone ? color : "var(--foreground-muted)" }}
+            className="rounded-full px-3 py-1 text-xs font-medium transition disabled:opacity-40"
+            style={{
+              background: selectedDone ? color : "var(--foreground-muted)",
+              color: selectedDone ? "white" : "var(--on-accent)",
+            }}
           >
             {selectedDone ? "Fait ✓" : "Marquer fait"}
           </button>

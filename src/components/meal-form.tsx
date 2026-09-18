@@ -309,8 +309,8 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
         animate={justAdded ? { scale: [1, 1.03, 1] } : {}}
         className={`relative w-full overflow-hidden rounded-xl border-[1.5px] px-4 py-2.5 text-sm font-semibold transition-colors disabled:opacity-40 ${
           justAdded
-            ? "border-nutrition bg-nutrition text-white"
-            : "border-accent text-accent hover:bg-accent hover:text-white"
+            ? "border-nutrition bg-nutrition text-on-accent"
+            : "border-accent text-accent hover:bg-accent hover:text-on-accent"
         }`}
       >
         <AnimatePresence mode="wait" initial={false}>

@@ -74,7 +74,7 @@ export function DayNavigator({
                 className="flex h-6.5 w-6.5 items-center justify-center rounded-full text-xs font-semibold"
                 style={{
                   background: isSelected ? "var(--accent)" : "transparent",
-                  color: isSelected ? "white" : dateStr === todayStr ? "var(--accent)" : "var(--foreground)",
+                  color: isSelected ? "var(--on-accent)" : dateStr === todayStr ? "var(--accent)" : "var(--foreground)",
                 }}
               >
                 {format(day, "d")}
@@ -149,14 +149,14 @@ export function DayNavigator({
                       className="relative flex aspect-square items-center justify-center rounded-lg text-xs font-medium transition disabled:opacity-0"
                       style={{
                         background: isSel ? "var(--accent)" : "transparent",
-                        color: isSel ? "white" : isToday(day) ? "var(--accent)" : "var(--foreground)",
+                        color: isSel ? "var(--on-accent)" : isToday(day) ? "var(--accent)" : "var(--foreground)",
                       }}
                     >
                       {format(day, "d")}
                       {marked.has(format(day, "yyyy-MM-dd")) && (
                         <span
                           className="absolute bottom-0.5 h-1 w-1 rounded-full"
-                          style={{ background: isSel ? "white" : "var(--nutrition)" }}
+                          style={{ background: isSel ? "var(--on-accent)" : "var(--nutrition)" }}
                         />
                       )}
                     </button>

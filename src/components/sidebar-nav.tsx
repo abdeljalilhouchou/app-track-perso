@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { signOut } from "@/lib/actions/auth";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   HomeIcon,
   CalendarIcon,
@@ -34,6 +35,7 @@ export function SidebarNav({ displayName }: { displayName: string }) {
         <Link href="/dashboard" className="text-lg font-semibold tracking-tight">
           track<span className="text-accent">.perso</span>
         </Link>
+        <ThemeToggle className="absolute right-2 top-1/2 -translate-y-1/2" />
       </div>
 
       {/* Mobile bottom tab bar */}
@@ -96,9 +98,12 @@ export function SidebarNav({ displayName }: { displayName: string }) {
         </nav>
 
         <div className="mt-auto space-y-3 border-t border-border pt-4">
-          <p className="truncate px-2 text-sm text-foreground-muted">
-            Bonjour, <span className="font-medium text-foreground">{displayName}</span>
-          </p>
+          <div className="flex items-center justify-between gap-2">
+            <p className="truncate px-2 text-sm text-foreground-muted">
+              Bonjour, <span className="font-medium text-foreground">{displayName}</span>
+            </p>
+            <ThemeToggle />
+          </div>
           <form action={signOut}>
             <button
               type="submit"

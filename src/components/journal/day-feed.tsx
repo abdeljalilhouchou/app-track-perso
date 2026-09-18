@@ -16,7 +16,7 @@ export type FeedItem = {
 const TYPE_META = {
   habit: { color: "var(--habit)", soft: "var(--habit-soft)", label: "Habitude" },
   sport: { color: "var(--sport)", soft: "var(--sport-soft)", label: "Sport" },
-  mood: { color: "#b45309", soft: "var(--mood-soft)", label: "Humeur" },
+  mood: { color: "var(--mood-text)", soft: "var(--mood-soft)", label: "Humeur" },
   moment: { color: "var(--accent)", soft: "var(--accent-soft)", label: "Moment" },
 } as const;
 

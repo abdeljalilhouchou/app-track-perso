@@ -36,7 +36,7 @@ export function WeightTracker({ logs }: { logs: WeightLog[] }) {
                   initial={{ opacity: 0, scale: 0.8, x: -4 }}
                   animate={{ opacity: 1, scale: 1, x: 0 }}
                   className="ml-1.5 inline-block"
-                  style={{ color: diff > 0 ? "var(--danger)" : "#16a34a" }}
+                  style={{ color: diff > 0 ? "var(--danger)" : "var(--success)" }}
                 >
                   {diff > 0 ? "+" : ""}
                   {diff} kg
@@ -79,7 +79,7 @@ export function WeightTracker({ logs }: { logs: WeightLog[] }) {
           type="submit"
           disabled={pending}
           whileTap={{ scale: 0.96 }}
-          className="rounded-xl border-[1.5px] border-weight px-4 py-2.5 text-sm font-semibold text-weight transition-colors hover:bg-weight hover:text-white disabled:opacity-40"
+          className="rounded-xl border-[1.5px] border-weight px-4 py-2.5 text-sm font-semibold text-weight transition-colors hover:bg-weight hover:text-on-accent disabled:opacity-40"
         >
           Noter
         </motion.button>

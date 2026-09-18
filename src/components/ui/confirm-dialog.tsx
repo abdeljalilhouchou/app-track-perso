@@ -37,7 +37,7 @@ export function ConfirmDialog({
           <button
             type="button"
             onClick={onConfirm}
-            className="rounded-lg px-3.5 py-1.5 text-sm font-medium text-white transition hover:opacity-90"
+            className="rounded-lg px-3.5 py-1.5 text-sm font-medium text-on-accent transition hover:opacity-90"
             style={{ background: danger ? "var(--danger)" : "var(--accent)" }}
           >
             {confirmLabel}

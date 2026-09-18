@@ -148,7 +148,7 @@ export function NutritionGoalsCalculator({ profile }: { profile: Profile | null 
       <button
         type="submit"
         disabled={pending}
-        className="rounded-xl border-[1.5px] border-accent px-4 py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-white disabled:opacity-60"
+        className="rounded-xl border-[1.5px] border-accent px-4 py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-on-accent disabled:opacity-60"
       >
         {pending ? "Enregistrement..." : "Enregistrer mes objectifs"}
       </button>

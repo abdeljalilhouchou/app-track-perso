@@ -8,7 +8,7 @@ function Delta({ metric, unit, neutral = false }: { metric: RecapMetric; unit: s
   const diff = Math.round((metric.current - metric.previous) * 10) / 10;
   if (diff === 0) return <p className="mt-1 text-xs text-foreground-muted">= semaine dernière</p>;
 
-  const color = neutral ? "var(--foreground-muted)" : diff > 0 ? "#16a34a" : "var(--danger)";
+  const color = neutral ? "var(--foreground-muted)" : diff > 0 ? "var(--success)" : "var(--danger)";
   return (
     <p className="mt-1 text-xs" style={{ color }}>
       {diff > 0 ? "▲ +" : "▼ "}

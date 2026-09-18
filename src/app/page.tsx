@@ -37,7 +37,7 @@ export default function Home() {
           </Link>
           <Link
             href="/signup"
-            className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+            className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-on-accent transition hover:opacity-90"
           >
             Commencer
           </Link>
@@ -58,7 +58,7 @@ export default function Home() {
         <div className="mt-8 flex gap-3">
           <Link
             href="/signup"
-            className="rounded-lg bg-accent px-6 py-3 text-sm font-medium text-white transition hover:opacity-90"
+            className="rounded-lg bg-accent px-6 py-3 text-sm font-medium text-on-accent transition hover:opacity-90"
           >
             Créer un compte gratuit
           </Link>

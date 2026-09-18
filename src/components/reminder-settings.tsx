@@ -55,7 +55,7 @@ export function ReminderSettings({ initialTime, email }: { initialTime: string |
           <button
             onClick={handleEnable}
             disabled={pending}
-            className="rounded-lg bg-accent px-3.5 py-1.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+            className="rounded-lg bg-accent px-3.5 py-1.5 text-sm font-medium text-on-accent transition hover:opacity-90 disabled:opacity-60"
           >
             Activer les rappels
           </button>
