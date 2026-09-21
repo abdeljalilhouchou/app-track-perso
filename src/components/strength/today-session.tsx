@@ -6,6 +6,7 @@ import { fr } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { useActionToast } from "@/components/toast/use-action-toast";
 import { ConfettiBurst } from "@/components/ui/confetti-burst";
+import { Dialog } from "@/components/ui/dialog";
 import { createDefaultProgram, markTemplateDone } from "@/lib/actions/strength";
 import { muscleColor } from "@/lib/strength";
 import type { ExerciseSummary } from "@/lib/strength-stats";
@@ -66,6 +67,10 @@ export function TodaySession({
   const [pending, startTransition] = useTransition();
   const [marking, startMarking] = useTransition();
   const run = useActionToast();
+  const [markTarget, setMarkTarget] = useState<TemplateView | null>(null);
+  const [markDuration, setMarkDuration] = useState("60");
+  const [markDate, setMarkDate] = useState(today);
+  const [markIntensity, setMarkIntensity] = useState(3);
   const [notice, setNotice] = useState<string | null>(null);
   const [active, setActive] = useState<Draft | null>(null);
   const [result, setResult] = useState<SessionResult | null>(null);
@@ -75,13 +80,43 @@ export function TodaySession({
 
   const suggested = templates.find((t) => t.id === suggestedId) ?? null;
 
+  const DURATION_KEY = "mark-done-duration";
+
+  /** Opens the small form (duration / date / intensity) instead of recording blindly. */
   function markDone(t: TemplateView) {
+    let remembered = "60";
+    try {
+      remembered = localStorage.getItem(DURATION_KEY) ?? "60";
+    } catch {
+      // storage unavailable: fall back to 60
+    }
+    setMarkDuration(remembered);
+    setMarkDate(today);
+    setMarkIntensity(3);
+    setMarkTarget(t);
+  }
+
+  function confirmMark() {
+    const t = markTarget;
+    const minutes = Math.round(Number(markDuration));
+    if (!t) return;
+    if (!Number.isFinite(minutes) || minutes < 1 || minutes > 600) {
+      setError("Indique une durée valide entre 1 et 600 minutes.");
+      return;
+    }
     setError(null);
     setNotice(null);
     startMarking(async () => {
-      const r = await run(() => markTemplateDone(t.id, today), { failure: "Séance non enregistrée" });
-      if (r?.error) setError(r.error);
-      else if (r) setNotice(`« ${t.name} » marquée comme faite (60 min). Tu peux la supprimer dans l'onglet Historique si besoin.`);
+      const r = await run(() => markTemplateDone(t.id, markDate, minutes, markIntensity), { failure: "Séance non enregistrée" });
+      if (r?.error) return setError(r.error);
+      if (!r) return;
+      try {
+        localStorage.setItem(DURATION_KEY, String(minutes));
+      } catch {
+        // not critical
+      }
+      setMarkTarget(null);
+      setNotice(`« ${t.name} » marquée comme faite (${minutes} min). Tu peux la supprimer dans l'onglet Historique si besoin.`);
     });
   }
 
@@ -332,11 +367,11 @@ export function TodaySession({
                   onClick={() => markDone(suggested)}
                   className="flex-1 rounded-xl border-[1.5px] border-sport px-5 py-3 text-sm font-semibold text-sport transition hover:bg-sport hover:text-on-accent disabled:opacity-50"
                 >
-                  {marking ? "Enregistrement..." : "Marquer comme fait"}
+                  Marquer comme fait
                 </button>
               </div>
               <p className="mt-2 text-[11px] text-foreground-muted">
-                « Marquer comme fait » enregistre la séance sans le détail des séries (60 min, intensité 3).
+                « Marquer comme fait » enregistre la séance sans le détail des séries : tu choisis la durée, la date et l&apos;intensité.
               </p>
             </div>
           )}
@@ -350,6 +385,92 @@ export function TodaySession({
           </button>
         </>
       )}
+
+      <Dialog open={markTarget !== null} onClose={() => setMarkTarget(null)} widthClassName="max-w-sm">
+        <div className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5 shadow-2xl">
+          <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">Marquer comme fait</p>
+          <p className="mt-1 text-lg font-semibold tracking-tight">{markTarget?.name}</p>
+
+          <div className="mt-4 space-y-3">
+            <label className="flex flex-col gap-1 text-xs text-foreground-muted">
+              Durée de la séance (minutes)
+              <input
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={600}
+                value={markDuration}
+                onChange={(e) => setMarkDuration(e.target.value)}
+                autoFocus
+                className="rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm text-foreground outline-none focus:border-sport focus:ring-2 focus:ring-sport/30"
+              />
+            </label>
+            <div className="flex flex-wrap gap-1.5">
+              {[45, 60, 75, 90].map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => setMarkDuration(String(m))}
+                  className="rounded-full border px-2.5 py-1 text-xs transition"
+                  style={{
+                    borderColor: markDuration === String(m) ? "var(--sport)" : "color-mix(in srgb, var(--sport) 35%, var(--border))",
+                    background: markDuration === String(m) ? "var(--sport)" : "transparent",
+                    color: markDuration === String(m) ? "var(--on-accent)" : undefined,
+                  }}
+                >
+                  {m} min
+                </button>
+              ))}
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <label className="flex flex-col gap-1 text-xs text-foreground-muted">
+                Date
+                <input
+                  type="date"
+                  value={markDate}
+                  max={today}
+                  onChange={(e) => setMarkDate(e.target.value || today)}
+                  className="rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm text-foreground outline-none focus:border-sport"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-xs text-foreground-muted">
+                Intensité
+                <select
+                  value={markIntensity}
+                  onChange={(e) => setMarkIntensity(Number(e.target.value))}
+                  className="rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm text-foreground outline-none focus:border-sport"
+                >
+                  <option value={1}>1 — Très facile</option>
+                  <option value={2}>2 — Facile</option>
+                  <option value={3}>3 — Correct</option>
+                  <option value={4}>4 — Dur</option>
+                  <option value={5}>5 — À fond</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          {error && <p className="mt-3 text-xs text-danger">{error}</p>}
+
+          <div className="mt-5 flex gap-2">
+            <button
+              type="button"
+              disabled={marking}
+              onClick={confirmMark}
+              className="flex-1 rounded-xl bg-sport px-4 py-2.5 text-sm font-semibold text-on-accent transition hover:opacity-90 disabled:opacity-60"
+            >
+              {marking ? "Enregistrement..." : "Valider la séance"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setMarkTarget(null)}
+              className="rounded-xl border border-border px-4 py-2.5 text-sm text-foreground-muted transition hover:bg-surface-muted"
+            >
+              Annuler
+            </button>
+          </div>
+        </div>
+      </Dialog>
 
       <details className="group rounded-2xl border-[1.5px] border-sport/40 bg-surface">
         <summary className="cursor-pointer list-none px-5 py-4 text-sm font-medium">

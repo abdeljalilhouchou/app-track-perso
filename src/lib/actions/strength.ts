@@ -252,8 +252,16 @@ export async function saveStrengthSession(payload: SessionPayload): Promise<Resu
 }
 
 /** One-click "I did this session": records it for the given day without per-set details. */
-export async function markTemplateDone(templateId: string, date: string): Promise<Result> {
+export async function markTemplateDone(
+  templateId: string,
+  date: string,
+  durationMinutes: number,
+  intensity: number
+): Promise<Result> {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: "Date invalide." };
+  if (!Number.isFinite(durationMinutes) || durationMinutes < 1 || durationMinutes > 600) {
+    return { error: "La durée doit être comprise entre 1 et 600 minutes." };
+  }
 
   const { supabase, user } = await currentUser();
   if (!user) return { error: "Non connecté." };
@@ -270,8 +278,8 @@ export async function markTemplateDone(templateId: string, date: string): Promis
     user_id: user.id,
     activity: template.name,
     workout_date: date,
-    duration_minutes: 60,
-    intensity: 3,
+    duration_minutes: clampInt(durationMinutes, 1, 600),
+    intensity: clampInt(intensity, 1, 5),
     notes: null,
     muscle_groups: template.muscle_groups,
     template_id: templateId,
