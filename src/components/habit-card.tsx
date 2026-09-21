@@ -107,6 +107,11 @@ export function HabitCard({
               >
                 {categoryMeta.icon} {habit.category}
               </span>
+              {habit.category === "Sport" && (
+                <span title="Cochée automatiquement quand tu enregistres une séance de sport" className="rounded-full border border-sport/40 px-1.5 py-0.5 text-[10px] text-sport">
+                  🔗 auto
+                </span>
+              )}
               {streak > 0 && <StreakFlame streak={streak} size="sm" />}
             </div>
           </div>

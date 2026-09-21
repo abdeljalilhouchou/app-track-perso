@@ -2,6 +2,7 @@ import { format, subDays } from "date-fns";
 import { fr } from "date-fns/locale";
 import { createClient } from "@/lib/supabase/server";
 import { MoodForm } from "@/components/mood/mood-form";
+import { Callout } from "@/components/ui/callout";
 import { MoodLineChart } from "@/components/charts/mood-line-chart";
 import { MoodEntryList } from "@/components/mood-entry-list";
 import { MoodCalendar } from "@/components/mood/mood-calendar";
@@ -70,6 +71,8 @@ export default async function HumeurPage() {
     },
   });
   const summary = moodSummary(allEntries ?? []);
+  const lastThree = (allEntries ?? []).slice(-3);
+  const lowStreak = lastThree.length === 3 && lastThree.every((e) => e.mood_score <= 2) ? lastThree : null;
   const weekdays = weekdayAverages(recentMoods);
 
   const chartData = (entries ?? []).map((e) => ({
@@ -84,6 +87,18 @@ export default async function HumeurPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Humeur</h1>
         <p className="mt-1 text-sm text-foreground-muted">Comment te sens-tu aujourd&apos;hui ?</p>
       </div>
+
+      {lowStreak && (
+        <Callout variant="warning" title="Prends soin de toi" dismissKey={`mood-low:${today}`}>
+          Ton humeur est basse depuis {lowStreak.length} jours de suite. Ce n&apos;est pas un échec : dors bien, bouge un peu,
+          parle à quelqu&apos;un. Si ça dure, n&apos;hésite pas à demander de l&apos;aide.
+        </Callout>
+      )}
+      {!todayEntry && (
+        <Callout variant="tip" dismissKey={`mood-today:${today}`} compact>
+          Note ton humeur du jour : c&apos;est ce qui permet à l&apos;app de trouver ce qui l&apos;influence.
+        </Callout>
+      )}
 
       <MoodTiles summary={summary} />
 

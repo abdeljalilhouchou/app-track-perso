@@ -8,6 +8,7 @@ import { BadgeGrid } from "@/components/badge-grid";
 import { StreakFlame } from "@/components/ui/streak-flame";
 import { ThemeSelector } from "@/components/theme-selector";
 import { Avatar } from "@/components/avatar";
+import { Callout } from "@/components/ui/callout";
 import { AccountSettings } from "@/components/account-settings";
 import { AnimatedCounter } from "@/components/ui/animated-counter";
 
@@ -61,6 +62,17 @@ export default async function ProfilPage() {
           </p>
         </div>
       </div>
+
+      {!profile?.reminder_time && (
+        <Callout variant="tip" title="Rappel quotidien" dismissKey="profile-reminder" compact>
+          Active le rappel par e-mail plus bas : il te dit chaque soir ce qu&apos;il te reste à faire.
+        </Callout>
+      )}
+      {!profile?.avatar_url && (
+        <Callout variant="info" title="Personnalise ton profil" dismissKey="profile-avatar" compact>
+          Ajoute une photo dans « Mon compte » : elle apparaît dans le menu et sur ton profil.
+        </Callout>
+      )}
 
       <ProfileStats
         stats={[

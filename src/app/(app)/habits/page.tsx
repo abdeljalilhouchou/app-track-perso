@@ -5,6 +5,7 @@ import { HabitCreateModal } from "@/components/habit-create-modal";
 import { HabitsBoard, type HabitCardData } from "@/components/habits-board";
 import { SuggestedHabits } from "@/components/suggested-habits";
 import { PausedHabits } from "@/components/paused-habits";
+import { Callout } from "@/components/ui/callout";
 import { MomentsJournal } from "@/components/moments-journal";
 import { HabitsCalendar } from "@/components/habits/habits-calendar";
 import { HabitsMonthly } from "@/components/habits/habits-monthly";
@@ -112,6 +113,18 @@ export default async function HabitsPage() {
         </div>
         <HabitCreateModal />
       </div>
+
+      {orderedHabits.some((h) => h.category === "Sport") ? (
+        <Callout variant="info" title="Lié au Sport" icon="🔗" dismissKey="habits-sport-link" compact>
+          Les habitudes de la catégorie <strong>Sport</strong> se cochent automatiquement quand tu enregistres une séance
+          dans l&apos;onglet Sport (et se décochent si tu supprimes cette séance).
+        </Callout>
+      ) : (
+        <Callout variant="tip" dismissKey="habits-sport-tip" compact>
+          Crée une habitude dans la catégorie <strong>Sport</strong> : elle se cochera toute seule dès que tu enregistres
+          une séance.
+        </Callout>
+      )}
 
       <MomentsJournal moments={moments ?? []} />
 

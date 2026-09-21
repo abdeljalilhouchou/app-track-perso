@@ -11,6 +11,7 @@ import { WeightTracker } from "@/components/weight-tracker";
 import { WeeklyBarChart } from "@/components/charts/weekly-bar-chart";
 import { MacroRings } from "@/components/macro-rings";
 import { NutritionTabs } from "@/components/nutrition-tabs";
+import { Callout } from "@/components/ui/callout";
 import { InViewFade } from "@/components/ui/in-view-fade";
 import { weeklyTotals } from "@/lib/weekly";
 import { buildRings, sumMeals } from "@/lib/nutrition-totals";
@@ -131,6 +132,27 @@ export default async function NutritionPage({
         initialTab={date ? "journal" : "today"}
         today={
           <>
+            {!profile?.goal_calories && (
+              <Callout variant="info" title="Définis tes objectifs" action={{ label: "Calculer mes objectifs", href: "/nutrition?date=" + today }}>
+                Sans objectif, les anneaux ne peuvent pas se remplir. Ouvre l&apos;onglet <strong>Journal</strong> et renseigne
+                ta taille, ton poids et ton âge : l&apos;app calcule tes calories et tes macros.
+              </Callout>
+            )}
+            {profile?.goal_calories && totals.calories > profile.goal_calories * 1.15 && (
+              <Callout variant="warning" title="Objectif calorique dépassé" dismissKey={`kcal-over:${today}`}>
+                Tu es à {totals.calories} kcal pour un objectif de {profile.goal_calories} kcal (+{totals.calories - profile.goal_calories}).
+              </Callout>
+            )}
+            {profile?.goal_calories && totals.calories > 0 && totals.calories <= profile.goal_calories && totals.calories >= profile.goal_calories * 0.9 && (
+              <Callout variant="success" dismissKey={`kcal-on-target:${today}`} compact>
+                Tu es pile dans ton objectif calorique aujourd&apos;hui. Bien joué !
+              </Callout>
+            )}
+            <Callout variant="tip" dismissKey="nutrition-off-tip" compact>
+              Un produit du supermarché n&apos;est pas dans ta base ? Tape son nom dans « Ajouter un aliment » puis lance la
+              recherche <strong>Open Food Facts</strong>.
+            </Callout>
+
             <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
               <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
                 Aujourd&apos;hui

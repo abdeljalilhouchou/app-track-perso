@@ -1,4 +1,4 @@
-import { format, getISODay, subDays, subWeeks } from "date-fns";
+import { differenceInCalendarDays, format, getISODay, parseISO, startOfWeek, subDays, subWeeks } from "date-fns";
 import { fr } from "date-fns/locale";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
@@ -13,6 +13,9 @@ import { TodayPanel } from "@/components/dashboard/today-panel";
 import { NutritionSummary } from "@/components/dashboard/nutrition-summary";
 import { ProgressCard } from "@/components/dashboard/progress-card";
 import { WeekRecap } from "@/components/dashboard/week-recap";
+import { SmartAlerts } from "@/components/dashboard/smart-alerts";
+import { computeStreak } from "@/lib/streak";
+import type { AlertFacts } from "@/lib/alerts";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -40,7 +43,7 @@ export default async function DashboardPage() {
   ] = await Promise.all([
     supabase
       .from("profiles")
-      .select("display_name, goal_calories, goal_protein, goal_carbs, goal_fat, water_goal_ml")
+      .select("display_name, goal_calories, goal_protein, goal_carbs, goal_fat, water_goal_ml, caffeine_limit_mg, sugar_limit_g, sport_weekly_goal, reminder_time")
       .eq("id", user.id)
       .single(),
     supabase.from("habits").select("*").eq("user_id", user.id).eq("archived", false),
@@ -153,12 +156,58 @@ export default async function DashboardPage() {
     energy: e.energy_level,
   }));
 
+ // ---- Facts for the notes & alerts panel
+  const dayBefore = (n: number) => format(subDays(today, n), "yyyy-MM-dd");
+  const streakOn = (set: Set<string>, from: number) => {
+    let n = 0;
+    while (set.has(dayBefore(from + n))) n++;
+    return n;
+  };
+  const dailyHabits = (habits ?? []).filter((h) => h.scheduled_days.length === 7);
+  const streaks = dailyHabits.map((h) => {
+    const set = logsByHabit.get(h.id) ?? new Set<string>();
+    const doneToday = set.has(todayStr);
+    const streak = computeStreak(set);
+    const lostLength = !doneToday && !set.has(dayBefore(1)) ? streakOn(set, 2) : 0;
+    return { name: h.name, streak: doneToday ? streak : set.has(dayBefore(1)) ? streak : 0, doneToday, lostLength };
+  });
+  const weekStart = format(startOfWeek(today, { weekStartsOn: 1 }), "yyyy-MM-dd");
+  const lastWeight = weightLogs && weightLogs.length > 0 ? weightLogs[weightLogs.length - 1] : null;
+  const alertFacts: AlertFacts = {
+    today: todayStr,
+    habits: {
+      total: todayHabits.length,
+      done: todayHabits.filter((h) => h.done).length,
+      remaining: todayHabits.filter((h) => !h.done).map((h) => h.name),
+    },
+    streaks,
+    moodLogged: moodToday !== null,
+    waterMl: (todayWater?.ml ?? 0) + drinksMl,
+    waterGoal: profile?.water_goal_ml ?? 2000,
+    kcal: Math.round(totals.calories),
+    kcalGoal: profile?.goal_calories ?? null,
+    protein: round1(totals.protein),
+    proteinGoal: profile?.goal_protein ?? null,
+    mealsCount: todayMeals.length,
+    caffeine: caffeineMg,
+    caffeineLimit: profile?.caffeine_limit_mg ?? 400,
+    sugar: sugarG,
+    sugarLimit: profile?.sugar_limit_g ?? 50,
+    sportSessions: (workouts ?? []).filter((w) => w.workout_date >= weekStart).length,
+    sportGoal: profile?.sport_weekly_goal ?? 3,
+    daysSinceWeight: lastWeight ? differenceInCalendarDays(today, parseISO(lastWeight.entry_date)) : null,
+    reminderSet: Boolean(profile?.reminder_time),
+    goalsSet: Boolean(profile?.goal_calories),
+  };
+
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Salut {displayName} 👋</h1>
         <p className="mt-1 text-sm text-foreground-muted">{format(today, "EEEE d MMMM yyyy", { locale: fr })}</p>
       </div>
+
+      <SmartAlerts facts={alertFacts} />
 
       <TodayPanel
         date={todayStr}

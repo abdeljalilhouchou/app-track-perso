@@ -3,6 +3,7 @@ import { fr } from "date-fns/locale";
 import { createClient } from "@/lib/supabase/server";
 import { DayNavigator } from "@/components/journal/day-navigator";
 import { DayFeed, type FeedItem } from "@/components/journal/day-feed";
+import { Callout } from "@/components/ui/callout";
 
 export default async function JournalPage({
   searchParams,
@@ -106,6 +107,11 @@ export default async function JournalPage({
           Choisis un jour et retrouve tout ce que tu y as fait.
         </p>
       </div>
+
+      <Callout variant="tip" dismissKey="journal-tip" compact>
+        Le journal regroupe tes habitudes, séances, humeurs et moments de la journée. Tes repas ont leur propre journal dans
+        l&apos;onglet Nutrition.
+      </Callout>
 
       <div className="rounded-2xl border border-border bg-surface p-5">
         <DayNavigator selectedDate={selectedDate} />

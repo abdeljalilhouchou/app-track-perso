@@ -496,6 +496,13 @@ export function SessionLogger({
         />
       </div>
 
+      {!showFinish && loggedSets === 0 && (
+        <p className="rounded-xl border border-dashed border-sport/40 px-3 py-2 text-xs text-foreground-muted">
+          💡 Renseigne au moins les répétitions d&apos;une série (ou touche ✓ pour reprendre les valeurs de la dernière fois) pour
+          pouvoir terminer la séance.
+        </p>
+      )}
+
       {/* Finish */}
       {!showFinish ? (
         <div className="flex flex-wrap gap-2">

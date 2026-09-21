@@ -3,6 +3,7 @@ import { fr } from "date-fns/locale";
 import { createClient } from "@/lib/supabase/server";
 import { WeeklyBarChart } from "@/components/charts/weekly-bar-chart";
 import { DayNavigator } from "@/components/journal/day-navigator";
+import { Callout } from "@/components/ui/callout";
 import { InViewFade } from "@/components/ui/in-view-fade";
 import { WorkoutForm } from "@/components/sport/workout-form";
 import { WeeklyGoal } from "@/components/sport/weekly-goal";
@@ -122,6 +123,44 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
     10
   );
 
+  // Notes and warnings for the training week
+  const yesterday = format(subDays(new Date(), 1), "yyyy-MM-dd");
+  const trainedYesterday = new Set(all.filter((w) => w.workout_date === yesterday).flatMap((w) => w.muscle_groups ?? []));
+  const suggestedTemplate = templates.find((t) => t.id === suggestedId);
+  const overlap = suggestedTemplate ? suggestedTemplate.muscleGroups.filter((g) => trainedYesterday.has(g)) : [];
+  const isoToday = new Date().getDay() === 0 ? 7 : new Date().getDay();
+  const missingSessions = weeklyGoal - stats.thisWeek.sessions;
+  const daysLeft = 8 - isoToday;
+
+  const notes = (
+    <div className="space-y-2.5">
+      {overlap.length > 0 && (
+        <Callout variant="warning" title="Repos musculaire" dismissKey={`sport-rest:${today}`} compact>
+          Tu as travaillé <strong>{overlap.join(", ")}</strong> hier. Les muscles ont besoin d&apos;environ 48 h pour
+          récupérer : choisis plutôt une autre séance, ou allège les charges.
+        </Callout>
+      )}
+      {missingSessions > 0 && missingSessions >= daysLeft && (
+        <Callout variant="warning" title="Objectif de la semaine en danger" dismissKey={`sport-goal-risk:${today}`} compact>
+          Il te reste {missingSessions} séance{missingSessions > 1 ? "s" : ""} pour {daysLeft} jour{daysLeft > 1 ? "s" : ""} :
+          impossible de rater un jour pour atteindre {weeklyGoal} séances.
+        </Callout>
+      )}
+      {missingSessions <= 0 && stats.thisWeek.sessions > 0 && (
+        <Callout variant="success" dismissKey={`sport-goal-done:${today}`} compact>
+          Objectif de la semaine atteint ({stats.thisWeek.sessions}/{weeklyGoal}). Pense à bien récupérer et à manger assez de
+          protéines.
+        </Callout>
+      )}
+      {templates.length > 0 && stats.totalSessions > 0 && sets.length === 0 && (
+        <Callout variant="tip" dismissKey="sport-log-sets" compact>
+          Astuce : lance la séance avec « Démarrer la séance » et note tes charges pour suivre ta progression et tes records.
+          « Marquer comme fait » ne garde pas le détail des séries.
+        </Callout>
+      )}
+    </div>
+  );
+
   const panels = {
     session: (
       <TodaySession
@@ -203,6 +242,8 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
           <p className="mt-0.5 text-sm text-foreground-muted">Musculation, programme et progression.</p>
         </div>
       </div>
+
+      {notes}
 
       <SportTabs panels={panels} initialTab={date ? "history" : "session"} />
     </div>
