@@ -77,6 +77,8 @@ export type Database = {
           duration_minutes: number;
           intensity: number;
           notes: string | null;
+          muscle_groups: string[];
+          template_id: string | null;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["workouts"]["Row"]> & {
@@ -257,6 +259,78 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["meal_template_items"]["Row"]>;
         Relationships: [];
       };
+      exercises: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string;
+          muscle_group: string;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["exercises"]["Row"]> & {
+          user_id: string;
+          name: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["exercises"]["Row"]>;
+        Relationships: [];
+      };
+      workout_templates: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string;
+          muscle_groups: string[];
+          position: number;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["workout_templates"]["Row"]> & {
+          user_id: string;
+          name: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["workout_templates"]["Row"]>;
+        Relationships: [];
+      };
+      workout_template_exercises: {
+        Row: {
+          id: string;
+          template_id: string;
+          user_id: string;
+          exercise_name: string;
+          muscle_group: string;
+          target_sets: number;
+          target_reps: number;
+          position: number;
+        };
+        Insert: Partial<Database["public"]["Tables"]["workout_template_exercises"]["Row"]> & {
+          template_id: string;
+          user_id: string;
+          exercise_name: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["workout_template_exercises"]["Row"]>;
+        Relationships: [];
+      };
+      workout_sets: {
+        Row: {
+          id: string;
+          workout_id: string;
+          user_id: string;
+          exercise_name: string;
+          muscle_group: string;
+          exercise_position: number;
+          set_number: number;
+          reps: number;
+          weight_kg: number;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["workout_sets"]["Row"]> & {
+          workout_id: string;
+          user_id: string;
+          exercise_name: string;
+          reps: number;
+        };
+        Update: Partial<Database["public"]["Tables"]["workout_sets"]["Row"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -277,3 +351,7 @@ export type WeightLog = Database["public"]["Tables"]["weight_logs"]["Row"];
 export type WaterLog = Database["public"]["Tables"]["water_logs"]["Row"];
 export type MealTemplate = Database["public"]["Tables"]["meal_templates"]["Row"];
 export type MealTemplateItem = Database["public"]["Tables"]["meal_template_items"]["Row"];
+export type Exercise = Database["public"]["Tables"]["exercises"]["Row"];
+export type WorkoutTemplate = Database["public"]["Tables"]["workout_templates"]["Row"];
+export type WorkoutTemplateExercise = Database["public"]["Tables"]["workout_template_exercises"]["Row"];
+export type WorkoutSet = Database["public"]["Tables"]["workout_sets"]["Row"];

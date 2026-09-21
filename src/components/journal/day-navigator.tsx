@@ -28,10 +28,12 @@ export function DayNavigator({
   selectedDate,
   basePath = "/journal",
   markedDates,
+  markColor = "var(--nutrition)",
 }: {
   selectedDate: string;
   basePath?: string;
   markedDates?: string[];
+  markColor?: string;
 }) {
   const router = useRouter();
   const marked = new Set(markedDates ?? []);
@@ -81,7 +83,7 @@ export function DayNavigator({
               </span>
               <span
                 className="h-1 w-1 rounded-full"
-                style={{ background: marked.has(dateStr) ? "var(--nutrition)" : "transparent" }}
+                style={{ background: marked.has(dateStr) ? markColor : "transparent" }}
               />
             </Link>
           );
@@ -156,7 +158,7 @@ export function DayNavigator({
                       {marked.has(format(day, "yyyy-MM-dd")) && (
                         <span
                           className="absolute bottom-0.5 h-1 w-1 rounded-full"
-                          style={{ background: isSel ? "var(--on-accent)" : "var(--nutrition)" }}
+                          style={{ background: isSel ? "var(--on-accent)" : markColor }}
                         />
                       )}
                     </button>
