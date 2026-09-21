@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Avatar } from "@/components/avatar";
 import { changePassword, exportMyData, saveAvatarUrl, updateDisplayName } from "@/lib/actions/account";
 import { getReport } from "@/lib/actions/report";
+import { useToast } from "@/components/toast/toast-provider";
 import { downloadReportPdf } from "@/lib/report-pdf";
 
 const AVATAR_SIZE = 256;
@@ -18,6 +19,19 @@ const outline =
   "rounded-lg border border-border px-3.5 py-2 text-sm font-medium text-foreground-muted transition hover:bg-surface-muted disabled:opacity-50";
 
 type Feedback = { kind: "ok" | "error"; text: string } | null;
+
+/** Inline feedback (kept next to the field for errors) that also raises a toast on success. */
+function useFeedback(): [Feedback, (f: Feedback) => void] {
+  const toast = useToast();
+  const [feedback, setFeedback] = useState<Feedback>(null);
+  return [
+    feedback,
+    (f) => {
+      setFeedback(f);
+      if (f?.kind === "ok") toast.success(f.text);
+    },
+  ];
+}
 
 function Notice({ feedback }: { feedback: Feedback }) {
   if (!feedback) return null;
@@ -47,7 +61,7 @@ async function toSquareJpeg(file: File): Promise<Blob> {
 function AvatarSection({ userId, name, avatarUrl }: { userId: string; name: string; avatarUrl: string | null }) {
   const [pending, startTransition] = useTransition();
   const [url, setUrl] = useState(avatarUrl);
-  const [feedback, setFeedback] = useState<Feedback>(null);
+  const [feedback, setFeedback] = useFeedback();
   const fileRef = useRef<HTMLInputElement>(null);
 
   function onPick(file: File | undefined) {
@@ -130,7 +144,7 @@ function AvatarSection({ userId, name, avatarUrl }: { userId: string; name: stri
 function NameSection({ initialName }: { initialName: string }) {
   const [pending, startTransition] = useTransition();
   const [name, setName] = useState(initialName);
-  const [feedback, setFeedback] = useState<Feedback>(null);
+  const [feedback, setFeedback] = useFeedback();
 
   return (
     <form
@@ -158,7 +172,7 @@ function NameSection({ initialName }: { initialName: string }) {
 function PasswordSection() {
   const [pending, startTransition] = useTransition();
   const [formKey, setFormKey] = useState(0);
-  const [feedback, setFeedback] = useState<Feedback>(null);
+  const [feedback, setFeedback] = useFeedback();
 
   return (
     <form
@@ -211,7 +225,7 @@ const MONTH_NAMES = [
 
 function ExportSection({ sinceYear }: { sinceYear: number }) {
   const [pending, startTransition] = useTransition();
-  const [feedback, setFeedback] = useState<Feedback>(null);
+  const [feedback, setFeedback] = useFeedback();
   const [now] = useState(() => new Date());
   const currentYear = now.getFullYear();
   const [mode, setMode] = useState<"month" | "year">("month");

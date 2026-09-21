@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { createHabit } from "@/lib/actions/habits";
 import { Dialog } from "@/components/ui/dialog";
@@ -9,6 +10,7 @@ import { CATEGORY_META, CATEGORY_PRESETS, WEEKDAYS } from "@/lib/habit-categorie
 export function HabitCreateModal() {
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [icon, setIcon] = useState("✨");
   const [name, setName] = useState("");
   const [category, setCategory] = useState<string>("Général");
@@ -42,7 +44,8 @@ export function HabitCreateModal() {
 
   function submit(formData: FormData) {
     startTransition(async () => {
-      await createHabit(formData);
+      const r = await run(() => createHabit(formData), { success: `Nouvelle habitude « ${formData.get("name")} » créée ✨`, failure: "Création impossible" });
+      if (!r || r.error) return;
       close();
     });
   }

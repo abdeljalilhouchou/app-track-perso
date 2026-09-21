@@ -1,24 +1,28 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { enableEmailReminders, updateReminderTime, disableReminders } from "@/lib/actions/reminders";
 
 export function ReminderSettings({ initialTime, email }: { initialTime: string | null; email: string }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [time, setTime] = useState(initialTime ?? "19:00");
   const [enabled, setEnabled] = useState(Boolean(initialTime));
 
   function handleEnable() {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     startTransition(async () => {
-      await enableEmailReminders(timezone, time);
+      const r = await run(() => enableEmailReminders(timezone, time), { success: `Rappel par e-mail activé chaque jour à ${time} 🔔`, failure: "Activation impossible" });
+      if (!r || r.error) return;
       setEnabled(true);
     });
   }
 
   function handleDisable() {
     startTransition(async () => {
-      await disableReminders();
+      const r = await run(() => disableReminders(), { success: "Rappel désactivé", failure: "Désactivation impossible" });
+      if (!r || r.error) return;
       setEnabled(false);
     });
   }
@@ -26,7 +30,7 @@ export function ReminderSettings({ initialTime, email }: { initialTime: string |
   function handleTimeChange(newTime: string) {
     setTime(newTime);
     if (enabled) {
-      startTransition(() => updateReminderTime(newTime));
+      startTransition(async () => void (await run(() => updateReminderTime(newTime), { success: `Rappel déplacé à ${newTime}`, failure: "Heure non modifiée" })));
     }
   }
 

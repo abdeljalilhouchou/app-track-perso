@@ -162,7 +162,7 @@ export default async function NutritionPage({
                   />
                 </div>
                 <p className="mt-2 text-[11px] text-foreground-muted">
-                  Ta limite quotidienne : {CAFFEINE_LIMIT_MG} mg (environ {Math.max(1, Math.round(CAFFEINE_LIMIT_MG / 100))} tasses de café). Modifiable dans l&apos;onglet Journal & tendances.
+                  Ta limite quotidienne : {CAFFEINE_LIMIT_MG} mg (environ {Math.max(1, Math.round(CAFFEINE_LIMIT_MG / 100))} tasses de café). Modifiable dans l&apos;onglet Journal.
                 </p>
               </div>
             )}

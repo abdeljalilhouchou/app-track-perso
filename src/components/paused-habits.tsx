@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { deleteHabit, resumeHabit } from "@/lib/actions/habits";
@@ -10,6 +11,7 @@ import type { Habit } from "@/types/database";
 export function PausedHabits({ habits }: { habits: Habit[] }) {
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
 
   if (habits.length === 0) return null;
 
@@ -50,14 +52,14 @@ export function PausedHabits({ habits }: { habits: Habit[] }) {
                     <div className="flex gap-3 text-xs">
                       <button
                         disabled={pending}
-                        onClick={() => startTransition(() => resumeHabit(habit.id))}
+                        onClick={() => startTransition(async () => void (await run(() => resumeHabit(habit.id), { success: `« ${habit.name} » reprise, c'est reparti !` })))}
                         className="font-medium text-accent hover:underline disabled:opacity-50"
                       >
                         Reprendre
                       </button>
                       <ConfirmDeleteButton
                         disabled={pending}
-                        onConfirm={() => startTransition(() => deleteHabit(habit.id))}
+                        onConfirm={() => startTransition(async () => void (await run(() => deleteHabit(habit.id), { success: `« ${habit.name} » supprimée`, failure: "Suppression impossible" })))}
                         title={`Supprimer "${habit.name}" ?`}
                         message="Son historique complet sera définitivement perdu. Cette action est irréversible."
                         className="text-foreground-muted hover:text-danger disabled:opacity-50"

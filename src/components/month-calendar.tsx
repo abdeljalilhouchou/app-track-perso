@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import {
   eachDayOfInterval,
@@ -31,6 +32,7 @@ export function MonthCalendar({
   notesByDate: Record<string, string>;
 }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const today = new Date();
   const todayStr = format(today, "yyyy-MM-dd");
   const [selected, setSelected] = useState(todayStr);
@@ -47,7 +49,7 @@ export function MonthCalendar({
 
   function saveNote() {
     if (noteDraft.trim() === (notesByDate[selected] ?? "").trim()) return;
-    startTransition(() => setHabitLogNote(habitId, selected, noteDraft));
+    startTransition(async () => void (await run(() => setHabitLogNote(habitId, selected, noteDraft), { success: "Note enregistrée", failure: "Note non enregistrée" })));
   }
 
   const selectedDone = loggedDates.has(selected);
@@ -111,7 +113,14 @@ export function MonthCalendar({
           </p>
           <button
             disabled={selectedIsFuture || pending}
-            onClick={() => startTransition(() => toggleHabitLog(habitId, selected))}
+            onClick={() =>
+              startTransition(async () =>
+                void (await run(() => toggleHabitLog(habitId, selected), {
+                  success: selectedDone ? "Jour décoché" : "Jour validé ✓",
+                  undo: { run: () => toggleHabitLog(habitId, selected) },
+                }))
+              )
+            }
             className="rounded-full px-3 py-1 text-xs font-medium transition disabled:opacity-40"
             style={{
               background: selectedDone ? color : "var(--foreground-muted)",

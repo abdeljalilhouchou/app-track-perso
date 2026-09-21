@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import {
   createDefaultProgram,
@@ -48,6 +49,7 @@ function TemplateEditor({
   onDone: () => void;
 }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [name, setName] = useState(initial?.name ?? "");
   const [groups, setGroups] = useState<string[]>(initial?.muscleGroups ?? []);
   const [rows, setRows] = useState<Row[]>(initial?.exercises ?? []);
@@ -74,8 +76,11 @@ function TemplateEditor({
   function save() {
     setError(null);
     startTransition(async () => {
-      const result = await saveTemplate({ id: initial?.id, name, muscleGroups: groups, exercises: rows });
-      if (result.error) return setError(result.error);
+      const result = await run(() => saveTemplate({ id: initial?.id, name, muscleGroups: groups, exercises: rows }), {
+        success: initial ? `Séance « ${name} » modifiée` : `Séance « ${name} » ajoutée à ton programme 📋`,
+        failure: "Séance non enregistrée",
+      });
+      if (!result || result.error) return setError(result?.error ?? "Enregistrement impossible.");
       onDone();
     });
   }
@@ -211,6 +216,7 @@ function TemplateCard({
   catalog: CatalogItem[];
 }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const expanded = open || editing;
@@ -247,7 +253,7 @@ function TemplateCard({
           <button
             type="button"
             disabled={pending || index === 0}
-            onClick={() => startTransition(async () => void (await moveTemplate(template.id, "up")))}
+            onClick={() => startTransition(async () => void (await run(() => moveTemplate(template.id, "up"))))}
             aria-label="Monter la séance"
             className="rounded-md px-1.5 py-1 text-xs transition hover:bg-surface-muted disabled:opacity-30"
           >
@@ -256,7 +262,7 @@ function TemplateCard({
           <button
             type="button"
             disabled={pending || index === total - 1}
-            onClick={() => startTransition(async () => void (await moveTemplate(template.id, "down")))}
+            onClick={() => startTransition(async () => void (await run(() => moveTemplate(template.id, "down"))))}
             aria-label="Descendre la séance"
             className="rounded-md px-1.5 py-1 text-xs transition hover:bg-surface-muted disabled:opacity-30"
           >
@@ -305,7 +311,7 @@ function TemplateCard({
                     </button>
                     <ConfirmDeleteButton
                       disabled={pending}
-                      onConfirm={() => startTransition(async () => void (await deleteTemplate(template.id)))}
+                      onConfirm={() => startTransition(async () => void (await run(() => deleteTemplate(template.id), { success: `Séance « ${template.name} » supprimée du programme` })))}
                       title="Supprimer cette séance ?"
                       message={`"${template.name}" sera retirée de ton programme. Ton historique de séances est conservé.`}
                       className="text-foreground-muted transition hover:text-danger"
@@ -325,6 +331,7 @@ function TemplateCard({
 
 export function ProgramManager({ templates, catalog }: { templates: TemplateView[]; catalog: CatalogItem[] }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -355,8 +362,11 @@ export function ProgramManager({ templates, catalog }: { templates: TemplateView
             disabled={pending}
             onClick={() =>
               startTransition(async () => {
-                const r = await createDefaultProgram();
-                if (r.error) setError(r.error);
+                const r = await run(() => createDefaultProgram(), {
+                  success: "Programme créé : 4 séances ajoutées 🏋️",
+                  failure: "Programme non créé",
+                });
+                if (r?.error) setError(r.error);
               })
             }
             className="mt-3 rounded-xl bg-sport px-4 py-2 text-sm font-semibold text-on-accent transition hover:opacity-90 disabled:opacity-60"
@@ -382,7 +392,7 @@ export function ProgramManager({ templates, catalog }: { templates: TemplateView
           <button
             type="button"
             disabled={pending}
-            onClick={() => startTransition(async () => void (await seedDefaultExercises()))}
+            onClick={() => startTransition(async () => void (await run(() => seedDefaultExercises(), { success: "Catalogue d'exercices importé 📥" })))}
             className="rounded-lg border border-sport/50 px-3.5 py-2 text-sm font-medium text-sport transition hover:bg-sport-soft disabled:opacity-60"
           >
             {pending ? "Import..." : "📥 Importer le catalogue d'exercices"}

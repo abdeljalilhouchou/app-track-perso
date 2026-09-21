@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useTransition } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -9,6 +10,7 @@ import type { Workout } from "@/types/database";
 
 export function WorkoutList({ workouts }: { workouts: Workout[] }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
 
   if (workouts.length === 0) {
     return (
@@ -31,7 +33,7 @@ export function WorkoutList({ workouts }: { workouts: Workout[] }) {
           </div>
           <ConfirmDeleteButton
             disabled={pending}
-            onConfirm={() => startTransition(() => deleteWorkout(w.id))}
+            onConfirm={() => startTransition(async () => void (await run(() => deleteWorkout(w.id), { success: `Séance « ${w.activity} » supprimée`, failure: "Suppression impossible" })))}
             title="Supprimer cette séance ?"
             message={`"${w.activity}" du ${format(new Date(w.workout_date), "d MMMM", { locale: fr })} sera définitivement supprimée.`}
             className="shrink-0 text-xs text-foreground-muted hover:text-danger disabled:opacity-60"

@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useMemo, useState, useTransition } from "react";
 import { differenceInMinutes, format } from "date-fns";
 import Link from "next/link";
@@ -92,6 +93,7 @@ function TimingFields({
 
 export function MomentsJournal({ moments }: { moments: Moment[] }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [resetKey, setResetKey] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
 
@@ -121,7 +123,8 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
         key={resetKey}
         action={(formData) =>
           startTransition(async () => {
-            await addMoment(formData);
+            const r = await run(() => addMoment(formData), { success: "Moment ajouté à ta journée ✨", failure: "Ajout impossible" });
+            if (!r || r.error) return;
             setResetKey((k) => k + 1);
             setShowDetails(false);
           })
@@ -196,6 +199,7 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
 
 function MomentItem({ moment }: { moment: Moment }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [editing, setEditing] = useState(false);
 
   if (editing) {
@@ -211,7 +215,8 @@ function MomentItem({ moment }: { moment: Moment }) {
         <form
           action={(formData) =>
             startTransition(async () => {
-              await updateMoment(moment.id, formData);
+              const r = await run(() => updateMoment(moment.id, formData), { success: "Moment modifié", failure: "Modification impossible" });
+              if (!r || r.error) return;
               setEditing(false);
             })
           }
@@ -290,7 +295,7 @@ function MomentItem({ moment }: { moment: Moment }) {
         </button>
         <ConfirmDeleteButton
           disabled={pending}
-          onConfirm={() => startTransition(() => deleteMoment(moment.id))}
+          onConfirm={() => startTransition(async () => void (await run(() => deleteMoment(moment.id), { success: "Moment supprimé", failure: "Suppression impossible" })))}
           title="Supprimer ce moment ?"
           message={`"${moment.text}" sera définitivement supprimé.`}
           className="flex h-7 w-7 items-center justify-center rounded-lg text-foreground-muted transition hover:bg-surface hover:text-danger disabled:opacity-50"

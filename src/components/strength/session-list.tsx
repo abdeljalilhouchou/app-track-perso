@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -31,6 +32,7 @@ export function SessionList({
   showDate?: boolean;
 }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [openId, setOpenId] = useState<string | null>(null);
 
   if (sessions.length === 0) {
@@ -102,7 +104,7 @@ export function SessionList({
                     {s.notes && <p className="text-xs text-foreground-muted">📝 {s.notes}</p>}
                     <ConfirmDeleteButton
                       disabled={pending}
-                      onConfirm={() => startTransition(() => deleteWorkout(s.id))}
+                      onConfirm={() => startTransition(async () => void (await run(() => deleteWorkout(s.id), { success: `Séance « ${s.activity} » supprimée`, failure: "Suppression impossible" })))}
                       title="Supprimer cette séance ?"
                       message={`"${s.activity}" du ${format(parseISO(s.date), "d MMMM", { locale: fr })} et toutes ses séries seront définitivement supprimées.`}
                       className="text-xs text-foreground-muted transition hover:text-danger"
@@ -119,7 +121,7 @@ export function SessionList({
                 <p className="text-xs text-foreground-muted">{s.notes ?? ""}</p>
                 <ConfirmDeleteButton
                   disabled={pending}
-                  onConfirm={() => startTransition(() => deleteWorkout(s.id))}
+                  onConfirm={() => startTransition(async () => void (await run(() => deleteWorkout(s.id), { success: `Séance « ${s.activity} » supprimée`, failure: "Suppression impossible" })))}
                   title="Supprimer cette séance ?"
                   message={`"${s.activity}" du ${format(parseISO(s.date), "d MMMM", { locale: fr })} sera définitivement supprimée.`}
                   className="text-xs text-foreground-muted transition hover:text-danger"

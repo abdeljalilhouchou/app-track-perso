@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { addDays, format, startOfWeek } from "date-fns";
 import Link from "next/link";
@@ -32,6 +33,7 @@ export function HabitCard({
   isLast: boolean;
 }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [editing, setEditing] = useState(false);
   const [note, setNote] = useState(todayNote ?? "");
   const today = format(new Date(), "yyyy-MM-dd");
@@ -39,7 +41,7 @@ export function HabitCard({
 
   function saveNote() {
     if (note.trim() === (todayNote ?? "").trim()) return;
-    startTransition(() => setHabitLogNote(habit.id, today, note));
+    startTransition(async () => void (await run(() => setHabitLogNote(habit.id, today, note), { success: "Note enregistrée", failure: "Note non enregistrée" })));
   }
 
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
@@ -55,7 +57,8 @@ export function HabitCard({
         <HabitForm
           action={(formData) =>
             startTransition(async () => {
-              await updateHabit(habit.id, formData);
+              const r = await run(() => updateHabit(habit.id, formData), { success: "Habitude modifiée", failure: "Modification impossible" });
+              if (!r || r.error) return;
               setEditing(false);
             })
           }
@@ -111,7 +114,14 @@ export function HabitCard({
 
         <motion.button
           disabled={pending}
-          onClick={() => startTransition(() => toggleHabitLog(habit.id, today))}
+          onClick={() =>
+            startTransition(async () =>
+              void (await run(() => toggleHabitLog(habit.id, today), {
+                success: doneToday ? `« ${habit.name} » décochée` : `Bien joué ! « ${habit.name} » validée aujourd'hui ✓`,
+                undo: { run: () => toggleHabitLog(habit.id, today) },
+              }))
+            )
+          }
           animate={doneToday ? { scale: [1, 1.25, 1] } : { scale: 1 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
           whileTap={{ scale: 0.9 }}
@@ -189,7 +199,7 @@ export function HabitCard({
         <div className="flex gap-1">
           <button
             disabled={isFirst || pending}
-            onClick={() => startTransition(() => moveHabit(habit.id, "up"))}
+            onClick={() => startTransition(async () => void (await run(() => moveHabit(habit.id, "up"))))}
             aria-label="Monter"
             className="rounded-md border border-border px-2 py-1 text-xs text-foreground-muted transition hover:bg-surface-muted disabled:opacity-30"
           >
@@ -197,7 +207,7 @@ export function HabitCard({
           </button>
           <button
             disabled={isLast || pending}
-            onClick={() => startTransition(() => moveHabit(habit.id, "down"))}
+            onClick={() => startTransition(async () => void (await run(() => moveHabit(habit.id, "down"))))}
             aria-label="Descendre"
             className="rounded-md border border-border px-2 py-1 text-xs text-foreground-muted transition hover:bg-surface-muted disabled:opacity-30"
           >
@@ -209,13 +219,13 @@ export function HabitCard({
             Modifier
           </button>
           <button
-            onClick={() => startTransition(() => pauseHabit(habit.id))}
+            onClick={() => startTransition(async () => void (await run(() => pauseHabit(habit.id), { success: `« ${habit.name} » mise en pause. Tu la retrouveras en bas de page.` })))}
             className="text-foreground-muted hover:text-foreground"
           >
             Pause
           </button>
           <ConfirmDeleteButton
-            onConfirm={() => startTransition(() => deleteHabit(habit.id))}
+            onConfirm={() => startTransition(async () => void (await run(() => deleteHabit(habit.id), { success: `« ${habit.name} » supprimée`, failure: "Suppression impossible" })))}
             title={`Supprimer "${habit.name}" ?`}
             message="Tout son historique (séries, notes) sera définitivement perdu. Cette action est irréversible."
             className="text-foreground-muted hover:text-danger"

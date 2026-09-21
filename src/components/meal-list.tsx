@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useTransition } from "react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
@@ -17,6 +18,7 @@ const MEAL_LABELS: Record<string, string> = {
 
 export function MealList({ meals, emptyLabel = "Rien enregistré aujourd'hui." }: { meals: MealEntry[]; emptyLabel?: string }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
 
   if (meals.length === 0) {
     return (
@@ -67,7 +69,7 @@ export function MealList({ meals, emptyLabel = "Rien enregistré aujourd'hui." }
                 </span>
                 <ConfirmDeleteButton
                   disabled={pending}
-                  onConfirm={() => startTransition(() => deleteMeal(m.id))}
+                  onConfirm={() => startTransition(async () => void (await run(() => deleteMeal(m.id), { success: `« ${m.food_name} » retiré du journal`, failure: "Suppression impossible" })))}
                   title="Supprimer cet aliment ?"
                   message={`"${m.food_name}" sera retiré du journal.`}
                   className="shrink-0 text-foreground-muted hover:text-danger"

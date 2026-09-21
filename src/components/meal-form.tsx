@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useMemo, useRef, useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { logMeal } from "@/lib/actions/nutrition";
@@ -70,6 +71,7 @@ function fromOff(r: OffResult): SelectedFood {
 
 export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods?: Food[] }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [offPending, startOffTransition] = useTransition();
   const [resetKey, setResetKey] = useState(0);
   const [query, setQuery] = useState("");
@@ -121,7 +123,8 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
       key={resetKey}
       action={(formData) =>
         startTransition(async () => {
-          await logMeal(formData);
+          const r = await run(() => logMeal(formData), { success: `${formData.get("food_name")} ajouté · ${formData.get("calories")} kcal`, failure: "Ajout impossible" });
+          if (!r || r.error) return;
           reset();
           setJustAdded(true);
           setTimeout(() => setJustAdded(false), 1500);

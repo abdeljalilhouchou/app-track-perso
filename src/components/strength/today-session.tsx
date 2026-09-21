@@ -4,6 +4,7 @@ import { useState, useTransition, type ReactNode } from "react";
 import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 import { motion } from "framer-motion";
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { ConfettiBurst } from "@/components/ui/confetti-burst";
 import { createDefaultProgram, markTemplateDone } from "@/lib/actions/strength";
 import { muscleColor } from "@/lib/strength";
@@ -64,6 +65,7 @@ export function TodaySession({
 }) {
   const [pending, startTransition] = useTransition();
   const [marking, startMarking] = useTransition();
+  const run = useActionToast();
   const [notice, setNotice] = useState<string | null>(null);
   const [active, setActive] = useState<Draft | null>(null);
   const [result, setResult] = useState<SessionResult | null>(null);
@@ -77,9 +79,9 @@ export function TodaySession({
     setError(null);
     setNotice(null);
     startMarking(async () => {
-      const r = await markTemplateDone(t.id, today);
-      if (r.error) setError(r.error);
-      else setNotice(`« ${t.name} » marquée comme faite (60 min). Tu peux la supprimer dans l'onglet Historique si besoin.`);
+      const r = await run(() => markTemplateDone(t.id, today), { failure: "Séance non enregistrée" });
+      if (r?.error) setError(r.error);
+      else if (r) setNotice(`« ${t.name} » marquée comme faite (60 min). Tu peux la supprimer dans l'onglet Historique si besoin.`);
     });
   }
 
@@ -195,8 +197,11 @@ export function TodaySession({
               disabled={pending}
               onClick={() =>
                 startTransition(async () => {
-                  const r = await createDefaultProgram();
-                  if (r.error) setError(r.error);
+                  const r = await run(() => createDefaultProgram(), {
+                    success: "Programme créé : 4 séances ajoutées à ta semaine 🏋️",
+                    failure: "Programme non créé",
+                  });
+                  if (r?.error) setError(r.error);
                 })
               }
               className="rounded-xl bg-sport px-5 py-2.5 text-sm font-semibold text-on-accent transition hover:opacity-90 disabled:opacity-60"

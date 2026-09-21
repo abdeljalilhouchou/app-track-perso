@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { saveDailyLimits } from "@/lib/actions/nutrition";
 
@@ -13,13 +14,15 @@ export function DailyLimits({
   sugarLimitG: number;
 }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [saved, setSaved] = useState(false);
 
   return (
     <form
       action={(formData) =>
         startTransition(async () => {
-          await saveDailyLimits(formData);
+          const r = await run(() => saveDailyLimits(formData), { success: "Limites personnelles enregistrées", failure: "Limites non enregistrées" });
+          if (!r || r.error) return;
           setSaved(true);
           setTimeout(() => setSaved(false), 1500);
         })

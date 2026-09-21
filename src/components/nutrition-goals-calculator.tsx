@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { saveNutritionProfile } from "@/lib/actions/nutrition";
 import { ACTIVITY_LEVELS, NUTRITION_GOALS, computeNutritionTargets } from "@/lib/nutrition-calculator";
@@ -7,6 +8,7 @@ import type { Profile } from "@/types/database";
 
 export function NutritionGoalsCalculator({ profile }: { profile: Profile | null }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [open, setOpen] = useState(!profile?.goal_calories);
 
   const [height, setHeight] = useState(profile?.height_cm ?? 170);
@@ -48,7 +50,8 @@ export function NutritionGoalsCalculator({ profile }: { profile: Profile | null 
     <form
       action={(formData) =>
         startTransition(async () => {
-          await saveNutritionProfile(formData);
+          const r = await run(() => saveNutritionProfile(formData), { success: `Objectifs mis à jour : ${preview.calories} kcal par jour 🎯`, failure: "Objectifs non enregistrés" });
+          if (!r || r.error) return;
           setOpen(false);
         })
       }

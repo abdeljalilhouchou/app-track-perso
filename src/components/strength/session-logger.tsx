@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { saveStrengthSession } from "@/lib/actions/strength";
 import { exerciseKey, formatWeight, muscleColor, setsVolume } from "@/lib/strength";
@@ -109,6 +110,7 @@ export function SessionLogger({
 }) {
   const isClient = useIsClient();
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [draft, setDraft] = useState<Draft>(initial);
   const [now, setNow] = useState(() => Date.now());
   const [restSeconds, setRestSeconds] = useState(90);
@@ -250,17 +252,21 @@ export function SessionLogger({
     setError(null);
     const records = detectRecords(summaries, payloadExercises);
     startTransition(async () => {
-      const result = await saveStrengthSession({
-        name: draft.name,
-        date: today,
-        templateId: draft.templateId,
-        muscleGroups: draft.muscleGroups,
-        durationMinutes: duration,
-        intensity,
-        notes,
-        exercises: payloadExercises,
-      });
-      if (result.error) return setError(result.error);
+      const result = await run(
+        () =>
+          saveStrengthSession({
+            name: draft.name,
+            date: today,
+            templateId: draft.templateId,
+            muscleGroups: draft.muscleGroups,
+            durationMinutes: duration,
+            intensity,
+            notes,
+            exercises: payloadExercises,
+          }),
+        { success: `Séance « ${draft.name} » enregistrée 💪`, failure: "Séance non enregistrée" }
+      );
+      if (!result || result.error) return setError(result?.error ?? "Enregistrement impossible.");
       clearDraft();
       onSaved({ name: draft.name, volume: totalVolume, sets: loggedSets, minutes: duration, records });
     });

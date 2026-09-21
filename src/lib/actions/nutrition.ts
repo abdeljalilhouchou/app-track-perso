@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { format } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
+import { dbFail, fail, NOT_SIGNED_IN, ok, type ActionResult } from "@/lib/actions/result";
 import { computeNutritionTargets, type ActivityLevel, type NutritionGoal } from "@/lib/nutrition-calculator";
 import { DEFAULT_DRINKS, DEFAULT_FOODS, type SeedFood } from "@/lib/food-database";
 import type { MealEntry } from "@/types/database";
@@ -17,7 +18,7 @@ function parseUnit(raw: FormDataEntryValue | null): "g" | "ml" {
   return raw === "ml" ? "ml" : "g";
 }
 
-export async function logMeal(formData: FormData) {
+export async function logMeal(formData: FormData): Promise<ActionResult> {
   const food_name = String(formData.get("food_name") ?? "").trim();
   const icon = String(formData.get("icon") ?? "🍽️").trim() || "🍽️";
   const meal_type = parseMealType(String(formData.get("meal_type") ?? "autre"));
@@ -33,15 +34,15 @@ export async function logMeal(formData: FormData) {
   const unit = parseUnit(formData.get("unit"));
   const entry_date = String(formData.get("entry_date") ?? "").trim() || format(new Date(), "yyyy-MM-dd");
 
-  if (!food_name || quantity_grams <= 0) return;
+  if (!food_name || quantity_grams <= 0) return fail("Choisis un aliment et une quantité valide.");
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return fail(NOT_SIGNED_IN);
 
-  await supabase.from("meal_entries").insert({
+  const { error: error } = await supabase.from("meal_entries").insert({
     user_id: user.id,
     entry_date,
     meal_type,
@@ -58,19 +59,25 @@ export async function logMeal(formData: FormData) {
     caffeine,
     unit,
   });
+  if (error) return dbFail(error);
 
   revalidatePath("/nutrition");
   revalidatePath("/journal");
+
+  return ok;
 }
 
-export async function deleteMeal(id: string) {
+export async function deleteMeal(id: string): Promise<ActionResult> {
   const supabase = await createClient();
-  await supabase.from("meal_entries").delete().eq("id", id);
+  const { error: error2 } = await supabase.from("meal_entries").delete().eq("id", id);
+  if (error2) return dbFail(error2);
   revalidatePath("/nutrition");
   revalidatePath("/journal");
+
+  return ok;
 }
 
-export async function saveNutritionProfile(formData: FormData) {
+export async function saveNutritionProfile(formData: FormData): Promise<ActionResult> {
   const heightCm = Number(formData.get("height_cm"));
   const weightKg = Number(formData.get("weight_kg"));
   const age = Number(formData.get("age"));
@@ -78,7 +85,7 @@ export async function saveNutritionProfile(formData: FormData) {
   const activityLevel = String(formData.get("activity_level") ?? "leger") as ActivityLevel;
   const goal = String(formData.get("nutrition_goal") ?? "maintenir") as NutritionGoal;
 
-  if (!heightCm || !weightKg || !age) return;
+  if (!heightCm || !weightKg || !age) return fail("Renseigne ta taille, ton poids et ton âge.");
 
   const targets = computeNutritionTargets({ heightCm, weightKg, age, sex, activityLevel, goal });
 
@@ -86,9 +93,9 @@ export async function saveNutritionProfile(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return fail(NOT_SIGNED_IN);
 
-  await supabase
+  const { error: error3 } = await supabase
     .from("profiles")
     .update({
       height_cm: heightCm,
@@ -103,19 +110,23 @@ export async function saveNutritionProfile(formData: FormData) {
       goal_fat: targets.fat,
     })
     .eq("id", user.id);
+  if (error3) return dbFail(error3);
 
   // Keep the weight log in sync with the calculator's current weight.
-  await supabase
+  const { error: error4 } = await supabase
     .from("weight_logs")
     .upsert(
       { user_id: user.id, entry_date: format(new Date(), "yyyy-MM-dd"), weight_kg: weightKg },
       { onConflict: "user_id,entry_date" }
     );
+  if (error4) return dbFail(error4);
 
   revalidatePath("/nutrition");
+
+  return ok;
 }
 
-export async function addFood(formData: FormData) {
+export async function addFood(formData: FormData): Promise<ActionResult> {
   const name = String(formData.get("name") ?? "").trim();
   const icon = String(formData.get("icon") ?? "🍽️").trim() || "🍽️";
   const category = String(formData.get("category") ?? "Autres").trim() || "Autres";
@@ -131,15 +142,15 @@ export async function addFood(formData: FormData) {
   const portion_label = String(formData.get("portion_label") ?? "").trim() || null;
   const portion_grams = Number(formData.get("portion_grams") ?? 0) || null;
 
-  if (!name) return;
+  if (!name) return fail("Le nom est requis.");
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return fail(NOT_SIGNED_IN);
 
-  await supabase.from("foods").insert({
+  const { error: error5 } = await supabase.from("foods").insert({
     user_id: user.id,
     name,
     icon,
@@ -156,10 +167,13 @@ export async function addFood(formData: FormData) {
     portion_label,
     portion_grams,
   });
+  if (error5) return dbFail(error5);
   revalidatePath("/nutrition");
+
+  return ok;
 }
 
-export async function updateFood(id: string, formData: FormData) {
+export async function updateFood(id: string, formData: FormData): Promise<ActionResult> {
   const name = String(formData.get("name") ?? "").trim();
   const icon = String(formData.get("icon") ?? "🍽️").trim() || "🍽️";
   const category = String(formData.get("category") ?? "Autres").trim() || "Autres";
@@ -175,20 +189,26 @@ export async function updateFood(id: string, formData: FormData) {
   const portion_label = String(formData.get("portion_label") ?? "").trim() || null;
   const portion_grams = Number(formData.get("portion_grams") ?? 0) || null;
 
-  if (!name) return;
+  if (!name) return fail("Le nom est requis.");
 
   const supabase = await createClient();
-  await supabase
+  const { error: error6 } = await supabase
     .from("foods")
     .update({ name, icon, category, calories, protein, carbs, fat, fiber, sugar, sodium, caffeine, unit, portion_label, portion_grams })
     .eq("id", id);
+  if (error6) return dbFail(error6);
   revalidatePath("/nutrition");
+
+  return ok;
 }
 
-export async function deleteFood(id: string) {
+export async function deleteFood(id: string): Promise<ActionResult> {
   const supabase = await createClient();
-  await supabase.from("foods").delete().eq("id", id);
+  const { error: error7 } = await supabase.from("foods").delete().eq("id", id);
+  if (error7) return dbFail(error7);
   revalidatePath("/nutrition");
+
+  return ok;
 }
 
 // Every column is set explicitly: a bulk insert with heterogeneous keys makes
@@ -250,7 +270,7 @@ export async function seedDefaultDrinks(): Promise<SeedResult> {
   return { added: rows.length, error: null };
 }
 
-export async function updateGoalsManually(formData: FormData) {
+export async function updateGoalsManually(formData: FormData): Promise<ActionResult> {
   const goal_calories = Number(formData.get("goal_calories"));
   const goal_protein = Number(formData.get("goal_protein"));
   const goal_carbs = Number(formData.get("goal_carbs"));
@@ -260,17 +280,20 @@ export async function updateGoalsManually(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return fail(NOT_SIGNED_IN);
 
-  await supabase
+  const { error: error8 } = await supabase
     .from("profiles")
     .update({ goal_calories, goal_protein, goal_carbs, goal_fat })
     .eq("id", user.id);
+  if (error8) return dbFail(error8);
 
   revalidatePath("/nutrition");
+
+  return ok;
 }
 
-export async function saveDailyLimits(formData: FormData) {
+export async function saveDailyLimits(formData: FormData): Promise<ActionResult> {
   const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, Math.round(n)));
   const water_goal_ml = clamp(Number(formData.get("water_goal_ml")) || 2000, 500, 10000);
   const caffeine_limit_mg = clamp(Number(formData.get("caffeine_limit_mg")) || 400, 50, 1000);
@@ -280,22 +303,25 @@ export async function saveDailyLimits(formData: FormData) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return fail(NOT_SIGNED_IN);
 
-  await supabase.from("profiles").update({ water_goal_ml, caffeine_limit_mg, sugar_limit_g }).eq("id", user.id);
+  const { error: error9 } = await supabase.from("profiles").update({ water_goal_ml, caffeine_limit_mg, sugar_limit_g }).eq("id", user.id);
+  if (error9) return dbFail(error9);
 
   revalidatePath("/nutrition");
   revalidatePath("/dashboard");
+
+  return ok;
 }
 
 // --- Water ---
 
-export async function addWater(amountMl: number) {
+export async function addWater(amountMl: number): Promise<ActionResult> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return fail(NOT_SIGNED_IN);
 
   const today = format(new Date(), "yyyy-MM-dd");
   const { data: existing } = await supabase
@@ -307,40 +333,50 @@ export async function addWater(amountMl: number) {
 
   const newMl = Math.max(0, (existing?.ml ?? 0) + amountMl);
 
-  await supabase
+  const { error: error10 } = await supabase
     .from("water_logs")
     .upsert({ user_id: user.id, entry_date: today, ml: newMl }, { onConflict: "user_id,entry_date" });
+  if (error10) return dbFail(error10);
 
   revalidatePath("/nutrition");
   revalidatePath("/dashboard");
+
+  return ok;
 }
 
 // --- Body weight ---
 
-export async function logWeight(formData: FormData) {
+export async function logWeight(formData: FormData): Promise<ActionResult> {
   const weight_kg = Number(formData.get("weight_kg") ?? 0);
   const entry_date = String(formData.get("entry_date") ?? "").trim() || format(new Date(), "yyyy-MM-dd");
-  if (!weight_kg) return;
+  if (!weight_kg) return fail("Entre un poids valide.");
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return fail(NOT_SIGNED_IN);
 
-  await supabase
+  const { error: error11 } = await supabase
     .from("weight_logs")
     .upsert({ user_id: user.id, entry_date, weight_kg }, { onConflict: "user_id,entry_date" });
+  if (error11) return dbFail(error11);
 
-  await supabase.from("profiles").update({ weight_kg }).eq("id", user.id);
+  const { error: error12 } = await supabase.from("profiles").update({ weight_kg }).eq("id", user.id);
+  if (error12) return dbFail(error12);
 
   revalidatePath("/nutrition");
+
+  return ok;
 }
 
-export async function deleteWeightLog(id: string) {
+export async function deleteWeightLog(id: string): Promise<ActionResult> {
   const supabase = await createClient();
-  await supabase.from("weight_logs").delete().eq("id", id);
+  const { error: error13 } = await supabase.from("weight_logs").delete().eq("id", id);
+  if (error13) return dbFail(error13);
   revalidatePath("/nutrition");
+
+  return ok;
 }
 
 // --- Meal templates (saved combos of foods) ---
@@ -361,14 +397,14 @@ export type TemplateItemInput = {
   unit: "g" | "ml";
 };
 
-export async function createMealTemplate(name: string, icon: string, items: TemplateItemInput[]) {
-  if (!name.trim() || items.length === 0) return;
+export async function createMealTemplate(name: string, icon: string, items: TemplateItemInput[]): Promise<ActionResult> {
+  if (!name.trim() || items.length === 0) return fail("Donne un nom à la recette et ajoute au moins un aliment.");
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return fail(NOT_SIGNED_IN);
 
   const { data: template } = await supabase
     .from("meal_templates")
@@ -376,17 +412,20 @@ export async function createMealTemplate(name: string, icon: string, items: Temp
     .select("id")
     .single();
 
-  if (!template) return;
+  if (!template) return fail("Action impossible.");
 
-  await supabase.from("meal_template_items").insert(
+  const { error: error14 } = await supabase.from("meal_template_items").insert(
     items.map((item) => ({
       template_id: template.id,
       user_id: user.id,
       ...item,
     }))
   );
+  if (error14) return dbFail(error14);
 
   revalidatePath("/nutrition");
+
+  return ok;
 }
 
 export async function updateMealTemplate(
@@ -428,30 +467,33 @@ export async function updateMealTemplate(
   return { error: null };
 }
 
-export async function deleteMealTemplate(id: string) {
+export async function deleteMealTemplate(id: string): Promise<ActionResult> {
   const supabase = await createClient();
-  await supabase.from("meal_templates").delete().eq("id", id);
+  const { error: error15 } = await supabase.from("meal_templates").delete().eq("id", id);
+  if (error15) return dbFail(error15);
   revalidatePath("/nutrition");
+
+  return ok;
 }
 
-export async function logMealTemplate(templateId: string, mealType: string) {
+export async function logMealTemplate(templateId: string, mealType: string): Promise<ActionResult> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) return fail(NOT_SIGNED_IN);
 
   const { data: items } = await supabase
     .from("meal_template_items")
     .select("*")
     .eq("template_id", templateId);
 
-  if (!items || items.length === 0) return;
+  if (!items || items.length === 0) return fail("Cette recette ne contient aucun aliment.");
 
   const entry_date = format(new Date(), "yyyy-MM-dd");
   const meal_type = parseMealType(mealType);
 
-  await supabase.from("meal_entries").insert(
+  const { error: error16 } = await supabase.from("meal_entries").insert(
     items.map((item) => ({
       user_id: user.id,
       entry_date,
@@ -470,7 +512,10 @@ export async function logMealTemplate(templateId: string, mealType: string) {
       unit: item.unit,
     }))
   );
+  if (error16) return dbFail(error16);
 
   revalidatePath("/nutrition");
   revalidatePath("/journal");
+
+  return ok;
 }

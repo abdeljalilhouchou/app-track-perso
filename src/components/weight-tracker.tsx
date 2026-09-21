@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -11,6 +12,7 @@ import type { WeightLog } from "@/types/database";
 
 export function WeightTracker({ logs }: { logs: WeightLog[] }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [resetKey, setResetKey] = useState(0);
 
   const sorted = [...logs].sort((a, b) => a.entry_date.localeCompare(b.entry_date));
@@ -59,7 +61,8 @@ export function WeightTracker({ logs }: { logs: WeightLog[] }) {
         key={resetKey}
         action={(formData) =>
           startTransition(async () => {
-            await logWeight(formData);
+            const r = await run(() => logWeight(formData), { success: `Poids enregistré : ${formData.get("weight_kg")} kg ⚖️`, failure: "Pesée non enregistrée" });
+            if (!r || r.error) return;
             setResetKey((k) => k + 1);
           })
         }
@@ -98,7 +101,7 @@ export function WeightTracker({ logs }: { logs: WeightLog[] }) {
                 {format(new Date(l.entry_date), "d MMM", { locale: fr })} · {l.weight_kg}kg
                 <ConfirmDeleteButton
                   disabled={pending}
-                  onConfirm={() => startTransition(() => deleteWeightLog(l.id))}
+                  onConfirm={() => startTransition(async () => void (await run(() => deleteWeightLog(l.id), { success: "Pesée supprimée", failure: "Suppression impossible" })))}
                   title="Supprimer cette pesée ?"
                   message={`La pesée du ${format(new Date(l.entry_date), "d MMMM", { locale: fr })} sera supprimée.`}
                   className="text-foreground-muted hover:text-danger"

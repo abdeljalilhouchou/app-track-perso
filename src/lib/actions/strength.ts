@@ -2,9 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { checkSportHabits, syncNotice } from "@/lib/sport-habit-sync";
 import { DEFAULT_EXERCISES, DEFAULT_PROGRAM, MUSCLE_GROUPS, type ProgramExercise } from "@/lib/strength";
 
-export type Result = { error: string | null };
+export type Result = { error: string | null; notice?: string };
 
 const clampInt = (n: number, min: number, max: number) => Math.min(max, Math.max(min, Math.round(n) || min));
 
@@ -18,6 +19,7 @@ async function currentUser() {
 
 function refresh() {
   revalidatePath("/sport");
+  revalidatePath("/habits");
   revalidatePath("/dashboard");
 }
 
@@ -243,8 +245,10 @@ export async function saveStrengthSession(payload: SessionPayload): Promise<Resu
     exercises.map((e) => ({ name: e.name, muscle: e.muscle }))
   );
 
+  const checked = await checkSportHabits(supabase, user.id, payload.date);
+
   refresh();
-  return { error: null, workoutId: workout.id };
+  return { error: null, workoutId: workout.id, notice: syncNotice(checked) };
 }
 
 /** One-click "I did this session": records it for the given day without per-set details. */
@@ -274,6 +278,8 @@ export async function markTemplateDone(templateId: string, date: string): Promis
   });
   if (error) return { error: error.message };
 
+  const checked = await checkSportHabits(supabase, user.id, date);
+
   refresh();
-  return { error: null };
+  return { error: null, notice: syncNotice(checked) };
 }

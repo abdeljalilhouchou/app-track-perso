@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 const TABS = [
   { id: "today", label: "Aujourd'hui", icon: "📅" },
-  { id: "journal", label: "Journal & tendances", icon: "📒" },
+  { id: "journal", label: "Journal", icon: "📒" },
   { id: "recipes", label: "Recettes", icon: "📖" },
 ] as const;
 
@@ -27,13 +27,18 @@ export function NutritionTabs({
 
   return (
     <div>
-      <div className="mb-6 inline-flex max-w-full gap-1 overflow-x-auto rounded-xl border border-nutrition/40 bg-surface-muted p-1">
+      <div
+        role="tablist"
+        className="mb-6 grid w-full grid-cols-3 gap-1 rounded-xl border border-nutrition/40 bg-surface-muted p-1 sm:inline-grid sm:w-auto"
+      >
         {TABS.map((tab) => (
           <button
             key={tab.id}
             type="button"
+            role="tab"
+            aria-selected={active === tab.id}
             onClick={() => setActive(tab.id)}
-            className="relative shrink-0 rounded-lg px-3 py-2 text-sm font-medium transition-colors sm:px-3.5"
+            className="relative min-w-0 rounded-lg px-2 py-2 text-sm font-medium transition-colors sm:px-4"
             style={{ color: active === tab.id ? "var(--on-accent)" : "var(--foreground-muted)" }}
           >
             {active === tab.id && (
@@ -44,9 +49,9 @@ export function NutritionTabs({
                 transition={{ type: "spring", duration: 0.4, bounce: 0.15 }}
               />
             )}
-            <span className="relative flex items-center gap-1.5">
-              <span>{tab.icon}</span>
-              {tab.label}
+            <span className="relative flex flex-col items-center gap-0.5 sm:flex-row sm:justify-center sm:gap-1.5">
+              <span className="text-base leading-none">{tab.icon}</span>
+              <span className="w-full truncate text-center text-[11px] leading-tight sm:w-auto sm:text-sm">{tab.label}</span>
             </span>
           </button>
         ))}

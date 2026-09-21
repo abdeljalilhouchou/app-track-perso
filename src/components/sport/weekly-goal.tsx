@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { motion } from "framer-motion";
 import { saveSportGoal } from "@/lib/actions/sport";
@@ -14,6 +15,7 @@ export function WeeklyGoal({
   goalWeeks: number;
 }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [value, setValue] = useState(goal);
   const pct = Math.min(100, Math.round((sessions / value) * 100));
   const reached = sessions >= value;
@@ -22,7 +24,7 @@ export function WeeklyGoal({
     const clamped = Math.min(14, Math.max(1, next));
     setValue(clamped);
     startTransition(async () => {
-      await saveSportGoal(clamped);
+      await run(() => saveSportGoal(clamped), { success: `Objectif : ${clamped} séance${clamped > 1 ? "s" : ""} par semaine`, failure: "Objectif non enregistré" });
     });
   }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useTransition } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -9,6 +10,7 @@ import type { MoodEntry } from "@/types/database";
 
 export function MoodEntryList({ entries }: { entries: MoodEntry[] }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
 
   return (
     <ul className="divide-y divide-border rounded-2xl border border-border bg-surface">
@@ -23,7 +25,7 @@ export function MoodEntryList({ entries }: { entries: MoodEntry[] }) {
           </div>
           <ConfirmDeleteButton
             disabled={pending}
-            onConfirm={() => startTransition(() => deleteMoodEntry(e.id))}
+            onConfirm={() => startTransition(async () => void (await run(() => deleteMoodEntry(e.id), { success: "Humeur supprimée", failure: "Suppression impossible" })))}
             title="Supprimer cette entrée ?"
             message={`L'humeur du ${format(new Date(e.entry_date), "d MMMM", { locale: fr })} sera définitivement supprimée.`}
             className="shrink-0 text-xs text-foreground-muted hover:text-danger disabled:opacity-60"

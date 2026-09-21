@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useOptimistic, useState, useTransition } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -62,6 +63,7 @@ export function TodayPanel({
   waterGoalMl: number;
 }) {
   const [, startTransition] = useTransition();
+  const run = useActionToast();
   const [burst, setBurst] = useState(0);
 
   const [doneMap, toggleOptimistic] = useOptimistic(
@@ -80,7 +82,10 @@ export function TodayPanel({
     if (willBeDone && doneCount + 1 === habits.length) setBurst((b) => b + 1);
     startTransition(async () => {
       toggleOptimistic(habit.id);
-      await toggleHabitLog(habit.id, date);
+      await run(() => toggleHabitLog(habit.id, date), {
+        success: willBeDone ? `Bien joué ! « ${habit.name} » validée ✓` : `« ${habit.name} » décochée`,
+        undo: { run: () => toggleHabitLog(habit.id, date) },
+      });
     });
   }
 
@@ -153,7 +158,7 @@ export function TodayPanel({
                 onClick={() =>
                   startTransition(async () => {
                     setMoodOptimistic(m.value);
-                    await quickLogMood(date, m.value);
+                    await run(() => quickLogMood(date, m.value), { success: "Humeur du jour enregistrée", failure: "Humeur non enregistrée" });
                   })
                 }
                 aria-label={`Humeur ${m.value} sur 5`}
@@ -198,7 +203,7 @@ export function TodayPanel({
               onClick={() =>
                 startTransition(async () => {
                   addWaterOptimistic(ml);
-                  await addWater(ml);
+                  await run(() => addWater(ml), { success: `+${ml} ml d'eau 💧`, failure: "Eau non enregistrée", undo: { run: () => addWater(-ml) } });
                 })
               }
               className="rounded-full border border-water/40 px-3 py-1.5 text-xs font-medium transition-colors hover:border-water hover:text-water"

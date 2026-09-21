@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { IconPicker } from "@/components/ui/icon-picker";
@@ -44,6 +45,7 @@ function UnitCaffeineFields({
 
 function FoodRow({ food }: { food: Food }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [editing, setEditing] = useState(false);
 
   if (editing) {
@@ -52,7 +54,8 @@ function FoodRow({ food }: { food: Food }) {
         <form
           action={(formData) =>
             startTransition(async () => {
-              await updateFood(food.id, formData);
+              const r = await run(() => updateFood(food.id, formData), { success: `« ${food.name} » modifié`, failure: "Modification impossible" });
+              if (!r || r.error) return;
               setEditing(false);
             })
           }
@@ -154,7 +157,7 @@ function FoodRow({ food }: { food: Food }) {
       </button>
       <ConfirmDeleteButton
         disabled={pending}
-        onConfirm={() => startTransition(() => deleteFood(food.id))}
+        onConfirm={() => startTransition(async () => void (await run(() => deleteFood(food.id), { success: `« ${food.name} » supprimé de ta base`, failure: "Suppression impossible" })))}
         title="Supprimer cet aliment ?"
         message={`"${food.name}" sera retiré de ta base d'aliments.`}
         className="shrink-0 text-xs text-foreground-muted hover:text-danger"
@@ -169,6 +172,7 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
   const [open, setOpen] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [addResetKey, setAddResetKey] = useState(0);
   const [seedError, setSeedError] = useState<string | null>(null);
 
@@ -243,7 +247,8 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
                 key={addResetKey}
                 action={(formData) =>
                   startTransition(async () => {
-                    await addFood(formData);
+                    const r = await run(() => addFood(formData), { success: `« ${formData.get("name")} » ajouté à ta base d'aliments`, failure: "Ajout impossible" });
+                    if (!r || r.error) return;
                     setAddResetKey((k) => k + 1);
                     setShowAdd(false);
                   })

@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { motion } from "framer-motion";
 import { createHabit } from "@/lib/actions/habits";
@@ -7,6 +8,7 @@ import { CATEGORY_META, SUGGESTED_HABITS } from "@/lib/habit-categories";
 
 export function SuggestedHabits({ existingNames }: { existingNames: string[] }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [addedNow, setAddedNow] = useState<string[]>([]);
   const lowerExisting = existingNames.map((n) => n.toLowerCase());
 
@@ -23,7 +25,8 @@ export function SuggestedHabits({ existingNames }: { existingNames: string[] }) 
     formData.set("category", suggestion.category);
     formData.set("scheduled_days", suggestion.scheduledDays.join(","));
     startTransition(async () => {
-      await createHabit(formData);
+      const r = await run(() => createHabit(formData), { success: `« ${suggestion.name} » ajoutée à tes habitudes ✨`, failure: "Ajout impossible" });
+      if (!r || r.error) return;
       setAddedNow((prev) => [...prev, suggestion.name]);
     });
   }

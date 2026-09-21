@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useMemo, useState, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { IconPicker } from "@/components/ui/icon-picker";
@@ -79,6 +80,7 @@ function TemplateBuilder({
   initial?: TemplateWithItems;
 }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [name, setName] = useState(initial?.name ?? "");
   const [icon, setIcon] = useState(initial?.icon ?? "🍽️");
   const [items, setItems] = useState<DraftItem[]>(() => (initial?.meal_template_items ?? []).map(toDraft));
@@ -133,14 +135,12 @@ function TemplateBuilder({
   function save() {
     setError(null);
     startTransition(async () => {
-      if (initial) {
-        const result = await updateMealTemplate(initial.id, name, icon, scaled);
-        if (result.error) {
-          setError(result.error);
-          return;
-        }
-      } else {
-        await createMealTemplate(name, icon, scaled);
+      const result = initial
+        ? await run(() => updateMealTemplate(initial.id, name, icon, scaled), { success: `Recette « ${name} » modifiée` })
+        : await run(() => createMealTemplate(name, icon, scaled), { success: `Recette « ${name} » créée 📖` });
+      if (!result || result.error) {
+        setError(result?.error ?? "Enregistrement impossible.");
+        return;
       }
       onDone();
     });
@@ -259,6 +259,7 @@ function TemplateBuilder({
 
 function TemplateCard({ template, foods }: { template: TemplateWithItems; foods: Food[] }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [mealType, setMealType] = useState<(typeof MEAL_TYPES)[number]["value"]>("dejeuner");
@@ -353,7 +354,7 @@ function TemplateCard({ template, foods }: { template: TemplateWithItems; foods:
                     <button
                       type="button"
                       disabled={pending}
-                      onClick={() => startTransition(() => logMealTemplate(template.id, mealType))}
+                      onClick={() => startTransition(async () => void (await run(() => logMealTemplate(template.id, mealType), { success: `Recette « ${template.name} » ajoutée au journal`, failure: "Ajout impossible" })))}
                       className="flex-1 rounded-lg border-[1.5px] border-accent px-3 py-1.5 text-xs font-semibold text-accent transition-colors hover:bg-accent hover:text-on-accent disabled:opacity-50"
                     >
                       Journaliser cette recette
@@ -367,7 +368,7 @@ function TemplateCard({ template, foods }: { template: TemplateWithItems; foods:
                     </button>
                     <ConfirmDeleteButton
                       disabled={pending}
-                      onConfirm={() => startTransition(() => deleteMealTemplate(template.id))}
+                      onConfirm={() => startTransition(async () => void (await run(() => deleteMealTemplate(template.id), { success: `Recette « ${template.name} » supprimée` })))}
                       title="Supprimer cette recette ?"
                       message={`"${template.name}" sera retirée de tes recettes.`}
                       className="shrink-0 text-xs text-foreground-muted hover:text-danger"

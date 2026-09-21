@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { motion } from "framer-motion";
 import { logWorkout } from "@/lib/actions/sport";
@@ -10,6 +11,7 @@ const field =
 
 export function WorkoutForm({ today, favorites }: { today: string; favorites: ActivityStat[] }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const [resetKey, setResetKey] = useState(0);
   const [activity, setActivity] = useState("");
   const [duration, setDuration] = useState(30);
@@ -34,7 +36,8 @@ export function WorkoutForm({ today, favorites }: { today: string; favorites: Ac
       key={resetKey}
       action={(formData) =>
         startTransition(async () => {
-          await logWorkout(formData);
+          const r = await run(() => logWorkout(formData), { success: `Séance « ${formData.get("activity")} » enregistrée 💪`, failure: "Séance non enregistrée" });
+          if (!r || r.error) return;
           reset();
           setJustAdded(true);
           setTimeout(() => setJustAdded(false), 1500);

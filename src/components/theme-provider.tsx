@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useState, useTransition } from "react";
 import { saveTheme } from "@/lib/actions/theme";
+import { useToast } from "@/components/toast/toast-provider";
 import { THEME_STORAGE_KEY, type Theme } from "@/lib/theme";
 
 type ThemeContextValue = { theme: Theme; setTheme: (theme: Theme) => void };
@@ -33,6 +34,7 @@ function applyTheme(theme: Theme) {
 export function ThemeProvider({ initialTheme, children }: { initialTheme: Theme; children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(initialTheme);
   const [, startTransition] = useTransition();
+  const toast = useToast();
 
   useEffect(() => {
     applyTheme(theme);
@@ -49,7 +51,8 @@ export function ThemeProvider({ initialTheme, children }: { initialTheme: Theme;
     startTransition(async () => {
       await saveTheme(next);
     });
-  }, []);
+    toast.success(`Apparence : ${next === "light" ? "clair ☀️" : next === "dark" ? "sombre 🌙" : "automatique (selon ton appareil)"}`);
+  }, [toast]);
 
   return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
 }

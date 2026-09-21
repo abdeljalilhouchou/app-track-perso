@@ -1,5 +1,6 @@
 "use client";
 
+import { useActionToast } from "@/components/toast/use-action-toast";
 import { useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { addWater } from "@/lib/actions/nutrition";
@@ -8,6 +9,7 @@ const QUICK_AMOUNTS = [250, 330, 500];
 
 export function WaterTracker({ ml, drinksMl = 0, goalMl = 2000 }: { ml: number; drinksMl?: number; goalMl?: number }) {
   const [pending, startTransition] = useTransition();
+  const run = useActionToast();
   const totalMl = ml + drinksMl;
   const pct = Math.min(100, Math.round((totalMl / goalMl) * 100));
 
@@ -51,7 +53,15 @@ export function WaterTracker({ ml, drinksMl = 0, goalMl = 2000 }: { ml: number; 
             type="button"
             disabled={pending}
             whileTap={{ scale: 0.92 }}
-            onClick={() => startTransition(() => addWater(amount))}
+            onClick={() =>
+              startTransition(async () =>
+                void (await run(() => addWater(amount), {
+                  success: `+${amount} ml d'eau 💧`,
+                  failure: "Eau non enregistrée",
+                  undo: { run: () => addWater(-amount) },
+                }))
+              )
+            }
             className="rounded-full border border-water/40 px-3 py-1.5 text-xs font-medium transition-colors hover:border-water/50 hover:text-water disabled:opacity-60"
           >
             + {amount} ml
@@ -61,7 +71,7 @@ export function WaterTracker({ ml, drinksMl = 0, goalMl = 2000 }: { ml: number; 
           type="button"
           disabled={pending || ml === 0}
           whileTap={{ scale: 0.92 }}
-          onClick={() => startTransition(() => addWater(-250))}
+          onClick={() => startTransition(async () => void (await run(() => addWater(-250), { success: "−250 ml retirés", failure: "Modification impossible" })))}
           className="rounded-full border border-dashed border-water/40 px-3 py-1.5 text-xs text-foreground-muted transition-colors hover:border-danger/40 hover:text-danger disabled:opacity-40"
         >
           − 250 ml

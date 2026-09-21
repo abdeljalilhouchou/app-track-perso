@@ -1,8 +1,7 @@
 import { format, subDays } from "date-fns";
 import { fr } from "date-fns/locale";
 import { createClient } from "@/lib/supabase/server";
-import { logMood } from "@/lib/actions/mood";
-import { MoodPicker } from "@/components/mood-picker";
+import { MoodForm } from "@/components/mood/mood-form";
 import { MoodLineChart } from "@/components/charts/mood-line-chart";
 import { MoodEntryList } from "@/components/mood-entry-list";
 import { MoodCalendar } from "@/components/mood/mood-calendar";
@@ -88,44 +87,7 @@ export default async function HumeurPage() {
 
       <MoodTiles summary={summary} />
 
-      <form action={logMood} className="space-y-4 rounded-2xl border-[1.5px] border-mood/50 bg-surface p-5">
-        <input type="hidden" name="entry_date" value={today} />
-
-        <div>
-          <p className="mb-2 text-sm font-medium">Humeur</p>
-          <MoodPicker defaultValue={todayEntry?.mood_score ?? 3} />
-        </div>
-
-        <div>
-          <label htmlFor="energy_level" className="mb-2 block text-sm font-medium">
-            Niveau d&apos;énergie
-          </label>
-          <input
-            id="energy_level"
-            name="energy_level"
-            type="range"
-            min={1}
-            max={5}
-            defaultValue={todayEntry?.energy_level ?? 3}
-            className="w-full accent-mood"
-          />
-        </div>
-
-        <input
-          name="notes"
-          defaultValue={todayEntry?.notes ?? ""}
-          placeholder="Notes (optionnel)"
-          className="w-full rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-accent"
-        />
-
-        <button
-          type="submit"
-          className="rounded-lg px-4 py-2 text-sm font-medium text-on-accent transition hover:opacity-90"
-          style={{ background: "var(--mood)" }}
-        >
-          {todayEntry ? "Mettre à jour" : "Enregistrer"}
-        </button>
-      </form>
+      <MoodForm today={today} existing={todayEntry ?? null} />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <MoodCalendar
