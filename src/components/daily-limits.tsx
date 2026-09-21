@@ -3,7 +3,15 @@
 import { useState, useTransition } from "react";
 import { saveDailyLimits } from "@/lib/actions/nutrition";
 
-export function DailyLimits({ waterGoalMl, caffeineLimitMg }: { waterGoalMl: number; caffeineLimitMg: number }) {
+export function DailyLimits({
+  waterGoalMl,
+  caffeineLimitMg,
+  sugarLimitG,
+}: {
+  waterGoalMl: number;
+  caffeineLimitMg: number;
+  sugarLimitG: number;
+}) {
   const [pending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
 
@@ -21,7 +29,7 @@ export function DailyLimits({ waterGoalMl, caffeineLimitMg }: { waterGoalMl: num
       <p className="mb-3 text-[10px] font-semibold uppercase tracking-wide text-foreground-muted">
         Mes limites personnelles
       </p>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <label className="flex flex-col gap-1">
           <span className="text-[10px] font-medium text-foreground-muted">💧 Objectif d&apos;eau (ml/jour)</span>
           <input
@@ -43,6 +51,18 @@ export function DailyLimits({ waterGoalMl, caffeineLimitMg }: { waterGoalMl: num
             max={1000}
             step={10}
             defaultValue={caffeineLimitMg}
+            className="rounded-lg border border-border bg-surface-muted px-2.5 py-2 text-sm outline-none focus:border-accent"
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-[10px] font-medium text-foreground-muted">🍬 Limite de sucres (g/jour)</span>
+          <input
+            name="sugar_limit_g"
+            type="number"
+            min={5}
+            max={300}
+            step={1}
+            defaultValue={sugarLimitG}
             className="rounded-lg border border-border bg-surface-muted px-2.5 py-2 text-sm outline-none focus:border-accent"
           />
         </label>

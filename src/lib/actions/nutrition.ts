@@ -274,6 +274,7 @@ export async function saveDailyLimits(formData: FormData) {
   const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, Math.round(n)));
   const water_goal_ml = clamp(Number(formData.get("water_goal_ml")) || 2000, 500, 10000);
   const caffeine_limit_mg = clamp(Number(formData.get("caffeine_limit_mg")) || 400, 50, 1000);
+  const sugar_limit_g = clamp(Number(formData.get("sugar_limit_g")) || 50, 5, 300);
 
   const supabase = await createClient();
   const {
@@ -281,7 +282,7 @@ export async function saveDailyLimits(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) return;
 
-  await supabase.from("profiles").update({ water_goal_ml, caffeine_limit_mg }).eq("id", user.id);
+  await supabase.from("profiles").update({ water_goal_ml, caffeine_limit_mg, sugar_limit_g }).eq("id", user.id);
 
   revalidatePath("/nutrition");
   revalidatePath("/dashboard");

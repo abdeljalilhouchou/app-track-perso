@@ -59,7 +59,7 @@ export default async function DashboardPage() {
       .order("entry_date", { ascending: true }),
     supabase
       .from("meal_entries")
-      .select("entry_date, calories, protein, carbs, fat, caffeine, unit, quantity_grams")
+      .select("entry_date, calories, protein, carbs, fat, sugar, caffeine, unit, quantity_grams")
       .eq("user_id", user.id)
       .gte("entry_date", since30),
     supabase.from("water_logs").select("ml").eq("user_id", user.id).eq("entry_date", todayStr).maybeSingle(),
@@ -107,6 +107,7 @@ export default async function DashboardPage() {
     todayMeals.filter((m) => m.unit === "ml").reduce((sum, m) => sum + m.quantity_grams, 0)
   );
   const caffeineMg = Math.round(todayMeals.reduce((sum, m) => sum + m.caffeine, 0));
+  const sugarG = Math.round(todayMeals.reduce((sum, m) => sum + m.sugar, 0) * 10) / 10;
   const round1 = (n: number) => Math.round(n * 10) / 10;
 
   const rings = [
@@ -172,6 +173,7 @@ export default async function DashboardPage() {
         <NutritionSummary
           rings={rings}
           caffeineMg={caffeineMg}
+          sugarG={sugarG}
           weightKg={latestWeight?.weight_kg ?? null}
           weightDelta={weightDelta}
           hasMeals={todayMeals.length > 0}

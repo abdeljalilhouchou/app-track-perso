@@ -23,6 +23,8 @@ create table if not exists public.profiles (
   goal_fat numeric(6, 1),
   water_goal_ml int not null default 2000,
   caffeine_limit_mg int not null default 400,
+  sugar_limit_g int not null default 50,
+  sport_weekly_goal int not null default 3,
   theme text not null default 'system' check (theme in ('light', 'dark', 'system')),
   created_at timestamptz not null default now()
 );

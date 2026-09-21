@@ -4,12 +4,14 @@ import { MacroRings } from "@/components/macro-rings";
 export function NutritionSummary({
   rings,
   caffeineMg,
+  sugarG,
   weightKg,
   weightDelta,
   hasMeals,
 }: {
   rings: { label: string; value: number; goal: number | null; unit: string; color: string }[];
   caffeineMg: number;
+  sugarG: number;
   weightKg: number | null;
   weightDelta: number | null;
   hasMeals: boolean;
@@ -37,6 +39,9 @@ export function NutritionSummary({
       <div className="mt-4 flex flex-wrap gap-2 text-xs">
         {caffeineMg > 0 && (
           <span className="rounded-full border border-nutrition/40 bg-surface-muted px-2.5 py-1">☕ {caffeineMg} mg de caféine</span>
+        )}
+        {sugarG > 0 && (
+          <span className="rounded-full border border-nutrition/40 bg-surface-muted px-2.5 py-1">🍬 {sugarG} g de sucres</span>
         )}
         {weightKg !== null && (
           <span className="rounded-full border border-nutrition/40 bg-surface-muted px-2.5 py-1">

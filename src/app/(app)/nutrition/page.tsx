@@ -13,6 +13,8 @@ import { MacroRings } from "@/components/macro-rings";
 import { NutritionTabs } from "@/components/nutrition-tabs";
 import { InViewFade } from "@/components/ui/in-view-fade";
 import { weeklyTotals } from "@/lib/weekly";
+import { buildRings, sumMeals } from "@/lib/nutrition-totals";
+import { SugarMeter } from "@/components/sugar-meter";
 
 export default async function NutritionPage({
   searchParams,
@@ -82,18 +84,11 @@ export default async function NutritionPage({
       .order("created_at", { ascending: false }),
   ]);
 
-  const totals = (meals ?? []).reduce(
-    (acc, m) => ({
-      calories: acc.calories + m.calories,
-      protein: acc.protein + m.protein,
-      carbs: acc.carbs + m.carbs,
-      fat: acc.fat + m.fat,
-    }),
-    { calories: 0, protein: 0, carbs: 0, fat: 0 }
-  );
+  const totals = sumMeals(meals ?? []);
+  const selectedTotals = sumMeals(selectedDayMeals ?? []);
 
   const drinksMl = (meals ?? []).filter((m) => m.unit === "ml").reduce((sum, m) => sum + m.quantity_grams, 0);
-  const caffeineMg = Math.round((meals ?? []).reduce((sum, m) => sum + m.caffeine, 0));
+  const caffeineMg = totals.caffeine;
   const CAFFEINE_LIMIT_MG = profile?.caffeine_limit_mg ?? 400;
 
   const caloriesChart = weeklyTotals(
@@ -113,12 +108,9 @@ export default async function NutritionPage({
     .map((name) => (foods ?? []).find((f) => f.name === name))
     .filter((f): f is NonNullable<typeof f> => Boolean(f));
 
-  const rings = [
-    { label: "Calories", value: totals.calories, goal: profile?.goal_calories ?? null, unit: "kcal", color: "var(--nutrition)" },
-    { label: "Protéines", value: totals.protein, goal: profile?.goal_protein ?? null, unit: "g", color: "var(--habit)" },
-    { label: "Glucides", value: totals.carbs, goal: profile?.goal_carbs ?? null, unit: "g", color: "var(--mood)" },
-    { label: "Lipides", value: totals.fat, goal: profile?.goal_fat ?? null, unit: "g", color: "var(--accent)" },
-  ];
+  const rings = buildRings(totals, profile);
+  const selectedRings = buildRings(selectedTotals, profile);
+  const SUGAR_LIMIT_G = profile?.sugar_limit_g ?? 50;
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -175,6 +167,8 @@ export default async function NutritionPage({
               </div>
             )}
 
+            {totals.sugar > 0 && <SugarMeter sugarG={totals.sugar} limitG={SUGAR_LIMIT_G} />}
+
             <WaterTracker ml={todayWater?.ml ?? 0} drinksMl={drinksMl} goalMl={profile?.water_goal_ml ?? 2000} />
 
             <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
@@ -190,6 +184,9 @@ export default async function NutritionPage({
             selectedDate={selectedDate}
             meals={selectedDayMeals ?? []}
             markedDates={Array.from(new Set((loggedDates ?? []).map((d) => d.entry_date)))}
+            totals={selectedTotals}
+            rings={selectedRings}
+            sugarLimitG={SUGAR_LIMIT_G}
           />
         }
         trends={
@@ -199,7 +196,7 @@ export default async function NutritionPage({
                 Objectifs quotidiens
               </p>
               <NutritionGoalsCalculator profile={profile} />
-              <DailyLimits waterGoalMl={profile?.water_goal_ml ?? 2000} caffeineLimitMg={profile?.caffeine_limit_mg ?? 400} />
+              <DailyLimits waterGoalMl={profile?.water_goal_ml ?? 2000} caffeineLimitMg={profile?.caffeine_limit_mg ?? 400} sugarLimitG={SUGAR_LIMIT_G} />
             </div>
 
             <InViewFade className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">

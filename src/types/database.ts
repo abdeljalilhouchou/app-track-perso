@@ -22,6 +22,8 @@ export type Database = {
           water_goal_ml: number;
           caffeine_limit_mg: number;
           theme: "light" | "dark" | "system";
+          sugar_limit_g: number;
+          sport_weekly_goal: number;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["profiles"]["Row"]> & { id: string };
