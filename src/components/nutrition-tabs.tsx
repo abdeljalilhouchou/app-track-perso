@@ -5,8 +5,7 @@ import { motion } from "framer-motion";
 
 const TABS = [
   { id: "today", label: "Aujourd'hui", icon: "📅" },
-  { id: "journal", label: "Journal", icon: "📒" },
-  { id: "trends", label: "Tendances", icon: "📈" },
+  { id: "journal", label: "Journal & tendances", icon: "📒" },
   { id: "recipes", label: "Recettes", icon: "📖" },
 ] as const;
 
@@ -15,18 +14,16 @@ type TabId = (typeof TABS)[number]["id"];
 export function NutritionTabs({
   today,
   journal,
-  trends,
   recipes,
   initialTab = "today",
 }: {
   today: ReactNode;
   journal: ReactNode;
-  trends: ReactNode;
   recipes: ReactNode;
   initialTab?: TabId;
 }) {
   const [active, setActive] = useState<TabId>(initialTab);
-  const content = { today, journal, trends, recipes }[active];
+  const content = { today, journal, recipes }[active];
 
   return (
     <div>

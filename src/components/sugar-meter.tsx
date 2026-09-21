@@ -21,7 +21,7 @@ export function SugarMeter({ sugarG, limitG }: { sugarG: number; limitG: number 
       <p className="mt-2 text-[11px] text-foreground-muted">
         {over
           ? `Tu dépasses ta limite de ${sugarG - limitG} g aujourd'hui.`
-          : `Il te reste ${Math.round((limitG - sugarG) * 10) / 10} g. Limite personnelle modifiable dans l'onglet Tendances.`}
+          : `Il te reste ${Math.round((limitG - sugarG) * 10) / 10} g. Limite personnelle modifiable dans l'onglet Journal & tendances.`}
       </p>
     </div>
   );

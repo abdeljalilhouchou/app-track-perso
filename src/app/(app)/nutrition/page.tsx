@@ -162,7 +162,7 @@ export default async function NutritionPage({
                   />
                 </div>
                 <p className="mt-2 text-[11px] text-foreground-muted">
-                  Ta limite quotidienne : {CAFFEINE_LIMIT_MG} mg (environ {Math.max(1, Math.round(CAFFEINE_LIMIT_MG / 100))} tasses de café). Modifiable dans l&apos;onglet Tendances.
+                  Ta limite quotidienne : {CAFFEINE_LIMIT_MG} mg (environ {Math.max(1, Math.round(CAFFEINE_LIMIT_MG / 100))} tasses de café). Modifiable dans l&apos;onglet Journal & tendances.
                 </p>
               </div>
             )}
@@ -180,17 +180,16 @@ export default async function NutritionPage({
           </>
         }
         journal={
-          <NutritionJournal
-            selectedDate={selectedDate}
-            meals={selectedDayMeals ?? []}
-            markedDates={Array.from(new Set((loggedDates ?? []).map((d) => d.entry_date)))}
-            totals={selectedTotals}
-            rings={selectedRings}
-            sugarLimitG={SUGAR_LIMIT_G}
-          />
-        }
-        trends={
           <>
+            <NutritionJournal
+              selectedDate={selectedDate}
+              meals={selectedDayMeals ?? []}
+              markedDates={Array.from(new Set((loggedDates ?? []).map((d) => d.entry_date)))}
+              totals={selectedTotals}
+              rings={selectedRings}
+              sugarLimitG={SUGAR_LIMIT_G}
+            />
+
             <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
                 Objectifs quotidiens
