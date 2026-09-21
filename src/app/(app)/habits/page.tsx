@@ -1,4 +1,4 @@
-import { format, subWeeks } from "date-fns";
+import { format, subDays } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { computeStreak, countThisWeek } from "@/lib/streak";
 import { HabitCreateModal } from "@/components/habit-create-modal";
@@ -6,6 +6,8 @@ import { HabitsBoard, type HabitCardData } from "@/components/habits-board";
 import { SuggestedHabits } from "@/components/suggested-habits";
 import { PausedHabits } from "@/components/paused-habits";
 import { MomentsJournal } from "@/components/moments-journal";
+import { HabitsCalendar } from "@/components/habits/habits-calendar";
+import { HabitsMonthly } from "@/components/habits/habits-monthly";
 
 export default async function HabitsPage() {
   const supabase = await createClient();
@@ -14,7 +16,7 @@ export default async function HabitsPage() {
   } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const since = format(subWeeks(new Date(), 18), "yyyy-MM-dd");
+  const since = format(subDays(new Date(), 400), "yyyy-MM-dd");
   const today = format(new Date(), "yyyy-MM-dd");
 
   const [{ data: habits }, { data: pausedHabits }, { data: logs }, { data: todayLogs }, { data: moments }] =
@@ -126,6 +128,24 @@ export default async function HabitsPage() {
         </div>
       ) : (
         <HabitsBoard groups={groups} />
+      )}
+
+      {orderedHabits.length > 0 && (
+        <div className="grid gap-4 lg:grid-cols-2">
+          <HabitsCalendar
+            today={today}
+            habits={orderedHabits.map((h) => ({
+              id: h.id,
+              name: h.name,
+              icon: h.icon,
+              color: h.color,
+              scheduledDays: h.scheduled_days,
+              createdOn: h.created_at.slice(0, 10),
+            }))}
+            logs={Object.fromEntries(orderedHabits.map((h) => [h.id, Array.from(logsByHabit.get(h.id) ?? [])]))}
+          />
+          <HabitsMonthly habits={orderedHabits} logsByHabit={logsByHabit} />
+        </div>
       )}
 
       <PausedHabits habits={pausedHabits ?? []} />

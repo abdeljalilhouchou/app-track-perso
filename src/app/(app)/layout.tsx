@@ -17,7 +17,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("display_name, theme")
+    .select("display_name, theme, avatar_url")
     .eq("id", user.id)
     .single();
 
@@ -27,7 +27,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <ThemeProvider initialTheme={theme}>
       <div className="flex min-h-screen flex-col md:flex-row">
-        <SidebarNav displayName={displayName} />
+        <SidebarNav displayName={displayName} avatarUrl={profile?.avatar_url ?? null} />
         <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
           <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 md:px-10">
             <PageTransition>{children}</PageTransition>

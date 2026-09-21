@@ -7,6 +7,8 @@ import { ProfileStats } from "@/components/profile-stats";
 import { BadgeGrid } from "@/components/badge-grid";
 import { StreakFlame } from "@/components/ui/streak-flame";
 import { ThemeSelector } from "@/components/theme-selector";
+import { Avatar } from "@/components/avatar";
+import { AccountSettings } from "@/components/account-settings";
 import { AnimatedCounter } from "@/components/ui/animated-counter";
 
 export default async function ProfilPage() {
@@ -18,7 +20,7 @@ export default async function ProfilPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("display_name, created_at, reminder_time")
+    .select("display_name, created_at, reminder_time, avatar_url")
     .eq("id", user.id)
     .single();
 
@@ -28,7 +30,6 @@ export default async function ProfilPage() {
   const bestStreak = stats.bestStreak;
 
   const displayName = profile?.display_name || user.email?.split("@")[0] || "toi";
-  const initial = displayName.charAt(0).toUpperCase();
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -38,12 +39,7 @@ export default async function ProfilPage() {
       </div>
 
       <div className="flex flex-col gap-6 rounded-2xl border border-border bg-surface p-6 sm:flex-row sm:items-center">
-        <div
-          className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full text-2xl font-semibold text-on-accent"
-          style={{ background: "var(--accent)" }}
-        >
-          {initial}
-        </div>
+        <Avatar name={displayName} url={profile?.avatar_url} size="lg" />
         <div className="flex-1">
           <div className="flex items-center justify-between">
             <p className="flex items-center gap-2 font-medium">
@@ -73,6 +69,13 @@ export default async function ProfilPage() {
           { label: "Humeurs notées", value: stats.moodEntriesCount, color: "var(--mood)" },
           { label: "Repas notés", value: stats.mealEntriesCount, color: "var(--nutrition)" },
         ]}
+      />
+
+      <AccountSettings
+        userId={user.id}
+        email={user.email ?? ""}
+        displayName={displayName}
+        avatarUrl={profile?.avatar_url ?? null}
       />
 
       <div className="rounded-2xl border-[1.5px] border-accent/40 bg-surface p-5">

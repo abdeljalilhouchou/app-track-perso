@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { signOut } from "@/lib/actions/auth";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Avatar } from "@/components/avatar";
 import {
   HomeIcon,
   CalendarIcon,
@@ -25,7 +26,7 @@ const links = [
   { href: "/profil", label: "Profil", shortLabel: "Profil", Icon: UserCircleIcon },
 ];
 
-export function SidebarNav({ displayName }: { displayName: string }) {
+export function SidebarNav({ displayName, avatarUrl }: { displayName: string; avatarUrl: string | null }) {
   const pathname = usePathname();
 
   return (
@@ -99,9 +100,12 @@ export function SidebarNav({ displayName }: { displayName: string }) {
 
         <div className="mt-auto space-y-3 border-t border-border pt-4">
           <div className="flex items-center justify-between gap-2">
-            <p className="truncate px-2 text-sm text-foreground-muted">
-              Bonjour, <span className="font-medium text-foreground">{displayName}</span>
-            </p>
+            <Link href="/profil" className="flex min-w-0 items-center gap-2 rounded-lg px-1 py-1 transition hover:bg-surface-muted">
+              <Avatar name={displayName} url={avatarUrl} size="sm" />
+              <p className="truncate text-sm text-foreground-muted">
+                <span className="font-medium text-foreground">{displayName}</span>
+              </p>
+            </Link>
             <ThemeToggle />
           </div>
           <form action={signOut}>
