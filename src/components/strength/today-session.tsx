@@ -5,7 +5,7 @@ import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { ConfettiBurst } from "@/components/ui/confetti-burst";
-import { createDefaultProgram } from "@/lib/actions/strength";
+import { createDefaultProgram, markTemplateDone } from "@/lib/actions/strength";
 import { muscleColor } from "@/lib/strength";
 import type { ExerciseSummary } from "@/lib/strength-stats";
 import { SessionLogger, useSavedDraft, clearDraft, type Draft, type SessionResult } from "@/components/strength/session-logger";
@@ -63,6 +63,8 @@ export function TodaySession({
   cardio: ReactNode;
 }) {
   const [pending, startTransition] = useTransition();
+  const [marking, startMarking] = useTransition();
+  const [notice, setNotice] = useState<string | null>(null);
   const [active, setActive] = useState<Draft | null>(null);
   const [result, setResult] = useState<SessionResult | null>(null);
   const [burst, setBurst] = useState(0);
@@ -70,6 +72,16 @@ export function TodaySession({
   const saved = parseDraft(useSavedDraft());
 
   const suggested = templates.find((t) => t.id === suggestedId) ?? null;
+
+  function markDone(t: TemplateView) {
+    setError(null);
+    setNotice(null);
+    startMarking(async () => {
+      const r = await markTemplateDone(t.id, today);
+      if (r.error) setError(r.error);
+      else setNotice(`« ${t.name} » marquée comme faite (60 min). Tu peux la supprimer dans l'onglet Historique si besoin.`);
+    });
+  }
 
   function start(draft: Draft) {
     setResult(null);
@@ -98,6 +110,16 @@ export function TodaySession({
   return (
     <div className="space-y-6">
       <ConfettiBurst trigger={burst} />
+
+      {notice && (
+        <div className="flex items-start justify-between gap-3 rounded-2xl border-[1.5px] border-sport bg-sport-soft p-4 text-sm">
+          <p>✓ {notice}</p>
+          <button type="button" onClick={() => setNotice(null)} aria-label="Fermer" className="text-foreground-muted hover:text-foreground">
+            ✕
+          </button>
+        </div>
+      )}
+      {error && templates.length > 0 && <p className="text-xs text-danger">{error}</p>}
 
       {result && (
         <motion.div
@@ -216,11 +238,11 @@ export function TodaySession({
                 const doneOn = doneThisWeek[t.id];
                 const isNext = t.id === suggestedId && !doneOn;
                 return (
-                  <li key={t.id}>
+                  <li key={t.id} className="flex items-stretch gap-1.5">
                     <button
                       type="button"
                       onClick={() => start(draftFromTemplate(t))}
-                      className="flex w-full items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition hover:bg-surface-muted"
+                      className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition hover:bg-surface-muted"
                       style={{
                         borderColor: isNext ? "var(--sport)" : "color-mix(in srgb, var(--sport) 30%, var(--border))",
                         background: doneOn ? "color-mix(in srgb, var(--sport) 10%, var(--surface))" : undefined,
@@ -253,6 +275,18 @@ export function TodaySession({
                             : "à faire"}
                       </span>
                     </button>
+                    {!doneOn && (
+                      <button
+                        type="button"
+                        disabled={marking}
+                        onClick={() => markDone(t)}
+                        title="Marquer cette séance comme faite"
+                        aria-label={`Marquer ${t.name} comme faite`}
+                        className="shrink-0 rounded-xl border border-sport/40 px-3 text-sm font-semibold text-sport transition hover:bg-sport hover:text-on-accent disabled:opacity-50"
+                      >
+                        ✓
+                      </button>
+                    )}
                   </li>
                 );
               })}
@@ -279,13 +313,26 @@ export function TodaySession({
                   <li className="text-xs text-foreground-muted">+ {suggested.exercises.length - 5} autres exercices</li>
                 )}
               </ul>
-              <button
-                type="button"
-                onClick={() => start(draftFromTemplate(suggested))}
-                className="mt-4 w-full rounded-xl bg-sport px-5 py-3 text-sm font-semibold text-on-accent transition hover:opacity-90"
-              >
-                Démarrer la séance
-              </button>
+              <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={() => start(draftFromTemplate(suggested))}
+                  className="flex-1 rounded-xl bg-sport px-5 py-3 text-sm font-semibold text-on-accent transition hover:opacity-90"
+                >
+                  Démarrer la séance
+                </button>
+                <button
+                  type="button"
+                  disabled={marking}
+                  onClick={() => markDone(suggested)}
+                  className="flex-1 rounded-xl border-[1.5px] border-sport px-5 py-3 text-sm font-semibold text-sport transition hover:bg-sport hover:text-on-accent disabled:opacity-50"
+                >
+                  {marking ? "Enregistrement..." : "Marquer comme fait"}
+                </button>
+              </div>
+              <p className="mt-2 text-[11px] text-foreground-muted">
+                « Marquer comme fait » enregistre la séance sans le détail des séries (60 min, intensité 3).
+              </p>
             </div>
           )}
 

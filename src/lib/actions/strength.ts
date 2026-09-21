@@ -246,3 +246,34 @@ export async function saveStrengthSession(payload: SessionPayload): Promise<Resu
   refresh();
   return { error: null, workoutId: workout.id };
 }
+
+/** One-click "I did this session": records it for the given day without per-set details. */
+export async function markTemplateDone(templateId: string, date: string): Promise<Result> {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: "Date invalide." };
+
+  const { supabase, user } = await currentUser();
+  if (!user) return { error: "Non connecté." };
+
+  const { data: template } = await supabase
+    .from("workout_templates")
+    .select("name, muscle_groups")
+    .eq("id", templateId)
+    .eq("user_id", user.id)
+    .single();
+  if (!template) return { error: "Séance introuvable." };
+
+  const { error } = await supabase.from("workouts").insert({
+    user_id: user.id,
+    activity: template.name,
+    workout_date: date,
+    duration_minutes: 60,
+    intensity: 3,
+    notes: null,
+    muscle_groups: template.muscle_groups,
+    template_id: templateId,
+  });
+  if (error) return { error: error.message };
+
+  refresh();
+  return { error: null };
+}
