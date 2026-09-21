@@ -1,5 +1,6 @@
 import { addDays, differenceInCalendarDays, format, parseISO, startOfWeek, subDays } from "date-fns";
 import { successRate } from "@/lib/habit-insights";
+import { moodDiffText } from "@/lib/mood-insights";
 
 export type RecapMetric = { current: number | null; previous: number | null };
 
@@ -65,14 +66,6 @@ export function computeWeekRecap(input: {
 }
 
 export type Insight = { icon: string; title: string; text: string; color: string };
-
-function moodDiffText(withLabel: string, without: string, a: number, b: number) {
-  const diff = a - b;
-  const scores = `${a.toFixed(1)}/5 vs ${b.toFixed(1)}/5`;
-  if (diff > 0.3) return `Ton humeur est plus haute ${withLabel} (${scores}). Continue comme ça !`;
-  if (diff < -0.3) return `Ton humeur est un peu plus basse ${withLabel} (${scores}) que ${without}.`;
-  return `Pas de lien net pour l'instant entre ton humeur et ce critère (${scores}).`;
-}
 
 export function buildInsights(input: {
   moods: { entry_date: string; mood_score: number }[];

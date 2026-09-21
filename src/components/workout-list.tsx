@@ -12,14 +12,14 @@ export function WorkoutList({ workouts }: { workouts: Workout[] }) {
 
   if (workouts.length === 0) {
     return (
-      <p className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-foreground-muted">
+      <p className="rounded-2xl border border-dashed border-sport/40 p-8 text-center text-sm text-foreground-muted">
         Aucune séance enregistrée pour le moment.
       </p>
     );
   }
 
   return (
-    <ul className="divide-y divide-border rounded-2xl border border-border bg-surface">
+    <ul className="divide-y divide-border rounded-2xl border-[1.5px] border-sport/50 bg-surface">
       {workouts.map((w) => (
         <li key={w.id} className="flex items-center justify-between gap-4 px-4 py-3">
           <div className="min-w-0">

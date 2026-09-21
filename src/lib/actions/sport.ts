@@ -37,3 +37,17 @@ export async function deleteWorkout(id: string) {
   revalidatePath("/sport");
   revalidatePath("/dashboard");
 }
+
+export async function saveSportGoal(sessionsPerWeek: number) {
+  const sport_weekly_goal = Math.min(14, Math.max(1, Math.round(sessionsPerWeek)));
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  await supabase.from("profiles").update({ sport_weekly_goal }).eq("id", user.id);
+
+  revalidatePath("/sport");
+}
