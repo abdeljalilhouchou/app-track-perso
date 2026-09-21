@@ -76,6 +76,7 @@ export default async function ProfilPage() {
         email={user.email ?? ""}
         displayName={displayName}
         avatarUrl={profile?.avatar_url ?? null}
+        memberSinceYear={new Date(user.created_at).getFullYear()}
       />
 
       <div className="rounded-2xl border-[1.5px] border-accent/40 bg-surface p-5">

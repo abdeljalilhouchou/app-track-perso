@@ -4,6 +4,8 @@ import { useRef, useState, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Avatar } from "@/components/avatar";
 import { changePassword, exportMyData, saveAvatarUrl, updateDisplayName } from "@/lib/actions/account";
+import { getReport } from "@/lib/actions/report";
+import { downloadReportPdf } from "@/lib/report-pdf";
 
 const AVATAR_SIZE = 256;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
@@ -192,11 +194,52 @@ function PasswordSection() {
   );
 }
 
-function ExportSection() {
+const MONTH_NAMES = [
+  "Janvier",
+  "Février",
+  "Mars",
+  "Avril",
+  "Mai",
+  "Juin",
+  "Juillet",
+  "Août",
+  "Septembre",
+  "Octobre",
+  "Novembre",
+  "Décembre",
+];
+
+function ExportSection({ sinceYear }: { sinceYear: number }) {
   const [pending, startTransition] = useTransition();
   const [feedback, setFeedback] = useState<Feedback>(null);
+  const [now] = useState(() => new Date());
+  const currentYear = now.getFullYear();
+  const [mode, setMode] = useState<"month" | "year">("month");
+  const [year, setYear] = useState(currentYear);
+  const [month, setMonth] = useState(now.getMonth() + 1);
 
-  function download() {
+  const firstYear = Math.min(sinceYear, currentYear);
+  const years = Array.from({ length: currentYear - firstYear + 1 }, (_, i) => currentYear - i);
+  const lastMonth = year === currentYear ? now.getMonth() + 1 : 12;
+  const safeMonth = Math.min(month, lastMonth);
+
+  function downloadPdf() {
+    setFeedback(null);
+    startTransition(async () => {
+      try {
+        const { data, error } = await getReport(
+          mode === "month" ? { kind: "month", year, month: safeMonth } : { kind: "year", year }
+        );
+        if (error || !data) return setFeedback({ kind: "error", text: error ?? "Rapport indisponible." });
+        await downloadReportPdf(data);
+        setFeedback({ kind: "ok", text: `PDF « ${data.periodLabel} » téléchargé.` });
+      } catch (e) {
+        setFeedback({ kind: "error", text: e instanceof Error ? e.message : "Impossible de créer le PDF." });
+      }
+    });
+  }
+
+  function downloadJson() {
     setFeedback(null);
     startTransition(async () => {
       const { json, error } = await exportMyData();
@@ -211,19 +254,81 @@ function ExportSection() {
       a.click();
       a.remove();
       URL.revokeObjectURL(href);
-      setFeedback({ kind: "ok", text: "Export téléchargé." });
+      setFeedback({ kind: "ok", text: "Export complet téléchargé." });
     });
   }
 
+  const tab = (active: boolean) => ({
+    background: active ? "var(--accent)" : "transparent",
+    color: active ? "var(--on-accent)" : "var(--foreground-muted)",
+  });
+
   return (
-    <div>
-      <p className="mb-3 text-xs text-foreground-muted">
-        Télécharge toutes tes données (habitudes, sport, humeur, repas, poids, eau, recettes, profil) dans un seul fichier
-        JSON.
+    <div className="space-y-4">
+      <p className="text-xs text-foreground-muted">
+        Télécharge un bilan PDF de tes habitudes, sport (musculation incluse), humeur, nutrition et poids, pour un mois ou
+        pour toute une année.
       </p>
-      <button type="button" disabled={pending} onClick={download} className={outline}>
-        {pending ? "Préparation..." : "⬇️ Exporter mes données"}
-      </button>
+
+      <div className="inline-flex gap-1 rounded-xl border border-accent/40 bg-surface-muted p-1">
+        <button
+          type="button"
+          onClick={() => setMode("month")}
+          className="rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors"
+          style={tab(mode === "month")}
+        >
+          Un mois
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode("year")}
+          className="rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors"
+          style={tab(mode === "year")}
+        >
+          Toute l&apos;année
+        </button>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        {mode === "month" && (
+          <select
+            value={safeMonth}
+            onChange={(e) => setMonth(Number(e.target.value))}
+            aria-label="Mois"
+            className={`${input} w-auto min-w-36`}
+          >
+            {MONTH_NAMES.slice(0, lastMonth).map((name, i) => (
+              <option key={name} value={i + 1}>
+                {name}
+              </option>
+            ))}
+          </select>
+        )}
+        <select
+          value={year}
+          onChange={(e) => setYear(Number(e.target.value))}
+          aria-label="Année"
+          className={`${input} w-auto min-w-28`}
+        >
+          {years.map((y) => (
+            <option key={y} value={y}>
+              {y}
+            </option>
+          ))}
+        </select>
+        <button type="button" disabled={pending} onClick={downloadPdf} className={primary}>
+          {pending ? "Préparation..." : "📄 Télécharger le PDF"}
+        </button>
+      </div>
+
+      <div className="border-t border-accent/20 pt-3">
+        <p className="mb-2 text-xs text-foreground-muted">
+          Besoin de toutes tes données brutes (sauvegarde) ? Export complet au format JSON :
+        </p>
+        <button type="button" disabled={pending} onClick={downloadJson} className={outline}>
+          ⬇️ Export complet (JSON)
+        </button>
+      </div>
       <Notice feedback={feedback} />
     </div>
   );
@@ -234,11 +339,13 @@ export function AccountSettings({
   email,
   displayName,
   avatarUrl,
+  memberSinceYear,
 }: {
   userId: string;
   email: string;
   displayName: string;
   avatarUrl: string | null;
+  memberSinceYear: number;
 }) {
   return (
     <div className="rounded-2xl border-[1.5px] border-accent/40 bg-surface p-5">
@@ -265,7 +372,7 @@ export function AccountSettings({
 
         <div className="border-t border-accent/20 pt-5">
           <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">Mes données</h3>
-          <ExportSection />
+          <ExportSection sinceYear={memberSinceYear} />
         </div>
       </div>
     </div>
