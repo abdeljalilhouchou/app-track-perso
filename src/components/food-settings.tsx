@@ -1,11 +1,12 @@
 "use client";
 
 import { useActionToast } from "@/components/toast/use-action-toast";
+import { useToast } from "@/components/toast/toast-provider";
 import { useState, useTransition } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { IconPicker } from "@/components/ui/icon-picker";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
-import { addFood, updateFood, deleteFood, seedDefaultFoods, seedDefaultDrinks } from "@/lib/actions/nutrition";
+import { addFood, updateFood, deleteFood, seedDefaultFoods, seedDefaultDrinks, resyncFoodDefaults } from "@/lib/actions/nutrition";
 import { FOOD_CATEGORIES } from "@/lib/food-database";
 import type { Food } from "@/types/database";
 
@@ -173,6 +174,7 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
   const [showAdd, setShowAdd] = useState(false);
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
+  const toast = useToast();
   const [addResetKey, setAddResetKey] = useState(0);
   const [seedError, setSeedError] = useState<string | null>(null);
 
@@ -233,6 +235,25 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
               <p className="rounded-lg border border-danger/40 bg-surface-muted px-3 py-2 text-xs text-danger">
                 Import impossible : {seedError}
               </p>
+            )}
+
+            {foods.length > 0 && (
+              <button
+                onClick={() =>
+                  startTransition(async () => {
+                    const r = await run(() => resyncFoodDefaults(), { failure: "Mise à jour impossible" });
+                    if (!r || r.error) return;
+                    // Deliberate success message even at 0: confirms the check ran instead of looking like nothing happened.
+                    if (r.updated > 0) toast.success(`${r.updated} aliment${r.updated > 1 ? "s" : ""} mis à jour (fibres, sucres, sodium, caféine, portion).`);
+                    else toast.info("Tes aliments sont déjà à jour.");
+                  })
+                }
+                disabled={pending}
+                className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-border px-3 py-2 text-xs font-medium text-foreground-muted transition hover:border-accent/40 hover:text-accent disabled:opacity-60"
+                title="Corrige les fibres/sucres/sodium/caféine/portion restées à 0 sur les aliments importés avant leur ajout à l'app"
+              >
+                🔄 Corriger les valeurs manquantes (sucres, fibres, sodium, caféine)
+              </button>
             )}
 
             {!showAdd ? (

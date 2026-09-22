@@ -270,6 +270,62 @@ export async function seedDefaultDrinks(): Promise<SeedResult> {
   return { added: rows.length, error: null };
 }
 
+export type ResyncResult = { updated: number; error: string | null };
+
+/**
+ * Fixes foods imported before fiber/sugar/sodium/caffeine existed in the seed data (they were
+ * inserted with these at 0 and never retroactively updated). For each of the user's foods whose
+ * name matches a current default food/drink AND still has all four at 0 — a strong sign it was
+ * never enriched, since real zero-everything foods are rare — refreshes those fields (and the
+ * portion, if unset) to the current seed values. Never touches calories/protein/carbs/fat or a
+ * food the user has already edited.
+ */
+export async function resyncFoodDefaults(): Promise<ResyncResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { updated: 0, error: "Non connecté." };
+
+  const { data: existing, error: fetchError } = await supabase
+    .from("foods")
+    .select("id, name, fiber, sugar, sodium, caffeine, portion_grams")
+    .eq("user_id", user.id);
+  if (fetchError) return { updated: 0, error: fetchError.message };
+
+  const seedByName = new Map(
+    [...DEFAULT_FOODS, ...DEFAULT_DRINKS].map((f) => [f.name.toLowerCase(), f])
+  );
+
+  const stale = (existing ?? []).filter(
+    (f) => f.fiber === 0 && f.sugar === 0 && f.sodium === 0 && f.caffeine === 0 && seedByName.has(f.name.toLowerCase())
+  );
+  if (stale.length === 0) return { updated: 0, error: null };
+
+  const results = await Promise.all(
+    stale.map((f) => {
+      const seed = seedByName.get(f.name.toLowerCase())!;
+      return supabase
+        .from("foods")
+        .update({
+          fiber: seed.fiber ?? 0,
+          sugar: seed.sugar ?? 0,
+          sodium: seed.sodium ?? 0,
+          caffeine: seed.caffeine ?? 0,
+          unit: seed.unit ?? "g",
+          portion_label: f.portion_grams ? undefined : seed.portion_label ?? null,
+          portion_grams: f.portion_grams ? undefined : seed.portion_grams ?? null,
+        })
+        .eq("id", f.id);
+    })
+  );
+  const failed = results.find((r) => r.error);
+  if (failed?.error) return { updated: 0, error: failed.error.message };
+
+  revalidatePath("/nutrition");
+  return { updated: stale.length, error: null };
+}
+
 export async function updateGoalsManually(formData: FormData): Promise<ActionResult> {
   const goal_calories = Number(formData.get("goal_calories"));
   const goal_protein = Number(formData.get("goal_protein"));
