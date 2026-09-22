@@ -30,11 +30,17 @@ export async function updateSession(request: NextRequest) {
   const isAuthRoute =
     request.nextUrl.pathname.startsWith("/login") ||
     request.nextUrl.pathname.startsWith("/signup") ||
+    request.nextUrl.pathname.startsWith("/forgot-password") ||
     request.nextUrl.pathname.startsWith("/auth");
+
+  // Left out of isAuthRoute on purpose: the recovery link signs the user in via /auth/callback
+  // before landing here, so redirecting signed-in visitors away (like other auth routes) would
+  // bounce them to /dashboard before they can set a new password.
+  const isResetPasswordRoute = request.nextUrl.pathname.startsWith("/reset-password");
 
   const isPublicRoute = request.nextUrl.pathname === "/";
 
-  if (!user && !isAuthRoute && !isPublicRoute) {
+  if (!user && !isAuthRoute && !isPublicRoute && !isResetPasswordRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
