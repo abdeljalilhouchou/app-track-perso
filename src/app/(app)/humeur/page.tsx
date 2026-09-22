@@ -8,6 +8,7 @@ import { MoodEntryList } from "@/components/mood-entry-list";
 import { MoodCalendar } from "@/components/mood/mood-calendar";
 import { MoodInsights, MoodTiles, WeekdayBars } from "@/components/mood/mood-overview";
 import { buildMoodInsights, moodSummary, weekdayAverages } from "@/lib/mood-insights";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 export default async function HumeurPage() {
   const supabase = await createClient();
@@ -15,6 +16,7 @@ export default async function HumeurPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return null;
+  const dict = await getDictionary();
 
   const now = new Date();
   const today = format(now, "yyyy-MM-dd");
@@ -84,8 +86,8 @@ export default async function HumeurPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Humeur</h1>
-        <p className="mt-1 text-sm text-foreground-muted">Comment te sens-tu aujourd&apos;hui ?</p>
+        <h1 className="text-2xl font-semibold tracking-tight">{dict.pages.mood.title}</h1>
+        <p className="mt-1 text-sm text-foreground-muted">{dict.pages.mood.subtitle}</p>
       </div>
 
       {lowStreak && (

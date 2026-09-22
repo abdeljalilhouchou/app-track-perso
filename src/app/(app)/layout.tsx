@@ -3,8 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 import { SidebarNav } from "@/components/sidebar-nav";
 import { PageTransition } from "@/components/page-transition";
 import { ThemeProvider } from "@/components/theme-provider";
+import { LanguageProvider } from "@/components/language-provider";
 import { ToastProvider } from "@/components/toast/toast-provider";
 import { isTheme } from "@/lib/theme";
+import { isLanguage } from "@/lib/language";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -18,16 +20,18 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("display_name, theme, avatar_url")
+    .select("display_name, theme, language, avatar_url")
     .eq("id", user.id)
     .single();
 
   const displayName = profile?.display_name || user.email?.split("@")[0] || "toi";
   const theme = isTheme(profile?.theme) ? profile.theme : "system";
+  const language = isLanguage(profile?.language) ? profile.language : "fr";
 
   return (
     <ToastProvider>
       <ThemeProvider initialTheme={theme}>
+      <LanguageProvider initialLanguage={language}>
       <div className="flex min-h-screen flex-col md:flex-row">
         <SidebarNav displayName={displayName} avatarUrl={profile?.avatar_url ?? null} />
         <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
@@ -36,6 +40,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </div>
         </main>
       </div>
+      </LanguageProvider>
       </ThemeProvider>
     </ToastProvider>
   );

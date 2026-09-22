@@ -16,6 +16,7 @@ import { InViewFade } from "@/components/ui/in-view-fade";
 import { weeklyTotals } from "@/lib/weekly";
 import { buildRings, sumMeals } from "@/lib/nutrition-totals";
 import { SugarMeter } from "@/components/sugar-meter";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 export default async function NutritionPage({
   searchParams,
@@ -28,6 +29,7 @@ export default async function NutritionPage({
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return null;
+  const dict = await getDictionary();
 
   const today = format(new Date(), "yyyy-MM-dd");
   const seventyDaysAgo = format(subDays(new Date(), 70), "yyyy-MM-dd");
@@ -121,8 +123,8 @@ export default async function NutritionPage({
             🍽️
           </span>
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Nutrition</h1>
-            <p className="mt-0.5 text-sm text-foreground-muted">Journal alimentaire et macros du jour.</p>
+            <h1 className="text-2xl font-semibold tracking-tight">{dict.pages.nutrition.title}</h1>
+            <p className="mt-0.5 text-sm text-foreground-muted">{dict.pages.nutrition.subtitle}</p>
           </div>
         </div>
         <FoodSettings foods={foods ?? []} />

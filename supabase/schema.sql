@@ -26,6 +26,7 @@ create table if not exists public.profiles (
   sugar_limit_g int not null default 50,
   sport_weekly_goal int not null default 3,
   theme text not null default 'system' check (theme in ('light', 'dark', 'system')),
+  language text not null default 'fr' check (language in ('fr', 'en', 'ar')),
   created_at timestamptz not null default now()
 );
 

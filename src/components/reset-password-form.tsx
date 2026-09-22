@@ -2,17 +2,19 @@
 
 import { useActionState, useState } from "react";
 import { updatePasswordAfterReset } from "@/lib/actions/auth";
+import { useAuthT } from "@/lib/i18n/use-auth-t";
 
 export function ResetPasswordForm() {
   const [state, formAction, pending] = useActionState(updatePasswordAfterReset, { error: null });
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const mismatch = confirm.length > 0 && password !== confirm;
+  const t = useAuthT();
 
   return (
     <form action={formAction} className="space-y-4 rounded-2xl border border-border bg-surface p-6 shadow-sm">
       <div className="space-y-1.5">
-        <label htmlFor="password" className="text-sm font-medium">Nouveau mot de passe</label>
+        <label htmlFor="password" className="text-sm font-medium">{t("auth.resetPassword.newPassword")}</label>
         <input
           id="password"
           name="password"
@@ -29,7 +31,7 @@ export function ResetPasswordForm() {
       </div>
 
       <div className="space-y-1.5">
-        <label htmlFor="confirm" className="text-sm font-medium">Confirmer le mot de passe</label>
+        <label htmlFor="confirm" className="text-sm font-medium">{t("auth.resetPassword.confirmPassword")}</label>
         <input
           id="confirm"
           name="confirm"
@@ -42,7 +44,7 @@ export function ResetPasswordForm() {
           className="w-full rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-accent"
           placeholder="Retape le mot de passe"
         />
-        {mismatch && <p className="text-xs text-danger">Les mots de passe ne correspondent pas.</p>}
+        {mismatch && <p className="text-xs text-danger">{t("auth.resetPassword.mismatch")}</p>}
       </div>
 
       {state.error && (
@@ -54,7 +56,7 @@ export function ResetPasswordForm() {
         disabled={pending || mismatch}
         className="w-full rounded-lg bg-accent px-3 py-2.5 text-sm font-medium text-on-accent transition hover:opacity-90 disabled:opacity-60"
       >
-        {pending ? "Enregistrement..." : "Choisir ce mot de passe"}
+        {pending ? t("auth.resetPassword.submitting") : t("auth.resetPassword.submit")}
       </button>
     </form>
   );

@@ -2,14 +2,9 @@
 
 import { useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
+import { useT } from "@/components/language-provider";
 
-const TABS = [
-  { id: "today", label: "Aujourd'hui", icon: "📅" },
-  { id: "journal", label: "Journal", icon: "📒" },
-  { id: "recipes", label: "Recettes", icon: "📖" },
-] as const;
-
-type TabId = (typeof TABS)[number]["id"];
+type TabId = "today" | "journal" | "recipes";
 
 export function NutritionTabs({
   today,
@@ -24,6 +19,13 @@ export function NutritionTabs({
 }) {
   const [active, setActive] = useState<TabId>(initialTab);
   const content = { today, journal, recipes }[active];
+  const t = useT();
+
+  const TABS: { id: TabId; label: string; icon: string }[] = [
+    { id: "today", label: t("tabs.nutrition.today"), icon: "📅" },
+    { id: "journal", label: t("tabs.nutrition.journal"), icon: "📒" },
+    { id: "recipes", label: t("tabs.nutrition.recipes"), icon: "📖" },
+  ];
 
   return (
     <div>

@@ -9,6 +9,7 @@ import { Callout } from "@/components/ui/callout";
 import { MomentsJournal } from "@/components/moments-journal";
 import { HabitsCalendar } from "@/components/habits/habits-calendar";
 import { HabitsMonthly } from "@/components/habits/habits-monthly";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 export default async function HabitsPage() {
   const supabase = await createClient();
@@ -16,6 +17,7 @@ export default async function HabitsPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return null;
+  const dict = await getDictionary();
 
   const since = format(subDays(new Date(), 400), "yyyy-MM-dd");
   const today = format(new Date(), "yyyy-MM-dd");
@@ -95,7 +97,7 @@ export default async function HabitsPage() {
             ✨
           </span>
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Habitudes</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">{dict.pages.habits.title}</h1>
             <p className="mt-0.5 text-sm text-foreground-muted">
               {orderedHabits.length > 0 ? (
                 <>
@@ -106,7 +108,7 @@ export default async function HabitsPage() {
                   </span>
                 </>
               ) : (
-                "Construis ta constance, un jour à la fois."
+                dict.pages.habits.subtitle
               )}
             </p>
           </div>

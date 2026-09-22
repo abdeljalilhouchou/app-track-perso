@@ -11,6 +11,8 @@ import { Avatar } from "@/components/avatar";
 import { Callout } from "@/components/ui/callout";
 import { AccountSettings } from "@/components/account-settings";
 import { AnimatedCounter } from "@/components/ui/animated-counter";
+import { LanguageSelector } from "@/components/language-selector";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 export default async function ProfilPage() {
   const supabase = await createClient();
@@ -18,6 +20,7 @@ export default async function ProfilPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return null;
+  const dict = await getDictionary();
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -35,8 +38,8 @@ export default async function ProfilPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Profil</h1>
-        <p className="mt-1 text-sm text-foreground-muted">Ta progression, tes badges, ton parcours.</p>
+        <h1 className="text-2xl font-semibold tracking-tight">{dict.pages.profile.title}</h1>
+        <p className="mt-1 text-sm text-foreground-muted">{dict.pages.profile.subtitle}</p>
       </div>
 
       <div className="flex flex-col gap-6 rounded-2xl border border-border bg-surface p-6 sm:flex-row sm:items-center">
@@ -99,6 +102,15 @@ export default async function ProfilPage() {
         <ThemeSelector />
       </div>
 
+      <div className="rounded-2xl border-[1.5px] border-accent/40 bg-surface p-5">
+        <h2 className="mb-1 flex items-center gap-2 text-sm font-medium">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft">🌐</span>
+          {dict.language.title}
+        </h2>
+        <p className="mb-3 text-xs text-foreground-muted">{dict.language.description}</p>
+        <LanguageSelector />
+      </div>
+
       <div className="rounded-2xl border border-border bg-surface p-5">
         <h2 className="mb-3 flex items-center gap-2 text-sm font-medium">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft">🔔</span>
@@ -121,7 +133,7 @@ export default async function ProfilPage() {
       </div>
 
       <SignOutButton className="w-full rounded-2xl border border-border bg-surface px-4 py-3 text-center text-sm font-medium text-foreground-muted transition hover:bg-surface-muted md:hidden">
-        Se déconnecter
+        {dict.nav.signOut}
       </SignOutButton>
     </div>
   );

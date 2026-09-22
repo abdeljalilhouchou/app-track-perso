@@ -16,6 +16,7 @@ import { WeekRecap } from "@/components/dashboard/week-recap";
 import { SmartAlerts } from "@/components/dashboard/smart-alerts";
 import { computeStreak } from "@/lib/streak";
 import type { AlertFacts } from "@/lib/alerts";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -23,6 +24,7 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return null;
+  const dict = await getDictionary();
 
   const today = new Date();
   const todayStr = format(today, "yyyy-MM-dd");
@@ -203,7 +205,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Salut {displayName} 👋</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">{dict.dashboard.greeting.replace("{name}", displayName)}</h1>
         <p className="mt-1 text-sm text-foreground-muted">{format(today, "EEEE d MMMM yyyy", { locale: fr })}</p>
       </div>
 
@@ -240,10 +242,10 @@ export default async function DashboardPage() {
         />
       </div>
 
-      <WeekRecap recap={recap} />
+      <WeekRecap recap={recap} title={dict.dashboard.weekRecap} />
 
       <div>
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">Insights</h2>
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{dict.dashboard.insights}</h2>
         {insights.length > 0 ? (
           <div className="grid gap-3 lg:grid-cols-3">
             {insights.map((i) => (
@@ -273,9 +275,9 @@ export default async function DashboardPage() {
       <div className="grid gap-4 lg:grid-cols-2">
         <InViewFade className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5">
           <div className="mb-2 flex items-center justify-between">
-            <h2 className="text-sm font-medium text-foreground-muted">Sport · minutes / semaine</h2>
+            <h2 className="text-sm font-medium text-foreground-muted">{dict.dashboard.sportChart}</h2>
             <Link href="/sport" className="text-xs text-accent hover:underline">
-              Voir tout
+              {dict.dashboard.seeAll}
             </Link>
           </div>
           <WeeklyBarChart data={sportChart} color="var(--sport)" unit="min" />
@@ -283,15 +285,15 @@ export default async function DashboardPage() {
 
         <InViewFade className="rounded-2xl border-[1.5px] border-mood/50 bg-surface p-5" delay={0.1}>
           <div className="mb-2 flex items-center justify-between">
-            <h2 className="text-sm font-medium text-foreground-muted">Humeur · 30 derniers jours</h2>
+            <h2 className="text-sm font-medium text-foreground-muted">{dict.dashboard.moodChart}</h2>
             <Link href="/humeur" className="text-xs text-accent hover:underline">
-              Voir tout
+              {dict.dashboard.seeAll}
             </Link>
           </div>
           {moodChart.length > 0 ? (
             <MoodLineChart data={moodChart} />
           ) : (
-            <p className="py-16 text-center text-sm text-foreground-muted">Aucune donnée pour l&apos;instant.</p>
+            <p className="py-16 text-center text-sm text-foreground-muted">{dict.dashboard.noData}</p>
           )}
         </InViewFade>
       </div>

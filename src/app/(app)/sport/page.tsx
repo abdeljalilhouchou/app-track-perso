@@ -17,6 +17,7 @@ import type { CatalogItem, TemplateView } from "@/components/strength/types";
 import { computeSportStats } from "@/lib/sport-stats";
 import { computeStrengthData, suggestNextTemplate, type RawSet } from "@/lib/strength-stats";
 import { weeklyTotals } from "@/lib/weekly";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 const PAGE_SIZE = 1000;
 
@@ -27,6 +28,7 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return null;
+  const dict = await getDictionary();
 
   const today = format(new Date(), "yyyy-MM-dd");
   const selectedDate = date && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : today;
@@ -238,8 +240,8 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
           🏋️
         </span>
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Sport</h1>
-          <p className="mt-0.5 text-sm text-foreground-muted">Musculation, programme et progression.</p>
+          <h1 className="text-2xl font-semibold tracking-tight">{dict.pages.sport.title}</h1>
+          <p className="mt-0.5 text-sm text-foreground-muted">{dict.pages.sport.subtitle}</p>
         </div>
       </div>
 

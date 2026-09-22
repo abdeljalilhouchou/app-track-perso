@@ -2,16 +2,9 @@
 
 import { useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
+import { useT } from "@/components/language-provider";
 
-const TABS = [
-  { id: "session", label: "Séance", icon: "🏋️" },
-  { id: "program", label: "Programme", icon: "📋" },
-  { id: "progress", label: "Progression", icon: "📈" },
-  { id: "history", label: "Historique", icon: "📅" },
-  { id: "stats", label: "Stats", icon: "📊" },
-] as const;
-
-export type SportTabId = (typeof TABS)[number]["id"];
+export type SportTabId = "session" | "program" | "progress" | "history" | "stats";
 
 export function SportTabs({
   panels,
@@ -21,6 +14,15 @@ export function SportTabs({
   initialTab?: SportTabId;
 }) {
   const [active, setActive] = useState<SportTabId>(initialTab);
+  const t = useT();
+
+  const TABS: { id: SportTabId; label: string; icon: string }[] = [
+    { id: "session", label: t("tabs.sport.session"), icon: "🏋️" },
+    { id: "program", label: t("tabs.sport.program"), icon: "📋" },
+    { id: "progress", label: t("tabs.sport.progress"), icon: "📈" },
+    { id: "history", label: t("tabs.sport.history"), icon: "📅" },
+    { id: "stats", label: t("tabs.sport.stats"), icon: "📊" },
+  ];
 
   return (
     <div>

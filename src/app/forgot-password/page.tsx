@@ -3,9 +3,11 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import { requestPasswordReset } from "@/lib/actions/auth";
+import { useAuthT } from "@/lib/i18n/use-auth-t";
 
 export default function ForgotPasswordPage() {
   const [state, formAction, pending] = useActionState(requestPasswordReset, { error: null, sent: false });
+  const t = useAuthT();
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
@@ -14,26 +16,21 @@ export default function ForgotPasswordPage() {
           <Link href="/" className="text-2xl font-semibold tracking-tight">
             track<span className="text-accent">.perso</span>
           </Link>
-          <p className="mt-2 text-sm text-foreground-muted">
-            Indique ton e-mail, on t&apos;envoie un lien pour choisir un nouveau mot de passe.
-          </p>
+          <p className="mt-2 text-sm text-foreground-muted">{t("auth.forgotPassword.tagline")}</p>
         </div>
 
         {state.sent ? (
           <div className="space-y-4 rounded-2xl border border-border bg-surface p-6 text-center shadow-sm">
             <span className="text-3xl">📬</span>
-            <p className="text-sm">
-              Si un compte existe avec cette adresse, un e-mail vient de partir avec un lien de réinitialisation. Vérifie
-              aussi tes spams.
-            </p>
+            <p className="text-sm">{t("auth.forgotPassword.sentMessage")}</p>
             <Link href="/login" className="inline-block text-sm font-medium text-accent hover:underline">
-              Retour à la connexion
+              {t("auth.forgotPassword.backToLogin")}
             </Link>
           </div>
         ) : (
           <form action={formAction} className="space-y-4 rounded-2xl border border-border bg-surface p-6 shadow-sm">
             <div className="space-y-1.5">
-              <label htmlFor="email" className="text-sm font-medium">Email</label>
+              <label htmlFor="email" className="text-sm font-medium">{t("auth.forgotPassword.email")}</label>
               <input
                 id="email"
                 name="email"
@@ -55,12 +52,12 @@ export default function ForgotPasswordPage() {
               disabled={pending}
               className="w-full rounded-lg bg-accent px-3 py-2.5 text-sm font-medium text-on-accent transition hover:opacity-90 disabled:opacity-60"
             >
-              {pending ? "Envoi..." : "Envoyer le lien"}
+              {pending ? t("auth.forgotPassword.submitting") : t("auth.forgotPassword.submit")}
             </button>
 
             <p className="text-center text-sm text-foreground-muted">
               <Link href="/login" className="font-medium text-accent hover:underline">
-                Retour à la connexion
+                {t("auth.forgotPassword.backToLogin")}
               </Link>
             </p>
           </form>

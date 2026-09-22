@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Callout } from "@/components/ui/callout";
 import { buildAlerts, type AlertFacts } from "@/lib/alerts";
+import { useT } from "@/components/language-provider";
 
 /**
  * Notes and warnings derived from today's data. Time-of-day rules use the user's own clock
@@ -16,11 +17,12 @@ export function SmartAlerts({ facts }: { facts: AlertFacts }) {
   });
 
   const alerts = buildAlerts(facts, clock.hour, clock.iso);
+  const t = useT();
   if (alerts.length === 0) return null;
 
   return (
     <section aria-label="Notes et alertes">
-      <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">Notes &amp; alertes</h2>
+      <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("dashboard.todayPanel.title")}</h2>
       <div className="space-y-2.5">
         {alerts.map((a, i) => (
           <motion.div key={a.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.06 }}>

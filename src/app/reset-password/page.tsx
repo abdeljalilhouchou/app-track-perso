@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { ResetPasswordForm } from "@/components/reset-password-form";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 export default async function ResetPasswordPage() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const dict = await getDictionary();
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
@@ -16,7 +18,7 @@ export default async function ResetPasswordPage() {
             track<span className="text-accent">.perso</span>
           </Link>
           <p className="mt-2 text-sm text-foreground-muted">
-            {user ? "Choisis ton nouveau mot de passe." : "Lien de réinitialisation invalide."}
+            {user ? dict.auth.resetPassword.tagline : dict.auth.resetPassword.invalidTagline}
           </p>
         </div>
 
@@ -25,15 +27,12 @@ export default async function ResetPasswordPage() {
         ) : (
           <div className="space-y-4 rounded-2xl border border-border bg-surface p-6 text-center shadow-sm">
             <span className="text-3xl">⚠️</span>
-            <p className="text-sm text-foreground-muted">
-              Ce lien a expiré ou a déjà été utilisé. Les liens de réinitialisation ne sont valables qu&apos;une seule
-              fois et pendant une durée limitée.
-            </p>
+            <p className="text-sm text-foreground-muted">{dict.auth.resetPassword.expiredMessage}</p>
             <Link
               href="/forgot-password"
               className="inline-block rounded-lg bg-accent px-4 py-2 text-sm font-medium text-on-accent transition hover:opacity-90"
             >
-              Redemander un lien
+              {dict.auth.resetPassword.requestNew}
             </Link>
           </div>
         )}

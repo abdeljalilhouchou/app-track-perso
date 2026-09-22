@@ -43,12 +43,10 @@ function Tile({
   );
 }
 
-export function WeekRecap({ recap }: { recap: WeekRecapData }) {
+export function WeekRecap({ recap, title }: { recap: WeekRecapData; title: string }) {
   return (
     <div>
-      <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-        Bilan de la semaine
-      </h2>
+      <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{title}</h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Tile
           label="Habitudes réussies"

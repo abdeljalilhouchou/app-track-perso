@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar } from "@/components/avatar";
+import { useT } from "@/components/language-provider";
 import {
   HomeIcon,
   SparkleIcon,
@@ -15,17 +16,18 @@ import {
   UserCircleIcon,
 } from "@/components/ui/nav-icons";
 
-const links = [
-  { href: "/dashboard", label: "Vue d'ensemble", shortLabel: "Accueil", Icon: HomeIcon },
-  { href: "/habits", label: "Habitudes", shortLabel: "Habitudes", Icon: SparkleIcon },
-  { href: "/sport", label: "Sport", shortLabel: "Sport", Icon: ActivityIcon },
-  { href: "/nutrition", label: "Nutrition", shortLabel: "Nutrition", Icon: UtensilsIcon },
-  { href: "/humeur", label: "Humeur", shortLabel: "Humeur", Icon: SmileIcon },
-  { href: "/profil", label: "Profil", shortLabel: "Profil", Icon: UserCircleIcon },
-];
-
 export function SidebarNav({ displayName, avatarUrl }: { displayName: string; avatarUrl: string | null }) {
   const pathname = usePathname();
+  const t = useT();
+
+  const links = [
+    { href: "/dashboard", label: t("nav.overview"), shortLabel: t("nav.overviewShort"), Icon: HomeIcon },
+    { href: "/habits", label: t("nav.habits"), shortLabel: t("nav.habits"), Icon: SparkleIcon },
+    { href: "/sport", label: t("nav.sport"), shortLabel: t("nav.sport"), Icon: ActivityIcon },
+    { href: "/nutrition", label: t("nav.nutrition"), shortLabel: t("nav.nutrition"), Icon: UtensilsIcon },
+    { href: "/humeur", label: t("nav.mood"), shortLabel: t("nav.mood"), Icon: SmileIcon },
+    { href: "/profil", label: t("nav.profile"), shortLabel: t("nav.profile"), Icon: UserCircleIcon },
+  ];
 
   return (
     <>
@@ -107,7 +109,7 @@ export function SidebarNav({ displayName, avatarUrl }: { displayName: string; av
             <ThemeToggle />
           </div>
           <SignOutButton className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-foreground-muted transition hover:bg-surface-muted hover:text-foreground">
-            Se déconnecter
+            {t("nav.signOut")}
           </SignOutButton>
         </div>
       </aside>
