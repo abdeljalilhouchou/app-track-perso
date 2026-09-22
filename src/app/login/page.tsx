@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import { signIn } from "@/lib/actions/auth";
+import { SignatureOverlay } from "@/components/auth/signature-overlay";
 
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState<{ error: string | null }, FormData>(
@@ -74,6 +75,8 @@ export default function LoginPage() {
           </Link>
         </p>
       </div>
+
+      <SignatureOverlay show={pending} label="Connexion..." />
     </div>
   );
 }

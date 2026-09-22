@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { signOut } from "@/lib/actions/auth";
+import { SignOutButton } from "@/components/auth/sign-out-button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar } from "@/components/avatar";
 import {
@@ -106,14 +106,9 @@ export function SidebarNav({ displayName, avatarUrl }: { displayName: string; av
             </Link>
             <ThemeToggle />
           </div>
-          <form action={signOut}>
-            <button
-              type="submit"
-              className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-foreground-muted transition hover:bg-surface-muted hover:text-foreground"
-            >
-              Se déconnecter
-            </button>
-          </form>
+          <SignOutButton className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-foreground-muted transition hover:bg-surface-muted hover:text-foreground">
+            Se déconnecter
+          </SignOutButton>
         </div>
       </aside>
     </>

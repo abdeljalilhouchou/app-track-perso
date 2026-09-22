@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { BADGES } from "@/lib/gamification";
 import { computeProfileStats, summarizeProgress } from "@/lib/profile-stats";
 import { ReminderSettings } from "@/components/reminder-settings";
-import { signOut } from "@/lib/actions/auth";
+import { SignOutButton } from "@/components/auth/sign-out-button";
 import { ProfileStats } from "@/components/profile-stats";
 import { BadgeGrid } from "@/components/badge-grid";
 import { StreakFlame } from "@/components/ui/streak-flame";
@@ -120,14 +120,9 @@ export default async function ProfilPage() {
         />
       </div>
 
-      <form action={signOut} className="md:hidden">
-        <button
-          type="submit"
-          className="w-full rounded-2xl border border-border bg-surface px-4 py-3 text-center text-sm font-medium text-foreground-muted transition hover:bg-surface-muted"
-        >
-          Se déconnecter
-        </button>
-      </form>
+      <SignOutButton className="w-full rounded-2xl border border-border bg-surface px-4 py-3 text-center text-sm font-medium text-foreground-muted transition hover:bg-surface-muted md:hidden">
+        Se déconnecter
+      </SignOutButton>
     </div>
   );
 }
