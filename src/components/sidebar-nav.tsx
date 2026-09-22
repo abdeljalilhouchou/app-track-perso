@@ -8,7 +8,6 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar } from "@/components/avatar";
 import {
   HomeIcon,
-  CalendarIcon,
   SparkleIcon,
   ActivityIcon,
   UtensilsIcon,
@@ -18,7 +17,6 @@ import {
 
 const links = [
   { href: "/dashboard", label: "Vue d'ensemble", shortLabel: "Accueil", Icon: HomeIcon },
-  { href: "/journal", label: "Journal", shortLabel: "Journal", Icon: CalendarIcon },
   { href: "/habits", label: "Habitudes", shortLabel: "Habitudes", Icon: SparkleIcon },
   { href: "/sport", label: "Sport", shortLabel: "Sport", Icon: ActivityIcon },
   { href: "/nutrition", label: "Nutrition", shortLabel: "Nutrition", Icon: UtensilsIcon },

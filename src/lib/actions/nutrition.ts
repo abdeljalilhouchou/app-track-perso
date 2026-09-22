@@ -62,7 +62,6 @@ export async function logMeal(formData: FormData): Promise<ActionResult> {
   if (error) return dbFail(error);
 
   revalidatePath("/nutrition");
-  revalidatePath("/journal");
 
   return ok;
 }
@@ -72,7 +71,6 @@ export async function deleteMeal(id: string): Promise<ActionResult> {
   const { error: error2 } = await supabase.from("meal_entries").delete().eq("id", id);
   if (error2) return dbFail(error2);
   revalidatePath("/nutrition");
-  revalidatePath("/journal");
 
   return ok;
 }
@@ -571,7 +569,6 @@ export async function logMealTemplate(templateId: string, mealType: string): Pro
   if (error16) return dbFail(error16);
 
   revalidatePath("/nutrition");
-  revalidatePath("/journal");
 
   return ok;
 }

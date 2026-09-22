@@ -62,7 +62,6 @@ export async function addMoment(formData: FormData): Promise<ActionResult> {
   if (error) return dbFail(error);
 
   revalidatePath("/habits");
-  revalidatePath("/journal");
 
   return ok;
 }
@@ -83,7 +82,6 @@ export async function updateMoment(momentId: string, formData: FormData): Promis
   if (error2) return dbFail(error2);
 
   revalidatePath("/habits");
-  revalidatePath("/journal");
 
   return ok;
 }
@@ -93,7 +91,6 @@ export async function deleteMoment(momentId: string): Promise<ActionResult> {
   const { error: error3 } = await supabase.from("moments").delete().eq("id", momentId);
   if (error3) return dbFail(error3);
   revalidatePath("/habits");
-  revalidatePath("/journal");
 
   return ok;
 }

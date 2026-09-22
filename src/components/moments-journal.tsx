@@ -3,7 +3,6 @@
 import { useActionToast } from "@/components/toast/use-action-toast";
 import { useMemo, useState, useTransition } from "react";
 import { differenceInMinutes, format } from "date-fns";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { addMoment, deleteMoment, updateMoment } from "@/lib/actions/moments";
 import { IconPicker } from "@/components/ui/icon-picker";
@@ -111,12 +110,6 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
             </p>
           </div>
         </div>
-        <Link
-          href="/journal"
-          className="shrink-0 whitespace-nowrap text-xs font-medium text-accent hover:underline"
-        >
-          Historique →
-        </Link>
       </div>
 
       <form
