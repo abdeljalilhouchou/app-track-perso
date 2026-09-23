@@ -37,11 +37,14 @@ export function sumMeals(meals: MealLike[]) {
 
 type Goals = { goal_calories: number | null; goal_protein: number | null; goal_carbs: number | null; goal_fat: number | null };
 
-export function buildRings(totals: ReturnType<typeof sumMeals>, goals: Goals | null) {
+/** Translated labels for the four rings, e.g. from `t("nutrition.macroRings.*")`. */
+export type RingLabels = { calories: string; protein: string; carbs: string; fat: string };
+
+export function buildRings(totals: ReturnType<typeof sumMeals>, goals: Goals | null, labels: RingLabels) {
   return [
-    { label: "Calories", value: totals.calories, goal: goals?.goal_calories ?? null, unit: "kcal", color: "var(--nutrition)" },
-    { label: "Protéines", value: totals.protein, goal: goals?.goal_protein ?? null, unit: "g", color: "var(--habit)" },
-    { label: "Glucides", value: totals.carbs, goal: goals?.goal_carbs ?? null, unit: "g", color: "var(--mood)" },
-    { label: "Lipides", value: totals.fat, goal: goals?.goal_fat ?? null, unit: "g", color: "var(--accent)" },
+    { label: labels.calories, value: totals.calories, goal: goals?.goal_calories ?? null, unit: "kcal", color: "var(--nutrition)" },
+    { label: labels.protein, value: totals.protein, goal: goals?.goal_protein ?? null, unit: "g", color: "var(--habit)" },
+    { label: labels.carbs, value: totals.carbs, goal: goals?.goal_carbs ?? null, unit: "g", color: "var(--mood)" },
+    { label: labels.fat, value: totals.fat, goal: goals?.goal_fat ?? null, unit: "g", color: "var(--accent)" },
   ];
 }

@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { addMoment, deleteMoment, updateMoment } from "@/lib/actions/moments";
 import { IconPicker } from "@/components/ui/icon-picker";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
+import { useT } from "@/components/language-provider";
 import { MOMENT_EMOJI_CHOICES } from "@/lib/habit-categories";
 import type { Moment } from "@/types/database";
 
@@ -57,6 +58,7 @@ function TimingFields({
   defaultStart: string;
   defaultEnd?: string;
 }) {
+  const t = useT();
   const [start, setStart] = useState(defaultStart);
   const [end, setEnd] = useState(defaultEnd ?? "");
   const duration = useMemo(() => liveDuration(start, end), [start, end]);
@@ -64,7 +66,7 @@ function TimingFields({
   return (
     <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
       <label className="flex flex-col gap-1">
-        <span className="text-[10px] font-medium text-foreground-muted">Début</span>
+        <span className="text-[10px] font-medium text-foreground-muted">{t("habits.moments.startLabel")}</span>
         <input
           name="occurred_at"
           type="datetime-local"
@@ -75,7 +77,7 @@ function TimingFields({
       </label>
       <label className="flex flex-col gap-1">
         <span className="text-[10px] font-medium text-foreground-muted">
-          Fin {duration && <span className="text-accent">· {duration}</span>}
+          {t("habits.moments.endLabel")} {duration && <span className="text-accent">· {duration}</span>}
         </span>
         <input
           name="ended_at"
@@ -91,6 +93,7 @@ function TimingFields({
 }
 
 export function MomentsJournal({ moments }: { moments: Moment[] }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const [resetKey, setResetKey] = useState(0);
@@ -104,10 +107,8 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
             📝
           </span>
           <div>
-            <h2 className="text-sm font-semibold">Moments du jour</h2>
-            <p className="text-xs text-foreground-muted">
-              Une sortie, un café, un imprévu — sans en faire une habitude récurrente.
-            </p>
+            <h2 className="text-sm font-semibold">{t("habits.moments.title")}</h2>
+            <p className="text-xs text-foreground-muted">{t("habits.moments.subtitle")}</p>
           </div>
         </div>
       </div>
@@ -116,7 +117,7 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
         key={resetKey}
         action={(formData) =>
           startTransition(async () => {
-            const r = await run(() => addMoment(formData), { success: "Moment ajouté à ta journée ✨", failure: "Ajout impossible" });
+            const r = await run(() => addMoment(formData), { success: t("habits.moments.addSuccess"), failure: t("habits.moments.addError") });
             if (!r || r.error) return;
             setResetKey((k) => k + 1);
             setShowDetails(false);
@@ -129,7 +130,7 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
           <input
             name="text"
             required
-            placeholder="Ex: Café avec Sarah, balade shopping..."
+            placeholder={t("habits.moments.textPlaceholder")}
             className="min-w-0 flex-1 rounded-xl border border-border bg-surface-muted px-3.5 py-2.5 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
           />
           <button
@@ -137,7 +138,7 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
             disabled={pending}
             className="shrink-0 rounded-xl border-[1.5px] border-accent px-4 py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-on-accent active:scale-[0.98] disabled:opacity-60"
           >
-            Ajouter
+            {t("common.add")}
           </button>
         </div>
 
@@ -146,14 +147,14 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
             <button
               type="button"
               onClick={() => setShowDetails(false)}
-              aria-label="Fermer les détails"
+              aria-label={t("habits.moments.closeDetailsAria")}
               className="absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full text-foreground-muted transition hover:bg-border hover:text-foreground"
             >
               ✕
             </button>
             <TimingFields defaultStart={nowLocal()} />
             <label className="flex max-w-35 flex-col gap-1">
-              <span className="text-[10px] font-medium text-foreground-muted">Prix (MAD)</span>
+              <span className="text-[10px] font-medium text-foreground-muted">{t("habits.moments.priceLabel")}</span>
               <input
                 name="price"
                 type="number"
@@ -171,14 +172,14 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
             className="flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-xs font-medium text-foreground-muted transition hover:border-accent/40 hover:text-accent sm:ml-13"
           >
             <PlusIcon />
-            Horaires, durée, prix
+            {t("habits.moments.detailsToggle")}
           </button>
         )}
       </form>
 
       {moments.length > 0 && (
         <div className="mt-5">
-          <p className="mb-1.5 text-xs font-medium text-foreground-muted">Aujourd&apos;hui</p>
+          <p className="mb-1.5 text-xs font-medium text-foreground-muted">{t("common.today")}</p>
           <ul className="space-y-1.5">
             {moments.map((m) => (
               <MomentItem key={m.id} moment={m} />
@@ -191,6 +192,7 @@ export function MomentsJournal({ moments }: { moments: Moment[] }) {
 }
 
 function MomentItem({ moment }: { moment: Moment }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const [editing, setEditing] = useState(false);
@@ -208,7 +210,7 @@ function MomentItem({ moment }: { moment: Moment }) {
         <form
           action={(formData) =>
             startTransition(async () => {
-              const r = await run(() => updateMoment(moment.id, formData), { success: "Moment modifié", failure: "Modification impossible" });
+              const r = await run(() => updateMoment(moment.id, formData), { success: t("habits.moments.editSuccess"), failure: t("habits.moments.editError") });
               if (!r || r.error) return;
               setEditing(false);
             })
@@ -226,7 +228,7 @@ function MomentItem({ moment }: { moment: Moment }) {
           </div>
           <TimingFields defaultStart={toLocalInput(moment.occurred_at)} defaultEnd={defaultEnd} />
           <label className="flex max-w-35 flex-col gap-1">
-            <span className="text-[10px] font-medium text-foreground-muted">Prix (MAD)</span>
+            <span className="text-[10px] font-medium text-foreground-muted">{t("habits.moments.priceLabel")}</span>
             <input
               name="price"
               type="number"
@@ -243,14 +245,14 @@ function MomentItem({ moment }: { moment: Moment }) {
               disabled={pending}
               className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-on-accent transition hover:opacity-90 disabled:opacity-60"
             >
-              Enregistrer
+              {t("common.save")}
             </button>
             <button
               type="button"
               onClick={() => setEditing(false)}
               className="rounded-lg border border-border px-3 py-1.5 text-xs text-foreground-muted transition hover:bg-surface-muted"
             >
-              Annuler
+              {t("common.cancel")}
             </button>
           </div>
         </form>
@@ -281,16 +283,16 @@ function MomentItem({ moment }: { moment: Moment }) {
       <span className="flex shrink-0 gap-1">
         <button
           onClick={() => setEditing(true)}
-          aria-label="Modifier"
+          aria-label={t("common.edit")}
           className="flex h-7 w-7 items-center justify-center rounded-lg text-foreground-muted transition hover:bg-surface hover:text-foreground"
         >
           <PencilIcon />
         </button>
         <ConfirmDeleteButton
           disabled={pending}
-          onConfirm={() => startTransition(async () => void (await run(() => deleteMoment(moment.id), { success: "Moment supprimé", failure: "Suppression impossible" })))}
-          title="Supprimer ce moment ?"
-          message={`"${moment.text}" sera définitivement supprimé.`}
+          onConfirm={() => startTransition(async () => void (await run(() => deleteMoment(moment.id), { success: t("habits.moments.deleteSuccess"), failure: t("habits.moments.deleteError") })))}
+          title={t("habits.moments.deleteConfirmTitle")}
+          message={t("habits.moments.deleteConfirmMessage", { text: moment.text })}
           className="flex h-7 w-7 items-center justify-center rounded-lg text-foreground-muted transition hover:bg-surface hover:text-danger disabled:opacity-50"
         >
           <TrashIcon />

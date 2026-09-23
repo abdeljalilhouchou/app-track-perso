@@ -6,24 +6,26 @@ import { format } from "date-fns";
 import { motion } from "framer-motion";
 import { deleteMeal } from "@/lib/actions/nutrition";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
+import { useT } from "@/components/language-provider";
 import type { MealEntry } from "@/types/database";
 
-const MEAL_LABELS: Record<string, string> = {
-  "petit-dejeuner": "🌅 Petit-déjeuner",
-  dejeuner: "☀️ Déjeuner",
-  diner: "🌙 Dîner",
-  collation: "🍎 Collation",
-  autre: "🍽️ Autre",
-};
-
-export function MealList({ meals, emptyLabel = "Rien enregistré aujourd'hui." }: { meals: MealEntry[]; emptyLabel?: string }) {
+export function MealList({ meals, emptyLabel }: { meals: MealEntry[]; emptyLabel?: string }) {
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
+  const t = useT();
+
+  const MEAL_LABELS: Record<string, string> = {
+    "petit-dejeuner": `🌅 ${t("nutrition.mealTypes.petitDejeuner")}`,
+    dejeuner: `☀️ ${t("nutrition.mealTypes.dejeuner")}`,
+    diner: `🌙 ${t("nutrition.mealTypes.diner")}`,
+    collation: `🍎 ${t("nutrition.mealTypes.collation")}`,
+    autre: `🍽️ ${t("nutrition.mealTypes.autre")}`,
+  };
 
   if (meals.length === 0) {
     return (
       <p className="rounded-xl border border-dashed border-nutrition/40 p-6 text-center text-sm text-foreground-muted">
-        {emptyLabel}
+        {emptyLabel ?? t("nutrition.mealList.emptyToday")}
       </p>
     );
   }
@@ -55,12 +57,14 @@ export function MealList({ meals, emptyLabel = "Rien enregistré aujourd'hui." }
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{m.food_name}</p>
                   <p className="text-xs text-foreground-muted">
-                    {m.quantity_grams}{m.unit} · {m.calories} kcal · {m.protein}g P · {m.carbs}g G · {m.fat}g L
+                    {m.quantity_grams}{m.unit} · {m.calories} kcal · {m.protein}g {t("nutrition.common.proteinAbbrev")} ·{" "}
+                    {m.carbs}g {t("nutrition.common.carbsAbbrev")} · {m.fat}g {t("nutrition.common.fatAbbrev")}
                   </p>
                   {(m.fiber > 0 || m.sugar > 0 || m.sodium > 0 || m.caffeine > 0) && (
                     <p className="text-[10px] text-foreground-muted/70">
-                      {m.fiber}g fibres · {m.sugar}g sucres · {m.sodium}mg sodium
-                      {m.caffeine > 0 ? ` · ☕ ${m.caffeine}mg caféine` : ""}
+                      {m.fiber}g {t("nutrition.common.fiberWord")} · {m.sugar}g {t("nutrition.common.sugarWord")} ·{" "}
+                      {m.sodium}mg {t("nutrition.common.sodiumWord")}
+                      {m.caffeine > 0 ? ` · ☕ ${m.caffeine}mg ${t("nutrition.common.caffeineWord")}` : ""}
                     </p>
                   )}
                 </div>
@@ -69,9 +73,16 @@ export function MealList({ meals, emptyLabel = "Rien enregistré aujourd'hui." }
                 </span>
                 <ConfirmDeleteButton
                   disabled={pending}
-                  onConfirm={() => startTransition(async () => void (await run(() => deleteMeal(m.id), { success: `« ${m.food_name} » retiré du journal`, failure: "Suppression impossible" })))}
-                  title="Supprimer cet aliment ?"
-                  message={`"${m.food_name}" sera retiré du journal.`}
+                  onConfirm={() =>
+                    startTransition(async () =>
+                      void (await run(() => deleteMeal(m.id), {
+                        success: t("nutrition.mealList.deleteSuccess", { name: m.food_name }),
+                        failure: t("nutrition.common.deleteFailure"),
+                      }))
+                    )
+                  }
+                  title={t("nutrition.mealList.deleteTitle")}
+                  message={t("nutrition.mealList.deleteMessage", { name: m.food_name })}
                   className="shrink-0 text-foreground-muted hover:text-danger"
                 >
                   ✕

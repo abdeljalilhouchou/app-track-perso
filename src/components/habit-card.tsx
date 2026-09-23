@@ -9,7 +9,8 @@ import { toggleHabitLog, deleteHabit, pauseHabit, moveHabit, updateHabit, setHab
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import { Heatmap } from "@/components/heatmap";
 import { HabitForm } from "@/components/habit-form";
-import { CATEGORY_META, WEEKDAYS } from "@/lib/habit-categories";
+import { useT } from "@/components/language-provider";
+import { CATEGORY_META, WEEKDAYS, categorySlug, weekdaySlug } from "@/lib/habit-categories";
 import { StreakFlame } from "@/components/ui/streak-flame";
 import type { Habit } from "@/types/database";
 
@@ -32,6 +33,7 @@ export function HabitCard({
   isFirst: boolean;
   isLast: boolean;
 }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const [editing, setEditing] = useState(false);
@@ -41,7 +43,7 @@ export function HabitCard({
 
   function saveNote() {
     if (note.trim() === (todayNote ?? "").trim()) return;
-    startTransition(async () => void (await run(() => setHabitLogNote(habit.id, today, note), { success: "Note enregistrée", failure: "Note non enregistrée" })));
+    startTransition(async () => void (await run(() => setHabitLogNote(habit.id, today, note), { success: t("habits.card.noteSaved"), failure: t("habits.card.noteSaveError") })));
   }
 
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
@@ -57,7 +59,7 @@ export function HabitCard({
         <HabitForm
           action={(formData) =>
             startTransition(async () => {
-              const r = await run(() => updateHabit(habit.id, formData), { success: "Habitude modifiée", failure: "Modification impossible" });
+              const r = await run(() => updateHabit(habit.id, formData), { success: t("habits.card.editSuccess"), failure: t("habits.card.editError") });
               if (!r || r.error) return;
               setEditing(false);
             })
@@ -68,7 +70,7 @@ export function HabitCard({
             category: habit.category,
             scheduled_days: habit.scheduled_days,
           }}
-          submitLabel="Enregistrer"
+          submitLabel={t("common.save")}
           onCancel={() => setEditing(false)}
         />
       </motion.div>
@@ -105,11 +107,11 @@ export function HabitCard({
                 className="inline-flex items-center gap-1 rounded-full px-1.5 py-0.5"
                 style={{ background: `color-mix(in srgb, ${categoryMeta.color} 16%, transparent)`, color: categoryMeta.color }}
               >
-                {categoryMeta.icon} {habit.category}
+                {categoryMeta.icon} {t(`habits.categories.${categorySlug(habit.category)}`)}
               </span>
               {habit.category === "Sport" && (
-                <span title="Cochée automatiquement quand tu enregistres une séance de sport" className="rounded-full border border-sport/40 px-1.5 py-0.5 text-[10px] text-sport">
-                  🔗 auto
+                <span title={t("habits.card.autoSportTooltip")} className="rounded-full border border-sport/40 px-1.5 py-0.5 text-[10px] text-sport">
+                  🔗 {t("habits.card.autoBadge")}
                 </span>
               )}
               {streak > 0 && <StreakFlame streak={streak} size="sm" />}
@@ -122,7 +124,9 @@ export function HabitCard({
           onClick={() =>
             startTransition(async () =>
               void (await run(() => toggleHabitLog(habit.id, today), {
-                success: doneToday ? `« ${habit.name} » décochée` : `Bien joué ! « ${habit.name} » validée aujourd'hui ✓`,
+                success: doneToday
+                  ? t("habits.card.uncheckedToast", { name: habit.name })
+                  : t("habits.card.checkedToast", { name: habit.name }),
                 undo: { run: () => toggleHabitLog(habit.id, today) },
               }))
             )
@@ -135,16 +139,14 @@ export function HabitCard({
           }`}
           style={doneToday ? { background: habit.color, boxShadow: `0 4px 14px -4px ${habit.color}` } : undefined}
         >
-          {doneToday ? "Fait ✓" : "Marquer fait"}
+          {doneToday ? t("habits.card.done") : t("habits.card.markDone")}
         </motion.button>
       </div>
 
       <div className="mt-3">
         <div className="mb-1.5 flex items-center justify-between text-xs text-foreground-muted">
-          <span>Cette semaine</span>
-          <span>
-            {thisWeekCount} / {habit.target_per_week} jours prévus
-          </span>
+          <span>{t("habits.card.thisWeek")}</span>
+          <span>{t("habits.card.weekProgress", { count: thisWeekCount, target: habit.target_per_week })}</span>
         </div>
         <div className="flex items-center gap-1">
           {weekDays.map((date, i) => {
@@ -157,7 +159,7 @@ export function HabitCard({
 
             return (
               <div key={dateStr} className="flex flex-1 flex-col items-center gap-1">
-                <span className="text-[10px] text-foreground-muted">{WEEKDAYS[i].short}</span>
+                <span className="text-[10px] text-foreground-muted">{t(`habits.weekdaysShort.${weekdaySlug(WEEKDAYS[i].value)}`)}</span>
                 <motion.span
                   initial={false}
                   animate={{ scale: done ? [1, 1.15, 1] : 1 }}
@@ -194,7 +196,7 @@ export function HabitCard({
             value={note}
             onChange={(e) => setNote(e.target.value)}
             onBlur={saveNote}
-            placeholder="+ note du jour (optionnel)"
+            placeholder={t("habits.card.notePlaceholder")}
             className="w-full rounded-lg border border-transparent bg-surface-muted px-2.5 py-1.5 text-xs outline-none transition focus:border-accent"
           />
         </div>
@@ -205,7 +207,7 @@ export function HabitCard({
           <button
             disabled={isFirst || pending}
             onClick={() => startTransition(async () => void (await run(() => moveHabit(habit.id, "up"))))}
-            aria-label="Monter"
+            aria-label={t("habits.card.moveUp")}
             className="rounded-md border border-border px-2 py-1 text-xs text-foreground-muted transition hover:bg-surface-muted disabled:opacity-30"
           >
             ▲
@@ -213,7 +215,7 @@ export function HabitCard({
           <button
             disabled={isLast || pending}
             onClick={() => startTransition(async () => void (await run(() => moveHabit(habit.id, "down"))))}
-            aria-label="Descendre"
+            aria-label={t("habits.card.moveDown")}
             className="rounded-md border border-border px-2 py-1 text-xs text-foreground-muted transition hover:bg-surface-muted disabled:opacity-30"
           >
             ▼
@@ -221,21 +223,21 @@ export function HabitCard({
         </div>
         <div className="flex gap-3 text-xs">
           <button onClick={() => setEditing(true)} className="text-foreground-muted hover:text-foreground">
-            Modifier
+            {t("common.edit")}
           </button>
           <button
-            onClick={() => startTransition(async () => void (await run(() => pauseHabit(habit.id), { success: `« ${habit.name} » mise en pause. Tu la retrouveras en bas de page.` })))}
+            onClick={() => startTransition(async () => void (await run(() => pauseHabit(habit.id), { success: t("habits.card.pauseSuccess", { name: habit.name }) })))}
             className="text-foreground-muted hover:text-foreground"
           >
-            Pause
+            {t("habits.card.pause")}
           </button>
           <ConfirmDeleteButton
-            onConfirm={() => startTransition(async () => void (await run(() => deleteHabit(habit.id), { success: `« ${habit.name} » supprimée`, failure: "Suppression impossible" })))}
-            title={`Supprimer "${habit.name}" ?`}
-            message="Tout son historique (séries, notes) sera définitivement perdu. Cette action est irréversible."
+            onConfirm={() => startTransition(async () => void (await run(() => deleteHabit(habit.id), { success: t("habits.card.deleteSuccess", { name: habit.name }), failure: t("habits.card.deleteError") })))}
+            title={t("habits.card.deleteConfirmTitle", { name: habit.name })}
+            message={t("habits.card.deleteConfirmMessage")}
             className="text-foreground-muted hover:text-danger"
           >
-            Supprimer
+            {t("common.delete")}
           </ConfirmDeleteButton>
         </div>
       </div>

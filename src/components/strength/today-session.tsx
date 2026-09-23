@@ -7,19 +7,20 @@ import { motion } from "framer-motion";
 import { useActionToast } from "@/components/toast/use-action-toast";
 import { ConfettiBurst } from "@/components/ui/confetti-burst";
 import { Dialog } from "@/components/ui/dialog";
+import { useT } from "@/components/language-provider";
 import { createDefaultProgram, markTemplateDone } from "@/lib/actions/strength";
-import { muscleColor } from "@/lib/strength";
+import { muscleColor, muscleGroupI18nPath } from "@/lib/strength";
 import type { ExerciseSummary } from "@/lib/strength-stats";
 import { SessionLogger, useSavedDraft, clearDraft, type Draft, type SessionResult } from "@/components/strength/session-logger";
 import type { CatalogItem, TemplateView } from "@/components/strength/types";
 
-function draftFromTemplate(t: TemplateView): Draft {
+function draftFromTemplate(tpl: TemplateView): Draft {
   return {
-    name: t.name,
-    templateId: t.id,
-    muscleGroups: t.muscleGroups,
+    name: tpl.name,
+    templateId: tpl.id,
+    muscleGroups: tpl.muscleGroups,
     startedAt: Date.now(),
-    exercises: t.exercises.map((e) => ({
+    exercises: tpl.exercises.map((e) => ({
       id: crypto.randomUUID(),
       name: e.name,
       muscle: e.muscle,
@@ -29,8 +30,8 @@ function draftFromTemplate(t: TemplateView): Draft {
   };
 }
 
-function freeDraft(): Draft {
-  return { name: "Séance libre", templateId: null, muscleGroups: [], startedAt: Date.now(), exercises: [] };
+function freeDraft(freeSessionName: string): Draft {
+  return { name: freeSessionName, templateId: null, muscleGroups: [], startedAt: Date.now(), exercises: [] };
 }
 
 function parseDraft(raw: string | null): Draft | null {
@@ -64,6 +65,11 @@ export function TodaySession({
   today: string;
   cardio: ReactNode;
 }) {
+  const t = useT();
+  const muscleLabel = (group: string) => {
+    const path = muscleGroupI18nPath(group);
+    return path ? t(path) : group;
+  };
   const [pending, startTransition] = useTransition();
   const [marking, startMarking] = useTransition();
   const run = useActionToast();
@@ -78,12 +84,12 @@ export function TodaySession({
   const [error, setError] = useState<string | null>(null);
   const saved = parseDraft(useSavedDraft());
 
-  const suggested = templates.find((t) => t.id === suggestedId) ?? null;
+  const suggested = templates.find((tpl) => tpl.id === suggestedId) ?? null;
 
   const DURATION_KEY = "mark-done-duration";
 
   /** Opens the small form (duration / date / intensity) instead of recording blindly. */
-  function markDone(t: TemplateView) {
+  function markDone(tpl: TemplateView) {
     let remembered = "60";
     try {
       remembered = localStorage.getItem(DURATION_KEY) ?? "60";
@@ -93,21 +99,21 @@ export function TodaySession({
     setMarkDuration(remembered);
     setMarkDate(today);
     setMarkIntensity(3);
-    setMarkTarget(t);
+    setMarkTarget(tpl);
   }
 
   function confirmMark() {
-    const t = markTarget;
+    const target = markTarget;
     const minutes = Math.round(Number(markDuration));
-    if (!t) return;
+    if (!target) return;
     if (!Number.isFinite(minutes) || minutes < 1 || minutes > 600) {
-      setError("Indique une durée valide entre 1 et 600 minutes.");
+      setError(t("sport.todaySession.invalidDuration"));
       return;
     }
     setError(null);
     setNotice(null);
     startMarking(async () => {
-      const r = await run(() => markTemplateDone(t.id, markDate, minutes, markIntensity), { failure: "Séance non enregistrée" });
+      const r = await run(() => markTemplateDone(target.id, markDate, minutes, markIntensity), { failure: t("sport.common.sessionNotSaved") });
       if (r?.error) return setError(r.error);
       if (!r) return;
       try {
@@ -116,7 +122,7 @@ export function TodaySession({
         // not critical
       }
       setMarkTarget(null);
-      setNotice(`« ${t.name} » marquée comme faite (${minutes} min). Tu peux la supprimer dans l'onglet Historique si besoin.`);
+      setNotice(t("sport.todaySession.markedDoneNotice", { name: target.name, minutes }));
     });
   }
 
@@ -151,7 +157,7 @@ export function TodaySession({
       {notice && (
         <div className="flex items-start justify-between gap-3 rounded-2xl border-[1.5px] border-sport bg-sport-soft p-4 text-sm">
           <p>✓ {notice}</p>
-          <button type="button" onClick={() => setNotice(null)} aria-label="Fermer" className="text-foreground-muted hover:text-foreground">
+          <button type="button" onClick={() => setNotice(null)} aria-label={t("sport.common.close")} className="text-foreground-muted hover:text-foreground">
             ✕
           </button>
         </div>
@@ -164,16 +170,24 @@ export function TodaySession({
           animate={{ opacity: 1, y: 0 }}
           className="rounded-2xl border-[1.5px] border-sport bg-sport-soft p-5"
         >
-          <p className="text-lg font-semibold">Séance enregistrée 🎉</p>
+          <p className="text-lg font-semibold">{t("sport.todaySession.sessionSavedTitle")}</p>
           <p className="mt-1 text-sm text-foreground-muted">
-            {result.name} · {result.minutes} min · {result.sets} séries · {result.volume.toLocaleString("fr-FR")} kg de volume
+            {t("sport.todaySession.sessionSavedSummary", {
+              name: result.name,
+              minutes: result.minutes,
+              sets: result.sets,
+              volume: result.volume.toLocaleString("fr-FR"),
+            })}
           </p>
           {result.records.length > 0 && (
             <ul className="mt-3 space-y-1">
               {result.records.map((r) => (
                 <li key={`${r.name}-${r.kind}`} className="text-sm">
-                  🏆 Nouveau record de {r.kind === "1RM" ? "force (1RM estimé)" : "charge"} :{" "}
-                  <strong>{r.name}</strong> — {r.value}
+                  {t("sport.todaySession.newRecord", {
+                    type: t(r.kind === "1RM" ? "sport.todaySession.recordType1RM" : "sport.todaySession.recordTypeWeight"),
+                    name: r.name,
+                    value: r.value,
+                  })}
                 </li>
               ))}
             </ul>
@@ -183,7 +197,7 @@ export function TodaySession({
             onClick={() => setResult(null)}
             className="mt-3 text-xs font-medium text-sport hover:underline"
           >
-            Fermer
+            {t("sport.common.close")}
           </button>
         </motion.div>
       )}
@@ -191,9 +205,9 @@ export function TodaySession({
       {saved && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-[1.5px] border-mood/60 bg-mood-soft p-4">
           <div>
-            <p className="text-sm font-semibold">Séance en cours : {saved.name}</p>
+            <p className="text-sm font-semibold">{t("sport.todaySession.sessionInProgress", { name: saved.name })}</p>
             <p className="text-xs text-foreground-muted">
-              Démarrée à {format(new Date(saved.startedAt), "HH:mm")} — tes séries sont sauvegardées.
+              {t("sport.todaySession.startedAt", { time: format(new Date(saved.startedAt), "HH:mm") })}
             </p>
           </div>
           <div className="flex gap-2">
@@ -202,16 +216,16 @@ export function TodaySession({
               onClick={() => start(saved)}
               className="rounded-lg bg-sport px-3.5 py-2 text-sm font-semibold text-on-accent transition hover:opacity-90"
             >
-              Reprendre
+              {t("sport.todaySession.resume")}
             </button>
             <button
               type="button"
               onClick={() => {
-                if (confirm("Supprimer cette séance en cours ?")) clearDraft();
+                if (confirm(t("sport.todaySession.confirmDeleteInProgress"))) clearDraft();
               }}
               className="rounded-lg border border-border px-3 py-2 text-sm text-foreground-muted transition hover:bg-surface-muted hover:text-danger"
             >
-              Supprimer
+              {t("sport.common.delete")}
             </button>
           </div>
         </div>
@@ -220,11 +234,8 @@ export function TodaySession({
       {templates.length === 0 ? (
         <div className="rounded-2xl border-[1.5px] border-dashed border-sport/50 p-8 text-center">
           <span className="text-4xl">🏋️</span>
-          <p className="mt-3 font-medium">Crée ton programme de musculation</p>
-          <p className="mx-auto mt-1 max-w-md text-sm text-foreground-muted">
-            Un split sur 4 jours (Pectoraux &amp; Triceps, Dos &amp; Biceps, Jambes, Épaules &amp; Abdos) avec ses exercices,
-            que tu pourras modifier entièrement dans l&apos;onglet Programme.
-          </p>
+          <p className="mt-3 font-medium">{t("sport.todaySession.emptyTitle")}</p>
+          <p className="mx-auto mt-1 max-w-md text-sm text-foreground-muted">{t("sport.todaySession.emptyBody")}</p>
           {error && <p className="mt-2 text-xs text-danger">{error}</p>}
           <div className="mt-4 flex flex-wrap justify-center gap-2">
             <button
@@ -233,22 +244,22 @@ export function TodaySession({
               onClick={() =>
                 startTransition(async () => {
                   const r = await run(() => createDefaultProgram(), {
-                    success: "Programme créé : 4 séances ajoutées à ta semaine 🏋️",
-                    failure: "Programme non créé",
+                    success: t("sport.todaySession.programCreatedToast"),
+                    failure: t("sport.common.programNotCreated"),
                   });
                   if (r?.error) setError(r.error);
                 })
               }
               className="rounded-xl bg-sport px-5 py-2.5 text-sm font-semibold text-on-accent transition hover:opacity-90 disabled:opacity-60"
             >
-              {pending ? "Création..." : "Créer mon split 4 jours"}
+              {pending ? t("sport.programManager.creating") : t("sport.common.createSplitButton")}
             </button>
             <button
               type="button"
-              onClick={() => start(freeDraft())}
+              onClick={() => start(freeDraft(t("sport.todaySession.freeSessionName")))}
               className="rounded-xl border border-sport/50 px-5 py-2.5 text-sm font-medium text-sport transition hover:bg-sport-soft"
             >
-              Séance libre
+              {t("sport.todaySession.freeSessionName")}
             </button>
           </div>
         </div>
@@ -256,12 +267,12 @@ export function TodaySession({
         <>
           <div className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5">
             <div className="mb-3 flex items-center justify-between">
-              <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">Cette semaine</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.todaySession.thisWeekLabel")}</p>
               <p className="text-sm">
                 <span className="font-semibold" style={{ color: "var(--sport)" }}>
                   {sessionsThisWeek}
                 </span>{" "}
-                / {goal} séances
+                / {goal} {t("sport.common.sessionOther")}
               </p>
             </div>
             <div className="mb-4 h-2 w-full overflow-hidden rounded-full bg-surface-muted">
@@ -274,14 +285,14 @@ export function TodaySession({
               />
             </div>
             <ul className="grid gap-2 sm:grid-cols-2">
-              {templates.map((t) => {
-                const doneOn = doneThisWeek[t.id];
-                const isNext = t.id === suggestedId && !doneOn;
+              {templates.map((tpl) => {
+                const doneOn = doneThisWeek[tpl.id];
+                const isNext = tpl.id === suggestedId && !doneOn;
                 return (
-                  <li key={t.id} className="flex items-stretch gap-1.5">
+                  <li key={tpl.id} className="flex items-stretch gap-1.5">
                     <button
                       type="button"
-                      onClick={() => start(draftFromTemplate(t))}
+                      onClick={() => start(draftFromTemplate(tpl))}
                       className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition hover:bg-surface-muted"
                       style={{
                         borderColor: isNext ? "var(--sport)" : "color-mix(in srgb, var(--sport) 30%, var(--border))",
@@ -298,30 +309,30 @@ export function TodaySession({
                         {doneOn ? "✓" : "•"}
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-medium">{t.name}</span>
+                        <span className="block truncate text-sm font-medium">{tpl.name}</span>
                         <span className="flex flex-wrap gap-x-2 text-[11px] text-foreground-muted">
-                          {t.muscleGroups.map((g) => (
+                          {tpl.muscleGroups.map((g) => (
                             <span key={g} style={{ color: muscleColor(g) }}>
-                              {g}
+                              {muscleLabel(g)}
                             </span>
                           ))}
                         </span>
                       </span>
                       <span className="shrink-0 text-[11px] text-foreground-muted">
                         {doneOn
-                          ? `fait ${format(parseISO(doneOn), "EEE", { locale: fr })}`
+                          ? t("sport.todaySession.doneOn", { day: format(parseISO(doneOn), "EEE", { locale: fr }) })
                           : isNext
-                            ? "prochaine"
-                            : "à faire"}
+                            ? t("sport.todaySession.next")
+                            : t("sport.todaySession.todo")}
                       </span>
                     </button>
                     {!doneOn && (
                       <button
                         type="button"
                         disabled={marking}
-                        onClick={() => markDone(t)}
-                        title="Marquer cette séance comme faite"
-                        aria-label={`Marquer ${t.name} comme faite`}
+                        onClick={() => markDone(tpl)}
+                        title={t("sport.todaySession.markDoneTitleAttr")}
+                        aria-label={t("sport.todaySession.markDoneAria", { name: tpl.name })}
                         className="shrink-0 rounded-xl border border-sport/40 px-3 text-sm font-semibold text-sport transition hover:bg-sport hover:text-on-accent disabled:opacity-50"
                       >
                         ✓
@@ -335,10 +346,13 @@ export function TodaySession({
 
           {suggested && (
             <div className="rounded-2xl border-[1.5px] border-sport bg-sport-soft p-5">
-              <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">Séance conseillée aujourd&apos;hui</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.todaySession.suggestedTitle")}</p>
               <p className="mt-1 text-xl font-semibold tracking-tight">{suggested.name}</p>
               <p className="mt-0.5 text-sm text-foreground-muted">
-                {suggested.exercises.length} exercices · {suggested.exercises.reduce((s, e) => s + e.sets, 0)} séries
+                {t("sport.todaySession.suggestedStats", {
+                  count: suggested.exercises.length,
+                  sets: suggested.exercises.reduce((s, e) => s + e.sets, 0),
+                })}
               </p>
               <ul className="mt-3 space-y-0.5 text-sm">
                 {suggested.exercises.slice(0, 5).map((e) => (
@@ -350,7 +364,9 @@ export function TodaySession({
                   </li>
                 ))}
                 {suggested.exercises.length > 5 && (
-                  <li className="text-xs text-foreground-muted">+ {suggested.exercises.length - 5} autres exercices</li>
+                  <li className="text-xs text-foreground-muted">
+                    {t("sport.todaySession.moreExercises", { count: suggested.exercises.length - 5 })}
+                  </li>
                 )}
               </ul>
               <div className="mt-4 flex flex-col gap-2 sm:flex-row">
@@ -359,7 +375,7 @@ export function TodaySession({
                   onClick={() => start(draftFromTemplate(suggested))}
                   className="flex-1 rounded-xl bg-sport px-5 py-3 text-sm font-semibold text-on-accent transition hover:opacity-90"
                 >
-                  Démarrer la séance
+                  {t("sport.todaySession.startSession")}
                 </button>
                 <button
                   type="button"
@@ -367,33 +383,31 @@ export function TodaySession({
                   onClick={() => markDone(suggested)}
                   className="flex-1 rounded-xl border-[1.5px] border-sport px-5 py-3 text-sm font-semibold text-sport transition hover:bg-sport hover:text-on-accent disabled:opacity-50"
                 >
-                  Marquer comme fait
+                  {t("sport.todaySession.markDone")}
                 </button>
               </div>
-              <p className="mt-2 text-[11px] text-foreground-muted">
-                « Marquer comme fait » enregistre la séance sans le détail des séries : tu choisis la durée, la date et l&apos;intensité.
-              </p>
+              <p className="mt-2 text-[11px] text-foreground-muted">{t("sport.todaySession.markDoneHint")}</p>
             </div>
           )}
 
           <button
             type="button"
-            onClick={() => start(freeDraft())}
+            onClick={() => start(freeDraft(t("sport.todaySession.freeSessionName")))}
             className="rounded-lg border border-dashed border-sport/50 px-3.5 py-2 text-sm font-medium text-sport transition hover:bg-sport-soft"
           >
-            + Séance libre (sans programme)
+            {t("sport.todaySession.freeSessionNoProgram")}
           </button>
         </>
       )}
 
       <Dialog open={markTarget !== null} onClose={() => setMarkTarget(null)} widthClassName="max-w-sm">
         <div className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5 shadow-2xl">
-          <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">Marquer comme fait</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.todaySession.markDone")}</p>
           <p className="mt-1 text-lg font-semibold tracking-tight">{markTarget?.name}</p>
 
           <div className="mt-4 space-y-3">
             <label className="flex flex-col gap-1 text-xs text-foreground-muted">
-              Durée de la séance (minutes)
+              {t("sport.todaySession.durationLabel")}
               <input
                 type="number"
                 inputMode="numeric"
@@ -418,13 +432,13 @@ export function TodaySession({
                     color: markDuration === String(m) ? "var(--on-accent)" : undefined,
                   }}
                 >
-                  {m} min
+                  {m} {t("sport.common.min")}
                 </button>
               ))}
             </div>
             <div className="grid grid-cols-2 gap-3">
               <label className="flex flex-col gap-1 text-xs text-foreground-muted">
-                Date
+                {t("sport.todaySession.dateLabel")}
                 <input
                   type="date"
                   value={markDate}
@@ -434,17 +448,17 @@ export function TodaySession({
                 />
               </label>
               <label className="flex flex-col gap-1 text-xs text-foreground-muted">
-                Intensité
+                {t("sport.common.intensityLabel")}
                 <select
                   value={markIntensity}
                   onChange={(e) => setMarkIntensity(Number(e.target.value))}
                   className="rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm text-foreground outline-none focus:border-sport"
                 >
-                  <option value={1}>1 — Très facile</option>
-                  <option value={2}>2 — Facile</option>
-                  <option value={3}>3 — Correct</option>
-                  <option value={4}>4 — Dur</option>
-                  <option value={5}>5 — À fond</option>
+                  <option value={1}>{t("sport.common.intensity1")}</option>
+                  <option value={2}>{t("sport.common.intensity2")}</option>
+                  <option value={3}>{t("sport.common.intensity3")}</option>
+                  <option value={4}>{t("sport.common.intensity4")}</option>
+                  <option value={5}>{t("sport.common.intensity5")}</option>
                 </select>
               </label>
             </div>
@@ -459,14 +473,14 @@ export function TodaySession({
               onClick={confirmMark}
               className="flex-1 rounded-xl bg-sport px-4 py-2.5 text-sm font-semibold text-on-accent transition hover:opacity-90 disabled:opacity-60"
             >
-              {marking ? "Enregistrement..." : "Valider la séance"}
+              {marking ? t("sport.common.saving") : t("sport.todaySession.confirmSession")}
             </button>
             <button
               type="button"
               onClick={() => setMarkTarget(null)}
               className="rounded-xl border border-border px-4 py-2.5 text-sm text-foreground-muted transition hover:bg-surface-muted"
             >
-              Annuler
+              {t("sport.common.cancel")}
             </button>
           </div>
         </div>
@@ -474,7 +488,7 @@ export function TodaySession({
 
       <details className="group rounded-2xl border-[1.5px] border-sport/40 bg-surface">
         <summary className="cursor-pointer list-none px-5 py-4 text-sm font-medium">
-          <span className="text-foreground-muted group-open:text-foreground">➕ Autre activité (cardio, sport collectif…)</span>
+          <span className="text-foreground-muted group-open:text-foreground">{t("sport.todaySession.otherActivity")}</span>
         </summary>
         <div className="px-2 pb-2">{cardio}</div>
       </details>

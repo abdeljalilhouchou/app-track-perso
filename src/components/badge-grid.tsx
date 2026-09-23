@@ -1,10 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useT } from "@/components/language-provider";
 
-type BadgeData = { id: string; icon: string; title: string; description: string; unlocked: boolean };
+type BadgeData = { id: string; icon: string; unlocked: boolean };
 
 export function BadgeGrid({ badges }: { badges: BadgeData[] }) {
+  const t = useT();
+
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" style={{ perspective: 900 }}>
       {badges.map((badge, i) => (
@@ -25,8 +28,8 @@ export function BadgeGrid({ badges }: { badges: BadgeData[] }) {
           >
             {badge.icon}
           </motion.span>
-          <p className="mt-2 text-sm font-medium">{badge.title}</p>
-          <p className="mt-1 text-xs text-foreground-muted">{badge.description}</p>
+          <p className="mt-2 text-sm font-medium">{t(`profile.badges.${badge.id}.title`)}</p>
+          <p className="mt-1 text-xs text-foreground-muted">{t(`profile.badges.${badge.id}.description`)}</p>
         </motion.div>
       ))}
     </div>

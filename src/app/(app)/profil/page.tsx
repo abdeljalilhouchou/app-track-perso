@@ -12,7 +12,7 @@ import { Callout } from "@/components/ui/callout";
 import { AccountSettings } from "@/components/account-settings";
 import { AnimatedCounter } from "@/components/ui/animated-counter";
 import { LanguageSelector } from "@/components/language-selector";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
 
 export default async function ProfilPage() {
   const supabase = await createClient();
@@ -21,6 +21,7 @@ export default async function ProfilPage() {
   } = await supabase.auth.getUser();
   if (!user) return null;
   const dict = await getDictionary();
+  const t = await getT();
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -47,11 +48,11 @@ export default async function ProfilPage() {
         <div className="flex-1">
           <div className="flex items-center justify-between">
             <p className="flex items-center gap-2 font-medium">
-              {displayName} · <span className="text-accent">Niveau {level}</span>
+              {displayName} · <span className="text-accent">{t("profile.level", { level })}</span>
               {bestStreak > 0 && <StreakFlame streak={bestStreak} size="sm" />}
             </p>
             <p className="text-xs text-foreground-muted">
-              {pointsIntoLevel} / {pointsForNextLevel} pts
+              {t("profile.pointsIntoLevel", { pointsIntoLevel, pointsForNextLevel })}
             </p>
           </div>
           <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-surface-muted">
@@ -61,28 +62,29 @@ export default async function ProfilPage() {
             />
           </div>
           <p className="mt-2 text-xs text-foreground-muted">
-            <AnimatedCounter value={points} /> points au total · {unlockedBadges.length} / {BADGES.length} badges débloqués
+            <AnimatedCounter value={points} /> {t("profile.totalPointsSuffix")} ·{" "}
+            {t("profile.badgesUnlocked", { unlocked: unlockedBadges.length, total: BADGES.length })}
           </p>
         </div>
       </div>
 
       {!profile?.reminder_time && (
-        <Callout variant="tip" title="Rappel quotidien" dismissKey="profile-reminder" compact>
-          Active le rappel par e-mail plus bas : il te dit chaque soir ce qu&apos;il te reste à faire.
+        <Callout variant="tip" title={t("profile.calloutReminder.title")} dismissKey="profile-reminder" compact>
+          {t("profile.calloutReminder.text")}
         </Callout>
       )}
       {!profile?.avatar_url && (
-        <Callout variant="info" title="Personnalise ton profil" dismissKey="profile-avatar" compact>
-          Ajoute une photo dans « Mon compte » : elle apparaît dans le menu et sur ton profil.
+        <Callout variant="info" title={t("profile.calloutCustomize.title")} dismissKey="profile-avatar" compact>
+          {t("profile.calloutCustomize.text")}
         </Callout>
       )}
 
       <ProfileStats
         stats={[
-          { label: "Habitudes cochées", value: stats.habitLogsCount, color: "var(--habit)" },
-          { label: "Séances de sport", value: stats.workoutsCount, color: "var(--sport)" },
-          { label: "Humeurs notées", value: stats.moodEntriesCount, color: "var(--mood)" },
-          { label: "Repas notés", value: stats.mealEntriesCount, color: "var(--nutrition)" },
+          { label: t("profile.stats.habitsChecked"), value: stats.habitLogsCount, color: "var(--habit)" },
+          { label: t("profile.stats.workouts"), value: stats.workoutsCount, color: "var(--sport)" },
+          { label: t("profile.stats.moods"), value: stats.moodEntriesCount, color: "var(--mood)" },
+          { label: t("profile.stats.meals"), value: stats.mealEntriesCount, color: "var(--nutrition)" },
         ]}
       />
 
@@ -97,7 +99,7 @@ export default async function ProfilPage() {
       <div className="rounded-2xl border-[1.5px] border-accent/40 bg-surface p-5">
         <h2 className="mb-3 flex items-center gap-2 text-sm font-medium">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft">🎨</span>
-          Apparence
+          {t("profile.appearanceHeading")}
         </h2>
         <ThemeSelector />
       </div>
@@ -114,19 +116,17 @@ export default async function ProfilPage() {
       <div className="rounded-2xl border border-border bg-surface p-5">
         <h2 className="mb-3 flex items-center gap-2 text-sm font-medium">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft">🔔</span>
-          Rappel quotidien
+          {t("profile.reminders.heading")}
         </h2>
         <ReminderSettings initialTime={profile?.reminder_time ?? null} email={user.email ?? ""} />
       </div>
 
       <div>
-        <h2 className="mb-3 text-sm font-medium text-foreground-muted">Badges</h2>
+        <h2 className="mb-3 text-sm font-medium text-foreground-muted">{t("profile.badgesHeading")}</h2>
         <BadgeGrid
           badges={[...unlockedBadges, ...lockedBadges].map((badge) => ({
             id: badge.id,
             icon: badge.icon,
-            title: badge.title,
-            description: badge.description,
             unlocked: unlockedBadges.includes(badge),
           }))}
         />

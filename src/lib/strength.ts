@@ -30,6 +30,29 @@ export function muscleColor(group: string) {
   return MUSCLE_COLORS[group] ?? "var(--foreground-muted)";
 }
 
+// Canonical (French) muscle group names are the values stored in the database and used for
+// matching/coloring; this maps them to the dictionary key under `sport.muscleGroups.*` so the UI
+// can display a translated label while the underlying data stays language-independent.
+const MUSCLE_GROUP_I18N_KEYS: Record<string, string> = {
+  Pectoraux: "pectoraux",
+  Dos: "dos",
+  Épaules: "epaules",
+  Biceps: "biceps",
+  Triceps: "triceps",
+  Quadriceps: "quadriceps",
+  "Ischio-jambiers": "ischioJambiers",
+  Fessiers: "fessiers",
+  Mollets: "mollets",
+  Abdominaux: "abdominaux",
+  "Avant-bras": "avantBras",
+};
+
+/** Dot path for a muscle group's translated display label (falls back to the raw name). */
+export function muscleGroupI18nPath(group: string) {
+  const key = MUSCLE_GROUP_I18N_KEYS[group];
+  return key ? `sport.muscleGroups.${key}` : null;
+}
+
 /** Stable identity of an exercise across sessions (case/space-insensitive). */
 export function exerciseKey(name: string) {
   return name.trim().toLowerCase().replace(/\s+/g, " ");

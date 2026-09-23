@@ -8,6 +8,7 @@ import { IconPicker } from "@/components/ui/icon-picker";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import { addFood, updateFood, deleteFood, seedDefaultFoods, seedDefaultDrinks, resyncFoodDefaults } from "@/lib/actions/nutrition";
 import { FOOD_CATEGORIES } from "@/lib/food-database";
+import { useT } from "@/components/language-provider";
 import type { Food } from "@/types/database";
 
 const FOOD_ICON_CHOICES = [
@@ -27,17 +28,18 @@ function UnitCaffeineFields({
   defaultCaffeine: number;
   fieldClass: string;
 }) {
+  const t = useT();
   return (
     <div className="grid grid-cols-2 gap-2">
       <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-        Type
+        {t("nutrition.foodSettings.typeLabel")}
         <select name="unit" defaultValue={defaultUnit} className={fieldClass}>
-          <option value="g">Solide (g)</option>
-          <option value="ml">Liquide (ml)</option>
+          <option value="g">{t("nutrition.foodSettings.solidOption")}</option>
+          <option value="ml">{t("nutrition.foodSettings.liquidOption")}</option>
         </select>
       </label>
       <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-        Caféine (mg/100)
+        {t("nutrition.foodSettings.caffeineLabel")}
         <input name="caffeine" type="number" min={0} step="0.1" defaultValue={defaultCaffeine} className={fieldClass} />
       </label>
     </div>
@@ -45,6 +47,7 @@ function UnitCaffeineFields({
 }
 
 function FoodRow({ food }: { food: Food }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const [editing, setEditing] = useState(false);
@@ -55,7 +58,10 @@ function FoodRow({ food }: { food: Food }) {
         <form
           action={(formData) =>
             startTransition(async () => {
-              const r = await run(() => updateFood(food.id, formData), { success: `« ${food.name} » modifié`, failure: "Modification impossible" });
+              const r = await run(() => updateFood(food.id, formData), {
+                success: t("nutrition.foodSettings.updateSuccess", { name: food.name }),
+                failure: t("nutrition.common.updateFailure"),
+              });
               if (!r || r.error) return;
               setEditing(false);
             })
@@ -82,33 +88,33 @@ function FoodRow({ food }: { food: Food }) {
           </select>
           <div className="grid grid-cols-4 gap-2">
             <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-              Kcal/100
+              {t("nutrition.foodSettings.caloriesLabel")}
               <input name="calories" type="number" min={0} step="0.1" defaultValue={food.calories} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
             </label>
             <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-              Prot.
+              {t("nutrition.foodSettings.proteinLabel")}
               <input name="protein" type="number" min={0} step="0.1" defaultValue={food.protein} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
             </label>
             <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-              Gluc.
+              {t("nutrition.foodSettings.carbsLabel")}
               <input name="carbs" type="number" min={0} step="0.1" defaultValue={food.carbs} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
             </label>
             <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-              Lip.
+              {t("nutrition.foodSettings.fatLabel")}
               <input name="fat" type="number" min={0} step="0.1" defaultValue={food.fat} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
             </label>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-              Fibres
+              {t("nutrition.foodSettings.fiberLabel")}
               <input name="fiber" type="number" min={0} step="0.1" defaultValue={food.fiber} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
             </label>
             <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-              Sucres
+              {t("nutrition.foodSettings.sugarLabel")}
               <input name="sugar" type="number" min={0} step="0.1" defaultValue={food.sugar} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
             </label>
             <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-              Sodium (mg)
+              {t("nutrition.foodSettings.sodiumLabel")}
               <input name="sodium" type="number" min={0} step="1" defaultValue={food.sodium} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
             </label>
           </div>
@@ -119,20 +125,20 @@ function FoodRow({ food }: { food: Food }) {
           />
           <div className="grid grid-cols-2 gap-2">
             <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-              Portion (libellé)
-              <input name="portion_label" type="text" placeholder="Ex: 1 tranche" defaultValue={food.portion_label ?? ""} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
+              {t("nutrition.foodSettings.portionLabelField")}
+              <input name="portion_label" type="text" placeholder={t("nutrition.foodSettings.portionLabelPlaceholder")} defaultValue={food.portion_label ?? ""} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
             </label>
             <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-              Portion (g/ml)
-              <input name="portion_grams" type="number" min={0} step="1" placeholder="Ex: 30" defaultValue={food.portion_grams ?? ""} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
+              {t("nutrition.foodSettings.portionGramsField")}
+              <input name="portion_grams" type="number" min={0} step="1" placeholder={t("nutrition.foodSettings.portionGramsPlaceholder")} defaultValue={food.portion_grams ?? ""} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
             </label>
           </div>
           <div className="flex gap-2">
             <button type="submit" disabled={pending} className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-on-accent transition hover:opacity-90 disabled:opacity-60">
-              Enregistrer
+              {t("common.save")}
             </button>
             <button type="button" onClick={() => setEditing(false)} className="rounded-lg border border-border px-3 py-1.5 text-xs text-foreground-muted transition hover:bg-surface-muted">
-              Annuler
+              {t("common.cancel")}
             </button>
           </div>
         </form>
@@ -148,19 +154,29 @@ function FoodRow({ food }: { food: Food }) {
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">{food.name}</p>
         <p className="text-xs text-foreground-muted">
-          {food.calories} kcal · {food.protein}g P · {food.carbs}g G · {food.fat}g L (/100{food.unit})
+          {food.calories} kcal · {food.protein}g {t("nutrition.common.proteinAbbrev")} · {food.carbs}g{" "}
+          {t("nutrition.common.carbsAbbrev")} · {food.fat}g {t("nutrition.common.fatAbbrev")} (/100{food.unit})
           {food.caffeine > 0 ? ` · ☕ ${food.caffeine}mg` : ""}
-          {food.portion_grams ? ` · portion : ${food.portion_label ?? `${food.portion_grams}${food.unit}`}` : ""}
+          {food.portion_grams
+            ? ` · ${t("nutrition.foodSettings.portionInline", { details: food.portion_label ?? `${food.portion_grams}${food.unit}` })}`
+            : ""}
         </p>
       </div>
       <button onClick={() => setEditing(true)} className="shrink-0 text-xs text-foreground-muted hover:text-foreground">
-        Modifier
+        {t("common.edit")}
       </button>
       <ConfirmDeleteButton
         disabled={pending}
-        onConfirm={() => startTransition(async () => void (await run(() => deleteFood(food.id), { success: `« ${food.name} » supprimé de ta base`, failure: "Suppression impossible" })))}
-        title="Supprimer cet aliment ?"
-        message={`"${food.name}" sera retiré de ta base d'aliments.`}
+        onConfirm={() =>
+          startTransition(async () =>
+            void (await run(() => deleteFood(food.id), {
+              success: t("nutrition.foodSettings.deleteSuccess", { name: food.name }),
+              failure: t("nutrition.common.deleteFailure"),
+            }))
+          )
+        }
+        title={t("nutrition.foodSettings.deleteTitle")}
+        message={t("nutrition.foodSettings.deleteMessage", { name: food.name })}
         className="shrink-0 text-xs text-foreground-muted hover:text-danger"
       >
         ✕
@@ -170,6 +186,7 @@ function FoodRow({ food }: { food: Food }) {
 }
 
 export function FoodSettings({ foods }: { foods: Food[] }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -198,14 +215,14 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
         onClick={() => setOpen(true)}
         className="flex items-center gap-1.5 rounded-lg border-[1.5px] border-accent px-3 py-1.5 text-xs font-semibold text-accent transition-colors hover:bg-accent hover:text-on-accent"
       >
-        ⚙️ Paramètres
+        {t("nutrition.foodSettings.openButton")}
       </button>
 
       <Dialog open={open} onClose={() => setOpen(false)} widthClassName="max-w-lg">
         <div className="rounded-2xl bg-surface shadow-2xl">
           <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-border bg-surface px-5 py-4">
-            <span className="text-sm font-semibold">Base d&apos;aliments ({foods.length})</span>
-            <button onClick={() => setOpen(false)} aria-label="Fermer" className="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-surface-muted text-foreground-muted transition hover:bg-border">
+            <span className="text-sm font-semibold">{t("nutrition.foodSettings.dialogTitle", { count: foods.length })}</span>
+            <button onClick={() => setOpen(false)} aria-label={t("common.close")} className="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-surface-muted text-foreground-muted transition hover:bg-border">
               ✕
             </button>
           </div>
@@ -217,7 +234,7 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
                 disabled={pending}
                 className="w-full rounded-xl border-[1.5px] border-dashed border-accent px-4 py-3 text-sm font-medium text-accent transition hover:bg-accent-soft disabled:opacity-60"
               >
-                {pending ? "Import..." : "📥 Importer la liste de base (~90 aliments et boissons)"}
+                {pending ? t("nutrition.foodSettings.importing") : t("nutrition.foodSettings.importFoodsButton")}
               </button>
             )}
 
@@ -227,13 +244,13 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
                 disabled={pending}
                 className="w-full rounded-xl border-[1.5px] border-dashed border-accent px-4 py-3 text-sm font-medium text-accent transition hover:bg-accent-soft disabled:opacity-60"
               >
-                {pending ? "Import..." : "☕ Importer les boissons (café, thé, jus, sodas…)"}
+                {pending ? t("nutrition.foodSettings.importing") : t("nutrition.foodSettings.importDrinksButton")}
               </button>
             )}
 
             {seedError && (
               <p className="rounded-lg border border-danger/40 bg-surface-muted px-3 py-2 text-xs text-danger">
-                Import impossible : {seedError}
+                {t("nutrition.foodSettings.importErrorPrefix", { error: seedError })}
               </p>
             )}
 
@@ -241,18 +258,29 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
               <button
                 onClick={() =>
                   startTransition(async () => {
-                    const r = await run(() => resyncFoodDefaults(), { failure: "Mise à jour impossible" });
+                    const r = await run(() => resyncFoodDefaults(), { failure: t("nutrition.foodSettings.resyncFailure") });
                     if (!r || r.error) return;
                     // Deliberate success message even at 0: confirms the check ran instead of looking like nothing happened.
-                    if (r.updated > 0) toast.success(`${r.updated} aliment${r.updated > 1 ? "s" : ""} mis à jour (fibres, sucres, sodium, caféine, portion).`);
-                    else toast.info("Tes aliments sont déjà à jour.");
+                    if (r.updated > 0) {
+                      toast.success(
+                        t("nutrition.foodSettings.resyncSuccess", {
+                          count: r.updated,
+                          word:
+                            r.updated > 1
+                              ? t("nutrition.foodSettings.resyncWordPlural")
+                              : t("nutrition.foodSettings.resyncWordSingular"),
+                        })
+                      );
+                    } else {
+                      toast.info(t("nutrition.foodSettings.resyncUpToDate"));
+                    }
                   })
                 }
                 disabled={pending}
                 className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-border px-3 py-2 text-xs font-medium text-foreground-muted transition hover:border-accent/40 hover:text-accent disabled:opacity-60"
-                title="Corrige les fibres/sucres/sodium/caféine/portion restées à 0 sur les aliments importés avant leur ajout à l'app"
+                title={t("nutrition.foodSettings.resyncTooltip")}
               >
-                🔄 Corriger les valeurs manquantes (sucres, fibres, sodium, caféine)
+                {t("nutrition.foodSettings.resyncButton")}
               </button>
             )}
 
@@ -261,14 +289,17 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
                 onClick={() => setShowAdd(true)}
                 className="flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-foreground-muted transition hover:border-accent/40 hover:text-accent"
               >
-                + Ajouter un aliment
+                {t("nutrition.foodSettings.addFoodButton")}
               </button>
             ) : (
               <form
                 key={addResetKey}
                 action={(formData) =>
                   startTransition(async () => {
-                    const r = await run(() => addFood(formData), { success: `« ${formData.get("name")} » ajouté à ta base d'aliments`, failure: "Ajout impossible" });
+                    const r = await run(() => addFood(formData), {
+                      success: t("nutrition.foodSettings.addSuccess", { name: String(formData.get("name")) }),
+                      failure: t("nutrition.common.addFailure"),
+                    });
                     if (!r || r.error) return;
                     setAddResetKey((k) => k + 1);
                     setShowAdd(false);
@@ -278,7 +309,7 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
               >
                 <div className="flex gap-2">
                   <IconPicker name="icon" defaultValue="🍽️" choices={FOOD_ICON_CHOICES} color="var(--nutrition)" />
-                  <input name="name" required placeholder="Nom de l'aliment" className="flex-1 rounded-lg border border-border bg-surface px-2.5 py-2 text-sm outline-none focus:border-accent" />
+                  <input name="name" required placeholder={t("nutrition.foodSettings.namePlaceholder")} className="flex-1 rounded-lg border border-border bg-surface px-2.5 py-2 text-sm outline-none focus:border-accent" />
                 </div>
                 <select name="category" defaultValue="Autres" className="w-full rounded-lg border border-border bg-surface px-2.5 py-2 text-xs outline-none focus:border-accent">
                   {FOOD_CATEGORIES.map((c) => (
@@ -287,33 +318,33 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
                 </select>
                 <div className="grid grid-cols-4 gap-2">
                   <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-                    Kcal/100
+                    {t("nutrition.foodSettings.caloriesLabel")}
                     <input name="calories" type="number" min={0} step="0.1" required className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
                   </label>
                   <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-                    Prot.
+                    {t("nutrition.foodSettings.proteinLabel")}
                     <input name="protein" type="number" min={0} step="0.1" defaultValue={0} className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
                   </label>
                   <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-                    Gluc.
+                    {t("nutrition.foodSettings.carbsLabel")}
                     <input name="carbs" type="number" min={0} step="0.1" defaultValue={0} className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
                   </label>
                   <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-                    Lip.
+                    {t("nutrition.foodSettings.fatLabel")}
                     <input name="fat" type="number" min={0} step="0.1" defaultValue={0} className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
                   </label>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-                    Fibres
+                    {t("nutrition.foodSettings.fiberLabel")}
                     <input name="fiber" type="number" min={0} step="0.1" defaultValue={0} className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
                   </label>
                   <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-                    Sucres
+                    {t("nutrition.foodSettings.sugarLabel")}
                     <input name="sugar" type="number" min={0} step="0.1" defaultValue={0} className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
                   </label>
                   <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-                    Sodium (mg)
+                    {t("nutrition.foodSettings.sodiumLabel")}
                     <input name="sodium" type="number" min={0} step="1" defaultValue={0} className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
                   </label>
                 </div>
@@ -324,20 +355,20 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
                 />
                 <div className="grid grid-cols-2 gap-2">
                   <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-                    Portion (libellé)
-                    <input name="portion_label" type="text" placeholder="Ex: 1 tranche" className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
+                    {t("nutrition.foodSettings.portionLabelField")}
+                    <input name="portion_label" type="text" placeholder={t("nutrition.foodSettings.portionLabelPlaceholder")} className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
                   </label>
                   <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
-                    Portion (g/ml)
-                    <input name="portion_grams" type="number" min={0} step="1" placeholder="Ex: 30" className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
+                    {t("nutrition.foodSettings.portionGramsField")}
+                    <input name="portion_grams" type="number" min={0} step="1" placeholder={t("nutrition.foodSettings.portionGramsPlaceholder")} className="rounded-lg border border-border bg-surface px-2 py-1.5 text-xs outline-none focus:border-accent" />
                   </label>
                 </div>
                 <div className="flex gap-2">
                   <button type="submit" disabled={pending} className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-on-accent transition hover:opacity-90 disabled:opacity-60">
-                    Ajouter
+                    {t("common.add")}
                   </button>
                   <button type="button" onClick={() => setShowAdd(false)} className="rounded-lg border border-border px-3 py-1.5 text-xs text-foreground-muted transition hover:bg-surface">
-                    Annuler
+                    {t("common.cancel")}
                   </button>
                 </div>
               </form>

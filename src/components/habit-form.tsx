@@ -3,6 +3,7 @@
 import { IconPicker } from "@/components/ui/icon-picker";
 import { CategoryPicker } from "@/components/ui/category-picker";
 import { DayPicker } from "@/components/ui/day-picker";
+import { useT } from "@/components/language-provider";
 import { CATEGORY_META } from "@/lib/habit-categories";
 
 export function HabitForm({
@@ -16,6 +17,7 @@ export function HabitForm({
   submitLabel: string;
   onCancel?: () => void;
 }) {
+  const t = useT();
   const category = defaultValues?.category ?? "Général";
   const color = CATEGORY_META[category]?.color ?? "var(--accent)";
 
@@ -27,7 +29,7 @@ export function HabitForm({
           name="name"
           required
           defaultValue={defaultValues?.name}
-          placeholder="Nom de l'habitude (ex: Lire 10 minutes)"
+          placeholder={t("habits.form.namePlaceholder")}
           className="flex-1 rounded-xl border border-border bg-surface-muted px-3 py-2.5 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
         />
       </div>
@@ -35,7 +37,7 @@ export function HabitForm({
       <CategoryPicker name="category" defaultValue={category} />
 
       <div>
-        <p className="mb-1.5 text-xs text-foreground-muted">Jours prévus</p>
+        <p className="mb-1.5 text-xs text-foreground-muted">{t("habits.form.scheduledDaysLabel")}</p>
         <DayPicker name="scheduled_days" defaultValue={defaultValues?.scheduled_days} color={color} />
       </div>
 
@@ -52,7 +54,7 @@ export function HabitForm({
             onClick={onCancel}
             className="rounded-xl border border-border px-4 py-2.5 text-sm text-foreground-muted transition hover:bg-surface-muted"
           >
-            Annuler
+            {t("common.cancel")}
           </button>
         )}
       </div>

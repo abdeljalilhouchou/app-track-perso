@@ -16,6 +16,8 @@ import {
 } from "date-fns";
 import { fr } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
+import { useT } from "@/components/language-provider";
+import { WEEKDAY_SLUGS } from "@/lib/habit-categories";
 
 export type CalendarHabit = {
   id: string;
@@ -25,8 +27,6 @@ export type CalendarHabit = {
   scheduledDays: number[];
   createdOn: string;
 };
-
-const WEEKDAYS = ["L", "M", "M", "J", "V", "S", "D"];
 
 export function HabitsCalendar({
   habits,
@@ -38,6 +38,7 @@ export function HabitsCalendar({
   logs: Record<string, string[]>;
   today: string;
 }) {
+  const t = useT();
   const doneSets = new Map(Object.entries(logs).map(([id, dates]) => [id, new Set(dates)]));
   const [month, setMonth] = useState(startOfMonth(parseISO(today)));
   const [selected, setSelected] = useState(today);
@@ -60,12 +61,12 @@ export function HabitsCalendar({
   return (
     <div className="rounded-2xl border-[1.5px] border-habit/50 bg-surface p-5">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">Historique des habitudes</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("habits.calendar.title")}</h2>
         <div className="flex items-center gap-1">
           <button
             type="button"
             onClick={() => setMonth((m) => subMonths(m, 1))}
-            aria-label="Mois précédent"
+            aria-label={t("habits.calendar.prevMonth")}
             className="rounded-lg px-2 py-1 text-foreground-muted transition hover:bg-surface-muted"
           >
             ←
@@ -75,7 +76,7 @@ export function HabitsCalendar({
             type="button"
             disabled={isCurrentMonth}
             onClick={() => setMonth((m) => addMonths(m, 1))}
-            aria-label="Mois suivant"
+            aria-label={t("habits.calendar.nextMonth")}
             className="rounded-lg px-2 py-1 text-foreground-muted transition hover:bg-surface-muted disabled:opacity-30"
           >
             →
@@ -84,8 +85,8 @@ export function HabitsCalendar({
       </div>
 
       <div className="mb-1 grid grid-cols-7 gap-1.5 text-center text-[10px] text-foreground-muted">
-        {WEEKDAYS.map((d, i) => (
-          <span key={i}>{d}</span>
+        {WEEKDAY_SLUGS.map((slug) => (
+          <span key={slug}>{t(`habits.weekdaysShort.${slug}`)}</span>
         ))}
       </div>
       <div className="grid grid-cols-7 gap-1.5">
@@ -135,13 +136,13 @@ export function HabitsCalendar({
 
       <div className="mt-3 flex flex-wrap items-center gap-3 text-[10px] text-foreground-muted">
         <span className="flex items-center gap-1">
-          <span className="h-2 w-2 rounded-sm" style={{ background: "color-mix(in srgb, var(--habit) 30%, var(--surface))" }} /> partiel
+          <span className="h-2 w-2 rounded-sm" style={{ background: "color-mix(in srgb, var(--habit) 30%, var(--surface))" }} /> {t("habits.calendar.legendPartial")}
         </span>
         <span className="flex items-center gap-1">
-          <span className="h-2 w-2 rounded-sm" style={{ background: "var(--habit)" }} /> tout fait
+          <span className="h-2 w-2 rounded-sm" style={{ background: "var(--habit)" }} /> {t("habits.calendar.legendAll")}
         </span>
         <span className="flex items-center gap-1">
-          <span className="h-2 w-2 rounded-sm" style={{ background: "var(--danger)" }} /> rien de fait
+          <span className="h-2 w-2 rounded-sm" style={{ background: "var(--danger)" }} /> {t("habits.calendar.legendNone")}
         </span>
       </div>
 
@@ -157,11 +158,11 @@ export function HabitsCalendar({
           <p className="mb-2 text-xs font-semibold capitalize text-foreground-muted">
             {format(parseISO(selected), "EEEE d MMMM", { locale: fr })}
             {selectedExpected.length > 0 && (
-              <span className="font-normal"> · {selectedDone.length}/{selectedExpected.length} faites</span>
+              <span className="font-normal"> {t("habits.calendar.doneSuffix", { done: selectedDone.length, expected: selectedExpected.length })}</span>
             )}
           </p>
           {selectedExpected.length === 0 ? (
-            <p className="text-xs text-foreground-muted">Aucune habitude prévue ce jour-là.</p>
+            <p className="text-xs text-foreground-muted">{t("habits.calendar.emptyDay")}</p>
           ) : (
             <ul className="space-y-1">
               {selectedExpected.map((h) => {

@@ -1,11 +1,13 @@
 import { endOfMonth, format, startOfMonth, subMonths } from "date-fns";
 import { fr } from "date-fns/locale";
 import { successRate } from "@/lib/habit-insights";
+import { useT } from "@/components/language-provider";
 
 type Habit = { id: string; name: string; icon: string; color: string; scheduled_days: number[]; created_at: string };
 
 /** Success rate of each habit over the current month, compared with the previous one. */
 export function HabitsMonthly({ habits, logsByHabit }: { habits: Habit[]; logsByHabit: Map<string, Set<string>> }) {
+  const t = useT();
   const now = new Date();
   const thisStart = startOfMonth(now);
   const lastStart = startOfMonth(subMonths(now, 1));
@@ -30,19 +32,19 @@ export function HabitsMonthly({ habits, logsByHabit }: { habits: Habit[]; logsBy
       <div className="mb-4 flex items-end justify-between gap-3">
         <div>
           <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-            Bilan de {format(now, "MMMM", { locale: fr })}
+            {t("habits.monthly.summaryTitle", { month: format(now, "MMMM", { locale: fr }) })}
           </h2>
           <p className="mt-1 text-2xl font-semibold" style={{ color: "var(--habit)" }}>
             {overall}%{" "}
             <span className="text-sm font-normal text-foreground-muted">
-              · {totalDone}/{totalExpected} jours prévus réussis
+              {t("habits.monthly.progressSuffix", { done: totalDone, expected: totalExpected })}
             </span>
           </p>
         </div>
       </div>
 
       {rows.length === 0 ? (
-        <p className="text-sm text-foreground-muted">Pas encore de jour prévu ce mois-ci.</p>
+        <p className="text-sm text-foreground-muted">{t("habits.monthly.emptyState")}</p>
       ) : (
         <ul className="space-y-3">
           {rows.map(({ h, cur, prev }) => {
@@ -72,7 +74,7 @@ export function HabitsMonthly({ habits, logsByHabit }: { habits: Habit[]; logsBy
           })}
         </ul>
       )}
-      <p className="mt-3 text-[11px] text-foreground-muted">Les flèches comparent au mois précédent.</p>
+      <p className="mt-3 text-[11px] text-foreground-muted">{t("habits.monthly.arrowsNote")}</p>
     </div>
   );
 }

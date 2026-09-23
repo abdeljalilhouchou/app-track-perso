@@ -16,8 +16,9 @@ import { SessionList, type SessionItem } from "@/components/strength/session-lis
 import type { CatalogItem, TemplateView } from "@/components/strength/types";
 import { computeSportStats } from "@/lib/sport-stats";
 import { computeStrengthData, suggestNextTemplate, type RawSet } from "@/lib/strength-stats";
+import { muscleGroupI18nPath } from "@/lib/strength";
 import { weeklyTotals } from "@/lib/weekly";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
 
 const PAGE_SIZE = 1000;
 
@@ -29,6 +30,7 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
   } = await supabase.auth.getUser();
   if (!user) return null;
   const dict = await getDictionary();
+  const t = await getT();
 
   const today = format(new Date(), "yyyy-MM-dd");
   const selectedDate = date && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : today;
@@ -78,12 +80,12 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
   const stats = computeSportStats(all, weeklyGoal);
 
   // Program
-  const templates: TemplateView[] = (templatesRaw ?? []).map((t) => ({
-    id: t.id,
-    name: t.name,
-    muscleGroups: t.muscle_groups,
+  const templates: TemplateView[] = (templatesRaw ?? []).map((tRow) => ({
+    id: tRow.id,
+    name: tRow.name,
+    muscleGroups: tRow.muscle_groups,
     exercises: (templateRows ?? [])
-      .filter((e) => e.template_id === t.id)
+      .filter((e) => e.template_id === tRow.id)
       .sort((a, b) => a.position - b.position)
       .map((e) => ({ name: e.exercise_name, muscle: e.muscle_group, sets: e.target_sets, reps: e.target_reps })),
   }));
@@ -95,7 +97,7 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
     if (w.template_id && w.workout_date >= weekStart && !doneThisWeek[w.template_id]) doneThisWeek[w.template_id] = w.workout_date;
   }
   const suggestedId = suggestNextTemplate(
-    templates.map((t) => t.id),
+    templates.map((tpl) => tpl.id),
     all
   );
 
@@ -116,7 +118,15 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
   const recentSessions = all.slice(0, 12).map(toItem);
 
   // Quick-pick chips for the cardio form: skip the names that come from the strength program
-  const strengthNames = new Set([...templates.map((t) => t.name.toLowerCase()), "séance libre", "séance de musculation"]);
+  // (the "free session" default name is user-facing and translated; all language variants are
+  // excluded here so the chip list stays clean regardless of which language a session was logged in)
+  const strengthNames = new Set([
+    ...templates.map((tpl) => tpl.name.toLowerCase()),
+    "séance libre",
+    "free session",
+    "حصة حرة",
+    "séance de musculation",
+  ]);
   const cardioFavorites = stats.activities.filter((a) => !strengthNames.has(a.name.toLowerCase())).slice(0, 6);
 
   const since = format(subWeeks(new Date(), 10), "yyyy-MM-dd");
@@ -128,36 +138,43 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
   // Notes and warnings for the training week
   const yesterday = format(subDays(new Date(), 1), "yyyy-MM-dd");
   const trainedYesterday = new Set(all.filter((w) => w.workout_date === yesterday).flatMap((w) => w.muscle_groups ?? []));
-  const suggestedTemplate = templates.find((t) => t.id === suggestedId);
+  const suggestedTemplate = templates.find((tpl) => tpl.id === suggestedId);
   const overlap = suggestedTemplate ? suggestedTemplate.muscleGroups.filter((g) => trainedYesterday.has(g)) : [];
   const isoToday = new Date().getDay() === 0 ? 7 : new Date().getDay();
   const missingSessions = weeklyGoal - stats.thisWeek.sessions;
   const daysLeft = 8 - isoToday;
 
+  const muscleLabel = (group: string) => {
+    const path = muscleGroupI18nPath(group);
+    return path ? t(path) : group;
+  };
+
   const notes = (
     <div className="space-y-2.5">
       {overlap.length > 0 && (
-        <Callout variant="warning" title="Repos musculaire" dismissKey={`sport-rest:${today}`} compact>
-          Tu as travaillé <strong>{overlap.join(", ")}</strong> hier. Les muscles ont besoin d&apos;environ 48 h pour
-          récupérer : choisis plutôt une autre séance, ou allège les charges.
+        <Callout variant="warning" title={t("sport.page.restWarningTitle")} dismissKey={`sport-rest:${today}`} compact>
+          {t("sport.page.restWarningPrefix")} <strong>{overlap.map(muscleLabel).join(", ")}</strong> {t("sport.page.restWarningSuffix")}
         </Callout>
       )}
       {missingSessions > 0 && missingSessions >= daysLeft && (
-        <Callout variant="warning" title="Objectif de la semaine en danger" dismissKey={`sport-goal-risk:${today}`} compact>
-          Il te reste {missingSessions} séance{missingSessions > 1 ? "s" : ""} pour {daysLeft} jour{daysLeft > 1 ? "s" : ""} :
-          impossible de rater un jour pour atteindre {weeklyGoal} séances.
+        <Callout variant="warning" title={t("sport.page.goalAtRiskTitle")} dismissKey={`sport-goal-risk:${today}`} compact>
+          {t("sport.page.goalAtRiskBody", {
+            missing: missingSessions,
+            missingUnit: t(missingSessions > 1 ? "sport.common.sessionOther" : "sport.common.sessionOne"),
+            days: daysLeft,
+            daysUnit: t(daysLeft > 1 ? "sport.common.dayOther" : "sport.common.dayOne"),
+            goal: weeklyGoal,
+          })}
         </Callout>
       )}
       {missingSessions <= 0 && stats.thisWeek.sessions > 0 && (
         <Callout variant="success" dismissKey={`sport-goal-done:${today}`} compact>
-          Objectif de la semaine atteint ({stats.thisWeek.sessions}/{weeklyGoal}). Pense à bien récupérer et à manger assez de
-          protéines.
+          {t("sport.page.goalReachedBody", { sessions: stats.thisWeek.sessions, goal: weeklyGoal })}
         </Callout>
       )}
       {templates.length > 0 && stats.totalSessions > 0 && sets.length === 0 && (
         <Callout variant="tip" dismissKey="sport-log-sets" compact>
-          Astuce : lance la séance avec « Démarrer la séance » et note tes charges pour suivre ta progression et tes records.
-          « Marquer comme fait » ne garde pas le détail des séries.
+          {t("sport.page.tipBody", { start: t("sport.todaySession.startSession"), markDone: t("sport.todaySession.markDone") })}
         </Callout>
       )}
     </div>
@@ -197,20 +214,23 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
             <p className="text-lg font-semibold capitalize">{format(parseISO(selectedDate), "EEEE d MMMM", { locale: fr })}</p>
             <p className="text-xs text-foreground-muted">
               {selectedDaySessions.length === 0
-                ? "Aucune séance ce jour-là"
-                : `${selectedDaySessions.length} séance${selectedDaySessions.length > 1 ? "s" : ""}`}
+                ? t("sport.page.noSessionsThatDay")
+                : t("sport.page.daySessionsCount", {
+                    count: selectedDaySessions.length,
+                    unit: t(selectedDaySessions.length > 1 ? "sport.common.sessionOther" : "sport.common.sessionOne"),
+                  })}
             </p>
           </div>
           <SessionList
             sessions={selectedDaySessions}
             details={strength.details}
-            emptyLabel="Repos ce jour-là. Choisis un jour marqué d'un point vert pour revoir une séance."
+            emptyLabel={t("sport.page.restDayEmpty")}
             showDate={false}
           />
         </div>
         <div>
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">Dernières séances</h2>
-          <SessionList sessions={recentSessions} details={strength.details} emptyLabel="Aucune séance enregistrée pour le moment." />
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.page.recentSessionsTitle")}</h2>
+          <SessionList sessions={recentSessions} details={strength.details} emptyLabel={t("sport.common.noSessionsRecorded")} />
         </div>
       </>
     ),
@@ -223,7 +243,7 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
         </div>
         <div className="grid gap-4 lg:grid-cols-2">
           <InViewFade className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5">
-            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground-muted">Minutes par semaine</h2>
+            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.page.minutesPerWeekTitle")}</h2>
             <WeeklyBarChart data={chartData} color="var(--sport)" unit="min" />
           </InViewFade>
           <ActivityBreakdown stats={stats} />

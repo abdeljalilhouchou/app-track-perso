@@ -6,8 +6,9 @@ import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
+import { useT } from "@/components/language-provider";
 import { deleteWorkout } from "@/lib/actions/sport";
-import { formatWeight, muscleColor } from "@/lib/strength";
+import { formatWeight, muscleColor, muscleGroupI18nPath } from "@/lib/strength";
 import type { WorkoutDetail } from "@/lib/strength-stats";
 
 export type SessionItem = {
@@ -31,6 +32,11 @@ export function SessionList({
   emptyLabel: string;
   showDate?: boolean;
 }) {
+  const t = useT();
+  const muscleLabel = (group: string) => {
+    const path = muscleGroupI18nPath(group);
+    return path ? t(path) : group;
+  };
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const [openId, setOpenId] = useState<string | null>(null);
@@ -61,13 +67,13 @@ export function SessionList({
                 <p className="mt-0.5 flex flex-wrap gap-x-2 text-xs">
                   {s.muscleGroups.map((g) => (
                     <span key={g} style={{ color: muscleColor(g) }}>
-                      {g}
+                      {muscleLabel(g)}
                     </span>
                   ))}
                   <span className="text-foreground-muted">
                     {showDate && `${format(parseISO(s.date), "EEE d MMM", { locale: fr })} · `}
-                    {s.duration} min · intensité {s.intensity}/5
-                    {detail && ` · ${detail.totalSets} séries · ${detail.volume.toLocaleString("fr-FR")} kg`}
+                    {t("sport.sessionList.durationIntensity", { duration: s.duration, intensity: s.intensity })}
+                    {detail && ` · ${t("sport.sessionList.detailSummary", { sets: detail.totalSets, volume: detail.volume.toLocaleString("fr-FR") })}`}
                   </span>
                 </p>
               </div>
@@ -93,23 +99,36 @@ export function SessionList({
                         <div className="flex items-center justify-between gap-2">
                           <p className="truncate text-sm font-medium">{ex.name}</p>
                           <span className="shrink-0 text-[11px]" style={{ color: muscleColor(ex.muscle) }}>
-                            {ex.muscle}
+                            {muscleLabel(ex.muscle)}
                           </span>
                         </div>
                         <p className="mt-0.5 text-xs text-foreground-muted">
-                          {ex.sets.map((x) => (x.weight > 0 ? `${formatWeight(x.weight)} kg × ${x.reps}` : `${x.reps} reps`)).join("  ·  ")}
+                          {ex.sets
+                            .map((x) => (x.weight > 0 ? `${formatWeight(x.weight)} kg × ${x.reps}` : t("sport.common.repsValue", { reps: x.reps })))
+                            .join("  ·  ")}
                         </p>
                       </div>
                     ))}
                     {s.notes && <p className="text-xs text-foreground-muted">📝 {s.notes}</p>}
                     <ConfirmDeleteButton
                       disabled={pending}
-                      onConfirm={() => startTransition(async () => void (await run(() => deleteWorkout(s.id), { success: `Séance « ${s.activity} » supprimée`, failure: "Suppression impossible" })))}
-                      title="Supprimer cette séance ?"
-                      message={`"${s.activity}" du ${format(parseISO(s.date), "d MMMM", { locale: fr })} et toutes ses séries seront définitivement supprimées.`}
+                      onConfirm={() =>
+                        startTransition(
+                          async () =>
+                            void (await run(() => deleteWorkout(s.id), {
+                              success: t("sport.common.sessionDeletedToast", { name: s.activity }),
+                              failure: t("sport.common.deleteImpossible"),
+                            }))
+                        )
+                      }
+                      title={t("sport.common.confirmDeleteSessionTitle")}
+                      message={t("sport.sessionList.confirmDeleteWithSets", {
+                        activity: s.activity,
+                        date: format(parseISO(s.date), "d MMMM", { locale: fr }),
+                      })}
                       className="text-xs text-foreground-muted transition hover:text-danger"
                     >
-                      Supprimer la séance
+                      {t("sport.sessionList.deleteSessionButton")}
                     </ConfirmDeleteButton>
                   </div>
                 </motion.div>
@@ -121,12 +140,23 @@ export function SessionList({
                 <p className="text-xs text-foreground-muted">{s.notes ?? ""}</p>
                 <ConfirmDeleteButton
                   disabled={pending}
-                  onConfirm={() => startTransition(async () => void (await run(() => deleteWorkout(s.id), { success: `Séance « ${s.activity} » supprimée`, failure: "Suppression impossible" })))}
-                  title="Supprimer cette séance ?"
-                  message={`"${s.activity}" du ${format(parseISO(s.date), "d MMMM", { locale: fr })} sera définitivement supprimée.`}
+                  onConfirm={() =>
+                    startTransition(
+                      async () =>
+                        void (await run(() => deleteWorkout(s.id), {
+                          success: t("sport.common.sessionDeletedToast", { name: s.activity }),
+                          failure: t("sport.common.deleteImpossible"),
+                        }))
+                    )
+                  }
+                  title={t("sport.common.confirmDeleteSessionTitle")}
+                  message={t("sport.common.confirmDeleteMessage", {
+                    activity: s.activity,
+                    date: format(parseISO(s.date), "d MMMM", { locale: fr }),
+                  })}
                   className="text-xs text-foreground-muted transition hover:text-danger"
                 >
-                  Supprimer
+                  {t("sport.common.delete")}
                 </ConfirmDeleteButton>
               </div>
             )}

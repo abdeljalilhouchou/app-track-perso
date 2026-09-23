@@ -3,15 +3,16 @@
 import Link from "next/link";
 import { useSyncExternalStore, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useT } from "@/components/language-provider";
 
 export type CalloutVariant = "info" | "tip" | "warning" | "success" | "danger";
 
-const VARIANTS: Record<CalloutVariant, { color: string; icon: string; label: string }> = {
-  info: { color: "var(--accent)", icon: "ℹ️", label: "À savoir" },
-  tip: { color: "var(--water)", icon: "💡", label: "Astuce" },
-  warning: { color: "var(--mood)", icon: "⚠️", label: "Attention" },
-  success: { color: "var(--success)", icon: "✅", label: "Bravo" },
-  danger: { color: "var(--danger)", icon: "🚨", label: "Alerte" },
+const VARIANTS: Record<CalloutVariant, { color: string; icon: string; labelKey: string }> = {
+  info: { color: "var(--accent)", icon: "ℹ️", labelKey: "common.calloutInfo" },
+  tip: { color: "var(--water)", icon: "💡", labelKey: "common.calloutTip" },
+  warning: { color: "var(--mood)", icon: "⚠️", labelKey: "common.calloutWarning" },
+  success: { color: "var(--success)", icon: "✅", labelKey: "common.calloutSuccess" },
+  danger: { color: "var(--danger)", icon: "🚨", labelKey: "common.calloutDanger" },
 };
 
 const STORAGE_KEY = "dismissed-callouts";
@@ -88,6 +89,7 @@ export function Callout({
   const v = VARIANTS[variant];
   const { ready, dismissed } = useDismissed(dismissKey);
   const visible = ready && !dismissed;
+  const t = useT();
 
   return (
     <AnimatePresence initial>
@@ -114,7 +116,7 @@ export function Callout({
           </motion.span>
           <div className="min-w-0 flex-1 text-sm">
             <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: v.color }}>
-              {title ?? v.label}
+              {title ?? t(v.labelKey)}
             </p>
             <div className="mt-0.5 text-foreground">{children}</div>
             {action && (
@@ -127,7 +129,7 @@ export function Callout({
             <button
               type="button"
               onClick={() => persistDismissal(dismissKey)}
-              aria-label="Masquer ce message"
+              aria-label={t("common.hideMessage")}
               className="shrink-0 rounded-full px-1.5 py-0.5 text-xs text-foreground-muted transition hover:bg-surface-muted hover:text-foreground"
             >
               ✕

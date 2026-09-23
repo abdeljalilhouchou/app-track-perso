@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { MUSCLE_GROUPS, exerciseKey, muscleColor } from "@/lib/strength";
+import { useT } from "@/components/language-provider";
+import { MUSCLE_GROUPS, exerciseKey, muscleColor, muscleGroupI18nPath } from "@/lib/strength";
 import type { CatalogItem } from "@/components/strength/types";
 
 /** Search the exercise catalog, or create a new exercise on the fly with its muscle group. */
@@ -9,7 +10,7 @@ export function ExercisePicker({
   catalog,
   excludedKeys = [],
   defaultMuscle = "Pectoraux",
-  label = "Ajouter un exercice",
+  label,
   onPick,
 }: {
   catalog: CatalogItem[];
@@ -18,6 +19,11 @@ export function ExercisePicker({
   label?: string;
   onPick: (name: string, muscle: string) => void;
 }) {
+  const t = useT();
+  const muscleLabel = (group: string) => {
+    const path = muscleGroupI18nPath(group);
+    return path ? t(path) : group;
+  };
   const [query, setQuery] = useState("");
   const [muscle, setMuscle] = useState(defaultMuscle);
 
@@ -34,11 +40,11 @@ export function ExercisePicker({
 
   return (
     <div>
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{label}</p>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{label ?? t("sport.exercisePicker.label")}</p>
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Chercher ou créer un exercice..."
+        placeholder={t("sport.exercisePicker.searchPlaceholder")}
         className="w-full rounded-xl border border-border bg-surface-muted px-3.5 py-2.5 text-sm outline-none focus:border-sport focus:ring-2 focus:ring-sport/30"
       />
       {q && (
@@ -52,7 +58,7 @@ export function ExercisePicker({
               >
                 <span>{c.name}</span>
                 <span className="text-xs" style={{ color: muscleColor(c.muscle) }}>
-                  {c.muscle}
+                  {muscleLabel(c.muscle)}
                 </span>
               </button>
             </li>
@@ -62,11 +68,13 @@ export function ExercisePicker({
               <select
                 value={muscle}
                 onChange={(e) => setMuscle(e.target.value)}
-                aria-label="Groupe musculaire"
+                aria-label={t("sport.exercisePicker.muscleGroupAria")}
                 className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none"
               >
                 {MUSCLE_GROUPS.map((g) => (
-                  <option key={g}>{g}</option>
+                  <option key={g} value={g}>
+                    {muscleLabel(g)}
+                  </option>
                 ))}
               </select>
               <button
@@ -74,7 +82,7 @@ export function ExercisePicker({
                 onClick={() => pick(query, muscle)}
                 className="flex-1 rounded-lg border border-dashed border-sport/50 px-2.5 py-1.5 text-left text-sm text-sport transition hover:bg-sport-soft"
               >
-                + Créer « {query.trim()} »
+                {t("sport.exercisePicker.createButton", { name: query.trim() })}
               </button>
             </li>
           )}

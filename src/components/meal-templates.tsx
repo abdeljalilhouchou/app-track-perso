@@ -13,16 +13,10 @@ import {
   type TemplateItemInput,
 } from "@/lib/actions/nutrition";
 import { computeMacros } from "@/lib/food-database";
+import { useT } from "@/components/language-provider";
 import type { Food, MealTemplate, MealTemplateItem } from "@/types/database";
 
 const TEMPLATE_ICONS = ["🍽️", "🥗", "🍳", "🥪", "🍲", "🥙", "🍱", "🥞", "🍛", "🍜"];
-
-const MEAL_TYPES = [
-  { value: "petit-dejeuner", label: "Petit-déj" },
-  { value: "dejeuner", label: "Déjeuner" },
-  { value: "diner", label: "Dîner" },
-  { value: "collation", label: "Collation" },
-] as const;
 
 type TemplateWithItems = MealTemplate & { meal_template_items: MealTemplateItem[] };
 
@@ -79,6 +73,7 @@ function TemplateBuilder({
   onDone: () => void;
   initial?: TemplateWithItems;
 }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const [name, setName] = useState(initial?.name ?? "");
@@ -136,10 +131,10 @@ function TemplateBuilder({
     setError(null);
     startTransition(async () => {
       const result = initial
-        ? await run(() => updateMealTemplate(initial.id, name, icon, scaled), { success: `Recette « ${name} » modifiée` })
-        : await run(() => createMealTemplate(name, icon, scaled), { success: `Recette « ${name} » créée 📖` });
+        ? await run(() => updateMealTemplate(initial.id, name, icon, scaled), { success: t("nutrition.templates.editSuccess", { name }) })
+        : await run(() => createMealTemplate(name, icon, scaled), { success: t("nutrition.templates.createSuccess", { name }) });
       if (!result || result.error) {
-        setError(result?.error ?? "Enregistrement impossible.");
+        setError(result?.error ?? t("nutrition.templates.saveErrorFallback"));
         return;
       }
       onDone();
@@ -153,7 +148,7 @@ function TemplateBuilder({
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Nom de la recette (ex: Bowl protéiné)"
+          placeholder={t("nutrition.templates.namePlaceholder")}
           className="flex-1 rounded-xl border border-border bg-surface-muted px-3 py-2 text-sm outline-none focus:border-accent"
         />
       </div>
@@ -166,7 +161,8 @@ function TemplateBuilder({
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">{it.base.food_name}</p>
                 <p className="text-xs text-foreground-muted">
-                  {scaled[i].calories} kcal · {scaled[i].protein}g P · {scaled[i].carbs}g G · {scaled[i].fat}g L
+                  {scaled[i].calories} kcal · {scaled[i].protein}g {t("nutrition.common.proteinAbbrev")} ·{" "}
+                  {scaled[i].carbs}g {t("nutrition.common.carbsAbbrev")} · {scaled[i].fat}g {t("nutrition.common.fatAbbrev")}
                 </p>
               </div>
               <input
@@ -174,14 +170,14 @@ function TemplateBuilder({
                 min={1}
                 value={it.qty}
                 onChange={(e) => setQty(i, Number(e.target.value))}
-                aria-label={`Quantité de ${it.base.food_name}`}
+                aria-label={t("nutrition.templates.qtyAriaLabel", { name: it.base.food_name })}
                 className="w-16 shrink-0 rounded-lg border border-border bg-surface px-2 py-1 text-xs outline-none focus:border-accent"
               />
               <span className="w-5 shrink-0 text-xs text-foreground-muted">{it.base.unit}</span>
               <button
                 type="button"
                 onClick={() => setItems((prev) => prev.filter((_, idx) => idx !== i))}
-                aria-label={`Retirer ${it.base.food_name}`}
+                aria-label={t("nutrition.templates.removeAriaLabel", { name: it.base.food_name })}
                 className="shrink-0 text-foreground-muted hover:text-danger"
               >
                 ✕
@@ -195,7 +191,7 @@ function TemplateBuilder({
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="+ Ajouter un aliment..."
+          placeholder={t("nutrition.templates.addFoodPlaceholder")}
           className="flex-1 rounded-xl border border-border bg-surface-muted px-3 py-2 text-sm outline-none focus:border-accent"
         />
         <input
@@ -203,7 +199,7 @@ function TemplateBuilder({
           min={1}
           value={grams}
           onChange={(e) => setGrams(Number(e.target.value))}
-          aria-label="Quantité à ajouter"
+          aria-label={t("nutrition.templates.addQtyAriaLabel")}
           className="w-20 rounded-xl border border-border bg-surface-muted px-2 py-2 text-sm outline-none focus:border-accent"
         />
       </div>
@@ -230,11 +226,15 @@ function TemplateBuilder({
 
       {items.length > 0 && (
         <p className="text-xs text-foreground-muted">
-          Total : {Math.round(totals.calories)} kcal · {Math.round(totals.protein * 10) / 10}g protéines
+          {t("nutrition.templates.totalLabel", {
+            calories: Math.round(totals.calories),
+            protein: Math.round(totals.protein * 10) / 10,
+            proteinsWord: t("nutrition.common.proteinsWord"),
+          })}
         </p>
       )}
 
-      {error && <p className="text-xs text-danger">Enregistrement impossible : {error}</p>}
+      {error && <p className="text-xs text-danger">{t("nutrition.templates.saveErrorPrefix", { error })}</p>}
 
       <div className="flex gap-2">
         <button
@@ -243,14 +243,14 @@ function TemplateBuilder({
           onClick={save}
           className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-on-accent transition hover:opacity-90 disabled:opacity-50"
         >
-          {initial ? "Enregistrer les modifications" : "Enregistrer la recette"}
+          {initial ? t("nutrition.templates.saveEdit") : t("nutrition.templates.saveNew")}
         </button>
         <button
           type="button"
           onClick={onDone}
           className="rounded-lg border border-border px-3 py-1.5 text-xs text-foreground-muted transition hover:bg-surface-muted"
         >
-          Annuler
+          {t("common.cancel")}
         </button>
       </div>
     </div>
@@ -258,10 +258,19 @@ function TemplateBuilder({
 }
 
 function TemplateCard({ template, foods }: { template: TemplateWithItems; foods: Food[] }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
+
+  const MEAL_TYPES = [
+    { value: "petit-dejeuner", label: t("nutrition.mealTypes.petitDejeunerShort") },
+    { value: "dejeuner", label: t("nutrition.mealTypes.dejeuner") },
+    { value: "diner", label: t("nutrition.mealTypes.diner") },
+    { value: "collation", label: t("nutrition.mealTypes.collation") },
+  ] as const;
+
   const [mealType, setMealType] = useState<(typeof MEAL_TYPES)[number]["value"]>("dejeuner");
 
   const items = template.meal_template_items;
@@ -288,12 +297,13 @@ function TemplateCard({ template, foods }: { template: TemplateWithItems; foods:
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold">{template.name}</p>
           <p className="mt-0.5 text-xs text-foreground-muted">
-            {Math.round(totals.calories)} kcal · {Math.round(totals.protein)}g P · {Math.round(totals.carbs)}g G ·{" "}
-            {Math.round(totals.fat)}g L
+            {Math.round(totals.calories)} kcal · {Math.round(totals.protein)}g {t("nutrition.common.proteinAbbrev")} ·{" "}
+            {Math.round(totals.carbs)}g {t("nutrition.common.carbsAbbrev")} · {Math.round(totals.fat)}g{" "}
+            {t("nutrition.common.fatAbbrev")}
           </p>
         </div>
         <span className="shrink-0 text-xs text-foreground-muted">
-          {items.length} aliment{items.length !== 1 ? "s" : ""}
+          {items.length} {items.length !== 1 ? t("nutrition.templates.itemCountPlural") : t("nutrition.templates.itemCountSingular")}
         </span>
         <motion.span
           animate={{ rotate: expanded ? 180 : 0 }}
@@ -326,12 +336,14 @@ function TemplateCard({ template, foods }: { template: TemplateWithItems; foods:
                           <p className="truncate text-sm font-medium">{it.food_name}</p>
                           <p className="text-xs text-foreground-muted">
                             {it.quantity_grams}
-                            {it.unit} · {it.calories} kcal · {it.protein}g P · {it.carbs}g G · {it.fat}g L
+                            {it.unit} · {it.calories} kcal · {it.protein}g {t("nutrition.common.proteinAbbrev")} ·{" "}
+                            {it.carbs}g {t("nutrition.common.carbsAbbrev")} · {it.fat}g {t("nutrition.common.fatAbbrev")}
                           </p>
                           {(it.fiber > 0 || it.sugar > 0 || it.sodium > 0 || it.caffeine > 0) && (
                             <p className="text-[10px] text-foreground-muted/70">
-                              {it.fiber}g fibres · {it.sugar}g sucres · {it.sodium}mg sodium
-                              {it.caffeine > 0 ? ` · ☕ ${it.caffeine}mg caféine` : ""}
+                              {it.fiber}g {t("nutrition.common.fiberWord")} · {it.sugar}g {t("nutrition.common.sugarWord")} ·{" "}
+                              {it.sodium}mg {t("nutrition.common.sodiumWord")}
+                              {it.caffeine > 0 ? ` · ☕ ${it.caffeine}mg ${t("nutrition.common.caffeineWord")}` : ""}
                             </p>
                           )}
                         </div>
@@ -354,26 +366,39 @@ function TemplateCard({ template, foods }: { template: TemplateWithItems; foods:
                     <button
                       type="button"
                       disabled={pending}
-                      onClick={() => startTransition(async () => void (await run(() => logMealTemplate(template.id, mealType), { success: `Recette « ${template.name} » ajoutée au journal`, failure: "Ajout impossible" })))}
+                      onClick={() =>
+                        startTransition(async () =>
+                          void (await run(() => logMealTemplate(template.id, mealType), {
+                            success: t("nutrition.templates.logSuccess", { name: template.name }),
+                            failure: t("nutrition.common.addFailure"),
+                          }))
+                        )
+                      }
                       className="flex-1 rounded-lg border-[1.5px] border-accent px-3 py-1.5 text-xs font-semibold text-accent transition-colors hover:bg-accent hover:text-on-accent disabled:opacity-50"
                     >
-                      Journaliser cette recette
+                      {t("nutrition.templates.logButton")}
                     </button>
                     <button
                       type="button"
                       onClick={() => setEditing(true)}
                       className="shrink-0 text-xs text-foreground-muted hover:text-foreground"
                     >
-                      Modifier
+                      {t("common.edit")}
                     </button>
                     <ConfirmDeleteButton
                       disabled={pending}
-                      onConfirm={() => startTransition(async () => void (await run(() => deleteMealTemplate(template.id), { success: `Recette « ${template.name} » supprimée` })))}
-                      title="Supprimer cette recette ?"
-                      message={`"${template.name}" sera retirée de tes recettes.`}
+                      onConfirm={() =>
+                        startTransition(async () =>
+                          void (await run(() => deleteMealTemplate(template.id), {
+                            success: t("nutrition.templates.deleteSuccess", { name: template.name }),
+                          }))
+                        )
+                      }
+                      title={t("nutrition.templates.deleteTitle")}
+                      message={t("nutrition.templates.deleteMessage", { name: template.name })}
                       className="shrink-0 text-xs text-foreground-muted hover:text-danger"
                     >
-                      Supprimer
+                      {t("common.delete")}
                     </ConfirmDeleteButton>
                   </div>
                 </div>
@@ -387,20 +412,21 @@ function TemplateCard({ template, foods }: { template: TemplateWithItems; foods:
 }
 
 export function MealTemplatesPanel({ templates, foods }: { templates: TemplateWithItems[]; foods: Food[] }) {
+  const t = useT();
   const [showBuilder, setShowBuilder] = useState(false);
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-          Mes recettes ({templates.length})
+          {t("nutrition.templates.headerCount", { count: templates.length })}
         </p>
         {!showBuilder && (
           <button
             onClick={() => setShowBuilder(true)}
             className="flex items-center gap-1.5 rounded-full border border-nutrition/40 px-3 py-1.5 text-xs font-medium text-foreground-muted transition hover:border-accent/40 hover:text-accent"
           >
-            + Nouvelle recette
+            {t("nutrition.templates.newButton")}
           </button>
         )}
       </div>
@@ -413,10 +439,10 @@ export function MealTemplatesPanel({ templates, foods }: { templates: TemplateWi
 
       {templates.length === 0 && !showBuilder ? (
         <p className="rounded-2xl border border-dashed border-nutrition/40 p-6 text-center text-xs text-foreground-muted">
-          Aucune recette enregistrée pour l&apos;instant. Combine des aliments en une recette pour la journaliser en un clic.
+          {t("nutrition.templates.emptyState")}
         </p>
       ) : (
-        templates.map((t) => <TemplateCard key={t.id} template={t} foods={foods} />)
+        templates.map((tpl) => <TemplateCard key={tpl.id} template={tpl} foods={foods} />)
       )}
     </div>
   );

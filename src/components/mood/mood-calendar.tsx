@@ -15,17 +15,28 @@ import {
 } from "date-fns";
 import { fr } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
+import { useT } from "@/components/language-provider";
 
 export type MoodDay = { date: string; mood: number; energy: number; notes: string | null };
 
 const EMOJI = ["", "😞", "😕", "😐", "🙂", "😄"];
 const SCORE_COLOR = ["", "var(--danger)", "var(--nutrition)", "var(--mood)", "var(--sport)", "var(--success)"];
-const WEEKDAYS = ["L", "M", "M", "J", "V", "S", "D"];
 
 export function MoodCalendar({ days, today }: { days: MoodDay[]; today: string }) {
+  const t = useT();
   const byDate = new Map(days.map((d) => [d.date, d]));
   const [month, setMonth] = useState(startOfMonth(parseISO(today)));
   const [selected, setSelected] = useState(today);
+
+  const WEEKDAYS = [
+    t("mood.calendar.weekdayMon"),
+    t("mood.calendar.weekdayTue"),
+    t("mood.calendar.weekdayWed"),
+    t("mood.calendar.weekdayThu"),
+    t("mood.calendar.weekdayFri"),
+    t("mood.calendar.weekdaySat"),
+    t("mood.calendar.weekdaySun"),
+  ];
 
   const grid = eachDayOfInterval({
     start: startOfWeek(startOfMonth(month), { weekStartsOn: 1 }),
@@ -37,12 +48,12 @@ export function MoodCalendar({ days, today }: { days: MoodDay[]; today: string }
   return (
     <div className="rounded-2xl border-[1.5px] border-mood/50 bg-surface p-5">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">Calendrier de l&apos;humeur</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("mood.calendar.title")}</h2>
         <div className="flex items-center gap-1">
           <button
             type="button"
             onClick={() => setMonth((m) => subMonths(m, 1))}
-            aria-label="Mois précédent"
+            aria-label={t("mood.calendar.prevMonth")}
             className="rounded-lg px-2 py-1 text-foreground-muted transition hover:bg-surface-muted"
           >
             ←
@@ -52,7 +63,7 @@ export function MoodCalendar({ days, today }: { days: MoodDay[]; today: string }
             type="button"
             disabled={isCurrentMonth}
             onClick={() => setMonth((m) => addMonths(m, 1))}
-            aria-label="Mois suivant"
+            aria-label={t("mood.calendar.nextMonth")}
             className="rounded-lg px-2 py-1 text-foreground-muted transition hover:bg-surface-muted disabled:opacity-30"
           >
             →
@@ -119,11 +130,16 @@ export function MoodCalendar({ days, today }: { days: MoodDay[]; today: string }
           {detail ? (
             <p className="mt-1">
               <span className="mr-1.5 text-lg">{EMOJI[detail.mood]}</span>
-              Humeur <strong>{detail.mood}/5</strong> · Énergie <strong>{detail.energy}/5</strong>
-              {detail.notes && <span className="block pt-1 text-xs text-foreground-muted">« {detail.notes} »</span>}
+              {t("mood.calendar.moodLabel")} <strong>{detail.mood}/5</strong> · {t("mood.calendar.energyLabel")}{" "}
+              <strong>{detail.energy}/5</strong>
+              {detail.notes && (
+                <span className="block pt-1 text-xs text-foreground-muted">
+                  {t("mood.calendar.notesQuote", { notes: detail.notes })}
+                </span>
+              )}
             </p>
           ) : (
-            <p className="mt-1 text-xs text-foreground-muted">Aucune humeur notée ce jour-là.</p>
+            <p className="mt-1 text-xs text-foreground-muted">{t("mood.calendar.noEntry")}</p>
           )}
         </motion.div>
       </AnimatePresence>

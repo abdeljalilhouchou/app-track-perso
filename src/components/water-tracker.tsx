@@ -4,10 +4,12 @@ import { useActionToast } from "@/components/toast/use-action-toast";
 import { useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { addWater } from "@/lib/actions/nutrition";
+import { useT } from "@/components/language-provider";
 
 const QUICK_AMOUNTS = [250, 330, 500];
 
 export function WaterTracker({ ml, drinksMl = 0, goalMl = 2000 }: { ml: number; drinksMl?: number; goalMl?: number }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const totalMl = ml + drinksMl;
@@ -16,7 +18,7 @@ export function WaterTracker({ ml, drinksMl = 0, goalMl = 2000 }: { ml: number; 
   return (
     <div className="rounded-2xl border-[1.5px] border-water/50 bg-surface p-5">
       <div className="mb-3 flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">💧 Hydratation</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("nutrition.water.heading")}</p>
         <span className="text-sm">
           <AnimatePresence mode="popLayout">
             <motion.span
@@ -34,7 +36,7 @@ export function WaterTracker({ ml, drinksMl = 0, goalMl = 2000 }: { ml: number; 
       </div>
       {drinksMl > 0 && (
         <p className="-mt-1.5 mb-3 text-[11px] text-foreground-muted">
-          dont {drinksMl} ml de boissons du journal (café, thé, jus…)
+          {t("nutrition.water.fromDrinks", { ml: drinksMl })}
         </p>
       )}
       <div className="mb-3 h-1.5 w-full overflow-hidden rounded-full bg-surface-muted">
@@ -56,8 +58,8 @@ export function WaterTracker({ ml, drinksMl = 0, goalMl = 2000 }: { ml: number; 
             onClick={() =>
               startTransition(async () =>
                 void (await run(() => addWater(amount), {
-                  success: `+${amount} ml d'eau 💧`,
-                  failure: "Eau non enregistrée",
+                  success: t("nutrition.water.addSuccess", { amount }),
+                  failure: t("nutrition.water.addFailure"),
                   undo: { run: () => addWater(-amount) },
                 }))
               )
@@ -71,7 +73,14 @@ export function WaterTracker({ ml, drinksMl = 0, goalMl = 2000 }: { ml: number; 
           type="button"
           disabled={pending || ml === 0}
           whileTap={{ scale: 0.92 }}
-          onClick={() => startTransition(async () => void (await run(() => addWater(-250), { success: "−250 ml retirés", failure: "Modification impossible" })))}
+          onClick={() =>
+            startTransition(async () =>
+              void (await run(() => addWater(-250), {
+                success: t("nutrition.water.removeSuccess"),
+                failure: t("nutrition.common.updateFailure"),
+              }))
+            )
+          }
           className="rounded-full border border-dashed border-water/40 px-3 py-1.5 text-xs text-foreground-muted transition-colors hover:border-danger/40 hover:text-danger disabled:opacity-40"
         >
           − 250 ml

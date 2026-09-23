@@ -1,5 +1,4 @@
 import { eachDayOfInterval, format, getISODay } from "date-fns";
-import { WEEKDAYS } from "@/lib/habit-categories";
 
 /** Success rate (0-100) over a date range, counting only days the habit was actually scheduled. */
 export function successRate(
@@ -21,11 +20,15 @@ export function successRate(
   return { rate: expected > 0 ? Math.round((completed / expected) * 100) : 0, completed, expected };
 }
 
-/** Finds which scheduled weekday has the best completion rate historically. */
+/**
+ * Finds which scheduled weekday has the best completion rate historically.
+ * Returns the ISO weekday number (1 = Monday ... 7 = Sunday) rather than a display label, so the
+ * caller can render it translated (e.g. via `weekdaySlug` + `t("habits.weekdaysLong.*")`).
+ */
 export function bestWeekday(
   loggedDates: Set<string>,
   scheduledDays: number[]
-): { label: string; rate: number } | null {
+): { day: number; rate: number } | null {
   if (scheduledDays.length === 0) return null;
 
   const allDates = Array.from(loggedDates).sort();
@@ -53,6 +56,5 @@ export function bestWeekday(
   }
 
   if (!best) return null;
-  const label = WEEKDAYS.find((w) => w.value === best!.day)?.label ?? "";
-  return { label, rate: best.rate };
+  return { day: best.day, rate: best.rate };
 }

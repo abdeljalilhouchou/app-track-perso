@@ -8,6 +8,7 @@ import { toggleHabitLog } from "@/lib/actions/habits";
 import { quickLogMood } from "@/lib/actions/mood";
 import { addWater } from "@/lib/actions/nutrition";
 import { ConfettiBurst } from "@/components/ui/confetti-burst";
+import { useT } from "@/components/language-provider";
 
 type TodayHabit = { id: string; icon: string; name: string; color: string; done: boolean };
 
@@ -62,6 +63,7 @@ export function TodayPanel({
   drinksMl: number;
   waterGoalMl: number;
 }) {
+  const t = useT();
   const [, startTransition] = useTransition();
   const run = useActionToast();
   const [burst, setBurst] = useState(0);
@@ -83,7 +85,9 @@ export function TodayPanel({
     startTransition(async () => {
       toggleOptimistic(habit.id);
       await run(() => toggleHabitLog(habit.id, date), {
-        success: willBeDone ? `Bien joué ! « ${habit.name} » validée ✓` : `« ${habit.name} » décochée`,
+        success: willBeDone
+          ? t("dashboard.today.habitDone", { name: habit.name })
+          : t("dashboard.today.habitUndone", { name: habit.name }),
         undo: { run: () => toggleHabitLog(habit.id, date) },
       });
     });
@@ -97,13 +101,16 @@ export function TodayPanel({
         <div className="mb-3 flex items-center gap-3">
           <HabitRing done={doneCount} total={habits.length} />
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">Habitudes du jour</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("dashboard.today.habitsHeading")}</p>
             <p className="text-xs text-foreground-muted">
               {habits.length === 0
-                ? "Aucune habitude prévue aujourd'hui"
+                ? t("dashboard.today.noHabitsToday")
                 : doneCount === habits.length
-                  ? "Tout est fait, bravo ! 🎉"
-                  : `${habits.length - doneCount} restante${habits.length - doneCount > 1 ? "s" : ""}`}
+                  ? t("dashboard.today.allDone")
+                  : t(
+                      habits.length - doneCount > 1 ? "dashboard.today.remainingMany" : "dashboard.today.remainingOne",
+                      { count: habits.length - doneCount }
+                    )}
             </p>
           </div>
         </div>
@@ -135,15 +142,15 @@ export function TodayPanel({
         </ul>
         {habits.length === 0 && (
           <Link href="/habits" className="text-xs font-medium text-accent hover:underline">
-            Gérer mes habitudes
+            {t("dashboard.today.manageHabits")}
           </Link>
         )}
       </div>
 
       <div>
-        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-foreground-muted">Humeur du jour</p>
+        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("dashboard.today.moodHeading")}</p>
         <p className="mb-3 text-xs text-foreground-muted">
-          {mood ? "Touche pour modifier." : "Pas encore notée — comment tu te sens ?"}
+          {mood ? t("dashboard.today.moodEditHint") : t("dashboard.today.moodPrompt")}
         </p>
         <div className="flex gap-2">
           {MOODS.map((m) => {
@@ -158,10 +165,13 @@ export function TodayPanel({
                 onClick={() =>
                   startTransition(async () => {
                     setMoodOptimistic(m.value);
-                    await run(() => quickLogMood(date, m.value), { success: "Humeur du jour enregistrée", failure: "Humeur non enregistrée" });
+                    await run(() => quickLogMood(date, m.value), {
+                      success: t("dashboard.today.moodLogged"),
+                      failure: t("dashboard.today.moodLogFailed"),
+                    });
                   })
                 }
-                aria-label={`Humeur ${m.value} sur 5`}
+                aria-label={t("dashboard.today.moodAriaLabel", { value: m.value })}
                 className="flex h-11 w-11 items-center justify-center rounded-xl border text-2xl transition-colors"
                 style={{
                   borderColor: selected ? "var(--mood)" : "color-mix(in srgb, var(--mood) 35%, var(--border))",
@@ -174,13 +184,13 @@ export function TodayPanel({
           })}
         </div>
         <Link href="/humeur" className="mt-3 inline-block text-xs font-medium text-accent hover:underline">
-          Ajouter énergie et notes
+          {t("dashboard.today.moodAddMore")}
         </Link>
       </div>
 
       <div>
         <div className="mb-3 flex items-center justify-between">
-          <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">💧 Hydratation</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("dashboard.today.hydrationHeading")}</p>
           <span className="text-sm">
             <span className="font-semibold">{totalWater}</span> / {waterGoalMl} ml
           </span>
@@ -203,7 +213,11 @@ export function TodayPanel({
               onClick={() =>
                 startTransition(async () => {
                   addWaterOptimistic(ml);
-                  await run(() => addWater(ml), { success: `+${ml} ml d'eau 💧`, failure: "Eau non enregistrée", undo: { run: () => addWater(-ml) } });
+                  await run(() => addWater(ml), {
+                    success: t("dashboard.today.waterAdded", { ml }),
+                    failure: t("dashboard.today.waterFailed"),
+                    undo: { run: () => addWater(-ml) },
+                  });
                 })
               }
               className="rounded-full border border-water/40 px-3 py-1.5 text-xs font-medium transition-colors hover:border-water hover:text-water"
@@ -213,7 +227,7 @@ export function TodayPanel({
           ))}
         </div>
         {drinksMl > 0 && (
-          <p className="mt-2 text-[11px] text-foreground-muted">dont {drinksMl} ml de boissons du journal</p>
+          <p className="mt-2 text-[11px] text-foreground-muted">{t("dashboard.today.waterFromJournal", { ml: drinksMl })}</p>
         )}
       </div>
     </div>

@@ -1,5 +1,22 @@
 // Central translation dictionary. Each locale is a full tree with the same shape;
 // `Dictionary` is derived from `fr` so `en`/`ar` are type-checked against it below.
+//
+// Per-module translations (habits, sport, nutrition, mood, profile, and the dashboard
+// additions) live in ./modules/*.ts and are merged in here so each module could be worked
+// on independently without every contributor touching this shared file at once.
+
+import { habitsAr, habitsEn, habitsFr } from "./modules/habits";
+import { sportAr, sportEn, sportFr } from "./modules/sport";
+import { nutritionAr, nutritionEn, nutritionFr } from "./modules/nutrition";
+import { moodAr, moodEn, moodFr } from "./modules/mood";
+import {
+  dashboardExtraAr,
+  dashboardExtraEn,
+  dashboardExtraFr,
+  profileAr,
+  profileEn,
+  profileFr,
+} from "./modules/profile";
 
 const fr = {
   common: {
@@ -17,6 +34,12 @@ const fr = {
     confirm: "Confirmer",
     back: "Retour",
     hello: "Bonjour",
+    calloutInfo: "À savoir",
+    calloutTip: "Astuce",
+    calloutWarning: "Attention",
+    calloutSuccess: "Bravo",
+    calloutDanger: "Alerte",
+    hideMessage: "Masquer ce message",
   },
   nav: {
     overview: "Vue d'ensemble",
@@ -83,12 +106,13 @@ const fr = {
     todayPanel: {
       title: "Notes & alertes",
     },
-    weekRecap: "Bilan de la semaine",
-    insights: "Insights",
+    weekRecapTitle: "Bilan de la semaine",
+    insightsTitle: "Insights",
     sportChart: "Sport · minutes / semaine",
     moodChart: "Humeur · 30 derniers jours",
     seeAll: "Voir tout",
     noData: "Aucune donnée pour l'instant.",
+    ...dashboardExtraFr,
   },
   pages: {
     habits: { title: "Habitudes", subtitle: "Construis ta constance, un jour à la fois." },
@@ -108,6 +132,11 @@ const fr = {
     en: "English",
     ar: "العربية",
   },
+  habits: habitsFr,
+  sport: sportFr,
+  nutrition: nutritionFr,
+  mood: moodFr,
+  profile: profileFr,
 };
 
 const en: Dictionary = {
@@ -126,6 +155,12 @@ const en: Dictionary = {
     confirm: "Confirm",
     back: "Back",
     hello: "Hello",
+    calloutInfo: "Good to know",
+    calloutTip: "Tip",
+    calloutWarning: "Heads up",
+    calloutSuccess: "Well done",
+    calloutDanger: "Alert",
+    hideMessage: "Hide this message",
   },
   nav: {
     overview: "Overview",
@@ -192,12 +227,13 @@ const en: Dictionary = {
     todayPanel: {
       title: "Notes & alerts",
     },
-    weekRecap: "Weekly recap",
-    insights: "Insights",
+    weekRecapTitle: "Weekly recap",
+    insightsTitle: "Insights",
     sportChart: "Sport · minutes / week",
     moodChart: "Mood · last 30 days",
     seeAll: "See all",
     noData: "No data yet.",
+    ...dashboardExtraEn,
   },
   pages: {
     habits: { title: "Habits", subtitle: "Build your consistency, one day at a time." },
@@ -217,6 +253,11 @@ const en: Dictionary = {
     en: "English",
     ar: "العربية",
   },
+  habits: habitsEn,
+  sport: sportEn,
+  nutrition: nutritionEn,
+  mood: moodEn,
+  profile: profileEn,
 };
 
 const ar: Dictionary = {
@@ -235,6 +276,12 @@ const ar: Dictionary = {
     confirm: "تأكيد",
     back: "رجوع",
     hello: "مرحبًا",
+    calloutInfo: "معلومة",
+    calloutTip: "نصيحة",
+    calloutWarning: "تنبيه",
+    calloutSuccess: "أحسنت",
+    calloutDanger: "تحذير",
+    hideMessage: "إخفاء هذه الرسالة",
   },
   nav: {
     overview: "نظرة عامة",
@@ -301,12 +348,13 @@ const ar: Dictionary = {
     todayPanel: {
       title: "ملاحظات وتنبيهات",
     },
-    weekRecap: "ملخص الأسبوع",
-    insights: "تحليلات",
+    weekRecapTitle: "ملخص الأسبوع",
+    insightsTitle: "تحليلات",
     sportChart: "الرياضة · دقائق / أسبوع",
     moodChart: "المزاج · آخر 30 يومًا",
     seeAll: "عرض الكل",
     noData: "لا توجد بيانات بعد.",
+    ...dashboardExtraAr,
   },
   pages: {
     habits: { title: "العادات", subtitle: "ابنِ انتظامك، يومًا بعد يوم." },
@@ -326,6 +374,11 @@ const ar: Dictionary = {
     en: "English",
     ar: "العربية",
   },
+  habits: habitsAr,
+  sport: sportAr,
+  nutrition: nutritionAr,
+  mood: moodAr,
+  profile: profileAr,
 };
 
 export type Dictionary = typeof fr;

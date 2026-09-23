@@ -2,6 +2,8 @@ import { addDays, differenceInCalendarDays, format, parseISO, startOfWeek, subDa
 import { successRate } from "@/lib/habit-insights";
 import { moodDiffText } from "@/lib/mood-insights";
 
+export type Translator = (path: string, vars?: Record<string, string | number>) => string;
+
 export type RecapMetric = { current: number | null; previous: number | null };
 
 export type WeekRecap = {
@@ -67,14 +69,23 @@ export function computeWeekRecap(input: {
 
 export type Insight = { icon: string; title: string; text: string; color: string };
 
-export function buildInsights(input: {
-  moods: { entry_date: string; mood_score: number }[];
-  workoutDates: Set<string>;
-  meals: { entry_date: string; protein: number }[];
-  goalProtein: number | null;
-  weights: { entry_date: string; weight_kg: number }[];
-  workouts: { workout_date: string; duration_minutes: number }[];
-}): Insight[] {
+/**
+ * `moodDiffText` (in mood-insights.ts, out of scope for i18n) still returns a hardcoded French
+ * sentence built around the `withLabel`/`without` phrases below — translating just those two
+ * phrases would produce mixed-language text, so they're intentionally left in French to keep
+ * the sentence grammatical until that helper itself is localized.
+ */
+export function buildInsights(
+  input: {
+    moods: { entry_date: string; mood_score: number }[];
+    workoutDates: Set<string>;
+    meals: { entry_date: string; protein: number }[];
+    goalProtein: number | null;
+    weights: { entry_date: string; weight_kg: number }[];
+    workouts: { workout_date: string; duration_minutes: number }[];
+  },
+  t: Translator
+): Insight[] {
   const insights: Insight[] = [];
   const meanMood = (rows: { mood_score: number }[]) => avg(rows.map((r) => r.mood_score));
 
@@ -85,7 +96,7 @@ export function buildInsights(input: {
     insights.push({
       icon: "🏃",
       color: "var(--sport)",
-      title: "Sport et humeur",
+      title: t("dashboard.insights.sportMoodTitle"),
       text: moodDiffText("les jours de sport", "les autres jours", meanMood(onSport)!, meanMood(offSport)!),
     });
   }
@@ -105,7 +116,7 @@ export function buildInsights(input: {
       insights.push({
         icon: "🥗",
         color: "var(--nutrition)",
-        title: "Protéines et humeur",
+        title: t("dashboard.insights.proteinMoodTitle"),
         text: moodDiffText(
           "les jours où tu atteins ton objectif de protéines",
           "les jours où tu ne l'atteins pas",
@@ -130,8 +141,16 @@ export function buildInsights(input: {
     insights.push({
       icon: "⚖️",
       color: "var(--weight)",
-      title: "Évolution du poids",
-      text: `${sign}${Math.abs(delta)} kg en ${days} jour${days > 1 ? "s" : ""} (${first.weight_kg} → ${last.weight_kg} kg), avec ${minutes} min de sport sur la période.`,
+      title: t("dashboard.insights.weightTrendTitle"),
+      text: t("dashboard.insights.weightTrendText", {
+        sign,
+        delta: Math.abs(delta),
+        days,
+        dayWord: t(days > 1 ? "dashboard.insights.dayMany" : "dashboard.insights.dayOne"),
+        first: first.weight_kg,
+        last: last.weight_kg,
+        minutes,
+      }),
     });
   }
 

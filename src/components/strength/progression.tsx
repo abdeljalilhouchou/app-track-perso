@@ -4,29 +4,28 @@ import { useMemo, useState } from "react";
 import { format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 import { WeeklyLineChart } from "@/components/charts/weekly-line-chart";
-import { formatWeight, muscleColor } from "@/lib/strength";
+import { useT } from "@/components/language-provider";
+import { formatWeight, muscleColor, muscleGroupI18nPath } from "@/lib/strength";
 import type { ExerciseSummary, MuscleWeek } from "@/lib/strength-stats";
 
-const METRICS = [
-  { id: "topWeight", label: "Charge max", unit: "kg" },
-  { id: "est1RM", label: "1RM estimé", unit: "kg" },
-  { id: "volume", label: "Volume", unit: "kg" },
-] as const;
-type MetricId = (typeof METRICS)[number]["id"];
+type MetricId = "topWeight" | "est1RM" | "volume";
 
 const day = (d: string) => format(parseISO(d), "d MMM yyyy", { locale: fr });
 
 export function MuscleVolume({ weeklyMuscles }: { weeklyMuscles: MuscleWeek[] }) {
+  const t = useT();
+  const muscleLabel = (group: string) => {
+    const path = muscleGroupI18nPath(group);
+    return path ? t(path) : group;
+  };
   return (
     <div className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5">
       <h2 className="mb-1 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-        Séries par muscle cette semaine
+        {t("sport.progression.weeklyVolumeTitle")}
       </h2>
-      <p className="mb-4 text-xs text-foreground-muted">
-        Repère courant pour progresser : environ 10 à 20 séries par muscle et par semaine.
-      </p>
+      <p className="mb-4 text-xs text-foreground-muted">{t("sport.progression.weeklyVolumeHint")}</p>
       {weeklyMuscles.length === 0 ? (
-        <p className="text-sm text-foreground-muted">Aucune série enregistrée cette semaine.</p>
+        <p className="text-sm text-foreground-muted">{t("sport.progression.weeklyVolumeEmpty")}</p>
       ) : (
         <ul className="space-y-3">
           {weeklyMuscles.map((m) => {
@@ -36,10 +35,11 @@ export function MuscleVolume({ weeklyMuscles }: { weeklyMuscles: MuscleWeek[] })
               <li key={m.muscle}>
                 <div className="mb-1 flex items-center justify-between text-xs">
                   <span className="font-medium" style={{ color }}>
-                    {m.muscle}
+                    {muscleLabel(m.muscle)}
                   </span>
                   <span className="text-foreground-muted">
-                    <strong className="text-foreground">{m.thisWeekSets}</strong> séries · {m.thisWeekVolume.toLocaleString("fr-FR")} kg
+                    <strong className="text-foreground">{m.thisWeekSets}</strong> {t("sport.progression.setsWord")} ·{" "}
+                    {m.thisWeekVolume.toLocaleString("fr-FR")} kg
                     {m.lastWeekSets > 0 && diff !== 0 && (
                       <span style={{ color: diff > 0 ? "var(--success)" : "var(--danger)" }}>
                         {" "}
@@ -62,6 +62,16 @@ export function MuscleVolume({ weeklyMuscles }: { weeklyMuscles: MuscleWeek[] })
 }
 
 export function Progression({ exercises }: { exercises: ExerciseSummary[] }) {
+  const t = useT();
+  const muscleLabel = (group: string) => {
+    const path = muscleGroupI18nPath(group);
+    return path ? t(path) : group;
+  };
+  const METRICS: { id: MetricId; label: string; unit: string }[] = [
+    { id: "topWeight", label: t("sport.progression.metricTopWeight"), unit: "kg" },
+    { id: "est1RM", label: t("sport.progression.metricEst1RM"), unit: "kg" },
+    { id: "volume", label: t("sport.progression.metricVolume"), unit: "kg" },
+  ];
   const [selectedKey, setSelectedKey] = useState(exercises[0]?.key ?? "");
   const [metric, setMetric] = useState<MetricId>("est1RM");
 
@@ -78,7 +88,7 @@ export function Progression({ exercises }: { exercises: ExerciseSummary[] }) {
   if (!exercise) {
     return (
       <p className="rounded-2xl border border-dashed border-sport/40 p-8 text-center text-sm text-foreground-muted">
-        Ta progression apparaîtra ici après ta première séance de musculation enregistrée avec des séries.
+        {t("sport.progression.empty")}
       </p>
     );
   }
@@ -96,12 +106,16 @@ export function Progression({ exercises }: { exercises: ExerciseSummary[] }) {
           <select
             value={exercise.key}
             onChange={(e) => setSelectedKey(e.target.value)}
-            aria-label="Exercice"
+            aria-label={t("sport.progression.exerciseAria")}
             className="min-w-0 flex-1 rounded-xl border border-border bg-surface-muted px-3.5 py-2.5 text-sm font-medium outline-none focus:border-sport"
           >
             {exercises.map((e) => (
               <option key={e.key} value={e.key}>
-                {e.name} ({e.sessions.length} séance{e.sessions.length > 1 ? "s" : ""})
+                {t("sport.progression.exerciseOption", {
+                  name: e.name,
+                  count: e.sessions.length,
+                  unit: t(e.sessions.length > 1 ? "sport.common.sessionOther" : "sport.common.sessionOne"),
+                })}
               </option>
             ))}
           </select>
@@ -124,16 +138,16 @@ export function Progression({ exercises }: { exercises: ExerciseSummary[] }) {
         </div>
 
         <p className="mb-1 text-xs" style={{ color: muscleColor(exercise.muscle) }}>
-          {exercise.muscle}
+          {muscleLabel(exercise.muscle)}
           {gain !== null && (
             <span className="text-foreground-muted">
               {" "}
-              · 1RM estimé{" "}
+              · {t("sport.progression.metricEst1RM")}{" "}
               <strong style={{ color: gain >= 0 ? "var(--success)" : "var(--danger)" }}>
                 {gain >= 0 ? "+" : ""}
                 {gain} kg
               </strong>{" "}
-              depuis {day(first1RM!.date)}
+              {t("sport.progression.since", { date: day(first1RM!.date) })}
             </span>
           )}
         </p>
@@ -142,7 +156,7 @@ export function Progression({ exercises }: { exercises: ExerciseSummary[] }) {
           <WeeklyLineChart data={chart} color="var(--sport)" unit={activeMetric.unit} />
         ) : (
           <p className="rounded-xl border border-dashed border-sport/40 p-6 text-center text-xs text-foreground-muted">
-            Il faut au moins 2 séances avec cet exercice pour tracer une courbe.
+            {t("sport.progression.needMoreSessions")}
           </p>
         )}
       </div>
@@ -150,13 +164,17 @@ export function Progression({ exercises }: { exercises: ExerciseSummary[] }) {
       <div className="grid gap-3 sm:grid-cols-3">
         {[
           {
-            label: "🏆 Charge max",
+            label: t("sport.progression.recordTopWeight"),
             value: maxWeight ? `${formatWeight(maxWeight.weight)} kg × ${maxWeight.reps}` : "—",
             hint: maxWeight ? day(maxWeight.date) : "",
           },
-          { label: "💪 1RM estimé", value: best1RM ? `${best1RM.value} kg` : "—", hint: best1RM ? day(best1RM.date) : "" },
           {
-            label: "📦 Meilleur volume",
+            label: t("sport.progression.recordEst1RM"),
+            value: best1RM ? `${best1RM.value} kg` : "—",
+            hint: best1RM ? day(best1RM.date) : "",
+          },
+          {
+            label: t("sport.progression.recordVolume"),
             value: bestVolume ? `${bestVolume.value.toLocaleString("fr-FR")} kg` : "—",
             hint: bestVolume ? day(bestVolume.date) : "",
           },
@@ -172,7 +190,7 @@ export function Progression({ exercises }: { exercises: ExerciseSummary[] }) {
       </div>
 
       <div className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5">
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">Dernières séances</h2>
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.progression.recentSessionsTitle")}</h2>
         <ul className="space-y-1.5">
           {[...exercise.sessions]
             .reverse()
@@ -181,7 +199,9 @@ export function Progression({ exercises }: { exercises: ExerciseSummary[] }) {
               <li key={s.workoutId} className="flex items-center gap-3 rounded-xl bg-surface-muted px-3 py-2 text-sm">
                 <span className="w-24 shrink-0 text-xs text-foreground-muted">{day(s.date)}</span>
                 <span className="min-w-0 flex-1 truncate">
-                  {s.sets.map((x) => (x.weight > 0 ? `${formatWeight(x.weight)}×${x.reps}` : `${x.reps} reps`)).join(" · ")}
+                  {s.sets
+                    .map((x) => (x.weight > 0 ? `${formatWeight(x.weight)}×${x.reps}` : t("sport.common.repsValue", { reps: x.reps })))
+                    .join(" · ")}
                 </span>
                 <span className="shrink-0 text-xs text-foreground-muted">{s.volume.toLocaleString("fr-FR")} kg</span>
               </li>

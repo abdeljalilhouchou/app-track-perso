@@ -3,6 +3,9 @@ import { fr } from "date-fns/locale";
 import { TiltCard } from "@/components/ui/tilt-card";
 import type { weekdayAverages, moodSummary } from "@/lib/mood-insights";
 import type { Insight } from "@/lib/dashboard";
+import type { Vars } from "@/lib/i18n/translate";
+
+type Translator = (path: string, vars?: Vars) => string;
 
 const EMOJI = ["", "😞", "😕", "😐", "🙂", "😄"];
 
@@ -21,34 +24,40 @@ function Tile({ label, value, hint }: { label: string; value: string; hint?: str
   );
 }
 
-export function MoodTiles({ summary }: { summary: ReturnType<typeof moodSummary> }) {
+export function MoodTiles({ summary, t }: { summary: ReturnType<typeof moodSummary>; t: Translator }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <Tile
-        label="Humeur moyenne (30 j)"
+        label={t("mood.overview.avgMood30d")}
         value={summary.mood === null ? "—" : `${summary.mood} / 5`}
         hint={summary.mood === null ? undefined : EMOJI[Math.round(summary.mood)]}
       />
-      <Tile label="Énergie moyenne" value={summary.energy === null ? "—" : `${summary.energy} / 5`} />
+      <Tile label={t("mood.overview.avgEnergy")} value={summary.energy === null ? "—" : `${summary.energy} / 5`} />
       <Tile
-        label="Meilleure journée"
+        label={t("mood.overview.bestDay")}
         value={summary.best ? `${EMOJI[summary.best.mood_score]} ${summary.best.mood_score}/5` : "—"}
         hint={summary.best ? format(parseISO(summary.best.entry_date), "EEEE d MMMM", { locale: fr }) : undefined}
       />
-      <Tile label="Série de notation" value={`${summary.streak} j`} hint={`${summary.count} humeurs notées au total`} />
+      <Tile
+        label={t("mood.overview.trackingStreak")}
+        value={t("mood.overview.streakUnit", { count: summary.streak })}
+        hint={t("mood.overview.totalMoodsTracked", { count: summary.count })}
+      />
     </div>
   );
 }
 
-export function WeekdayBars({ data }: { data: ReturnType<typeof weekdayAverages> }) {
+export function WeekdayBars({ data, t }: { data: ReturnType<typeof weekdayAverages>; t: Translator }) {
   const known = data.filter((d) => d.avg !== null);
   const best = known.length ? known.reduce((b, d) => (d.avg! > b.avg! ? d : b)) : null;
 
   return (
     <div className="rounded-2xl border-[1.5px] border-mood/50 bg-surface p-5">
-      <h2 className="mb-1 text-xs font-semibold uppercase tracking-wide text-foreground-muted">Humeur par jour de la semaine</h2>
+      <h2 className="mb-1 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
+        {t("mood.overview.weekdayChartTitle")}
+      </h2>
       <p className="mb-4 text-xs text-foreground-muted">
-        {best ? `Ton meilleur jour : ${best.label} (${best.avg}/5).` : "Pas encore assez de données."}
+        {best ? t("mood.overview.bestDayHint", { label: best.label, avg: best.avg! }) : t("mood.overview.notEnoughData")}
       </p>
       <div className="flex h-36 items-end gap-2">
         {data.map((d) => (
@@ -70,11 +79,11 @@ export function WeekdayBars({ data }: { data: ReturnType<typeof weekdayAverages>
   );
 }
 
-export function MoodInsights({ insights }: { insights: Insight[] }) {
+export function MoodInsights({ insights, t }: { insights: Insight[]; t: Translator }) {
   return (
     <div>
       <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-        Ce qui influence ton humeur
+        {t("mood.overview.insightsTitle")}
       </h2>
       {insights.length > 0 ? (
         <div className="grid gap-3 lg:grid-cols-2">
@@ -96,8 +105,7 @@ export function MoodInsights({ insights }: { insights: Insight[] }) {
         </div>
       ) : (
         <p className="rounded-2xl border border-dashed border-mood/40 p-5 text-sm text-foreground-muted">
-          Continue à noter ton humeur, tes repas, ton eau et ton sport : les liens apparaîtront ici dès qu&apos;il y aura
-          au moins 2 jours de chaque côté.
+          {t("mood.overview.insightsEmpty")}
         </p>
       )}
     </div>

@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useActionToast } from "@/components/toast/use-action-toast";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
+import { useT } from "@/components/language-provider";
 import {
   createDefaultProgram,
   deleteTemplate,
@@ -11,7 +12,7 @@ import {
   saveTemplate,
   seedDefaultExercises,
 } from "@/lib/actions/strength";
-import { MUSCLE_GROUPS, exerciseKey, muscleColor } from "@/lib/strength";
+import { MUSCLE_GROUPS, exerciseKey, muscleColor, muscleGroupI18nPath } from "@/lib/strength";
 import { ExercisePicker } from "@/components/strength/exercise-picker";
 import type { CatalogItem, TemplateView } from "@/components/strength/types";
 
@@ -20,7 +21,13 @@ type Row = { name: string; muscle: string; sets: number; reps: number };
 const smallInput =
   "w-14 rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-center text-xs outline-none focus:border-sport";
 
+function muscleLabel(group: string, t: ReturnType<typeof useT>) {
+  const path = muscleGroupI18nPath(group);
+  return path ? t(path) : group;
+}
+
 function MuscleChip({ group, active, onClick }: { group: string; active: boolean; onClick?: () => void }) {
+  const t = useT();
   const color = muscleColor(group);
   return (
     <button
@@ -34,7 +41,7 @@ function MuscleChip({ group, active, onClick }: { group: string; active: boolean
         color: active ? color : "var(--foreground-muted)",
       }}
     >
-      {group}
+      {muscleLabel(group, t)}
     </button>
   );
 }
@@ -48,6 +55,7 @@ function TemplateEditor({
   initial?: TemplateView;
   onDone: () => void;
 }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const [name, setName] = useState(initial?.name ?? "");
@@ -77,10 +85,12 @@ function TemplateEditor({
     setError(null);
     startTransition(async () => {
       const result = await run(() => saveTemplate({ id: initial?.id, name, muscleGroups: groups, exercises: rows }), {
-        success: initial ? `Séance « ${name} » modifiée` : `Séance « ${name} » ajoutée à ton programme 📋`,
-        failure: "Séance non enregistrée",
+        success: initial
+          ? t("sport.programManager.templateUpdatedToast", { name })
+          : t("sport.programManager.templateCreatedToast", { name }),
+        failure: t("sport.common.sessionNotSaved"),
       });
-      if (!result || result.error) return setError(result?.error ?? "Enregistrement impossible.");
+      if (!result || result.error) return setError(result?.error ?? t("sport.common.saveError"));
       onDone();
     });
   }
@@ -90,12 +100,12 @@ function TemplateEditor({
       <input
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="Nom de la séance (ex: Pectoraux & Triceps)"
+        placeholder={t("sport.programManager.namePlaceholder")}
         className="w-full rounded-xl border border-border bg-surface-muted px-3.5 py-2.5 text-sm font-medium outline-none focus:border-sport focus:ring-2 focus:ring-sport/30"
       />
 
       <div>
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground-muted">Muscles ciblés</p>
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.programManager.targetedMuscles")}</p>
         <div className="flex flex-wrap gap-1.5">
           {MUSCLE_GROUPS.map((g) => (
             <MuscleChip key={g} group={g} active={groups.includes(g)} onClick={() => toggleGroup(g)} />
@@ -105,11 +115,11 @@ function TemplateEditor({
 
       <div>
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-          Exercices ({rows.length})
+          {t("sport.programManager.exercisesCount", { count: rows.length })}
         </p>
         {rows.length === 0 ? (
           <p className="rounded-xl border border-dashed border-sport/40 p-4 text-center text-xs text-foreground-muted">
-            Ajoute les exercices de cette séance ci-dessous.
+            {t("sport.programManager.addExercisesHint")}
           </p>
         ) : (
           <ul className="space-y-1.5">
@@ -120,7 +130,7 @@ function TemplateEditor({
                     type="button"
                     disabled={i === 0}
                     onClick={() => move(i, -1)}
-                    aria-label="Monter"
+                    aria-label={t("sport.programManager.moveRowUpAria")}
                     className="text-[10px] leading-none text-foreground-muted transition hover:text-foreground disabled:opacity-30"
                   >
                     ▲
@@ -129,7 +139,7 @@ function TemplateEditor({
                     type="button"
                     disabled={i === rows.length - 1}
                     onClick={() => move(i, 1)}
-                    aria-label="Descendre"
+                    aria-label={t("sport.programManager.moveRowDownAria")}
                     className="mt-1 text-[10px] leading-none text-foreground-muted transition hover:text-foreground disabled:opacity-30"
                   >
                     ▼
@@ -138,7 +148,7 @@ function TemplateEditor({
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{r.name}</p>
                   <p className="text-[11px]" style={{ color: muscleColor(r.muscle) }}>
-                    {r.muscle}
+                    {muscleLabel(r.muscle, t)}
                   </p>
                 </div>
                 <input
@@ -147,7 +157,7 @@ function TemplateEditor({
                   max={12}
                   value={r.sets}
                   onChange={(e) => patch(i, { sets: Number(e.target.value) })}
-                  aria-label={`Séries de ${r.name}`}
+                  aria-label={t("sport.programManager.setsOfAria", { name: r.name })}
                   className={smallInput}
                 />
                 <span className="text-xs text-foreground-muted">×</span>
@@ -157,13 +167,13 @@ function TemplateEditor({
                   max={100}
                   value={r.reps}
                   onChange={(e) => patch(i, { reps: Number(e.target.value) })}
-                  aria-label={`Répétitions de ${r.name}`}
+                  aria-label={t("sport.programManager.repsOfAria", { name: r.name })}
                   className={smallInput}
                 />
                 <button
                   type="button"
                   onClick={() => setRows((prev) => prev.filter((_, idx) => idx !== i))}
-                  aria-label={`Retirer ${r.name}`}
+                  aria-label={t("sport.programManager.removeAria", { name: r.name })}
                   className="text-xs text-foreground-muted transition hover:text-danger"
                 >
                   ✕
@@ -190,14 +200,14 @@ function TemplateEditor({
           onClick={save}
           className="rounded-lg bg-sport px-4 py-2 text-sm font-semibold text-on-accent transition hover:opacity-90 disabled:opacity-50"
         >
-          {pending ? "Enregistrement..." : initial ? "Enregistrer les modifications" : "Créer la séance"}
+          {pending ? t("sport.common.saving") : initial ? t("sport.programManager.saveEdits") : t("sport.programManager.createSession")}
         </button>
         <button
           type="button"
           onClick={onDone}
           className="rounded-lg border border-border px-4 py-2 text-sm text-foreground-muted transition hover:bg-surface-muted"
         >
-          Annuler
+          {t("sport.common.cancel")}
         </button>
       </div>
     </div>
@@ -215,6 +225,7 @@ function TemplateCard({
   total: number;
   catalog: CatalogItem[];
 }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const [open, setOpen] = useState(false);
@@ -241,11 +252,11 @@ function TemplateCard({
           <p className="mt-0.5 flex flex-wrap gap-x-2 text-xs">
             {template.muscleGroups.map((g) => (
               <span key={g} style={{ color: muscleColor(g) }}>
-                {g}
+                {muscleLabel(g, t)}
               </span>
             ))}
             <span className="text-foreground-muted">
-              · {template.exercises.length} exercices · {totalSets} séries
+              · {t("sport.programManager.templateSummary", { exercises: template.exercises.length, sets: totalSets })}
             </span>
           </p>
         </button>
@@ -254,7 +265,7 @@ function TemplateCard({
             type="button"
             disabled={pending || index === 0}
             onClick={() => startTransition(async () => void (await run(() => moveTemplate(template.id, "up"))))}
-            aria-label="Monter la séance"
+            aria-label={t("sport.programManager.moveSessionUpAria")}
             className="rounded-md px-1.5 py-1 text-xs transition hover:bg-surface-muted disabled:opacity-30"
           >
             ▲
@@ -263,7 +274,7 @@ function TemplateCard({
             type="button"
             disabled={pending || index === total - 1}
             onClick={() => startTransition(async () => void (await run(() => moveTemplate(template.id, "down"))))}
-            aria-label="Descendre la séance"
+            aria-label={t("sport.programManager.moveSessionDownAria")}
             className="rounded-md px-1.5 py-1 text-xs transition hover:bg-surface-muted disabled:opacity-30"
           >
             ▼
@@ -292,7 +303,7 @@ function TemplateCard({
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium">{e.name}</p>
                           <p className="text-[11px]" style={{ color: muscleColor(e.muscle) }}>
-                            {e.muscle}
+                            {muscleLabel(e.muscle, t)}
                           </p>
                         </div>
                         <span className="shrink-0 text-sm font-semibold" style={{ color: "var(--sport)" }}>
@@ -307,16 +318,23 @@ function TemplateCard({
                       onClick={() => setEditing(true)}
                       className="text-foreground-muted transition hover:text-foreground"
                     >
-                      Modifier
+                      {t("sport.programManager.edit")}
                     </button>
                     <ConfirmDeleteButton
                       disabled={pending}
-                      onConfirm={() => startTransition(async () => void (await run(() => deleteTemplate(template.id), { success: `Séance « ${template.name} » supprimée du programme` })))}
-                      title="Supprimer cette séance ?"
-                      message={`"${template.name}" sera retirée de ton programme. Ton historique de séances est conservé.`}
+                      onConfirm={() =>
+                        startTransition(
+                          async () =>
+                            void (await run(() => deleteTemplate(template.id), {
+                              success: t("sport.programManager.templateDeletedToast", { name: template.name }),
+                            }))
+                        )
+                      }
+                      title={t("sport.common.confirmDeleteSessionTitle")}
+                      message={t("sport.programManager.confirmDeleteTemplateMessage", { name: template.name })}
                       className="text-foreground-muted transition hover:text-danger"
                     >
-                      Supprimer
+                      {t("sport.common.delete")}
                     </ConfirmDeleteButton>
                   </div>
                 </div>
@@ -330,6 +348,7 @@ function TemplateCard({
 }
 
 export function ProgramManager({ templates, catalog }: { templates: TemplateView[]; catalog: CatalogItem[] }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const [creating, setCreating] = useState(false);
@@ -339,7 +358,10 @@ export function ProgramManager({ templates, catalog }: { templates: TemplateView
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-          Ma semaine type ({templates.length} séance{templates.length > 1 ? "s" : ""})
+          {t("sport.programManager.myWeekTitle", {
+            count: templates.length,
+            unit: t(templates.length > 1 ? "sport.common.sessionOther" : "sport.common.sessionOne"),
+          })}
         </p>
         {!creating && (
           <button
@@ -347,7 +369,7 @@ export function ProgramManager({ templates, catalog }: { templates: TemplateView
             onClick={() => setCreating(true)}
             className="rounded-full border border-sport/40 px-3 py-1.5 text-xs font-medium text-foreground-muted transition hover:border-sport hover:text-sport"
           >
-            + Nouvelle séance
+            {t("sport.programManager.newSession")}
           </button>
         )}
       </div>
@@ -356,46 +378,50 @@ export function ProgramManager({ templates, catalog }: { templates: TemplateView
 
       {templates.length === 0 && !creating ? (
         <div className="rounded-2xl border border-dashed border-sport/40 p-6 text-center">
-          <p className="text-sm text-foreground-muted">Aucune séance dans ton programme pour l&apos;instant.</p>
+          <p className="text-sm text-foreground-muted">{t("sport.programManager.noSessions")}</p>
           <button
             type="button"
             disabled={pending}
             onClick={() =>
               startTransition(async () => {
                 const r = await run(() => createDefaultProgram(), {
-                  success: "Programme créé : 4 séances ajoutées 🏋️",
-                  failure: "Programme non créé",
+                  success: t("sport.programManager.programCreatedToast"),
+                  failure: t("sport.common.programNotCreated"),
                 });
                 if (r?.error) setError(r.error);
               })
             }
             className="mt-3 rounded-xl bg-sport px-4 py-2 text-sm font-semibold text-on-accent transition hover:opacity-90 disabled:opacity-60"
           >
-            {pending ? "Création..." : "Créer mon split 4 jours"}
+            {pending ? t("sport.programManager.creating") : t("sport.common.createSplitButton")}
           </button>
           {error && <p className="mt-2 text-xs text-danger">{error}</p>}
         </div>
       ) : (
-        templates.map((t, i) => <TemplateCard key={t.id} template={t} index={i} total={templates.length} catalog={catalog} />)
+        templates.map((tpl, i) => <TemplateCard key={tpl.id} template={tpl} index={i} total={templates.length} catalog={catalog} />)
       )}
 
-      <p className="text-[11px] text-foreground-muted">
-        L&apos;ordre des séances sert à proposer la suivante. Une séance peut être faite dans n&apos;importe quel ordre.
-      </p>
+      <p className="text-[11px] text-foreground-muted">{t("sport.programManager.orderHint")}</p>
 
       {catalog.length < 20 && (
         <div className="rounded-2xl border border-dashed border-sport/40 p-4">
           <p className="mb-2 text-sm text-foreground-muted">
-            Ton catalogue contient {catalog.length} exercice{catalog.length > 1 ? "s" : ""}. Importe la liste de base
-            (~70 exercices classés par muscle) pour les retrouver en recherche.
+            {t("sport.programManager.catalogHint", {
+              count: catalog.length,
+              unit: t(catalog.length > 1 ? "sport.common.exerciseOther" : "sport.common.exerciseOne"),
+            })}
           </p>
           <button
             type="button"
             disabled={pending}
-            onClick={() => startTransition(async () => void (await run(() => seedDefaultExercises(), { success: "Catalogue d'exercices importé 📥" })))}
+            onClick={() =>
+              startTransition(
+                async () => void (await run(() => seedDefaultExercises(), { success: t("sport.programManager.catalogImportedToast") }))
+              )
+            }
             className="rounded-lg border border-sport/50 px-3.5 py-2 text-sm font-medium text-sport transition hover:bg-sport-soft disabled:opacity-60"
           >
-            {pending ? "Import..." : "📥 Importer le catalogue d'exercices"}
+            {pending ? t("sport.programManager.importing") : t("sport.programManager.importCatalogButton")}
           </button>
         </div>
       )}

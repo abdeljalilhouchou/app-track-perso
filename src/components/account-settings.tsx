@@ -7,6 +7,7 @@ import { changePassword, exportMyData, saveAvatarUrl, updateDisplayName } from "
 import { getReport } from "@/lib/actions/report";
 import { useToast } from "@/components/toast/toast-provider";
 import { downloadReportPdf } from "@/lib/report-pdf";
+import { useT } from "@/components/language-provider";
 
 const AVATAR_SIZE = 256;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
@@ -59,6 +60,7 @@ async function toSquareJpeg(file: File): Promise<Blob> {
 }
 
 function AvatarSection({ userId, name, avatarUrl }: { userId: string; name: string; avatarUrl: string | null }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const [url, setUrl] = useState(avatarUrl);
   const [feedback, setFeedback] = useFeedback();
@@ -67,8 +69,8 @@ function AvatarSection({ userId, name, avatarUrl }: { userId: string; name: stri
   function onPick(file: File | undefined) {
     if (!file) return;
     setFeedback(null);
-    if (!file.type.startsWith("image/")) return setFeedback({ kind: "error", text: "Choisis un fichier image." });
-    if (file.size > MAX_FILE_BYTES) return setFeedback({ kind: "error", text: "Image trop lourde (8 Mo maximum)." });
+    if (!file.type.startsWith("image/")) return setFeedback({ kind: "error", text: t("profile.account.chooseImageFile") });
+    if (file.size > MAX_FILE_BYTES) return setFeedback({ kind: "error", text: t("profile.account.imageTooLarge") });
 
     startTransition(async () => {
       try {
@@ -86,12 +88,12 @@ function AvatarSection({ userId, name, avatarUrl }: { userId: string; name: stri
         if (result.error) throw new Error(result.error);
 
         setUrl(publicUrl);
-        setFeedback({ kind: "ok", text: "Photo mise à jour." });
+        setFeedback({ kind: "ok", text: t("profile.account.photoUpdated") });
       } catch (e) {
-        const message = e instanceof Error ? e.message : "Erreur inconnue";
+        const message = e instanceof Error ? e.message : t("profile.account.unknownError");
         setFeedback({
           kind: "error",
-          text: `Impossible d'envoyer la photo : ${message}. Vérifie que la migration 0015 a été exécutée dans Supabase.`,
+          text: t("profile.account.photoUploadError", { message }),
         });
       } finally {
         if (fileRef.current) fileRef.current.value = "";
@@ -107,7 +109,7 @@ function AvatarSection({ userId, name, avatarUrl }: { userId: string; name: stri
       const result = await saveAvatarUrl(null);
       if (result.error) return setFeedback({ kind: "error", text: result.error });
       setUrl(null);
-      setFeedback({ kind: "ok", text: "Photo supprimée." });
+      setFeedback({ kind: "ok", text: t("profile.account.photoDeleted") });
     });
   }
 
@@ -125,15 +127,15 @@ function AvatarSection({ userId, name, avatarUrl }: { userId: string; name: stri
           />
           <div className="flex flex-wrap gap-2">
             <button type="button" disabled={pending} onClick={() => fileRef.current?.click()} className={primary}>
-              {pending ? "Envoi..." : url ? "Changer la photo" : "Ajouter une photo"}
+              {pending ? t("profile.account.uploading") : url ? t("profile.account.changePhoto") : t("profile.account.addPhoto")}
             </button>
             {url && (
               <button type="button" disabled={pending} onClick={remove} className={outline}>
-                Supprimer
+                {t("profile.account.removePhoto")}
               </button>
             )}
           </div>
-          <p className="text-xs text-foreground-muted">JPG, PNG ou WebP · recadrée en carré automatiquement.</p>
+          <p className="text-xs text-foreground-muted">{t("profile.account.photoHint")}</p>
         </div>
       </div>
       <Notice feedback={feedback} />
@@ -142,6 +144,7 @@ function AvatarSection({ userId, name, avatarUrl }: { userId: string; name: stri
 }
 
 function NameSection({ initialName }: { initialName: string }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const [name, setName] = useState(initialName);
   const [feedback, setFeedback] = useFeedback();
@@ -153,15 +156,17 @@ function NameSection({ initialName }: { initialName: string }) {
         setFeedback(null);
         startTransition(async () => {
           const result = await updateDisplayName(name);
-          setFeedback(result.error ? { kind: "error", text: result.error } : { kind: "ok", text: "Nom mis à jour." });
+          setFeedback(
+            result.error ? { kind: "error", text: result.error } : { kind: "ok", text: t("profile.account.nameUpdated") }
+          );
         });
       }}
     >
-      <label className="mb-1 block text-xs font-medium text-foreground-muted">Nom affiché</label>
+      <label className="mb-1 block text-xs font-medium text-foreground-muted">{t("profile.account.nameLabel")}</label>
       <div className="flex gap-2">
         <input value={name} onChange={(e) => setName(e.target.value)} maxLength={40} required className={input} />
         <button type="submit" disabled={pending || name.trim() === initialName} className={primary}>
-          Enregistrer
+          {t("profile.account.save")}
         </button>
       </div>
       <Notice feedback={feedback} />
@@ -170,6 +175,7 @@ function NameSection({ initialName }: { initialName: string }) {
 }
 
 function PasswordSection() {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const [formKey, setFormKey] = useState(0);
   const [feedback, setFeedback] = useFeedback();
@@ -183,47 +189,71 @@ function PasswordSection() {
         const current = String(data.get("current"));
         const next = String(data.get("next"));
         const confirm = String(data.get("confirm"));
-        if (next !== confirm) return setFeedback({ kind: "error", text: "Les deux nouveaux mots de passe sont différents." });
+        if (next !== confirm) return setFeedback({ kind: "error", text: t("profile.account.passwordMismatch") });
 
         setFeedback(null);
         startTransition(async () => {
           const result = await changePassword(current, next);
           if (result.error) return setFeedback({ kind: "error", text: result.error });
           setFormKey((k) => k + 1);
-          setFeedback({ kind: "ok", text: "Mot de passe modifié." });
+          setFeedback({ kind: "ok", text: t("profile.account.passwordChanged") });
         });
       }}
       className="space-y-2"
     >
-      <input name="current" type="password" required autoComplete="current-password" placeholder="Mot de passe actuel" className={input} />
+      <input
+        name="current"
+        type="password"
+        required
+        autoComplete="current-password"
+        placeholder={t("profile.account.currentPassword")}
+        className={input}
+      />
       <div className="grid gap-2 sm:grid-cols-2">
-        <input name="next" type="password" required minLength={6} autoComplete="new-password" placeholder="Nouveau mot de passe" className={input} />
-        <input name="confirm" type="password" required minLength={6} autoComplete="new-password" placeholder="Confirmer" className={input} />
+        <input
+          name="next"
+          type="password"
+          required
+          minLength={6}
+          autoComplete="new-password"
+          placeholder={t("profile.account.newPassword")}
+          className={input}
+        />
+        <input
+          name="confirm"
+          type="password"
+          required
+          minLength={6}
+          autoComplete="new-password"
+          placeholder={t("profile.account.confirmPassword")}
+          className={input}
+        />
       </div>
       <button type="submit" disabled={pending} className={primary}>
-        {pending ? "Modification..." : "Changer le mot de passe"}
+        {pending ? t("profile.account.changingPassword") : t("profile.account.changePassword")}
       </button>
       <Notice feedback={feedback} />
     </form>
   );
 }
 
-const MONTH_NAMES = [
-  "Janvier",
-  "Février",
-  "Mars",
-  "Avril",
-  "Mai",
-  "Juin",
-  "Juillet",
-  "Août",
-  "Septembre",
-  "Octobre",
-  "Novembre",
-  "Décembre",
+const MONTH_KEYS = [
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "may",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "oct",
+  "nov",
+  "dec",
 ];
 
 function ExportSection({ sinceYear }: { sinceYear: number }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const [feedback, setFeedback] = useFeedback();
   const [now] = useState(() => new Date());
@@ -244,11 +274,14 @@ function ExportSection({ sinceYear }: { sinceYear: number }) {
         const { data, error } = await getReport(
           mode === "month" ? { kind: "month", year, month: safeMonth } : { kind: "year", year }
         );
-        if (error || !data) return setFeedback({ kind: "error", text: error ?? "Rapport indisponible." });
+        if (error || !data) return setFeedback({ kind: "error", text: error ?? t("profile.account.reportUnavailable") });
         await downloadReportPdf(data);
-        setFeedback({ kind: "ok", text: `PDF « ${data.periodLabel} » téléchargé.` });
+        setFeedback({ kind: "ok", text: t("profile.account.pdfDownloaded", { label: data.periodLabel }) });
       } catch (e) {
-        setFeedback({ kind: "error", text: e instanceof Error ? e.message : "Impossible de créer le PDF." });
+        setFeedback({
+          kind: "error",
+          text: e instanceof Error ? e.message : t("profile.account.pdfError"),
+        });
       }
     });
   }
@@ -257,7 +290,7 @@ function ExportSection({ sinceYear }: { sinceYear: number }) {
     setFeedback(null);
     startTransition(async () => {
       const { json, error } = await exportMyData();
-      if (error || !json) return setFeedback({ kind: "error", text: error ?? "Export impossible." });
+      if (error || !json) return setFeedback({ kind: "error", text: error ?? t("profile.account.exportImpossible") });
 
       const blob = new Blob([json], { type: "application/json" });
       const href = URL.createObjectURL(blob);
@@ -268,7 +301,7 @@ function ExportSection({ sinceYear }: { sinceYear: number }) {
       a.click();
       a.remove();
       URL.revokeObjectURL(href);
-      setFeedback({ kind: "ok", text: "Export complet téléchargé." });
+      setFeedback({ kind: "ok", text: t("profile.account.jsonDownloaded") });
     });
   }
 
@@ -279,10 +312,7 @@ function ExportSection({ sinceYear }: { sinceYear: number }) {
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-foreground-muted">
-        Télécharge un bilan PDF de tes habitudes, sport (musculation incluse), humeur, nutrition et poids, pour un mois ou
-        pour toute une année.
-      </p>
+      <p className="text-xs text-foreground-muted">{t("profile.account.exportIntro")}</p>
 
       <div className="inline-flex gap-1 rounded-xl border border-accent/40 bg-surface-muted p-1">
         <button
@@ -291,7 +321,7 @@ function ExportSection({ sinceYear }: { sinceYear: number }) {
           className="rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors"
           style={tab(mode === "month")}
         >
-          Un mois
+          {t("profile.account.month")}
         </button>
         <button
           type="button"
@@ -299,7 +329,7 @@ function ExportSection({ sinceYear }: { sinceYear: number }) {
           className="rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors"
           style={tab(mode === "year")}
         >
-          Toute l&apos;année
+          {t("profile.account.year")}
         </button>
       </div>
 
@@ -308,12 +338,12 @@ function ExportSection({ sinceYear }: { sinceYear: number }) {
           <select
             value={safeMonth}
             onChange={(e) => setMonth(Number(e.target.value))}
-            aria-label="Mois"
+            aria-label={t("profile.account.monthAriaLabel")}
             className={`${input} w-auto min-w-36`}
           >
-            {MONTH_NAMES.slice(0, lastMonth).map((name, i) => (
-              <option key={name} value={i + 1}>
-                {name}
+            {MONTH_KEYS.slice(0, lastMonth).map((key, i) => (
+              <option key={key} value={i + 1}>
+                {t(`profile.account.months.${key}`)}
               </option>
             ))}
           </select>
@@ -321,7 +351,7 @@ function ExportSection({ sinceYear }: { sinceYear: number }) {
         <select
           value={year}
           onChange={(e) => setYear(Number(e.target.value))}
-          aria-label="Année"
+          aria-label={t("profile.account.yearAriaLabel")}
           className={`${input} w-auto min-w-28`}
         >
           {years.map((y) => (
@@ -331,16 +361,14 @@ function ExportSection({ sinceYear }: { sinceYear: number }) {
           ))}
         </select>
         <button type="button" disabled={pending} onClick={downloadPdf} className={primary}>
-          {pending ? "Préparation..." : "📄 Télécharger le PDF"}
+          {pending ? t("profile.account.preparing") : t("profile.account.downloadPdf")}
         </button>
       </div>
 
       <div className="border-t border-accent/20 pt-3">
-        <p className="mb-2 text-xs text-foreground-muted">
-          Besoin de toutes tes données brutes (sauvegarde) ? Export complet au format JSON :
-        </p>
+        <p className="mb-2 text-xs text-foreground-muted">{t("profile.account.jsonIntro")}</p>
         <button type="button" disabled={pending} onClick={downloadJson} className={outline}>
-          ⬇️ Export complet (JSON)
+          {t("profile.account.downloadJson")}
         </button>
       </div>
       <Notice feedback={feedback} />
@@ -361,11 +389,12 @@ export function AccountSettings({
   avatarUrl: string | null;
   memberSinceYear: number;
 }) {
+  const t = useT();
   return (
     <div className="rounded-2xl border-[1.5px] border-accent/40 bg-surface p-5">
       <h2 className="mb-4 flex items-center gap-2 text-sm font-medium">
         <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft">👤</span>
-        Mon compte
+        {t("profile.account.heading")}
       </h2>
 
       <div className="space-y-6">
@@ -373,19 +402,23 @@ export function AccountSettings({
 
         <div className="space-y-4 border-t border-accent/20 pt-5">
           <div>
-            <label className="mb-1 block text-xs font-medium text-foreground-muted">Adresse e-mail</label>
+            <label className="mb-1 block text-xs font-medium text-foreground-muted">{t("profile.account.emailLabel")}</label>
             <input value={email} readOnly disabled className={`${input} opacity-70`} />
           </div>
           <NameSection initialName={displayName} />
         </div>
 
         <div className="border-t border-accent/20 pt-5">
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">Mot de passe</h3>
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
+            {t("profile.account.passwordHeading")}
+          </h3>
           <PasswordSection />
         </div>
 
         <div className="border-t border-accent/20 pt-5">
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">Mes données</h3>
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
+            {t("profile.account.dataHeading")}
+          </h3>
           <ExportSection sinceYear={memberSinceYear} />
         </div>
       </div>

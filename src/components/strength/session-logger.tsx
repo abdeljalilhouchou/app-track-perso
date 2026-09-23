@@ -7,8 +7,9 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useActionToast } from "@/components/toast/use-action-toast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useT } from "@/components/language-provider";
 import { saveStrengthSession } from "@/lib/actions/strength";
-import { exerciseKey, formatWeight, muscleColor, setsVolume } from "@/lib/strength";
+import { exerciseKey, formatWeight, muscleColor, muscleGroupI18nPath, setsVolume } from "@/lib/strength";
 import { ExercisePicker } from "@/components/strength/exercise-picker";
 import { detectRecords, type ExerciseSummary } from "@/lib/strength-stats";
 
@@ -89,8 +90,10 @@ function clock(totalSeconds: number) {
   return h > 0 ? `${h}:${pad(m % 60)}:${pad(s % 60)}` : `${m}:${pad(s % 60)}`;
 }
 
-function compactSets(sets: { reps: number; weight: number }[]) {
-  return sets.map((s) => (s.weight > 0 ? `${formatWeight(s.weight)}×${s.reps}` : `${s.reps} reps`)).join(" · ");
+function compactSets(sets: { reps: number; weight: number }[], t: ReturnType<typeof useT>) {
+  return sets
+    .map((s) => (s.weight > 0 ? `${formatWeight(s.weight)}×${s.reps}` : t("sport.common.repsValue", { reps: s.reps })))
+    .join(" · ");
 }
 
 export function SessionLogger({
@@ -108,6 +111,11 @@ export function SessionLogger({
   onExit: () => void;
   onSaved: (result: SessionResult) => void;
 }) {
+  const t = useT();
+  const muscleLabel = (group: string) => {
+    const path = muscleGroupI18nPath(group);
+    return path ? t(path) : group;
+  };
   const isClient = useIsClient();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
@@ -264,9 +272,9 @@ export function SessionLogger({
             notes,
             exercises: payloadExercises,
           }),
-        { success: `Séance « ${draft.name} » enregistrée 💪`, failure: "Séance non enregistrée" }
+        { success: t("sport.common.sessionSavedToast", { name: draft.name }), failure: t("sport.common.sessionNotSaved") }
       );
-      if (!result || result.error) return setError(result?.error ?? "Enregistrement impossible.");
+      if (!result || result.error) return setError(result?.error ?? t("sport.common.saveError"));
       clearDraft();
       onSaved({ name: draft.name, volume: totalVolume, sets: loggedSets, minutes: duration, records });
     });
@@ -283,7 +291,7 @@ export function SessionLogger({
             <input
               value={draft.name}
               onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
-              aria-label="Nom de la séance"
+              aria-label={t("sport.sessionLogger.nameAria")}
               className="w-full max-w-sm bg-transparent text-xl font-semibold tracking-tight outline-none focus:underline"
             />
             <div className="mt-1 flex flex-wrap gap-1.5">
@@ -293,7 +301,7 @@ export function SessionLogger({
                   className="rounded-full px-2 py-0.5 text-[10px] font-medium"
                   style={{ background: `color-mix(in srgb, ${muscleColor(g)} 16%, transparent)`, color: muscleColor(g) }}
                 >
-                  {g}
+                  {muscleLabel(g)}
                 </span>
               ))}
               <span className="text-xs capitalize text-foreground-muted">{format(new Date(), "EEEE d MMMM", { locale: fr })}</span>
@@ -304,21 +312,21 @@ export function SessionLogger({
               <p className="text-xl font-semibold tabular-nums" style={{ color: "var(--sport)" }}>
                 {clock(elapsedSeconds)}
               </p>
-              <p className="text-[10px] uppercase tracking-wide text-foreground-muted">Durée</p>
+              <p className="text-[10px] uppercase tracking-wide text-foreground-muted">{t("sport.sessionLogger.durationStat")}</p>
             </div>
             <div>
               <p className="text-xl font-semibold tabular-nums">{loggedSets}</p>
-              <p className="text-[10px] uppercase tracking-wide text-foreground-muted">Séries</p>
+              <p className="text-[10px] uppercase tracking-wide text-foreground-muted">{t("sport.sessionLogger.setsStat")}</p>
             </div>
             <div>
               <p className="text-xl font-semibold tabular-nums">{totalVolume.toLocaleString("fr-FR")}</p>
-              <p className="text-[10px] uppercase tracking-wide text-foreground-muted">Volume kg</p>
+              <p className="text-[10px] uppercase tracking-wide text-foreground-muted">{t("sport.sessionLogger.volumeStat")}</p>
             </div>
           </div>
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-foreground-muted">
-          <span>Repos entre séries :</span>
+          <span>{t("sport.sessionLogger.restBetweenSets")}</span>
           {REST_OPTIONS.map((s) => (
             <button
               key={s}
@@ -331,7 +339,7 @@ export function SessionLogger({
                 color: restSeconds === s ? "var(--on-accent)" : undefined,
               }}
             >
-              {s >= 120 ? `${s / 60} min` : `${s} s`}
+              {s >= 120 ? `${s / 60} ${t("sport.common.min")}` : `${s} ${t("sport.common.sec")}`}
             </button>
           ))}
         </div>
@@ -352,13 +360,16 @@ export function SessionLogger({
               <div className="min-w-0">
                 <p className="truncate font-medium">{exercise.name}</p>
                 <p className="text-xs" style={{ color: muscleColor(exercise.muscle) }}>
-                  {exercise.muscle}
+                  {muscleLabel(exercise.muscle)}
                   {exercise.targetReps ? (
-                    <span className="text-foreground-muted"> · objectif {exercise.sets.length} × {exercise.targetReps}</span>
+                    <span className="text-foreground-muted">
+                      {" "}
+                      {t("sport.sessionLogger.targetLabel", { sets: exercise.sets.length, reps: exercise.targetReps })}
+                    </span>
                   ) : null}
                 </p>
                 <p className="mt-0.5 text-[11px] text-foreground-muted">
-                  {last ? `Dernière fois : ${compactSets(last.sets)}` : "Première fois — pas d'historique"}
+                  {last ? t("sport.sessionLogger.lastTime", { sets: compactSets(last.sets, t) }) : t("sport.sessionLogger.firstTime")}
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-1 text-foreground-muted">
@@ -366,7 +377,7 @@ export function SessionLogger({
                   type="button"
                   disabled={exIndex === 0}
                   onClick={() => moveExercise(exercise.id, -1)}
-                  aria-label="Monter l'exercice"
+                  aria-label={t("sport.sessionLogger.moveExerciseUpAria")}
                   className="rounded-md px-1.5 py-1 text-xs transition hover:bg-surface-muted disabled:opacity-30"
                 >
                   ▲
@@ -375,7 +386,7 @@ export function SessionLogger({
                   type="button"
                   disabled={exIndex === draft.exercises.length - 1}
                   onClick={() => moveExercise(exercise.id, 1)}
-                  aria-label="Descendre l'exercice"
+                  aria-label={t("sport.sessionLogger.moveExerciseDownAria")}
                   className="rounded-md px-1.5 py-1 text-xs transition hover:bg-surface-muted disabled:opacity-30"
                 >
                   ▼
@@ -383,11 +394,11 @@ export function SessionLogger({
                 <button
                   type="button"
                   onClick={() => {
-                    if (!hasData || confirm(`Retirer « ${exercise.name} » de la séance ?`)) {
+                    if (!hasData || confirm(t("sport.sessionLogger.confirmRemoveExercise", { name: exercise.name }))) {
                       setDraft((d) => ({ ...d, exercises: d.exercises.filter((e) => e.id !== exercise.id) }));
                     }
                   }}
-                  aria-label="Retirer l'exercice"
+                  aria-label={t("sport.sessionLogger.removeExerciseAria")}
                   className="rounded-md px-1.5 py-1 text-xs transition hover:bg-surface-muted hover:text-danger"
                 >
                   ✕
@@ -396,9 +407,9 @@ export function SessionLogger({
             </div>
 
             <div className="mb-1 grid grid-cols-[2rem_1fr_1fr_2.5rem_1.5rem] items-center gap-2 text-center text-[10px] uppercase tracking-wide text-foreground-muted">
-              <span>Série</span>
+              <span>{t("sport.sessionLogger.colSet")}</span>
               <span>kg</span>
-              <span>Reps</span>
+              <span>{t("sport.sessionLogger.colReps")}</span>
               <span />
               <span />
             </div>
@@ -425,7 +436,7 @@ export function SessionLogger({
                           sets: ex.sets.map((s, idx) => (idx === i ? { ...s, weight: e.target.value } : s)),
                         }))
                       }
-                      aria-label={`Poids série ${i + 1}`}
+                      aria-label={t("sport.sessionLogger.weightAria", { n: i + 1 })}
                       className={fieldClass}
                     />
                     <input
@@ -440,14 +451,14 @@ export function SessionLogger({
                           sets: ex.sets.map((s, idx) => (idx === i ? { ...s, reps: e.target.value } : s)),
                         }))
                       }
-                      aria-label={`Répétitions série ${i + 1}`}
+                      aria-label={t("sport.sessionLogger.repsAria", { n: i + 1 })}
                       className={fieldClass}
                     />
                     <motion.button
                       type="button"
                       whileTap={{ scale: 0.85 }}
                       onClick={() => toggleDone(exercise, i)}
-                      aria-label={set.done ? "Série validée, annuler" : "Valider la série"}
+                      aria-label={t(set.done ? "sport.sessionLogger.setValidatedAria" : "sport.sessionLogger.validateSetAria")}
                       aria-pressed={set.done}
                       className="flex h-9 w-full items-center justify-center rounded-lg border-[1.5px] text-sm font-bold transition-colors"
                       style={{
@@ -463,7 +474,7 @@ export function SessionLogger({
                       onClick={() =>
                         updateExercise(exercise.id, (ex) => ({ ...ex, sets: ex.sets.filter((_, idx) => idx !== i) }))
                       }
-                      aria-label={`Supprimer la série ${i + 1}`}
+                      aria-label={t("sport.sessionLogger.removeSetAria", { n: i + 1 })}
                       className="text-xs text-foreground-muted transition hover:text-danger"
                     >
                       ✕
@@ -480,7 +491,7 @@ export function SessionLogger({
               }
               className="mt-3 rounded-lg border border-dashed border-sport/50 px-3 py-1.5 text-xs font-medium text-sport transition hover:bg-sport-soft"
             >
-              + Série
+              {t("sport.sessionLogger.addSet")}
             </button>
           </motion.div>
         );
@@ -498,8 +509,7 @@ export function SessionLogger({
 
       {!showFinish && loggedSets === 0 && (
         <p className="rounded-xl border border-dashed border-sport/40 px-3 py-2 text-xs text-foreground-muted">
-          💡 Renseigne au moins les répétitions d&apos;une série (ou touche ✓ pour reprendre les valeurs de la dernière fois) pour
-          pouvoir terminer la séance.
+          {t("sport.sessionLogger.needRepsHint")}
         </p>
       )}
 
@@ -512,22 +522,25 @@ export function SessionLogger({
             onClick={() => setShowFinish(true)}
             className="flex-1 rounded-xl bg-sport px-5 py-3 text-sm font-semibold text-on-accent transition hover:opacity-90 disabled:opacity-40"
           >
-            Terminer la séance ({loggedSets} série{loggedSets > 1 ? "s" : ""})
+            {t("sport.sessionLogger.finishSession", {
+              count: loggedSets,
+              unit: t(loggedSets > 1 ? "sport.common.setOther" : "sport.common.setOne"),
+            })}
           </button>
           <button
             type="button"
             onClick={() => setConfirmDiscard(true)}
             className="rounded-xl border border-border px-4 py-3 text-sm font-medium text-foreground-muted transition hover:bg-surface-muted hover:text-danger"
           >
-            Abandonner
+            {t("sport.sessionLogger.discard")}
           </button>
         </div>
       ) : (
         <div className="space-y-3 rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">Récapitulatif</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.sessionLogger.summaryTitle")}</p>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="flex flex-col gap-1 text-xs text-foreground-muted">
-              Durée (minutes)
+              {t("sport.sessionLogger.durationMinutesLabel")}
               <input
                 type="number"
                 min={1}
@@ -537,24 +550,24 @@ export function SessionLogger({
               />
             </label>
             <label className="flex flex-col gap-1 text-xs text-foreground-muted">
-              Ressenti / intensité
+              {t("sport.sessionLogger.intensityFeelLabel")}
               <select
                 value={intensity}
                 onChange={(e) => setIntensity(Number(e.target.value))}
                 className={`${fieldClass} text-left text-foreground`}
               >
-                <option value={1}>1 — Très facile</option>
-                <option value={2}>2 — Facile</option>
-                <option value={3}>3 — Correct</option>
-                <option value={4}>4 — Dur</option>
-                <option value={5}>5 — À fond</option>
+                <option value={1}>{t("sport.common.intensity1")}</option>
+                <option value={2}>{t("sport.common.intensity2")}</option>
+                <option value={3}>{t("sport.common.intensity3")}</option>
+                <option value={4}>{t("sport.common.intensity4")}</option>
+                <option value={5}>{t("sport.common.intensity5")}</option>
               </select>
             </label>
           </div>
           <input
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Notes (sensations, douleurs, énergie...)"
+            placeholder={t("sport.sessionLogger.notesPlaceholder")}
             className={`${fieldClass} text-left`}
           />
           {error && <p className="text-xs text-danger">{error}</p>}
@@ -565,14 +578,14 @@ export function SessionLogger({
               onClick={save}
               className="flex-1 rounded-xl bg-sport px-5 py-2.5 text-sm font-semibold text-on-accent transition hover:opacity-90 disabled:opacity-50"
             >
-              {pending ? "Enregistrement..." : "Enregistrer la séance"}
+              {pending ? t("sport.common.saving") : t("sport.common.saveSessionButton")}
             </button>
             <button
               type="button"
               onClick={() => setShowFinish(false)}
               className="rounded-xl border border-border px-4 py-2.5 text-sm text-foreground-muted transition hover:bg-surface-muted"
             >
-              Retour
+              {t("sport.sessionLogger.back")}
             </button>
           </div>
         </div>
@@ -580,9 +593,9 @@ export function SessionLogger({
 
       <ConfirmDialog
         open={confirmDiscard}
-        title="Abandonner la séance ?"
-        message="Les séries saisies ne seront pas enregistrées."
-        confirmLabel="Abandonner"
+        title={t("sport.sessionLogger.discardTitle")}
+        message={t("sport.sessionLogger.discardMessage")}
+        confirmLabel={t("sport.sessionLogger.discard")}
         onCancel={() => setConfirmDiscard(false)}
         onConfirm={() => {
           setConfirmDiscard(false);
@@ -606,10 +619,10 @@ export function SessionLogger({
                 <div className="flex items-center gap-3">
                   <div className="min-w-0 flex-1">
                     <p className="text-[10px] font-semibold uppercase tracking-wide text-foreground-muted">
-                      {restRemaining > 0 ? "Repos" : "C'est reparti !"}
+                      {restRemaining > 0 ? t("sport.sessionLogger.restLabel") : t("sport.sessionLogger.restOverLabel")}
                     </p>
                     <p className="text-2xl font-semibold tabular-nums" style={{ color: restRemaining > 0 ? "var(--sport)" : "var(--success)" }}>
-                      {restRemaining > 0 ? clock(restRemaining) : "Go 💪"}
+                      {restRemaining > 0 ? clock(restRemaining) : t("sport.sessionLogger.goLabel")}
                     </p>
                   </div>
                   <button
@@ -617,14 +630,14 @@ export function SessionLogger({
                     onClick={() => startRest(Math.max(15, restRemaining + 15))}
                     className="rounded-lg border border-sport/40 px-2.5 py-1.5 text-xs font-medium transition hover:bg-surface-muted"
                   >
-                    +15 s
+                    {t("sport.sessionLogger.plus15", { unit: t("sport.common.sec") })}
                   </button>
                   <button
                     type="button"
                     onClick={stopRest}
                     className="rounded-lg bg-sport px-3 py-1.5 text-xs font-semibold text-on-accent transition hover:opacity-90"
                   >
-                    Passer
+                    {t("sport.sessionLogger.skip")}
                   </button>
                 </div>
                 <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-surface-muted">

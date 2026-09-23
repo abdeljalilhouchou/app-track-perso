@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { HabitCard } from "@/components/habit-card";
 import { ConfettiBurst } from "@/components/ui/confetti-burst";
-import { CATEGORY_META } from "@/lib/habit-categories";
+import { useT } from "@/components/language-provider";
+import { CATEGORY_META, categorySlug } from "@/lib/habit-categories";
 import type { Habit } from "@/types/database";
 
 export type HabitCardData = {
@@ -19,6 +20,7 @@ export type HabitCardData = {
 };
 
 export function HabitsBoard({ groups }: { groups: { category: string; habits: HabitCardData[] }[] }) {
+  const t = useT();
   const [burst, setBurst] = useState(0);
   const wasAllDone = useRef<boolean | null>(null);
 
@@ -53,7 +55,7 @@ export function HabitsBoard({ groups }: { groups: { category: string; habits: Ha
               >
                 {meta.icon}
               </span>
-              <span style={{ color: meta.color }}>{category}</span>
+              <span style={{ color: meta.color }}>{t(`habits.categories.${categorySlug(category)}`)}</span>
               <span className="text-xs text-foreground-muted">· {habits.length}</span>
             </h2>
             <motion.div layout className="grid gap-4 sm:grid-cols-2">

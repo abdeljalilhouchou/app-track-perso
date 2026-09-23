@@ -1,11 +1,15 @@
 import { getISODay, parseISO } from "date-fns";
 import { computeStreak } from "@/lib/streak";
 import type { Insight } from "@/lib/dashboard";
+import type { Vars } from "@/lib/i18n/translate";
 
 type Mood = { entry_date: string; mood_score: number; energy_level: number };
+type Translator = (path: string, vars?: Vars) => string;
 
 const avg = (values: number[]) => (values.length ? values.reduce((s, v) => s + v, 0) / values.length : null);
 
+// Used by src/lib/dashboard.ts's own (still-French, out of scope) insights builder — keep this
+// signature untouched so that call site keeps compiling. The mood page uses `moodDiffTextT` below.
 export function moodDiffText(withLabel: string, without: string, a: number, b: number) {
   const diff = a - b;
   const scores = `${a.toFixed(1)}/5 vs ${b.toFixed(1)}/5`;
@@ -14,13 +18,25 @@ export function moodDiffText(withLabel: string, without: string, a: number, b: n
   return `Pas de lien net pour l'instant entre ton humeur et ce critère (${scores}).`;
 }
 
-const WEEKDAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+function moodDiffTextT(t: Translator, withLabel: string, withoutLabel: string, a: number, b: number) {
+  const diff = a - b;
+  const scores = `${a.toFixed(1)}/5 vs ${b.toFixed(1)}/5`;
+  if (diff > 0.3) return t("mood.insights.higher", { withLabel, scores });
+  if (diff < -0.3) return t("mood.insights.lower", { withLabel, withoutLabel, scores });
+  return t("mood.insights.noLink", { scores });
+}
 
-export function weekdayAverages(moods: Mood[]) {
-  return WEEKDAYS.map((label, i) => {
+const WEEKDAY_KEYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
+
+export function weekdayAverages(moods: Mood[], t: Translator) {
+  return WEEKDAY_KEYS.map((key, i) => {
     const rows = moods.filter((m) => getISODay(parseISO(m.entry_date)) === i + 1);
     const a = avg(rows.map((m) => m.mood_score));
-    return { label, avg: a === null ? null : Math.round(a * 10) / 10, count: rows.length };
+    return {
+      label: t(`mood.insights.weekday.${key}`),
+      avg: a === null ? null : Math.round(a * 10) / 10,
+      count: rows.length,
+    };
   });
 }
 
@@ -50,15 +66,17 @@ export function buildMoodInsights(input: {
   facts: Map<string, DayFacts>;
   waterByDate: Map<string, number>;
   goals: { protein: number | null; sugarLimit: number; caffeineLimit: number; water: number };
+  t: Translator;
 }): Insight[] {
+  const { t } = input;
   const out: Insight[] = [];
 
   function compare(
     icon: string,
-    title: string,
+    titleKey: string,
     color: string,
-    withLabel: string,
-    withoutLabel: string,
+    withLabelKey: string,
+    withoutLabelKey: string,
     predicate: (date: string) => boolean | null
   ) {
     const yes: number[] = [];
@@ -69,24 +87,36 @@ export function buildMoodInsights(input: {
       (p ? yes : no).push(m.mood_score);
     }
     if (yes.length < 2 || no.length < 2) return;
+    const withLabel = t(withLabelKey);
+    const withoutLabel = t(withoutLabelKey);
     out.push({
       icon,
-      title,
+      title: t(titleKey),
       color,
-      text: `${moodDiffText(withLabel, withoutLabel, avg(yes)!, avg(no)!)} (${yes.length} vs ${no.length} jours)`,
+      text: `${moodDiffTextT(t, withLabel, withoutLabel, avg(yes)!, avg(no)!)} ${t("mood.insights.daysCompared", {
+        yes: yes.length,
+        no: no.length,
+      })}`,
     });
   }
 
-  compare("🏃", "Sport", "var(--sport)", "les jours de sport", "les autres jours", (d) => input.workoutDates.has(d));
+  compare(
+    "🏃",
+    "mood.insights.sport.title",
+    "var(--sport)",
+    "mood.insights.sport.with",
+    "mood.insights.sport.without",
+    (d) => input.workoutDates.has(d)
+  );
 
   if (input.goals.protein) {
     const goal = input.goals.protein;
     compare(
       "💪",
-      "Protéines",
+      "mood.insights.protein.title",
       "var(--habit)",
-      "quand tu atteins ton objectif de protéines",
-      "les autres jours",
+      "mood.insights.protein.with",
+      "mood.insights.protein.without",
       (d) => {
         const f = input.facts.get(d);
         return f?.hasMeals ? f.protein >= goal : null;
@@ -94,21 +124,42 @@ export function buildMoodInsights(input: {
     );
   }
 
-  compare("🍬", "Sucres", "var(--weight)", "les jours où tu dépasses ta limite de sucres", "les jours sous la limite", (d) => {
-    const f = input.facts.get(d);
-    return f?.hasMeals ? f.sugar > input.goals.sugarLimit : null;
-  });
+  compare(
+    "🍬",
+    "mood.insights.sugar.title",
+    "var(--weight)",
+    "mood.insights.sugar.with",
+    "mood.insights.sugar.without",
+    (d) => {
+      const f = input.facts.get(d);
+      return f?.hasMeals ? f.sugar > input.goals.sugarLimit : null;
+    }
+  );
 
-  compare("☕", "Caféine", "var(--mood)", "les jours de forte caféine", "les jours plus modérés", (d) => {
-    const f = input.facts.get(d);
-    return f?.hasMeals ? f.caffeine >= input.goals.caffeineLimit * 0.5 : null;
-  });
+  compare(
+    "☕",
+    "mood.insights.caffeine.title",
+    "var(--mood)",
+    "mood.insights.caffeine.with",
+    "mood.insights.caffeine.without",
+    (d) => {
+      const f = input.facts.get(d);
+      return f?.hasMeals ? f.caffeine >= input.goals.caffeineLimit * 0.5 : null;
+    }
+  );
 
-  compare("💧", "Hydratation", "var(--water)", "quand tu atteins ton objectif d'eau", "les autres jours", (d) => {
-    const water = (input.waterByDate.get(d) ?? 0) + (input.facts.get(d)?.drinksMl ?? 0);
-    if (!input.waterByDate.has(d) && !(input.facts.get(d)?.drinksMl ?? 0)) return null;
-    return water >= input.goals.water;
-  });
+  compare(
+    "💧",
+    "mood.insights.hydration.title",
+    "var(--water)",
+    "mood.insights.hydration.with",
+    "mood.insights.hydration.without",
+    (d) => {
+      const water = (input.waterByDate.get(d) ?? 0) + (input.facts.get(d)?.drinksMl ?? 0);
+      if (!input.waterByDate.has(d) && !(input.facts.get(d)?.drinksMl ?? 0)) return null;
+      return water >= input.goals.water;
+    }
+  );
 
   return out;
 }

@@ -9,7 +9,8 @@ import { Callout } from "@/components/ui/callout";
 import { MomentsJournal } from "@/components/moments-journal";
 import { HabitsCalendar } from "@/components/habits/habits-calendar";
 import { HabitsMonthly } from "@/components/habits/habits-monthly";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
+import { categorySlug } from "@/lib/habit-categories";
 
 export default async function HabitsPage() {
   const supabase = await createClient();
@@ -18,6 +19,7 @@ export default async function HabitsPage() {
   } = await supabase.auth.getUser();
   if (!user) return null;
   const dict = await getDictionary();
+  const t = await getT();
 
   const since = format(subDays(new Date(), 400), "yyyy-MM-dd");
   const today = format(new Date(), "yyyy-MM-dd");
@@ -101,10 +103,14 @@ export default async function HabitsPage() {
             <p className="mt-0.5 text-sm text-foreground-muted">
               {orderedHabits.length > 0 ? (
                 <>
-                  {orderedHabits.length} habitude{orderedHabits.length > 1 ? "s" : ""} active
-                  {orderedHabits.length > 1 ? "s" : ""} ·{" "}
+                  {orderedHabits.length === 1
+                    ? t("habits.page.activeHabitsOne", { count: orderedHabits.length })
+                    : t("habits.page.activeHabitsOther", { count: orderedHabits.length })}{" "}
+                  ·{" "}
                   <span className="font-medium" style={{ color: "var(--habit)" }}>
-                    {doneTodayCount} faite{doneTodayCount > 1 ? "s" : ""} aujourd&apos;hui
+                    {doneTodayCount === 1
+                      ? t("habits.page.doneTodayOne", { count: doneTodayCount })
+                      : t("habits.page.doneTodayOther", { count: doneTodayCount })}
                   </span>
                 </>
               ) : (
@@ -117,14 +123,14 @@ export default async function HabitsPage() {
       </div>
 
       {orderedHabits.some((h) => h.category === "Sport") ? (
-        <Callout variant="info" title="Lié au Sport" icon="🔗" dismissKey="habits-sport-link" compact>
-          Les habitudes de la catégorie <strong>Sport</strong> se cochent automatiquement quand tu enregistres une séance
-          dans l&apos;onglet Sport (et se décochent si tu supprimes cette séance).
+        <Callout variant="info" title={t("habits.page.sportLinkTitle")} icon="🔗" dismissKey="habits-sport-link" compact>
+          {t("habits.page.sportLinkPrefix")} <strong>{t(`habits.categories.${categorySlug("Sport")}`)}</strong>{" "}
+          {t("habits.page.sportLinkSuffix", { sport: t("nav.sport") })}
         </Callout>
       ) : (
         <Callout variant="tip" dismissKey="habits-sport-tip" compact>
-          Crée une habitude dans la catégorie <strong>Sport</strong> : elle se cochera toute seule dès que tu enregistres
-          une séance.
+          {t("habits.page.sportTipPrefix")} <strong>{t(`habits.categories.${categorySlug("Sport")}`)}</strong>
+          {t("habits.page.sportTipSuffix")}
         </Callout>
       )}
 
@@ -137,9 +143,7 @@ export default async function HabitsPage() {
       {orderedHabits.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border p-10 text-center">
           <span className="text-4xl">🌱</span>
-          <p className="mt-3 text-sm text-foreground-muted">
-            Aucune habitude pour le moment. Ajoute la première ci-dessus.
-          </p>
+          <p className="mt-3 text-sm text-foreground-muted">{t("habits.page.emptyState")}</p>
         </div>
       ) : (
         <HabitsBoard groups={groups} />

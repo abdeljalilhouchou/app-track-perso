@@ -6,7 +6,8 @@ import { createClient } from "@/lib/supabase/server";
 import { computeStreak, longestStreakEver } from "@/lib/streak";
 import { bestWeekday, successRate } from "@/lib/habit-insights";
 import { MonthCalendar } from "@/components/month-calendar";
-import { CATEGORY_META, WEEKDAYS } from "@/lib/habit-categories";
+import { CATEGORY_META, WEEKDAYS, categorySlug, weekdaySlug } from "@/lib/habit-categories";
+import { getT } from "@/lib/i18n/get-dictionary";
 
 export default async function HabitDetailPage({
   params,
@@ -17,6 +18,7 @@ export default async function HabitDetailPage({
 }) {
   const { id } = await params;
   const { month: monthParam } = await searchParams;
+  const t = await getT();
 
   const supabase = await createClient();
   const {
@@ -62,6 +64,7 @@ export default async function HabitDetailPage({
   );
   const threeMonthStats = successRate(loggedDates, habit.scheduled_days, subMonths(today, 3), today);
   const weekdayInsight = bestWeekday(loggedDates, habit.scheduled_days);
+  const weekdayInsightLabel = weekdayInsight ? t(`habits.weekdaysLong.${weekdaySlug(weekdayInsight.day)}`) : null;
   const monthDiff = thisMonthStats.rate - prevMonthStats.rate;
 
   const prevMonth = format(subMonths(month, 1), "yyyy-MM");
@@ -74,7 +77,7 @@ export default async function HabitDetailPage({
     <div className="space-y-8 animate-fade-in">
       <div>
         <Link href="/habits" className="text-sm text-foreground-muted hover:text-foreground">
-          ← Retour aux habitudes
+          {t("habits.detail.backLink")}
         </Link>
 
         <div className="mt-3 flex items-start gap-4">
@@ -90,7 +93,7 @@ export default async function HabitDetailPage({
               className="mt-1 inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium"
               style={{ background: `color-mix(in srgb, ${categoryMeta.color} 16%, transparent)`, color: categoryMeta.color }}
             >
-              {categoryMeta.icon} {habit.category}
+              {categoryMeta.icon} {t(`habits.categories.${categorySlug(habit.category)}`)}
             </span>
 
             <div className="mt-3 flex gap-1.5">
@@ -99,14 +102,14 @@ export default async function HabitDetailPage({
                 return (
                   <span
                     key={d.value}
-                    title={d.label}
+                    title={t(`habits.weekdaysLong.${weekdaySlug(d.value)}`)}
                     className="flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold"
                     style={{
                       background: scheduled ? habit.color : "var(--surface-muted)",
                       color: scheduled ? "white" : "var(--foreground-muted)",
                     }}
                   >
-                    {d.short}
+                    {t(`habits.weekdaysShort.${weekdaySlug(d.value)}`)}
                   </span>
                 );
               })}
@@ -121,7 +124,7 @@ export default async function HabitDetailPage({
             <span className="flex h-7 w-7 items-center justify-center rounded-lg" style={{ background: `color-mix(in srgb, ${habit.color} 16%, transparent)` }}>
               📊
             </span>
-            Total de fois faites
+            {t("habits.detail.totalTimes")}
           </div>
           <p className="mt-2 text-2xl font-semibold" style={{ color: habit.color }}>
             {loggedDates.size}
@@ -132,10 +135,10 @@ export default async function HabitDetailPage({
             <span className="flex h-7 w-7 items-center justify-center rounded-lg" style={{ background: `color-mix(in srgb, ${habit.color} 16%, transparent)` }}>
               🔥
             </span>
-            Série actuelle
+            {t("habits.detail.currentStreak")}
           </div>
           <p className="mt-2 text-2xl font-semibold" style={{ color: habit.color }}>
-            {streak} j
+            {t("habits.detail.daysUnit", { count: streak })}
           </p>
         </div>
         <div className="rounded-2xl border border-border bg-surface p-5">
@@ -143,20 +146,20 @@ export default async function HabitDetailPage({
             <span className="flex h-7 w-7 items-center justify-center rounded-lg" style={{ background: `color-mix(in srgb, ${habit.color} 16%, transparent)` }}>
               🏆
             </span>
-            Meilleure série
+            {t("habits.detail.bestStreak")}
           </div>
           <p className="mt-2 text-2xl font-semibold" style={{ color: habit.color }}>
-            {best} j
+            {t("habits.detail.daysUnit", { count: best })}
           </p>
         </div>
       </div>
 
       <div className="rounded-2xl border border-border bg-surface p-5">
-        <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-foreground-muted">Insights</p>
+        <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("habits.detail.insightsTitle")}</p>
         <div className="grid gap-4 sm:grid-cols-3">
           <div>
             <div className="mb-1.5 flex items-center justify-between text-xs text-foreground-muted">
-              <span>3 derniers mois</span>
+              <span>{t("habits.detail.last3Months")}</span>
               <span className="font-semibold text-foreground">{threeMonthStats.rate}%</span>
             </div>
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-muted">
@@ -166,27 +169,31 @@ export default async function HabitDetailPage({
               />
             </div>
             <p className="mt-1.5 text-xs text-foreground-muted">
-              {threeMonthStats.completed}/{threeMonthStats.expected} jours prévus
+              {t("habits.detail.daysExpectedFraction", { completed: threeMonthStats.completed, expected: threeMonthStats.expected })}
             </p>
           </div>
 
           <div>
-            <p className="text-xs text-foreground-muted">Meilleur jour</p>
+            <p className="text-xs text-foreground-muted">{t("habits.detail.bestDay")}</p>
             <p className="mt-1.5 text-lg font-semibold">
-              {weekdayInsight && weekdayInsight.rate > 0 ? weekdayInsight.label : "—"}
+              {weekdayInsight && weekdayInsight.rate > 0 ? weekdayInsightLabel : "—"}
             </p>
             <p className="text-xs text-foreground-muted">
-              {weekdayInsight && weekdayInsight.rate > 0 ? `${weekdayInsight.rate}% de réussite` : "Pas encore assez de données"}
+              {weekdayInsight && weekdayInsight.rate > 0
+                ? t("habits.detail.successRatePercent", { rate: weekdayInsight.rate })
+                : t("habits.detail.notEnoughData")}
             </p>
           </div>
 
           <div>
-            <p className="text-xs text-foreground-muted">Tendance mensuelle</p>
+            <p className="text-xs text-foreground-muted">{t("habits.detail.monthlyTrend")}</p>
             <p className="mt-1.5 flex items-center gap-1.5 text-lg font-semibold">
               {monthDiff > 0 ? "📈" : monthDiff < 0 ? "📉" : "➡️"} {thisMonthStats.rate}%
             </p>
             <p className="text-xs text-foreground-muted">
-              {prevMonthStats.expected > 0 ? `vs ${prevMonthStats.rate}% le mois précédent` : "Premier mois suivi"}
+              {prevMonthStats.expected > 0
+                ? t("habits.detail.vsPrevMonth", { rate: prevMonthStats.rate })
+                : t("habits.detail.firstMonthTracked")}
             </p>
           </div>
         </div>
@@ -198,12 +205,12 @@ export default async function HabitDetailPage({
             href={`/habits/${id}?month=${prevMonth}`}
             className="flex items-center gap-1 rounded-lg border-[1.5px] border-accent px-3 py-1.5 text-sm font-medium text-accent transition-colors hover:bg-accent hover:text-on-accent"
           >
-            ← Précédent
+            {t("habits.detail.prevMonth")}
           </Link>
           <div className="text-center">
             <p className="font-medium capitalize">{format(month, "MMMM yyyy", { locale: fr })}</p>
             <p className="text-xs text-foreground-muted">
-              {thisMonthStats.completed} / {thisMonthStats.expected} jours prévus ({thisMonthStats.rate}%)
+              {t("habits.detail.monthProgress", { completed: thisMonthStats.completed, expected: thisMonthStats.expected, rate: thisMonthStats.rate })}
             </p>
           </div>
           {isCurrentMonth ? (
@@ -213,7 +220,7 @@ export default async function HabitDetailPage({
               href={`/habits/${id}?month=${nextMonth}`}
               className="flex items-center gap-1 rounded-lg border-[1.5px] border-accent px-3 py-1.5 text-sm font-medium text-accent transition-colors hover:bg-accent hover:text-on-accent"
             >
-              Suivant →
+              {t("habits.detail.nextMonth")}
             </Link>
           )}
         </div>
@@ -228,13 +235,13 @@ export default async function HabitDetailPage({
 
         <div className="mt-4 flex flex-wrap items-center gap-4 border-t border-border pt-4 text-xs text-foreground-muted">
           <span className="flex items-center gap-1.5">
-            <span className="h-3 w-3 rounded-sm" style={{ background: habit.color }} /> Fait
+            <span className="h-3 w-3 rounded-sm" style={{ background: habit.color }} /> {t("habits.detail.legendDone")}
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-3 w-3 rounded-sm bg-surface-muted" /> Prévu, pas fait
+            <span className="h-3 w-3 rounded-sm bg-surface-muted" /> {t("habits.detail.legendMissed")}
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: habit.color }} /> Avec une note
+            <span className="h-1.5 w-1.5 rounded-full" style={{ background: habit.color }} /> {t("habits.detail.legendNoted")}
           </span>
         </div>
       </div>

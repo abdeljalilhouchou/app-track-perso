@@ -16,7 +16,7 @@ import { WeekRecap } from "@/components/dashboard/week-recap";
 import { SmartAlerts } from "@/components/dashboard/smart-alerts";
 import { computeStreak } from "@/lib/streak";
 import type { AlertFacts } from "@/lib/alerts";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -25,6 +25,7 @@ export default async function DashboardPage() {
   } = await supabase.auth.getUser();
   if (!user) return null;
   const dict = await getDictionary();
+  const t = await getT();
 
   const today = new Date();
   const todayStr = format(today, "yyyy-MM-dd");
@@ -116,10 +117,10 @@ export default async function DashboardPage() {
   const round1 = (n: number) => Math.round(n * 10) / 10;
 
   const rings = [
-    { label: "Calories", value: Math.round(totals.calories), goal: profile?.goal_calories ?? null, unit: "kcal", color: "var(--nutrition)" },
-    { label: "Protéines", value: round1(totals.protein), goal: profile?.goal_protein ?? null, unit: "g", color: "var(--habit)" },
-    { label: "Glucides", value: round1(totals.carbs), goal: profile?.goal_carbs ?? null, unit: "g", color: "var(--mood)" },
-    { label: "Lipides", value: round1(totals.fat), goal: profile?.goal_fat ?? null, unit: "g", color: "var(--accent)" },
+    { label: t("dashboard.rings.calories"), value: Math.round(totals.calories), goal: profile?.goal_calories ?? null, unit: "kcal", color: "var(--nutrition)" },
+    { label: t("dashboard.rings.protein"), value: round1(totals.protein), goal: profile?.goal_protein ?? null, unit: "g", color: "var(--habit)" },
+    { label: t("dashboard.rings.carbs"), value: round1(totals.carbs), goal: profile?.goal_carbs ?? null, unit: "g", color: "var(--mood)" },
+    { label: t("dashboard.rings.fat"), value: round1(totals.fat), goal: profile?.goal_fat ?? null, unit: "g", color: "var(--accent)" },
   ];
 
   const latestWeight = weightLogs && weightLogs.length > 0 ? weightLogs[weightLogs.length - 1] : null;
@@ -138,14 +139,17 @@ export default async function DashboardPage() {
     meals: meals ?? [],
   });
 
-  const insights = buildInsights({
-    moods: moodEntries ?? [],
-    workoutDates: new Set((workouts ?? []).map((w) => w.workout_date)),
-    meals: meals ?? [],
-    goalProtein: profile?.goal_protein ?? null,
-    weights: weightLogs ?? [],
-    workouts: workouts ?? [],
-  });
+  const insights = buildInsights(
+    {
+      moods: moodEntries ?? [],
+      workoutDates: new Set((workouts ?? []).map((w) => w.workout_date)),
+      meals: meals ?? [],
+      goalProtein: profile?.goal_protein ?? null,
+      weights: weightLogs ?? [],
+      workouts: workouts ?? [],
+    },
+    t
+  );
 
   // Charts
   const sportChart = weeklyTotals(
@@ -228,6 +232,7 @@ export default async function DashboardPage() {
           weightKg={latestWeight?.weight_kg ?? null}
           weightDelta={weightDelta}
           hasMeals={todayMeals.length > 0}
+          t={t}
         />
         <ProgressCard
           level={progress.level}
@@ -239,13 +244,14 @@ export default async function DashboardPage() {
           unlocked={progress.unlocked}
           totalBadges={BADGES.length}
           nextBadge={progress.locked[0] ?? null}
+          t={t}
         />
       </div>
 
-      <WeekRecap recap={recap} title={dict.dashboard.weekRecap} />
+      <WeekRecap recap={recap} title={dict.dashboard.weekRecapTitle} t={t} />
 
       <div>
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{dict.dashboard.insights}</h2>
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{dict.dashboard.insightsTitle}</h2>
         {insights.length > 0 ? (
           <div className="grid gap-3 lg:grid-cols-3">
             {insights.map((i) => (
@@ -266,8 +272,7 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <p className="rounded-2xl border border-dashed border-accent/40 p-5 text-sm text-foreground-muted">
-            Continue à noter humeur, sport, repas et poids : les liens entre tes modules apparaîtront ici dès qu&apos;il y
-            aura assez de données.
+            {t("dashboard.insights.empty")}
           </p>
         )}
       </div>
@@ -300,9 +305,9 @@ export default async function DashboardPage() {
 
       {(!habits || habits.length === 0) && (
         <div className="rounded-2xl border border-dashed border-habit/40 p-6 text-center text-sm text-foreground-muted">
-          Tu n&apos;as pas encore d&apos;habitude.{" "}
+          {t("dashboard.emptyHabits.text")}{" "}
           <Link href="/habits" className="font-medium text-accent hover:underline">
-            Crée ta première habitude
+            {t("dashboard.emptyHabits.cta")}
           </Link>
           .
         </div>

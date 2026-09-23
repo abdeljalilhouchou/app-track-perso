@@ -8,7 +8,7 @@ import { MoodEntryList } from "@/components/mood-entry-list";
 import { MoodCalendar } from "@/components/mood/mood-calendar";
 import { MoodInsights, MoodTiles, WeekdayBars } from "@/components/mood/mood-overview";
 import { buildMoodInsights, moodSummary, weekdayAverages } from "@/lib/mood-insights";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
 
 export default async function HumeurPage() {
   const supabase = await createClient();
@@ -17,6 +17,7 @@ export default async function HumeurPage() {
   } = await supabase.auth.getUser();
   if (!user) return null;
   const dict = await getDictionary();
+  const t = await getT();
 
   const now = new Date();
   const today = format(now, "yyyy-MM-dd");
@@ -71,11 +72,12 @@ export default async function HumeurPage() {
       caffeineLimit: profile?.caffeine_limit_mg ?? 400,
       water: profile?.water_goal_ml ?? 2000,
     },
+    t,
   });
   const summary = moodSummary(allEntries ?? []);
   const lastThree = (allEntries ?? []).slice(-3);
   const lowStreak = lastThree.length === 3 && lastThree.every((e) => e.mood_score <= 2) ? lastThree : null;
-  const weekdays = weekdayAverages(recentMoods);
+  const weekdays = weekdayAverages(recentMoods, t);
 
   const chartData = (entries ?? []).map((e) => ({
     label: format(new Date(e.entry_date), "d MMM", { locale: fr }),
@@ -91,18 +93,17 @@ export default async function HumeurPage() {
       </div>
 
       {lowStreak && (
-        <Callout variant="warning" title="Prends soin de toi" dismissKey={`mood-low:${today}`}>
-          Ton humeur est basse depuis {lowStreak.length} jours de suite. Ce n&apos;est pas un échec : dors bien, bouge un peu,
-          parle à quelqu&apos;un. Si ça dure, n&apos;hésite pas à demander de l&apos;aide.
+        <Callout variant="warning" title={t("mood.page.lowStreakTitle")} dismissKey={`mood-low:${today}`}>
+          {t("mood.page.lowStreakMessage", { days: lowStreak.length })}
         </Callout>
       )}
       {!todayEntry && (
         <Callout variant="tip" dismissKey={`mood-today:${today}`} compact>
-          Note ton humeur du jour : c&apos;est ce qui permet à l&apos;app de trouver ce qui l&apos;influence.
+          {t("mood.page.todayTip")}
         </Callout>
       )}
 
-      <MoodTiles summary={summary} />
+      <MoodTiles summary={summary} t={t} />
 
       <MoodForm today={today} existing={todayEntry ?? null} />
 
@@ -111,19 +112,17 @@ export default async function HumeurPage() {
           today={today}
           days={(allEntries ?? []).map((e) => ({ date: e.entry_date, mood: e.mood_score, energy: e.energy_level, notes: e.notes }))}
         />
-        <WeekdayBars data={weekdays} />
+        <WeekdayBars data={weekdays} t={t} />
       </div>
 
-      <MoodInsights insights={insights} />
+      <MoodInsights insights={insights} t={t} />
 
       <div className="rounded-2xl border-[1.5px] border-mood/50 bg-surface p-5">
-        <h2 className="text-sm font-medium text-foreground-muted">30 derniers jours</h2>
+        <h2 className="text-sm font-medium text-foreground-muted">{t("mood.page.last30Days")}</h2>
         {chartData.length > 0 ? (
           <MoodLineChart data={chartData} />
         ) : (
-          <p className="py-10 text-center text-sm text-foreground-muted">
-            Pas encore assez de données pour afficher un graphique.
-          </p>
+          <p className="py-10 text-center text-sm text-foreground-muted">{t("mood.page.noChartData")}</p>
         )}
       </div>
 

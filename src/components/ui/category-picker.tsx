@@ -2,8 +2,9 @@
 
 import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { CATEGORY_META, CATEGORY_PRESETS } from "@/lib/habit-categories";
+import { CATEGORY_META, CATEGORY_PRESETS, categorySlug } from "@/lib/habit-categories";
 import { useClickOutside } from "@/lib/use-click-outside";
+import { useT } from "@/components/language-provider";
 
 export function CategoryPicker({
   name,
@@ -16,6 +17,7 @@ export function CategoryPicker({
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useClickOutside(ref, () => setOpen(false));
+  const t = useT();
 
   const meta = CATEGORY_META[value] ?? CATEGORY_META["Général"];
 
@@ -29,7 +31,7 @@ export function CategoryPicker({
       >
         <span className="flex items-center gap-2">
           <span className="h-2.5 w-2.5 rounded-full" style={{ background: meta.color }} />
-          {meta.icon} {value}
+          {meta.icon} {t(`habits.categories.${categorySlug(value)}`)}
         </span>
         <span className={`text-xs text-foreground-muted transition-transform ${open ? "rotate-180" : ""}`}>▾</span>
       </button>
@@ -59,7 +61,7 @@ export function CategoryPicker({
                   }`}
                 >
                   <span className="h-2.5 w-2.5 rounded-full" style={{ background: catMeta.color }} />
-                  {catMeta.icon} {cat}
+                  {catMeta.icon} {t(`habits.categories.${categorySlug(cat)}`)}
                 </button>
               );
             })}

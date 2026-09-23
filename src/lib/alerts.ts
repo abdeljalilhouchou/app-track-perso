@@ -32,37 +32,40 @@ export type SmartAlert = {
   action?: { label: string; href: string };
 };
 
+export type Translator = (path: string, vars?: Record<string, string | number>) => string;
+
 const ORDER: Record<CalloutVariant, number> = { danger: 0, warning: 1, info: 2, tip: 3, success: 4 };
-const plural = (n: number, one: string, many: string) => (n > 1 ? many : one);
 
 /** `hour` is the user's local hour (0-23) and `isoWeekday` 1 = Monday … 7 = Sunday. */
-export function buildAlerts(f: AlertFacts, hour: number, isoWeekday: number): SmartAlert[] {
+export function buildAlerts(f: AlertFacts, hour: number, isoWeekday: number, t: Translator): SmartAlert[] {
   const out: SmartAlert[] = [];
+  const plural = (n: number, oneKey: string, manyKey: string) =>
+    t(`dashboard.alerts.${n > 1 ? manyKey : oneKey}`);
 
   // ---- Limits already exceeded (always relevant)
   if (f.caffeine > f.caffeineLimit) {
     out.push({
       id: "caffeine-over",
       variant: "warning",
-      title: "Caféine dépassée",
-      text: `Tu es à ${f.caffeine} mg pour une limite de ${f.caffeineLimit} mg. Évite d'en reprendre aujourd'hui, surtout le soir, pour bien dormir.`,
+      title: t("dashboard.alerts.caffeineOverTitle"),
+      text: t("dashboard.alerts.caffeineOverText", { caffeine: f.caffeine, limit: f.caffeineLimit }),
     });
   }
   if (f.sugar > f.sugarLimit) {
     out.push({
       id: "sugar-over",
       variant: "warning",
-      title: "Trop de sucres aujourd'hui",
-      text: `${f.sugar} g pour une limite de ${f.sugarLimit} g. Privilégie de l'eau et des aliments non sucrés pour le reste de la journée.`,
+      title: t("dashboard.alerts.sugarOverTitle"),
+      text: t("dashboard.alerts.sugarOverText", { sugar: f.sugar, limit: f.sugarLimit }),
     });
   }
   if (f.kcalGoal && f.kcal > f.kcalGoal * 1.15) {
     out.push({
       id: "kcal-over",
       variant: "warning",
-      title: "Objectif calorique dépassé",
-      text: `Tu es à ${f.kcal} kcal pour un objectif de ${f.kcalGoal} kcal (+${f.kcal - f.kcalGoal}). Allège le prochain repas si tu vises une perte de poids.`,
-      action: { label: "Voir mon journal", href: "/nutrition" },
+      title: t("dashboard.alerts.kcalOverTitle"),
+      text: t("dashboard.alerts.kcalOverText", { kcal: f.kcal, goal: f.kcalGoal, over: f.kcal - f.kcalGoal }),
+      action: { label: t("dashboard.alerts.actions.viewJournal"), href: "/nutrition" },
     });
   }
 
@@ -72,18 +75,18 @@ export function buildAlerts(f: AlertFacts, hour: number, isoWeekday: number): Sm
       out.push({
         id: `streak-risk-${s.name}`,
         variant: hour >= 21 ? "danger" : "warning",
-        title: hour >= 21 ? "Ta série se termine bientôt !" : "Série en danger",
-        text: `« ${s.name} » : ${s.streak} jours d'affilée. Coche-la avant minuit pour ne pas casser ta série. 🔥`,
-        action: { label: "Aller aux habitudes", href: "/habits" },
+        title: t(hour >= 21 ? "dashboard.alerts.streakRiskTitleUrgent" : "dashboard.alerts.streakRiskTitleWarning"),
+        text: t("dashboard.alerts.streakRiskText", { name: s.name, streak: s.streak }),
+        action: { label: t("dashboard.alerts.actions.goToHabits"), href: "/habits" },
       });
     }
     if (!s.doneToday && s.streak === 0 && s.lostLength >= 3) {
       out.push({
         id: `streak-lost-${s.name}`,
         variant: "warning",
-        title: "Série perdue",
-        text: `Ta série de ${s.lostLength} jours sur « ${s.name} » s'est arrêtée hier. Ça arrive à tout le monde : repars dès aujourd'hui, une nouvelle série commence par un seul jour.`,
-        action: { label: "Reprendre maintenant", href: "/habits" },
+        title: t("dashboard.alerts.streakLostTitle"),
+        text: t("dashboard.alerts.streakLostText", { lostLength: s.lostLength, name: s.name }),
+        action: { label: t("dashboard.alerts.actions.resumeNow"), href: "/habits" },
       });
     }
   }
@@ -94,17 +97,19 @@ export function buildAlerts(f: AlertFacts, hour: number, isoWeekday: number): Sm
       out.push({
         id: "habits-all-done",
         variant: "success",
-        title: "Journée parfaite",
-        text: `Toutes tes habitudes du jour sont faites (${f.habits.total}/${f.habits.total}). Bravo ! 🎉`,
+        title: t("dashboard.alerts.allDoneTitle"),
+        text: t("dashboard.alerts.allDoneText", { total: f.habits.total }),
       });
     } else if (hour >= 18) {
       const left = f.habits.remaining.length;
       out.push({
         id: "habits-left-evening",
         variant: "info",
-        title: `${left} ${plural(left, "habitude", "habitudes")} à faire`,
-        text: `Il te reste : ${f.habits.remaining.slice(0, 3).join(", ")}${left > 3 ? "…" : ""}. Il n'est pas trop tard pour finir la journée en beauté.`,
-        action: { label: "Cocher maintenant", href: "/habits" },
+        title: t(left > 1 ? "dashboard.alerts.habitsLeftTitleMany" : "dashboard.alerts.habitsLeftTitleOne", { count: left }),
+        text: t("dashboard.alerts.habitsLeftText", {
+          list: `${f.habits.remaining.slice(0, 3).join(", ")}${left > 3 ? "…" : ""}`,
+        }),
+        action: { label: t("dashboard.alerts.actions.checkNow"), href: "/habits" },
       });
     }
   }
@@ -116,16 +121,22 @@ export function buildAlerts(f: AlertFacts, hour: number, isoWeekday: number): Sm
     out.push({
       id: "sport-goal-reached",
       variant: "success",
-      title: "Objectif sport atteint",
-      text: `${f.sportSessions}/${f.sportGoal} séances cette semaine. Tu peux souffler ou viser plus haut ! 💪`,
+      title: t("dashboard.alerts.sportGoalReachedTitle"),
+      text: t("dashboard.alerts.sportGoalReachedText", { sessions: f.sportSessions, goal: f.sportGoal }),
     });
   } else if (missing > 0 && missing >= daysLeft) {
     out.push({
       id: "sport-goal-risk",
       variant: "warning",
-      title: "Objectif de la semaine en danger",
-      text: `Il te reste ${missing} ${plural(missing, "séance", "séances")} à faire en ${daysLeft} ${plural(daysLeft, "jour", "jours")} pour atteindre ${f.sportGoal}. Planifie-en une aujourd'hui.`,
-      action: { label: "Voir ma séance", href: "/sport" },
+      title: t("dashboard.alerts.sportGoalRiskTitle"),
+      text: t("dashboard.alerts.sportGoalRiskText", {
+        missing,
+        sessionWord: plural(missing, "sessionOne", "sessionMany"),
+        daysLeft,
+        dayWord: plural(daysLeft, "dayOne", "dayMany"),
+        goal: f.sportGoal,
+      }),
+      action: { label: t("dashboard.alerts.actions.viewSession"), href: "/sport" },
     });
   }
 
@@ -134,18 +145,18 @@ export function buildAlerts(f: AlertFacts, hour: number, isoWeekday: number): Sm
     out.push({
       id: "no-meals",
       variant: "tip",
-      title: "Aucun repas noté",
-      text: "Rien n'est enregistré dans ton journal alimentaire aujourd'hui. Note au moins ce que tu as déjà mangé pour garder des stats justes.",
-      action: { label: "Ajouter un repas", href: "/nutrition" },
+      title: t("dashboard.alerts.noMealsTitle"),
+      text: t("dashboard.alerts.noMealsText"),
+      action: { label: t("dashboard.alerts.actions.addMeal"), href: "/nutrition" },
     });
   }
   if (f.proteinGoal && f.mealsCount > 0 && hour >= 19 && f.protein < f.proteinGoal * 0.6) {
     out.push({
       id: "protein-low",
       variant: "info",
-      title: "Protéines en retard",
-      text: `Il te manque ${Math.round(f.proteinGoal - f.protein)} g de protéines pour ton objectif. Un yaourt grec, des œufs ou un shake peuvent combler l'écart.`,
-      action: { label: "Ajouter un aliment", href: "/nutrition" },
+      title: t("dashboard.alerts.proteinLowTitle"),
+      text: t("dashboard.alerts.proteinLowText", { missing: Math.round(f.proteinGoal - f.protein) }),
+      action: { label: t("dashboard.alerts.actions.addFood"), href: "/nutrition" },
     });
   }
   const waterPct = f.waterGoal ? f.waterMl / f.waterGoal : 1;
@@ -153,15 +164,15 @@ export function buildAlerts(f: AlertFacts, hour: number, isoWeekday: number): Sm
     out.push({
       id: "water-low-evening",
       variant: "warning",
-      title: "Hydratation insuffisante",
-      text: `${f.waterMl} ml sur ${f.waterGoal} ml. Bois un grand verre d'eau maintenant, puis un autre avant de dormir.`,
+      title: t("dashboard.alerts.waterLowEveningTitle"),
+      text: t("dashboard.alerts.waterLowEveningText", { water: f.waterMl, goal: f.waterGoal }),
     });
   } else if (hour >= 14 && waterPct < 0.4) {
     out.push({
       id: "water-low-afternoon",
       variant: "tip",
-      title: "Pense à boire",
-      text: `Tu n'as bu que ${f.waterMl} ml sur ${f.waterGoal} ml. Ajoute un verre (250 ml) depuis le tableau de bord.`,
+      title: t("dashboard.alerts.waterLowAfternoonTitle"),
+      text: t("dashboard.alerts.waterLowAfternoonText", { water: f.waterMl, goal: f.waterGoal }),
     });
   }
 
@@ -170,35 +181,35 @@ export function buildAlerts(f: AlertFacts, hour: number, isoWeekday: number): Sm
     out.push({
       id: "mood-missing",
       variant: "tip",
-      title: "Comment tu te sens ?",
-      text: "Ton humeur du jour n'est pas encore notée : un clic suffit dans le panneau ci-dessous.",
+      title: t("dashboard.alerts.moodMissingTitle"),
+      text: t("dashboard.alerts.moodMissingText"),
     });
   }
   if (f.daysSinceWeight !== null && f.daysSinceWeight >= 7) {
     out.push({
       id: "weight-old",
       variant: "tip",
-      title: "Pesée à faire",
-      text: `Ta dernière pesée date de ${f.daysSinceWeight} jours. Une pesée par semaine suffit pour suivre ta tendance.`,
-      action: { label: "Noter mon poids", href: "/nutrition" },
+      title: t("dashboard.alerts.weightOldTitle"),
+      text: t("dashboard.alerts.weightOldText", { days: f.daysSinceWeight }),
+      action: { label: t("dashboard.alerts.actions.noteWeight"), href: "/nutrition" },
     });
   }
   if (!f.goalsSet) {
     out.push({
       id: "goals-missing",
       variant: "info",
-      title: "Objectifs nutrition non définis",
-      text: "Renseigne ta taille, ton poids et ton âge : l'app calcule tes calories et macros idéaux.",
-      action: { label: "Calculer mes objectifs", href: "/nutrition" },
+      title: t("dashboard.alerts.goalsMissingTitle"),
+      text: t("dashboard.alerts.goalsMissingText"),
+      action: { label: t("dashboard.alerts.actions.calculateGoals"), href: "/nutrition" },
     });
   }
   if (!f.reminderSet) {
     out.push({
       id: "reminder-missing",
       variant: "tip",
-      title: "Active ton rappel du soir",
-      text: "Un e-mail chaque jour te rappelle ce qu'il te reste à faire. Ça prend 10 secondes.",
-      action: { label: "Activer le rappel", href: "/profil" },
+      title: t("dashboard.alerts.reminderMissingTitle"),
+      text: t("dashboard.alerts.reminderMissingText"),
+      action: { label: t("dashboard.alerts.actions.activateReminder"), href: "/profil" },
     });
   }
 

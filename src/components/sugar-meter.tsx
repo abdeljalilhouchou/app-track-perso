@@ -1,5 +1,10 @@
+"use client";
+
+import { useT } from "@/components/language-provider";
+
 /** Daily sugar intake vs the user's personal limit. */
 export function SugarMeter({ sugarG, limitG }: { sugarG: number; limitG: number }) {
+  const t = useT();
   const over = sugarG > limitG;
   const pct = Math.min(100, Math.round((sugarG / limitG) * 100));
   const color = over ? "var(--danger)" : "var(--weight)";
@@ -7,7 +12,7 @@ export function SugarMeter({ sugarG, limitG }: { sugarG: number; limitG: number 
   return (
     <div className="rounded-2xl border-[1.5px] border-weight/50 bg-surface p-5">
       <div className="mb-3 flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">🍬 Sucres</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("nutrition.sugarMeter.heading")}</p>
         <span className="text-sm">
           <span className="font-semibold" style={{ color: over ? "var(--danger)" : "var(--foreground)" }}>
             {sugarG}
@@ -20,8 +25,8 @@ export function SugarMeter({ sugarG, limitG }: { sugarG: number; limitG: number 
       </div>
       <p className="mt-2 text-[11px] text-foreground-muted">
         {over
-          ? `Tu dépasses ta limite de ${sugarG - limitG} g aujourd'hui.`
-          : `Il te reste ${Math.round((limitG - sugarG) * 10) / 10} g. Limite personnelle modifiable dans l'onglet Journal.`}
+          ? t("nutrition.sugarMeter.overLimit", { amount: sugarG - limitG })
+          : t("nutrition.sugarMeter.underLimit", { amount: Math.round((limitG - sugarG) * 10) / 10 })}
       </p>
     </div>
   );

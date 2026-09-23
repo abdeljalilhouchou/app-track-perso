@@ -4,9 +4,11 @@ import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { saveNutritionProfile } from "@/lib/actions/nutrition";
 import { ACTIVITY_LEVELS, NUTRITION_GOALS, computeNutritionTargets } from "@/lib/nutrition-calculator";
+import { useT } from "@/components/language-provider";
 import type { Profile } from "@/types/database";
 
 export function NutritionGoalsCalculator({ profile }: { profile: Profile | null }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const [open, setOpen] = useState(!profile?.goal_calories);
@@ -33,14 +35,15 @@ export function NutritionGoalsCalculator({ profile }: { profile: Profile | null 
         <div className="flex flex-wrap gap-4 text-sm">
           <span><strong>{profile.goal_calories}</strong> kcal/j</span>
           <span className="text-foreground-muted">
-            {profile.goal_protein}g P · {profile.goal_carbs}g G · {profile.goal_fat}g L
+            {profile.goal_protein}g {t("nutrition.common.proteinAbbrev")} · {profile.goal_carbs}g{" "}
+            {t("nutrition.common.carbsAbbrev")} · {profile.goal_fat}g {t("nutrition.common.fatAbbrev")}
           </span>
         </div>
         <button
           onClick={() => setOpen(true)}
           className="text-xs font-medium text-accent hover:underline"
         >
-          Recalculer
+          {t("nutrition.goalsCalculator.recalculate")}
         </button>
       </div>
     );
@@ -50,7 +53,10 @@ export function NutritionGoalsCalculator({ profile }: { profile: Profile | null 
     <form
       action={(formData) =>
         startTransition(async () => {
-          const r = await run(() => saveNutritionProfile(formData), { success: `Objectifs mis à jour : ${preview.calories} kcal par jour 🎯`, failure: "Objectifs non enregistrés" });
+          const r = await run(() => saveNutritionProfile(formData), {
+            success: t("nutrition.goalsCalculator.saveSuccess", { calories: preview.calories }),
+            failure: t("nutrition.goalsCalculator.saveFailure"),
+          });
           if (!r || r.error) return;
           setOpen(false);
         })
@@ -59,7 +65,7 @@ export function NutritionGoalsCalculator({ profile }: { profile: Profile | null 
     >
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <label className="flex flex-col gap-1">
-          <span className="text-[10px] font-medium text-foreground-muted">Taille (cm)</span>
+          <span className="text-[10px] font-medium text-foreground-muted">{t("nutrition.goalsCalculator.height")}</span>
           <input
             name="height_cm"
             type="number"
@@ -71,7 +77,7 @@ export function NutritionGoalsCalculator({ profile }: { profile: Profile | null 
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-[10px] font-medium text-foreground-muted">Poids (kg)</span>
+          <span className="text-[10px] font-medium text-foreground-muted">{t("nutrition.goalsCalculator.weight")}</span>
           <input
             name="weight_kg"
             type="number"
@@ -83,7 +89,7 @@ export function NutritionGoalsCalculator({ profile }: { profile: Profile | null 
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-[10px] font-medium text-foreground-muted">Âge</span>
+          <span className="text-[10px] font-medium text-foreground-muted">{t("nutrition.goalsCalculator.age")}</span>
           <input
             name="age"
             type="number"
@@ -95,21 +101,21 @@ export function NutritionGoalsCalculator({ profile }: { profile: Profile | null 
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-[10px] font-medium text-foreground-muted">Sexe</span>
+          <span className="text-[10px] font-medium text-foreground-muted">{t("nutrition.goalsCalculator.sex")}</span>
           <select
             name="sex"
             value={sex}
             onChange={(e) => setSex(e.target.value as "homme" | "femme")}
             className="rounded-lg border border-border bg-surface-muted px-2.5 py-2 text-sm outline-none focus:border-accent"
           >
-            <option value="homme">Homme</option>
-            <option value="femme">Femme</option>
+            <option value="homme">{t("nutrition.goalsCalculator.male")}</option>
+            <option value="femme">{t("nutrition.goalsCalculator.female")}</option>
           </select>
         </label>
       </div>
 
       <label className="flex flex-col gap-1">
-        <span className="text-[10px] font-medium text-foreground-muted">Niveau d&apos;activité</span>
+        <span className="text-[10px] font-medium text-foreground-muted">{t("nutrition.goalsCalculator.activityLevel")}</span>
         <select
           name="activity_level"
           value={activity}
@@ -118,14 +124,15 @@ export function NutritionGoalsCalculator({ profile }: { profile: Profile | null 
         >
           {ACTIVITY_LEVELS.map((a) => (
             <option key={a.value} value={a.value}>
-              {a.label} — {a.hint}
+              {t(`nutrition.goalsCalculator.activityLevels.${a.value}.label`)} —{" "}
+              {t(`nutrition.goalsCalculator.activityLevels.${a.value}.hint`)}
             </option>
           ))}
         </select>
       </label>
 
       <label className="flex flex-col gap-1">
-        <span className="text-[10px] font-medium text-foreground-muted">Objectif</span>
+        <span className="text-[10px] font-medium text-foreground-muted">{t("nutrition.goalsCalculator.goal")}</span>
         <select
           name="nutrition_goal"
           value={goal}
@@ -134,17 +141,24 @@ export function NutritionGoalsCalculator({ profile }: { profile: Profile | null 
         >
           {NUTRITION_GOALS.map((g) => (
             <option key={g.value} value={g.value}>
-              {g.label}
+              {t(`nutrition.goalsCalculator.goals.${g.value}`)}
             </option>
           ))}
         </select>
       </label>
 
       <div className="rounded-xl bg-accent-soft p-3 text-sm">
-        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-accent">Résultat estimé</p>
+        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-accent">{t("nutrition.goalsCalculator.resultTitle")}</p>
         <p>
-          <strong>{preview.calories} kcal/jour</strong> — {preview.protein}g protéines · {preview.carbs}g glucides ·{" "}
-          {preview.fat}g lipides
+          {t("nutrition.goalsCalculator.resultLine", {
+            calories: preview.calories,
+            protein: preview.protein,
+            proteinsWord: t("nutrition.common.proteinsWord"),
+            carbs: preview.carbs,
+            carbsWord: t("nutrition.common.carbsWord"),
+            fat: preview.fat,
+            fatWord: t("nutrition.common.fatWord"),
+          })}
         </p>
       </div>
 
@@ -153,7 +167,7 @@ export function NutritionGoalsCalculator({ profile }: { profile: Profile | null 
         disabled={pending}
         className="rounded-xl border-[1.5px] border-accent px-4 py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-on-accent disabled:opacity-60"
       >
-        {pending ? "Enregistrement..." : "Enregistrer mes objectifs"}
+        {pending ? t("nutrition.common.saving") : t("nutrition.goalsCalculator.saveButton")}
       </button>
     </form>
   );

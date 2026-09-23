@@ -16,7 +16,7 @@ import { InViewFade } from "@/components/ui/in-view-fade";
 import { weeklyTotals } from "@/lib/weekly";
 import { buildRings, sumMeals } from "@/lib/nutrition-totals";
 import { SugarMeter } from "@/components/sugar-meter";
-import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
 
 export default async function NutritionPage({
   searchParams,
@@ -30,6 +30,7 @@ export default async function NutritionPage({
   } = await supabase.auth.getUser();
   if (!user) return null;
   const dict = await getDictionary();
+  const t = await getT();
 
   const today = format(new Date(), "yyyy-MM-dd");
   const seventyDaysAgo = format(subDays(new Date(), 70), "yyyy-MM-dd");
@@ -111,8 +112,14 @@ export default async function NutritionPage({
     .map((name) => (foods ?? []).find((f) => f.name === name))
     .filter((f): f is NonNullable<typeof f> => Boolean(f));
 
-  const rings = buildRings(totals, profile);
-  const selectedRings = buildRings(selectedTotals, profile);
+  const macroRingLabels = {
+    calories: t("nutrition.macroRings.calories"),
+    protein: t("nutrition.macroRings.protein"),
+    carbs: t("nutrition.macroRings.carbs"),
+    fat: t("nutrition.macroRings.fat"),
+  };
+  const rings = buildRings(totals, profile, macroRingLabels);
+  const selectedRings = buildRings(selectedTotals, profile, macroRingLabels);
   const SUGAR_LIMIT_G = profile?.sugar_limit_g ?? 50;
 
   return (
@@ -135,29 +142,39 @@ export default async function NutritionPage({
         today={
           <>
             {!profile?.goal_calories && (
-              <Callout variant="info" title="Définis tes objectifs" action={{ label: "Calculer mes objectifs", href: "/nutrition?date=" + today }}>
-                Sans objectif, les anneaux ne peuvent pas se remplir. Ouvre l&apos;onglet <strong>Journal</strong> et renseigne
-                ta taille, ton poids et ton âge : l&apos;app calcule tes calories et tes macros.
+              <Callout
+                variant="info"
+                title={t("nutrition.page.defineGoalsTitle")}
+                action={{ label: t("nutrition.page.defineGoalsAction"), href: "/nutrition?date=" + today }}
+              >
+                {t("nutrition.page.defineGoalsBodyPrefix")}
+                <strong>{t("tabs.nutrition.journal")}</strong>
+                {t("nutrition.page.defineGoalsBodySuffix")}
               </Callout>
             )}
             {profile?.goal_calories && totals.calories > profile.goal_calories * 1.15 && (
-              <Callout variant="warning" title="Objectif calorique dépassé" dismissKey={`kcal-over:${today}`}>
-                Tu es à {totals.calories} kcal pour un objectif de {profile.goal_calories} kcal (+{totals.calories - profile.goal_calories}).
+              <Callout variant="warning" title={t("nutrition.page.overGoalTitle")} dismissKey={`kcal-over:${today}`}>
+                {t("nutrition.page.overGoalBody", {
+                  current: totals.calories,
+                  goal: profile.goal_calories,
+                  diff: totals.calories - profile.goal_calories,
+                })}
               </Callout>
             )}
             {profile?.goal_calories && totals.calories > 0 && totals.calories <= profile.goal_calories && totals.calories >= profile.goal_calories * 0.9 && (
               <Callout variant="success" dismissKey={`kcal-on-target:${today}`} compact>
-                Tu es pile dans ton objectif calorique aujourd&apos;hui. Bien joué !
+                {t("nutrition.page.onTargetBody")}
               </Callout>
             )}
             <Callout variant="tip" dismissKey="nutrition-off-tip" compact>
-              Un produit du supermarché n&apos;est pas dans ta base ? Tape son nom dans « Ajouter un aliment » puis lance la
-              recherche <strong>Open Food Facts</strong>.
+              {t("nutrition.page.offTipPrefix")}« {t("nutrition.page.addFoodHeading")} »{t("nutrition.page.offTipMiddle")}
+              <strong>Open Food Facts</strong>
+              {t("nutrition.page.offTipSuffix")}
             </Callout>
 
             <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
               <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                Aujourd&apos;hui
+                {t("nutrition.page.todayLabel")}
               </p>
               <MacroRings rings={rings} />
             </div>
@@ -165,7 +182,7 @@ export default async function NutritionPage({
             {caffeineMg > 0 && (
               <div className="rounded-2xl border-[1.5px] border-mood/50 bg-surface p-5">
                 <div className="mb-3 flex items-center justify-between">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">☕ Caféine</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("nutrition.page.caffeineHeading")}</p>
                   <span className="text-sm">
                     <span
                       className="font-semibold"
@@ -186,7 +203,10 @@ export default async function NutritionPage({
                   />
                 </div>
                 <p className="mt-2 text-[11px] text-foreground-muted">
-                  Ta limite quotidienne : {CAFFEINE_LIMIT_MG} mg (environ {Math.max(1, Math.round(CAFFEINE_LIMIT_MG / 100))} tasses de café). Modifiable dans l&apos;onglet Journal.
+                  {t("nutrition.page.caffeineLimitNote", {
+                    limit: CAFFEINE_LIMIT_MG,
+                    cups: Math.max(1, Math.round(CAFFEINE_LIMIT_MG / 100)),
+                  })}
                 </p>
               </div>
             )}
@@ -197,7 +217,7 @@ export default async function NutritionPage({
 
             <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                Ajouter un aliment
+                {t("nutrition.page.addFoodHeading")}
               </p>
               <MealForm foods={foods ?? []} quickFoods={quickFoods} />
             </div>
@@ -216,7 +236,7 @@ export default async function NutritionPage({
 
             <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                Objectifs quotidiens
+                {t("nutrition.page.dailyGoalsHeading")}
               </p>
               <NutritionGoalsCalculator profile={profile} />
               <DailyLimits waterGoalMl={profile?.water_goal_ml ?? 2000} caffeineLimitMg={profile?.caffeine_limit_mg ?? 400} sugarLimitG={SUGAR_LIMIT_G} />
@@ -224,7 +244,7 @@ export default async function NutritionPage({
 
             <InViewFade className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                Tendance calorique (10 dernières semaines)
+                {t("nutrition.page.calorieTrendHeading")}
               </p>
               <WeeklyBarChart data={caloriesChart} color="var(--nutrition)" unit="kcal" />
             </InViewFade>

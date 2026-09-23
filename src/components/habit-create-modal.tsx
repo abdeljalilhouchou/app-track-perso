@@ -5,9 +5,11 @@ import { useState, useTransition } from "react";
 import { createHabit } from "@/lib/actions/habits";
 import { Dialog } from "@/components/ui/dialog";
 import { IconPicker } from "@/components/ui/icon-picker";
-import { CATEGORY_META, CATEGORY_PRESETS, WEEKDAYS } from "@/lib/habit-categories";
+import { useT } from "@/components/language-provider";
+import { CATEGORY_META, CATEGORY_PRESETS, WEEKDAYS, categorySlug, weekdaySlug } from "@/lib/habit-categories";
 
 export function HabitCreateModal() {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
@@ -18,7 +20,9 @@ export function HabitCreateModal() {
 
   const meta = CATEGORY_META[category] ?? CATEGORY_META["Général"];
   const scheduleLabel =
-    days.length === 7 ? "tous les jours" : days.map((d) => WEEKDAYS.find((w) => w.value === d)?.label).join(", ");
+    days.length === 7
+      ? t("habits.createModal.everyDay")
+      : days.map((d) => t(`habits.weekdaysLong.${weekdaySlug(d)}`)).join(", ");
 
   function reset() {
     setIcon("✨");
@@ -44,7 +48,10 @@ export function HabitCreateModal() {
 
   function submit(formData: FormData) {
     startTransition(async () => {
-      const r = await run(() => createHabit(formData), { success: `Nouvelle habitude « ${formData.get("name")} » créée ✨`, failure: "Création impossible" });
+      const r = await run(() => createHabit(formData), {
+        success: t("habits.createModal.createSuccess", { name: String(formData.get("name")) }),
+        failure: t("habits.createModal.createError"),
+      });
       if (!r || r.error) return;
       close();
     });
@@ -60,17 +67,17 @@ export function HabitCreateModal() {
           <line x1="12" y1="5" x2="12" y2="19" />
           <line x1="5" y1="12" x2="19" y2="12" />
         </svg>
-        Nouvelle habitude
+        {t("habits.createModal.newHabit")}
       </button>
 
       <Dialog open={open} onClose={close}>
         <form action={submit} className="rounded-2xl bg-surface shadow-2xl">
           <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-border bg-surface px-5 py-4">
-            <span className="text-sm font-semibold">Nouvelle habitude</span>
+            <span className="text-sm font-semibold">{t("habits.createModal.newHabit")}</span>
             <button
               type="button"
               onClick={close}
-              aria-label="Fermer"
+              aria-label={t("common.close")}
               className="flex h-6.5 w-6.5 items-center justify-center rounded-full bg-surface-muted text-foreground-muted transition hover:bg-border"
             >
               ✕
@@ -86,17 +93,17 @@ export function HabitCreateModal() {
             </span>
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold" style={{ color: meta.color }}>
-                {name.trim() || "Nom de l'habitude"}
+                {name.trim() || t("habits.createModal.previewPlaceholder")}
               </p>
               <p className="text-xs text-foreground-muted">
-                {category} · {scheduleLabel}
+                {t(`habits.categories.${categorySlug(category)}`)} · {scheduleLabel}
               </p>
             </div>
           </div>
 
           <div className="space-y-4 px-5 py-4">
             <div>
-              <label className="mb-2 block text-xs font-medium text-foreground-muted">Nom</label>
+              <label className="mb-2 block text-xs font-medium text-foreground-muted">{t("habits.createModal.nameLabel")}</label>
               <div className="flex gap-2">
                 <IconPicker name="icon" value={icon} onChange={setIcon} color={meta.color} />
                 <input
@@ -105,14 +112,14 @@ export function HabitCreateModal() {
                   autoFocus
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Ex: Lire 10 minutes"
+                  placeholder={t("habits.createModal.nameInputPlaceholder")}
                   className="flex-1 rounded-xl border border-border bg-surface-muted px-3.5 py-2.5 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
                 />
               </div>
             </div>
 
             <div>
-              <label className="mb-2 block text-xs font-medium text-foreground-muted">Catégorie</label>
+              <label className="mb-2 block text-xs font-medium text-foreground-muted">{t("habits.createModal.categoryLabel")}</label>
               <div className="flex flex-wrap gap-1.5">
                 {CATEGORY_PRESETS.map((c) => {
                   const cMeta = CATEGORY_META[c];
@@ -130,7 +137,7 @@ export function HabitCreateModal() {
                       }}
                     >
                       <span className="h-1.5 w-1.5 rounded-full" style={{ background: cMeta.color }} />
-                      {cMeta.icon} {c}
+                      {cMeta.icon} {t(`habits.categories.${categorySlug(c)}`)}
                     </button>
                   );
                 })}
@@ -139,7 +146,7 @@ export function HabitCreateModal() {
             </div>
 
             <div>
-              <label className="mb-2 block text-xs font-medium text-foreground-muted">Jours prévus</label>
+              <label className="mb-2 block text-xs font-medium text-foreground-muted">{t("habits.createModal.scheduledDaysLabel")}</label>
               <div className="flex gap-1.5">
                 {WEEKDAYS.map((d) => {
                   const active = days.includes(d.value);
@@ -154,7 +161,7 @@ export function HabitCreateModal() {
                         color: active ? "white" : "var(--foreground-muted)",
                       }}
                     >
-                      {d.short}
+                      {t(`habits.weekdaysShort.${weekdaySlug(d.value)}`)}
                     </button>
                   );
                 })}
@@ -169,7 +176,7 @@ export function HabitCreateModal() {
               onClick={close}
               className="rounded-xl border border-border px-4 py-2 text-sm font-medium text-foreground-muted transition hover:bg-surface"
             >
-              Annuler
+              {t("common.cancel")}
             </button>
             <button
               type="submit"
@@ -177,7 +184,7 @@ export function HabitCreateModal() {
               className="rounded-xl px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:opacity-90 disabled:opacity-50"
               style={{ background: meta.color }}
             >
-              {pending ? "Création..." : "Créer l'habitude"}
+              {pending ? t("habits.createModal.creating") : t("habits.createModal.submit")}
             </button>
           </div>
         </form>

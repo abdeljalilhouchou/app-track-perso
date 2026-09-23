@@ -7,14 +7,8 @@ import { logMeal } from "@/lib/actions/nutrition";
 import { searchOpenFoodFacts, type OffResult } from "@/lib/actions/openfoodfacts";
 import { computeMacros } from "@/lib/food-database";
 import { useClickOutside } from "@/lib/use-click-outside";
+import { useT } from "@/components/language-provider";
 import type { Food } from "@/types/database";
-
-const MEAL_TYPES = [
-  { value: "petit-dejeuner", label: "Petit-déj", icon: "🌅" },
-  { value: "dejeuner", label: "Déjeuner", icon: "☀️" },
-  { value: "diner", label: "Dîner", icon: "🌙" },
-  { value: "collation", label: "Collation", icon: "🍎" },
-] as const;
 
 type SelectedFood = {
   id: string;
@@ -70,8 +64,16 @@ function fromOff(r: OffResult): SelectedFood {
 }
 
 export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods?: Food[] }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
+
+  const MEAL_TYPES = [
+    { value: "petit-dejeuner", label: t("nutrition.mealTypes.petitDejeunerShort"), icon: "🌅" },
+    { value: "dejeuner", label: t("nutrition.mealTypes.dejeuner"), icon: "☀️" },
+    { value: "diner", label: t("nutrition.mealTypes.diner"), icon: "🌙" },
+    { value: "collation", label: t("nutrition.mealTypes.collation"), icon: "🍎" },
+  ] as const;
   const [offPending, startOffTransition] = useTransition();
   const [resetKey, setResetKey] = useState(0);
   const [query, setQuery] = useState("");
@@ -123,7 +125,10 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
       key={resetKey}
       action={(formData) =>
         startTransition(async () => {
-          const r = await run(() => logMeal(formData), { success: `${formData.get("food_name")} ajouté · ${formData.get("calories")} kcal`, failure: "Ajout impossible" });
+          const r = await run(() => logMeal(formData), {
+            success: t("nutrition.mealForm.addedToast", { name: String(formData.get("food_name")), calories: String(formData.get("calories")) }),
+            failure: t("nutrition.common.addFailure"),
+          });
           if (!r || r.error) return;
           reset();
           setJustAdded(true);
@@ -149,7 +154,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
       )}
 
       <div ref={ref} className="relative">
-        <label className="mb-1.5 block text-xs font-medium text-foreground-muted">Aliment</label>
+        <label className="mb-1.5 block text-xs font-medium text-foreground-muted">{t("nutrition.mealForm.foodLabel")}</label>
         <input
           value={query}
           onChange={(e) => {
@@ -159,7 +164,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
-          placeholder={foods.length > 0 ? "Ex: poitrine de poulet, espresso, jus d'orange..." : "Aucun aliment — ouvre Paramètres pour en ajouter"}
+          placeholder={foods.length > 0 ? t("nutrition.mealForm.placeholderWithFoods") : t("nutrition.mealForm.placeholderNoFoods")}
           className="w-full rounded-xl border border-border bg-surface-muted px-3.5 py-2.5 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
         />
         <AnimatePresence>
@@ -189,7 +194,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
         {open && query.trim() && matches.length === 0 && !offResults && (
           <div className="mt-1.5 space-y-1.5">
             <p className="text-xs text-foreground-muted">
-              Aucun résultat dans ta base — ajoute-le via ⚙️ Paramètres, ou cherche en ligne :
+              {t("nutrition.mealForm.noResultsHint")}
             </p>
             <button
               type="button"
@@ -197,14 +202,14 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
               disabled={offPending}
               className="rounded-lg border border-dashed border-accent/50 px-2.5 py-1.5 text-xs font-medium text-accent transition hover:bg-accent-soft disabled:opacity-60"
             >
-              {offPending ? "Recherche..." : "🌍 Rechercher sur Open Food Facts"}
+              {offPending ? t("nutrition.mealForm.searching") : t("nutrition.mealForm.searchOff")}
             </button>
           </div>
         )}
         {offResults && (
           <div className="mt-1.5 max-h-64 overflow-y-auto rounded-xl border border-nutrition/40 bg-surface p-1.5 shadow-xl">
             {offResults.length === 0 ? (
-              <p className="px-2.5 py-2 text-xs text-foreground-muted">Aucun résultat en ligne.</p>
+              <p className="px-2.5 py-2 text-xs text-foreground-muted">{t("nutrition.mealForm.noOnlineResults")}</p>
             ) : (
               offResults.map((r) => (
                 <button
@@ -230,7 +235,9 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
 
       <div className="grid grid-cols-2 gap-3">
         <label className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-foreground-muted">Quantité ({selected?.unit ?? "g"})</span>
+          <span className="text-xs font-medium text-foreground-muted">
+            {t("nutrition.mealForm.quantityLabel", { unit: selected?.unit ?? "g" })}
+          </span>
           <input
             type="number"
             min={1}
@@ -240,7 +247,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
           />
         </label>
         <div className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-foreground-muted">Repas</span>
+          <span className="text-xs font-medium text-foreground-muted">{t("nutrition.mealForm.mealLabel")}</span>
           <div className="flex gap-1 rounded-xl border border-nutrition/40 bg-surface-muted p-1">
             {MEAL_TYPES.map((m) => (
               <button
@@ -264,7 +271,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
           onClick={() => setGrams(selected.portion_grams!)}
           className="rounded-full border border-nutrition/40 px-2.5 py-1 text-xs text-foreground-muted transition hover:border-nutrition hover:text-accent"
         >
-          Portion : {selected.portion_label ? `${selected.portion_label} · ` : ""}
+          {t("nutrition.mealForm.portionPrefix")}{selected.portion_label ? `${selected.portion_label} · ` : ""}
           {selected.portion_grams}
           {selected.unit}
         </button>
@@ -274,17 +281,18 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
         <div className="flex flex-wrap gap-x-3 gap-y-1.5 rounded-xl bg-surface-muted p-3 text-xs">
           <span><strong>{preview.calories}</strong> kcal</span>
           <span className="text-foreground-muted">·</span>
-          <span><strong>{preview.protein}g</strong> protéines</span>
+          <span><strong>{preview.protein}g</strong> {t("nutrition.common.proteinsWord")}</span>
           <span className="text-foreground-muted">·</span>
-          <span><strong>{preview.carbs}g</strong> glucides</span>
+          <span><strong>{preview.carbs}g</strong> {t("nutrition.common.carbsWord")}</span>
           <span className="text-foreground-muted">·</span>
-          <span><strong>{preview.fat}g</strong> lipides</span>
+          <span><strong>{preview.fat}g</strong> {t("nutrition.common.fatWord")}</span>
           {(preview.fiber > 0 || preview.sugar > 0 || preview.sodium > 0 || preview.caffeine > 0) && (
             <>
               <span className="w-full" />
               <span className="text-foreground-muted">
-                {preview.fiber}g fibres · {preview.sugar}g sucres · {preview.sodium}mg sodium
-                {preview.caffeine > 0 ? ` · ☕ ${preview.caffeine}mg caféine` : ""}
+                {preview.fiber}g {t("nutrition.common.fiberWord")} · {preview.sugar}g {t("nutrition.common.sugarWord")} ·{" "}
+                {preview.sodium}mg {t("nutrition.common.sodiumWord")}
+                {preview.caffeine > 0 ? ` · ☕ ${preview.caffeine}mg ${t("nutrition.common.caffeineWord")}` : ""}
               </span>
             </>
           )}
@@ -325,7 +333,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
             transition={{ duration: 0.15 }}
             className="block"
           >
-            {justAdded ? "Ajouté ✓" : "Ajouter au journal"}
+            {justAdded ? t("nutrition.mealForm.addedButton") : t("nutrition.mealForm.addButton")}
           </motion.span>
         </AnimatePresence>
       </motion.button>

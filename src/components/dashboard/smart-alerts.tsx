@@ -16,8 +16,8 @@ export function SmartAlerts({ facts }: { facts: AlertFacts }) {
     return { hour: d.getHours(), iso: d.getDay() === 0 ? 7 : d.getDay() };
   });
 
-  const alerts = buildAlerts(facts, clock.hour, clock.iso);
   const t = useT();
+  const alerts = buildAlerts(facts, clock.hour, clock.iso, t);
   if (alerts.length === 0) return null;
 
   return (

@@ -15,8 +15,8 @@ import {
 import { fr } from "date-fns/locale";
 import { motion } from "framer-motion";
 import { toggleHabitLog, setHabitLogNote } from "@/lib/actions/habits";
-
-const WEEKDAY_LABELS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+import { useT } from "@/components/language-provider";
+import { WEEKDAY_SLUGS } from "@/lib/habit-categories";
 
 export function MonthCalendar({
   habitId,
@@ -31,6 +31,7 @@ export function MonthCalendar({
   loggedDates: Set<string>;
   notesByDate: Record<string, string>;
 }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const today = new Date();
@@ -49,7 +50,7 @@ export function MonthCalendar({
 
   function saveNote() {
     if (noteDraft.trim() === (notesByDate[selected] ?? "").trim()) return;
-    startTransition(async () => void (await run(() => setHabitLogNote(habitId, selected, noteDraft), { success: "Note enregistrée", failure: "Note non enregistrée" })));
+    startTransition(async () => void (await run(() => setHabitLogNote(habitId, selected, noteDraft), { success: t("habits.monthCalendar.noteSaved"), failure: t("habits.monthCalendar.noteSaveError") })));
   }
 
   const selectedDone = loggedDates.has(selected);
@@ -58,8 +59,8 @@ export function MonthCalendar({
   return (
     <div>
       <div className="mb-2 grid grid-cols-7 gap-1 text-center text-xs text-foreground-muted">
-        {WEEKDAY_LABELS.map((d) => (
-          <span key={d}>{d}</span>
+        {WEEKDAY_SLUGS.map((slug) => (
+          <span key={slug}>{t(`habits.weekdaysMid.${slug}`)}</span>
         ))}
       </div>
       <div className="grid grid-cols-7 gap-1">
@@ -116,7 +117,7 @@ export function MonthCalendar({
             onClick={() =>
               startTransition(async () =>
                 void (await run(() => toggleHabitLog(habitId, selected), {
-                  success: selectedDone ? "Jour décoché" : "Jour validé ✓",
+                  success: selectedDone ? t("habits.monthCalendar.uncheckedDay") : t("habits.monthCalendar.checkedDay"),
                   undo: { run: () => toggleHabitLog(habitId, selected) },
                 }))
               )
@@ -127,7 +128,7 @@ export function MonthCalendar({
               color: selectedDone ? "white" : "var(--on-accent)",
             }}
           >
-            {selectedDone ? "Fait ✓" : "Marquer fait"}
+            {selectedDone ? t("habits.monthCalendar.done") : t("habits.monthCalendar.markDone")}
           </button>
         </div>
         <input
@@ -135,7 +136,7 @@ export function MonthCalendar({
           onChange={(e) => setNoteDraft(e.target.value)}
           onBlur={saveNote}
           disabled={selectedIsFuture}
-          placeholder="Note pour ce jour (optionnel)"
+          placeholder={t("habits.monthCalendar.notePlaceholder")}
           className="mt-2 w-full rounded-lg border border-border bg-surface px-2.5 py-1.5 text-xs outline-none transition focus:border-accent disabled:opacity-50"
         />
       </motion.div>

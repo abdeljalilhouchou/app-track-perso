@@ -4,11 +4,13 @@ import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { deleteHabit, resumeHabit } from "@/lib/actions/habits";
-import { CATEGORY_META } from "@/lib/habit-categories";
+import { useT } from "@/components/language-provider";
+import { CATEGORY_META, categorySlug } from "@/lib/habit-categories";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import type { Habit } from "@/types/database";
 
 export function PausedHabits({ habits }: { habits: Habit[] }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
@@ -21,7 +23,7 @@ export function PausedHabits({ habits }: { habits: Habit[] }) {
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-center justify-between text-sm font-medium text-foreground-muted"
       >
-        <span>⏸️ Habitudes en pause ({habits.length})</span>
+        <span>{t("habits.paused.header", { count: habits.length })}</span>
         <span className={`transition-transform ${open ? "rotate-180" : ""}`}>▾</span>
       </button>
 
@@ -46,25 +48,25 @@ export function PausedHabits({ habits }: { habits: Habit[] }) {
                       <span>{habit.icon}</span>
                       {habit.name}
                       <span className="text-xs" style={{ color: meta.color }}>
-                        {meta.icon} {habit.category}
+                        {meta.icon} {t(`habits.categories.${categorySlug(habit.category)}`)}
                       </span>
                     </span>
                     <div className="flex gap-3 text-xs">
                       <button
                         disabled={pending}
-                        onClick={() => startTransition(async () => void (await run(() => resumeHabit(habit.id), { success: `« ${habit.name} » reprise, c'est reparti !` })))}
+                        onClick={() => startTransition(async () => void (await run(() => resumeHabit(habit.id), { success: t("habits.paused.resumeSuccess", { name: habit.name }) })))}
                         className="font-medium text-accent hover:underline disabled:opacity-50"
                       >
-                        Reprendre
+                        {t("habits.paused.resume")}
                       </button>
                       <ConfirmDeleteButton
                         disabled={pending}
-                        onConfirm={() => startTransition(async () => void (await run(() => deleteHabit(habit.id), { success: `« ${habit.name} » supprimée`, failure: "Suppression impossible" })))}
-                        title={`Supprimer "${habit.name}" ?`}
-                        message="Son historique complet sera définitivement perdu. Cette action est irréversible."
+                        onConfirm={() => startTransition(async () => void (await run(() => deleteHabit(habit.id), { success: t("habits.paused.deleteSuccess", { name: habit.name }), failure: t("habits.paused.deleteError") })))}
+                        title={t("habits.paused.deleteConfirmTitle", { name: habit.name })}
+                        message={t("habits.paused.deleteConfirmMessage")}
                         className="text-foreground-muted hover:text-danger disabled:opacity-50"
                       >
-                        Supprimer
+                        {t("common.delete")}
                       </ConfirmDeleteButton>
                     </div>
                   </li>

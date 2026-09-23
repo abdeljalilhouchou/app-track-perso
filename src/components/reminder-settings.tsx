@@ -3,8 +3,10 @@
 import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { enableEmailReminders, updateReminderTime, disableReminders } from "@/lib/actions/reminders";
+import { useT } from "@/components/language-provider";
 
 export function ReminderSettings({ initialTime, email }: { initialTime: string | null; email: string }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const [time, setTime] = useState(initialTime ?? "19:00");
@@ -13,7 +15,10 @@ export function ReminderSettings({ initialTime, email }: { initialTime: string |
   function handleEnable() {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     startTransition(async () => {
-      const r = await run(() => enableEmailReminders(timezone, time), { success: `Rappel par e-mail activé chaque jour à ${time} 🔔`, failure: "Activation impossible" });
+      const r = await run(() => enableEmailReminders(timezone, time), {
+        success: t("profile.reminders.enabled", { time }),
+        failure: t("profile.reminders.enableFailed"),
+      });
       if (!r || r.error) return;
       setEnabled(true);
     });
@@ -21,7 +26,10 @@ export function ReminderSettings({ initialTime, email }: { initialTime: string |
 
   function handleDisable() {
     startTransition(async () => {
-      const r = await run(() => disableReminders(), { success: "Rappel désactivé", failure: "Désactivation impossible" });
+      const r = await run(() => disableReminders(), {
+        success: t("profile.reminders.disabled"),
+        failure: t("profile.reminders.disableFailed"),
+      });
       if (!r || r.error) return;
       setEnabled(false);
     });
@@ -30,7 +38,13 @@ export function ReminderSettings({ initialTime, email }: { initialTime: string |
   function handleTimeChange(newTime: string) {
     setTime(newTime);
     if (enabled) {
-      startTransition(async () => void (await run(() => updateReminderTime(newTime), { success: `Rappel déplacé à ${newTime}`, failure: "Heure non modifiée" })));
+      startTransition(
+        async () =>
+          void (await run(() => updateReminderTime(newTime), {
+            success: t("profile.reminders.moved", { time: newTime }),
+            failure: t("profile.reminders.moveFailed"),
+          }))
+      );
     }
   }
 
@@ -38,7 +52,7 @@ export function ReminderSettings({ initialTime, email }: { initialTime: string |
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-3">
         <label className="flex items-center gap-2 text-sm">
-          <span className="text-foreground-muted">Heure du rappel</span>
+          <span className="text-foreground-muted">{t("profile.reminders.timeLabel")}</span>
           <input
             type="time"
             value={time}
@@ -53,7 +67,7 @@ export function ReminderSettings({ initialTime, email }: { initialTime: string |
             disabled={pending}
             className="rounded-lg border border-border px-3.5 py-1.5 text-sm font-medium text-foreground-muted transition hover:bg-surface-muted disabled:opacity-60"
           >
-            Désactiver
+            {t("profile.reminders.disable")}
           </button>
         ) : (
           <button
@@ -61,16 +75,27 @@ export function ReminderSettings({ initialTime, email }: { initialTime: string |
             disabled={pending}
             className="rounded-lg bg-accent px-3.5 py-1.5 text-sm font-medium text-on-accent transition hover:opacity-90 disabled:opacity-60"
           >
-            Activer les rappels
+            {t("profile.reminders.enable")}
           </button>
         )}
       </div>
 
       <p className="text-xs text-foreground-muted">
-        {enabled
-          ? <>Un email sera envoyé à <span className="font-medium text-foreground">{email}</span> vers {time} s&apos;il te reste des habitudes prévues aujourd&apos;hui.</>
-          : "Reçois un email de rappel si des habitudes prévues aujourd'hui ne sont pas encore cochées."}
+        {enabled ? <EnabledDescription text={t("profile.reminders.descriptionEnabled", { email, time })} email={email} /> : t("profile.reminders.descriptionDisabled")}
       </p>
     </div>
+  );
+}
+
+/** Renders the "reminder enabled" sentence with the email address bolded, wherever it lands in the translated text. */
+function EnabledDescription({ text, email }: { text: string; email: string }) {
+  const idx = text.indexOf(email);
+  if (idx === -1) return <>{text}</>;
+  return (
+    <>
+      {text.slice(0, idx)}
+      <span className="font-medium text-foreground">{email}</span>
+      {text.slice(idx + email.length)}
+    </>
   );
 }

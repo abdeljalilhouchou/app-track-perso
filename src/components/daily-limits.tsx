@@ -3,6 +3,7 @@
 import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { saveDailyLimits } from "@/lib/actions/nutrition";
+import { useT } from "@/components/language-provider";
 
 export function DailyLimits({
   waterGoalMl,
@@ -13,6 +14,7 @@ export function DailyLimits({
   caffeineLimitMg: number;
   sugarLimitG: number;
 }) {
+  const t = useT();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const [saved, setSaved] = useState(false);
@@ -21,7 +23,10 @@ export function DailyLimits({
     <form
       action={(formData) =>
         startTransition(async () => {
-          const r = await run(() => saveDailyLimits(formData), { success: "Limites personnelles enregistrées", failure: "Limites non enregistrées" });
+          const r = await run(() => saveDailyLimits(formData), {
+            success: t("nutrition.dailyLimits.saveSuccess"),
+            failure: t("nutrition.dailyLimits.saveFailure"),
+          });
           if (!r || r.error) return;
           setSaved(true);
           setTimeout(() => setSaved(false), 1500);
@@ -30,11 +35,11 @@ export function DailyLimits({
       className="mt-4 border-t border-nutrition/30 pt-4"
     >
       <p className="mb-3 text-[10px] font-semibold uppercase tracking-wide text-foreground-muted">
-        Mes limites personnelles
+        {t("nutrition.dailyLimits.heading")}
       </p>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <label className="flex flex-col gap-1">
-          <span className="text-[10px] font-medium text-foreground-muted">💧 Objectif d&apos;eau (ml/jour)</span>
+          <span className="text-[10px] font-medium text-foreground-muted">{t("nutrition.dailyLimits.waterGoalLabel")}</span>
           <input
             name="water_goal_ml"
             type="number"
@@ -46,7 +51,7 @@ export function DailyLimits({
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-[10px] font-medium text-foreground-muted">☕ Limite de caféine (mg/jour)</span>
+          <span className="text-[10px] font-medium text-foreground-muted">{t("nutrition.dailyLimits.caffeineLimitLabel")}</span>
           <input
             name="caffeine_limit_mg"
             type="number"
@@ -58,7 +63,7 @@ export function DailyLimits({
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-[10px] font-medium text-foreground-muted">🍬 Limite de sucres (g/jour)</span>
+          <span className="text-[10px] font-medium text-foreground-muted">{t("nutrition.dailyLimits.sugarLimitLabel")}</span>
           <input
             name="sugar_limit_g"
             type="number"
@@ -75,7 +80,7 @@ export function DailyLimits({
         disabled={pending}
         className="mt-3 rounded-xl border-[1.5px] border-accent px-4 py-2 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-on-accent disabled:opacity-60"
       >
-        {pending ? "Enregistrement..." : saved ? "Enregistré ✓" : "Enregistrer mes limites"}
+        {pending ? t("nutrition.common.saving") : saved ? t("nutrition.dailyLimits.saved") : t("nutrition.dailyLimits.saveButton")}
       </button>
     </form>
   );

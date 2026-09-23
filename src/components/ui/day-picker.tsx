@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { WEEKDAYS } from "@/lib/habit-categories";
+import { WEEKDAYS, weekdaySlug } from "@/lib/habit-categories";
+import { useT } from "@/components/language-provider";
 
 export function DayPicker({
   name,
@@ -16,6 +17,7 @@ export function DayPicker({
   const [selected, setSelected] = useState<number[]>(
     defaultValue && defaultValue.length > 0 ? defaultValue : [1, 2, 3, 4, 5, 6, 7]
   );
+  const t = useT();
 
   function toggle(day: number) {
     setSelected((prev) => {
@@ -37,7 +39,7 @@ export function DayPicker({
             <motion.button
               key={day.value}
               type="button"
-              title={day.label}
+              title={t(`habits.weekdaysLong.${weekdaySlug(day.value)}`)}
               onClick={() => toggle(day.value)}
               whileTap={{ scale: 0.88 }}
               className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium transition-colors"
@@ -46,7 +48,7 @@ export function DayPicker({
                 color: active ? "white" : "var(--foreground-muted)",
               }}
             >
-              {day.short}
+              {t(`habits.weekdaysShort.${weekdaySlug(day.value)}`)}
             </motion.button>
           );
         })}
