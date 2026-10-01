@@ -12,6 +12,9 @@ export async function signIn(_prevState: { error: string | null }, formData: For
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
+    if (error.code === "email_not_confirmed") {
+      return { error: "Email non confirmé. Clique sur le lien reçu par mail (vérifie aussi tes spams)." };
+    }
     return { error: "Email ou mot de passe incorrect." };
   }
 
