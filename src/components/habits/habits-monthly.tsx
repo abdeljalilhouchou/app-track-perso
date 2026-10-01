@@ -1,13 +1,13 @@
 import { endOfMonth, format, startOfMonth, subMonths } from "date-fns";
 import { fr } from "date-fns/locale";
 import { successRate } from "@/lib/habit-insights";
-import { useT } from "@/components/language-provider";
+import { getT } from "@/lib/i18n/get-dictionary";
 
 type Habit = { id: string; name: string; icon: string; color: string; scheduled_days: number[]; created_at: string };
 
 /** Success rate of each habit over the current month, compared with the previous one. */
-export function HabitsMonthly({ habits, logsByHabit }: { habits: Habit[]; logsByHabit: Map<string, Set<string>> }) {
-  const t = useT();
+export async function HabitsMonthly({ habits, logsByHabit }: { habits: Habit[]; logsByHabit: Map<string, Set<string>> }) {
+  const t = await getT();
   const now = new Date();
   const thisStart = startOfMonth(now);
   const lastStart = startOfMonth(subMonths(now, 1));
