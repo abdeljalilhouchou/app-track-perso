@@ -9,6 +9,7 @@ import { isFiniteInRange, isUuid, isValidIsoDate } from "@/lib/actions/validatio
 function revalidateSportViews() {
   revalidatePath("/sport");
   revalidatePath("/sport/musculation");
+  revalidatePath("/sport/calisthenics");
   revalidatePath("/sport/calendar");
   revalidatePath("/sport/stats");
 }
@@ -57,14 +58,25 @@ export async function deleteWorkout(id: string): Promise<ActionResult> {
   } = await supabase.auth.getUser();
   if (!user) return fail(NOT_SIGNED_IN);
 
-  const { data: workout, error: fetchError } = await supabase.from("workouts").select("workout_date")
+  const { data: classifiedWorkout, error: classifiedError } = await supabase.from("workouts").select("workout_date, discipline")
     .eq("id", id).eq("user_id", user.id).maybeSingle();
-  if (fetchError) return dbFail(fetchError);
+  let workoutDate = classifiedWorkout?.workout_date;
+  if (classifiedError && (classifiedError.code === "42703" || classifiedError.message.toLowerCase().includes("discipline"))) {
+    // Keep this existing action compatible while the additive phase 4 migration is still pending.
+    const { data: legacyWorkout, error: legacyError } = await supabase.from("workouts").select("workout_date")
+      .eq("id", id).eq("user_id", user.id).maybeSingle();
+    if (legacyError) return dbFail(legacyError);
+    workoutDate = legacyWorkout?.workout_date;
+  } else if (classifiedError) {
+    return dbFail(classifiedError);
+  } else if (classifiedWorkout?.discipline === "calisthenics") {
+    return fail("Supprime cette séance depuis le module Calisthenics.");
+  }
 
   const { error: error2 } = await supabase.from("workouts").delete().eq("id", id).eq("user_id", user.id);
   if (error2) return dbFail(error2);
 
-  const removed = workout ? await uncheckSportHabits(supabase, user.id, workout.workout_date) : 0;
+  const removed = workoutDate ? await uncheckSportHabits(supabase, user.id, workoutDate) : 0;
 
   revalidateSportViews();
   revalidatePath("/habits");

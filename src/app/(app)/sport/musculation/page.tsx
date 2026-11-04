@@ -35,7 +35,7 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
 
   const today = format(new Date(), "yyyy-MM-dd");
   const selectedDate = isValidIsoDate(requestedDate) ? requestedDate : today;
-  const [all, profileResult, sets, templatesRaw, templateRows, catalogRaw] = await Promise.all([
+  const [allWorkouts, profileResult, sets, templatesRaw, templateRows, catalogRaw] = await Promise.all([
     fetchAllRows((from, to) =>
       supabase
         .from("workouts")
@@ -88,6 +88,9 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
   ]);
   if (profileResult.error) throw new Error("Impossible de charger l’objectif sportif.");
   const profile = profileResult.data;
+  // Keep the established Muscle workspace scoped to its own sessions.
+  // Rows without an explicit discipline remain visible as before.
+  const all = allWorkouts.filter((workout) => workout.discipline !== "calisthenics" && workout.discipline !== "running");
 
   const weeklyGoal = profile?.sport_weekly_goal ?? 3;
   const language = isLanguage(profile?.language) ? profile.language : "fr";

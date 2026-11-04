@@ -20,6 +20,7 @@ async function currentUser() {
 function refresh() {
   revalidatePath("/sport");
   revalidatePath("/sport/musculation");
+  revalidatePath("/sport/calisthenics");
   revalidatePath("/sport/calendar");
   revalidatePath("/sport/stats");
   revalidatePath("/habits");

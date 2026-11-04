@@ -56,8 +56,10 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
   const { workouts, workoutSetIds, weeklyGoal, language, stats } = data;
   const recent = workouts.slice(0, 6);
   const lastSession = workouts[0];
-  const identifiedStrength = workouts.filter((workout) => Boolean(workout.template_id) || workoutSetIds.has(workout.id)).length;
-  const unclassified = workouts.length - identifiedStrength;
+  const identifiedCalisthenics = workouts.filter((workout) => workout.discipline === "calisthenics").length;
+  const identifiedStrength = workouts.filter((workout) => workout.discipline === "strength" ||
+    (workout.discipline !== "calisthenics" && (Boolean(workout.template_id) || workoutSetIds.has(workout.id)))).length;
+  const unclassified = Math.max(0, workouts.length - identifiedStrength - identifiedCalisthenics);
   const chartData = sportWeeklyDuration(workouts, language);
 
   return (
@@ -120,6 +122,7 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
             <div className="space-y-4">
               {[
                 { label: t("sport.hub.identifiedStrength"), count: identifiedStrength },
+                { label: t("sport.hub.calisthenics.title"), count: identifiedCalisthenics },
                 { label: t("sport.hub.unclassifiedActivity"), count: unclassified },
               ].map(({ label, count }) => (
                 <div key={label}>
@@ -153,6 +156,7 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
             href="/sport/calisthenics"
             title={t("sport.hub.calisthenics.title")}
             description={t("sport.hub.calisthenicsDescription")}
+            detail={identifiedCalisthenics > 0 ? `${identifiedCalisthenics} · ${t("sport.hub.calisthenics.sessionsTitle").toLowerCase()}` : undefined}
             Icon={SparkleIcon}
           />
           <DisciplineCard
@@ -182,7 +186,7 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
             {recent.map((workout) => (
               <li key={workout.id}>
                 <Link
-                  href={`/sport/musculation?date=${encodeURIComponent(workout.workout_date)}`}
+                  href={workout.discipline === "calisthenics" ? `/sport/calisthenics?session=${encodeURIComponent(workout.id)}` : `/sport/musculation?date=${encodeURIComponent(workout.workout_date)}`}
                   className="flex min-h-14 items-center justify-between gap-3 py-3 transition hover:text-sport"
                 >
                   <span className="min-w-0">

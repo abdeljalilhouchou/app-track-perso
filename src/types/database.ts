@@ -1,3 +1,5 @@
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+
 export type Database = {
   public: {
     Tables: {
@@ -81,6 +83,8 @@ export type Database = {
           notes: string | null;
           muscle_groups: string[];
           template_id: string | null;
+          discipline: "general" | "strength" | "calisthenics" | "running" | null;
+          calisthenics_program_session_id: string | null;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["workouts"]["Row"]> & {
@@ -333,9 +337,93 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["workout_sets"]["Row"]>;
         Relationships: [];
       };
+      calisthenics_exercises: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          exercise_key: string;
+          category: "push" | "pull" | "legs" | "core" | "skills" | "mobility";
+          primary_muscle: string;
+          level: "beginner" | "intermediate" | "advanced";
+          measurement_type: "reps" | "hold" | "mixed";
+          name_fr: string;
+          name_en: string;
+          name_ar: string;
+          description_fr: string;
+          description_en: string;
+          description_ar: string;
+          instructions_fr: string;
+          instructions_en: string;
+          instructions_ar: string;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["calisthenics_exercises"]["Row"]> & { exercise_key: string; category: "push" | "pull" | "legs" | "core" | "skills" | "mobility"; name_fr: string; name_en: string; name_ar: string };
+        Update: Partial<Database["public"]["Tables"]["calisthenics_exercises"]["Row"]>;
+        Relationships: [];
+      };
+      calisthenics_programs: {
+        Row: { id: string; user_id: string; name: string; notes: string; created_at: string; updated_at: string };
+        Insert: Partial<Database["public"]["Tables"]["calisthenics_programs"]["Row"]> & { user_id: string; name: string };
+        Update: Partial<Database["public"]["Tables"]["calisthenics_programs"]["Row"]>;
+        Relationships: [];
+      };
+      calisthenics_program_sessions: {
+        Row: { id: string; user_id: string; program_id: string; name: string; position: number; created_at: string };
+        Insert: Partial<Database["public"]["Tables"]["calisthenics_program_sessions"]["Row"]> & { user_id: string; program_id: string; name: string };
+        Update: Partial<Database["public"]["Tables"]["calisthenics_program_sessions"]["Row"]>;
+        Relationships: [];
+      };
+      calisthenics_program_exercises: {
+        Row: {
+          id: string; user_id: string; program_session_id: string; exercise_id: string | null;
+          exercise_name: string; category: "push" | "pull" | "legs" | "core" | "skills" | "mobility";
+          measurement_type: "reps" | "hold" | "mixed"; target_sets: number; target_reps: number | null;
+          target_hold_seconds: number | null; assistance_kg: number | null; added_weight_kg: number | null;
+          notes: string; position: number;
+        };
+        Insert: Partial<Database["public"]["Tables"]["calisthenics_program_exercises"]["Row"]> & { user_id: string; program_session_id: string; exercise_name: string; category: "push" | "pull" | "legs" | "core" | "skills" | "mobility"; measurement_type: "reps" | "hold" | "mixed" };
+        Update: Partial<Database["public"]["Tables"]["calisthenics_program_exercises"]["Row"]>;
+        Relationships: [];
+      };
+      calisthenics_sets: {
+        Row: {
+          id: string; user_id: string; workout_id: string; exercise_id: string | null; exercise_name: string;
+          category: "push" | "pull" | "legs" | "core" | "skills" | "mobility";
+          measurement_type: "reps" | "hold" | "mixed"; exercise_position: number; set_number: number;
+          reps: number | null; hold_seconds: number | null; assistance_kg: number | null; added_weight_kg: number | null;
+          variation: string; notes: string; created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["calisthenics_sets"]["Row"]> & { user_id: string; workout_id: string; exercise_name: string; category: "push" | "pull" | "legs" | "core" | "skills" | "mobility"; measurement_type: "reps" | "hold" | "mixed"; set_number: number };
+        Update: Partial<Database["public"]["Tables"]["calisthenics_sets"]["Row"]>;
+        Relationships: [];
+      };
+      calisthenics_skills: {
+        Row: {
+          id: string; user_id: string; name: string; skill_key: string; current_step: number; target_step: number;
+          progression_steps: string[]; measurement_type: "reps" | "hold"; started_on: string | null; notes: string;
+          created_at: string; updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["calisthenics_skills"]["Row"]> & { user_id: string; name: string };
+        Update: Partial<Database["public"]["Tables"]["calisthenics_skills"]["Row"]>;
+        Relationships: [];
+      };
+      calisthenics_skill_logs: {
+        Row: {
+          id: string; user_id: string; skill_id: string; workout_id: string | null; logged_on: string; step_index: number;
+          step_name: string; reps: number | null; hold_seconds: number | null; notes: string; created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["calisthenics_skill_logs"]["Row"]> & { user_id: string; skill_id: string; logged_on: string; step_index: number; step_name: string };
+        Update: Partial<Database["public"]["Tables"]["calisthenics_skill_logs"]["Row"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      save_calisthenics_program: {
+        Args: { p_program_id: string | null; p_name: string; p_notes: string; p_sessions: Json };
+        Returns: string;
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };
@@ -357,3 +445,10 @@ export type Exercise = Database["public"]["Tables"]["exercises"]["Row"];
 export type WorkoutTemplate = Database["public"]["Tables"]["workout_templates"]["Row"];
 export type WorkoutTemplateExercise = Database["public"]["Tables"]["workout_template_exercises"]["Row"];
 export type WorkoutSet = Database["public"]["Tables"]["workout_sets"]["Row"];
+export type CalisthenicsExercise = Database["public"]["Tables"]["calisthenics_exercises"]["Row"];
+export type CalisthenicsProgram = Database["public"]["Tables"]["calisthenics_programs"]["Row"];
+export type CalisthenicsProgramSession = Database["public"]["Tables"]["calisthenics_program_sessions"]["Row"];
+export type CalisthenicsProgramExercise = Database["public"]["Tables"]["calisthenics_program_exercises"]["Row"];
+export type CalisthenicsSet = Database["public"]["Tables"]["calisthenics_sets"]["Row"];
+export type CalisthenicsSkill = Database["public"]["Tables"]["calisthenics_skills"]["Row"];
+export type CalisthenicsSkillLog = Database["public"]["Tables"]["calisthenics_skill_logs"]["Row"];
