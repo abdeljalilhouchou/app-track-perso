@@ -17,6 +17,7 @@ import { SmartAlerts } from "@/components/dashboard/smart-alerts";
 import { computeStreak } from "@/lib/streak";
 import type { AlertFacts } from "@/lib/alerts";
 import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
+import { fetchAllRows } from "@/lib/paging";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -34,14 +35,14 @@ export default async function DashboardPage() {
   const since10w = format(subWeeks(today, 10), "yyyy-MM-dd");
 
   const [
-    { data: profile },
-    { data: habits },
-    { data: habitLogs },
-    { data: workouts },
-    { data: moodEntries },
-    { data: meals },
-    { data: todayWater },
-    { data: weightLogs },
+    profileResult,
+    habits,
+    habitLogs,
+    workouts,
+    moodEntries,
+    meals,
+    todayWaterResult,
+    weightLogs,
     stats,
   ] = await Promise.all([
     supabase
@@ -49,46 +50,52 @@ export default async function DashboardPage() {
       .select("display_name, goal_calories, goal_protein, goal_carbs, goal_fat, water_goal_ml, caffeine_limit_mg, sugar_limit_g, sport_weekly_goal, reminder_time")
       .eq("id", user.id)
       .single(),
-    supabase.from("habits").select("*").eq("user_id", user.id).eq("archived", false),
-    supabase.from("habit_logs").select("habit_id, log_date").eq("user_id", user.id).gte("log_date", since10w),
-    supabase
-      .from("workouts")
-      .select("*")
-      .eq("user_id", user.id)
-      .gte("workout_date", since10w)
-      .order("workout_date", { ascending: false }),
-    supabase
-      .from("mood_entries")
-      .select("*")
-      .eq("user_id", user.id)
-      .gte("entry_date", since30)
-      .order("entry_date", { ascending: true }),
-    supabase
-      .from("meal_entries")
-      .select("entry_date, calories, protein, carbs, fat, sugar, caffeine, unit, quantity_grams")
-      .eq("user_id", user.id)
-      .gte("entry_date", since30),
+    fetchAllRows((from, to) =>
+      supabase.from("habits").select("*").eq("user_id", user.id).eq("archived", false)
+        .order("position").order("id").range(from, to)
+    ),
+    fetchAllRows((from, to) =>
+      supabase.from("habit_logs").select("habit_id, log_date").eq("user_id", user.id).gte("log_date", since10w)
+        .order("log_date").order("habit_id").range(from, to)
+    ),
+    fetchAllRows((from, to) =>
+      supabase.from("workouts").select("*").eq("user_id", user.id).gte("workout_date", since10w)
+        .order("workout_date", { ascending: false }).order("id", { ascending: false }).range(from, to)
+    ),
+    fetchAllRows((from, to) =>
+      supabase.from("mood_entries").select("*").eq("user_id", user.id).gte("entry_date", since30)
+        .order("entry_date").order("id").range(from, to)
+    ),
+    fetchAllRows((from, to) =>
+      supabase.from("meal_entries")
+        .select("entry_date, calories, protein, carbs, fat, sugar, caffeine, unit, quantity_grams, id")
+        .eq("user_id", user.id).gte("entry_date", since30)
+        .order("entry_date").order("id").range(from, to)
+    ),
     supabase.from("water_logs").select("ml").eq("user_id", user.id).eq("entry_date", todayStr).maybeSingle(),
-    supabase
-      .from("weight_logs")
-      .select("*")
-      .eq("user_id", user.id)
-      .gte("entry_date", since60)
-      .order("entry_date", { ascending: true }),
+    fetchAllRows((from, to) =>
+      supabase.from("weight_logs").select("*").eq("user_id", user.id).gte("entry_date", since60)
+        .order("entry_date").order("id").range(from, to)
+    ),
     computeProfileStats(supabase, user.id),
   ]);
+
+  if (profileResult.error) throw new Error("Impossible de charger le profil.");
+  if (todayWaterResult.error) throw new Error("Impossible de charger l’hydratation du jour.");
+  const profile = profileResult.data;
+  const todayWater = todayWaterResult.data;
 
   const displayName = profile?.display_name || user.email?.split("@")[0] || "toi";
 
   const logsByHabit = new Map<string, Set<string>>();
-  for (const log of habitLogs ?? []) {
+  for (const log of habitLogs) {
     if (!logsByHabit.has(log.habit_id)) logsByHabit.set(log.habit_id, new Set());
     logsByHabit.get(log.habit_id)!.add(log.log_date);
   }
 
   // Today
   const todayIsoDay = getISODay(today);
-  const todayHabits = (habits ?? [])
+  const todayHabits = habits
     .filter((h) => h.scheduled_days.includes(todayIsoDay))
     .map((h) => ({
       id: h.id,
@@ -97,9 +104,9 @@ export default async function DashboardPage() {
       color: h.color,
       done: logsByHabit.get(h.id)?.has(todayStr) ?? false,
     }));
-  const moodToday = (moodEntries ?? []).find((e) => e.entry_date === todayStr)?.mood_score ?? null;
+  const moodToday = moodEntries.find((e) => e.entry_date === todayStr)?.mood_score ?? null;
 
-  const todayMeals = (meals ?? []).filter((m) => m.entry_date === todayStr);
+  const todayMeals = meals.filter((m) => m.entry_date === todayStr);
   const totals = todayMeals.reduce(
     (acc, m) => ({
       calories: acc.calories + m.calories,
@@ -123,8 +130,8 @@ export default async function DashboardPage() {
     { label: t("dashboard.rings.fat"), value: round1(totals.fat), goal: profile?.goal_fat ?? null, unit: "g", color: "var(--accent)" },
   ];
 
-  const latestWeight = weightLogs && weightLogs.length > 0 ? weightLogs[weightLogs.length - 1] : null;
-  const previousWeight = weightLogs && weightLogs.length > 1 ? weightLogs[weightLogs.length - 2] : null;
+  const latestWeight = weightLogs.length > 0 ? weightLogs[weightLogs.length - 1] : null;
+  const previousWeight = weightLogs.length > 1 ? weightLogs[weightLogs.length - 2] : null;
   const weightDelta = latestWeight && previousWeight ? round1(latestWeight.weight_kg - previousWeight.weight_kg) : null;
 
   // Progression
@@ -132,31 +139,31 @@ export default async function DashboardPage() {
 
   // Weekly recap + cross-module insights
   const recap = computeWeekRecap({
-    habits: habits ?? [],
+    habits,
     logsByHabit,
-    workouts: workouts ?? [],
-    moods: moodEntries ?? [],
-    meals: meals ?? [],
+    workouts,
+    moods: moodEntries,
+    meals,
   });
 
   const insights = buildInsights(
     {
-      moods: moodEntries ?? [],
-      workoutDates: new Set((workouts ?? []).map((w) => w.workout_date)),
-      meals: meals ?? [],
+      moods: moodEntries,
+      workoutDates: new Set(workouts.map((w) => w.workout_date)),
+      meals,
       goalProtein: profile?.goal_protein ?? null,
-      weights: weightLogs ?? [],
-      workouts: workouts ?? [],
+      weights: weightLogs,
+      workouts,
     },
     t
   );
 
   // Charts
   const sportChart = weeklyTotals(
-    (workouts ?? []).map((w) => ({ date: w.workout_date, value: w.duration_minutes })),
+    workouts.map((w) => ({ date: w.workout_date, value: w.duration_minutes })),
     10
   );
-  const moodChart = (moodEntries ?? []).map((e) => ({
+  const moodChart = moodEntries.map((e) => ({
     label: format(new Date(e.entry_date), "d MMM", { locale: fr }),
     mood: e.mood_score,
     energy: e.energy_level,
@@ -169,7 +176,7 @@ export default async function DashboardPage() {
     while (set.has(dayBefore(from + n))) n++;
     return n;
   };
-  const dailyHabits = (habits ?? []).filter((h) => h.scheduled_days.length === 7);
+  const dailyHabits = habits.filter((h) => h.scheduled_days.length === 7);
   const streaks = dailyHabits.map((h) => {
     const set = logsByHabit.get(h.id) ?? new Set<string>();
     const doneToday = set.has(todayStr);
@@ -178,7 +185,7 @@ export default async function DashboardPage() {
     return { name: h.name, streak: doneToday ? streak : set.has(dayBefore(1)) ? streak : 0, doneToday, lostLength };
   });
   const weekStart = format(startOfWeek(today, { weekStartsOn: 1 }), "yyyy-MM-dd");
-  const lastWeight = weightLogs && weightLogs.length > 0 ? weightLogs[weightLogs.length - 1] : null;
+  const lastWeight = weightLogs.length > 0 ? weightLogs[weightLogs.length - 1] : null;
   const alertFacts: AlertFacts = {
     today: todayStr,
     habits: {
@@ -199,7 +206,7 @@ export default async function DashboardPage() {
     caffeineLimit: profile?.caffeine_limit_mg ?? 400,
     sugar: sugarG,
     sugarLimit: profile?.sugar_limit_g ?? 50,
-    sportSessions: (workouts ?? []).filter((w) => w.workout_date >= weekStart).length,
+    sportSessions: workouts.filter((w) => w.workout_date >= weekStart).length,
     sportGoal: profile?.sport_weekly_goal ?? 3,
     daysSinceWeight: lastWeight ? differenceInCalendarDays(today, parseISO(lastWeight.entry_date)) : null,
     reminderSet: Boolean(profile?.reminder_time),
@@ -303,7 +310,7 @@ export default async function DashboardPage() {
         </InViewFade>
       </div>
 
-      {(!habits || habits.length === 0) && (
+      {habits.length === 0 && (
         <div className="rounded-2xl border border-dashed border-habit/40 p-6 text-center text-sm text-foreground-muted">
           {t("dashboard.emptyHabits.text")}{" "}
           <Link href="/habits" className="font-medium text-accent hover:underline">

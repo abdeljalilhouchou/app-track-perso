@@ -18,7 +18,7 @@ const round1 = (n: number | null) => (n === null ? null : Math.round(n * 10) / 1
 
 /** This week (Monday → today) compared with the same span of the previous week. */
 export function computeWeekRecap(input: {
-  habits: { id: string; scheduled_days: number[] }[];
+  habits: { id: string; scheduled_days: number[]; created_at: string }[];
   logsByHabit: Map<string, Set<string>>;
   workouts: { workout_date: string; duration_minutes: number }[];
   moods: { entry_date: string; mood_score: number }[];
@@ -46,7 +46,9 @@ export function computeWeekRecap(input: {
       let completed = 0;
       let expected = 0;
       for (const h of input.habits) {
-        const res = successRate(input.logsByHabit.get(h.id) ?? new Set(), h.scheduled_days, r.startD, r.endD);
+        const created = parseISO(h.created_at.slice(0, 10));
+        const start = created > r.startD ? created : r.startD;
+        const res = successRate(input.logsByHabit.get(h.id) ?? new Set(), h.scheduled_days, start, r.endD);
         completed += res.completed;
         expected += res.expected;
       }

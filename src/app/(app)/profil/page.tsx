@@ -23,11 +23,12 @@ export default async function ProfilPage() {
   const dict = await getDictionary();
   const t = await getT();
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("display_name, created_at, reminder_time, avatar_url")
     .eq("id", user.id)
     .single();
+  if (profileError) throw new Error("Impossible de charger le profil.");
 
   const stats = await computeProfileStats(supabase, user.id);
   const { points, level, pointsIntoLevel, pointsForNextLevel, progressPct, unlocked: unlockedBadges, locked: lockedBadges } =

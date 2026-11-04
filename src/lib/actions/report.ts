@@ -8,6 +8,9 @@ import { buildReport, periodRange, type RawReport, type ReportData, type ReportP
 const CHUNK = 60;
 
 function validate(period: ReportPeriod, today: string): string | null {
+  if (!period || typeof period !== "object" || (period.kind !== "year" && period.kind !== "month") || typeof period.year !== "number") {
+    return "Période invalide.";
+  }
   const thisYear = Number(today.slice(0, 4));
   if (!Number.isInteger(period.year) || period.year < 2000 || period.year > thisYear) return "Année invalide.";
   if (period.kind === "month") {
@@ -38,7 +41,8 @@ export async function getReport(period: ReportPeriod): Promise<{ data: ReportDat
         .select("display_name, goal_calories, goal_protein, goal_carbs, goal_fat")
         .eq("id", uid)
         .single(),
-      supabase.from("habits").select("id, name, scheduled_days, created_at").eq("user_id", uid),
+      fetchAllRows((from, to) => supabase.from("habits").select("id, name, scheduled_days, created_at")
+        .eq("user_id", uid).order("id").range(from, to)),
       fetchAllRows((from, to) =>
         supabase
           .from("habit_logs")
@@ -49,18 +53,12 @@ export async function getReport(period: ReportPeriod): Promise<{ data: ReportDat
           .order("id")
           .range(from, to)
       ),
-      supabase
-        .from("workouts")
-        .select("id, workout_date, activity, duration_minutes, intensity")
-        .eq("user_id", uid)
-        .gte("workout_date", start)
-        .lte("workout_date", end),
-      supabase
-        .from("mood_entries")
-        .select("entry_date, mood_score, energy_level, notes")
-        .eq("user_id", uid)
-        .gte("entry_date", start)
-        .lte("entry_date", end),
+      fetchAllRows((from, to) => supabase.from("workouts")
+        .select("id, workout_date, activity, duration_minutes, intensity").eq("user_id", uid)
+        .gte("workout_date", start).lte("workout_date", end).order("workout_date").order("id").range(from, to)),
+      fetchAllRows((from, to) => supabase.from("mood_entries")
+        .select("entry_date, mood_score, energy_level, notes, id").eq("user_id", uid)
+        .gte("entry_date", start).lte("entry_date", end).order("entry_date").order("id").range(from, to)),
       fetchAllRows((from, to) =>
         supabase
           .from("meal_entries")
@@ -71,15 +69,16 @@ export async function getReport(period: ReportPeriod): Promise<{ data: ReportDat
           .order("id")
           .range(from, to)
       ),
-      supabase.from("water_logs").select("entry_date, ml").eq("user_id", uid).gte("entry_date", start).lte("entry_date", end),
-      supabase.from("weight_logs").select("entry_date, weight_kg").eq("user_id", uid).gte("entry_date", start).lte("entry_date", end),
+      fetchAllRows((from, to) => supabase.from("water_logs").select("entry_date, ml").eq("user_id", uid)
+        .gte("entry_date", start).lte("entry_date", end).order("entry_date").range(from, to)),
+      fetchAllRows((from, to) => supabase.from("weight_logs").select("entry_date, weight_kg, id").eq("user_id", uid)
+        .gte("entry_date", start).lte("entry_date", end).order("entry_date").order("id").range(from, to)),
     ]);
 
-    const firstError = [profile, habits, workouts, moods, water, weights].find((r) => r.error)?.error;
-    if (firstError) return { data: null, error: firstError.message };
+    if (profile.error) return { data: null, error: "Impossible de charger le profil du rapport." };
 
     // Sets are fetched per chunk of workout ids (an `in` filter with hundreds of ids would overflow the URL).
-    const workoutRows = workouts.data ?? [];
+    const workoutRows = workouts;
     const sets: RawReport["sets"] = [];
     try {
       for (let i = 0; i < workoutRows.length; i += CHUNK) {
@@ -107,18 +106,18 @@ export async function getReport(period: ReportPeriod): Promise<{ data: ReportDat
         carbs: profile.data?.goal_carbs ?? null,
         fat: profile.data?.goal_fat ?? null,
       },
-      habits: habits.data ?? [],
+      habits,
       habitLogs,
       workouts: workoutRows,
       sets,
-      moods: moods.data ?? [],
+      moods,
       meals,
-      water: water.data ?? [],
-      weights: weights.data ?? [],
+      water,
+      weights,
     };
 
     return { data: buildReport(raw, period, today), error: null };
-  } catch (e) {
-    return { data: null, error: e instanceof Error ? e.message : "Impossible de préparer le rapport." };
+  } catch {
+    return { data: null, error: "Impossible de préparer le rapport. Réessaie dans un instant." };
   }
 }

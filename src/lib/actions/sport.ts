@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { dbFail, fail, NOT_SIGNED_IN, ok, type ActionResult } from "@/lib/actions/result";
 import { checkSportHabits, syncNotice, uncheckSportHabits } from "@/lib/sport-habit-sync";
+import { isFiniteInRange, isUuid, isValidIsoDate } from "@/lib/actions/validation";
 
 export async function logWorkout(formData: FormData): Promise<ActionResult> {
   const activity = String(formData.get("activity") ?? "").trim();
@@ -12,7 +13,9 @@ export async function logWorkout(formData: FormData): Promise<ActionResult> {
   const intensity = Number(formData.get("intensity") ?? 3);
   const notes = String(formData.get("notes") ?? "").trim() || null;
 
-  if (!activity || !workout_date) return fail("Renseigne l'activité et la date.");
+  if (!activity || activity.length > 100 || !isValidIsoDate(workout_date) ||
+    !isFiniteInRange(duration_minutes, 1, 600, true) || !isFiniteInRange(intensity, 1, 5, true) ||
+    (notes !== null && notes.length > 2000)) return fail("Vérifie l’activité, la date et les valeurs de la séance.");
 
   const supabase = await createClient();
   const {
@@ -40,15 +43,18 @@ export async function logWorkout(formData: FormData): Promise<ActionResult> {
 }
 
 export async function deleteWorkout(id: string): Promise<ActionResult> {
+  if (!isUuid(id)) return fail("Séance invalide.");
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return fail(NOT_SIGNED_IN);
 
-  const { data: workout } = await supabase.from("workouts").select("workout_date").eq("id", id).maybeSingle();
+  const { data: workout, error: fetchError } = await supabase.from("workouts").select("workout_date")
+    .eq("id", id).eq("user_id", user.id).maybeSingle();
+  if (fetchError) return dbFail(fetchError);
 
-  const { error: error2 } = await supabase.from("workouts").delete().eq("id", id);
+  const { error: error2 } = await supabase.from("workouts").delete().eq("id", id).eq("user_id", user.id);
   if (error2) return dbFail(error2);
 
   const removed = workout ? await uncheckSportHabits(supabase, user.id, workout.workout_date) : 0;
@@ -64,7 +70,8 @@ export async function deleteWorkout(id: string): Promise<ActionResult> {
 }
 
 export async function saveSportGoal(sessionsPerWeek: number): Promise<ActionResult> {
-  const sport_weekly_goal = Math.min(14, Math.max(1, Math.round(sessionsPerWeek)));
+  if (!isFiniteInRange(sessionsPerWeek, 1, 14, true)) return fail("L’objectif doit être entre 1 et 14 séances.");
+  const sport_weekly_goal = sessionsPerWeek;
 
   const supabase = await createClient();
   const {

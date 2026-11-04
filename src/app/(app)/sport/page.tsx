@@ -15,12 +15,12 @@ import { MuscleVolume, Progression } from "@/components/strength/progression";
 import { SessionList, type SessionItem } from "@/components/strength/session-list";
 import type { CatalogItem, TemplateView } from "@/components/strength/types";
 import { computeSportStats } from "@/lib/sport-stats";
-import { computeStrengthData, suggestNextTemplate, type RawSet } from "@/lib/strength-stats";
+import { computeStrengthData, suggestNextTemplate } from "@/lib/strength-stats";
 import { muscleGroupI18nPath } from "@/lib/strength";
 import { weeklyTotals } from "@/lib/weekly";
+import { fetchAllRows } from "@/lib/paging";
 import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
-
-const PAGE_SIZE = 1000;
+import { isValidIsoDate } from "@/lib/actions/validation";
 
 export default async function SportPage({ searchParams }: { searchParams: Promise<{ date?: string }> }) {
   const { date } = await searchParams;
@@ -33,49 +33,61 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
   const t = await getT();
 
   const today = format(new Date(), "yyyy-MM-dd");
-  const selectedDate = date && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : today;
-  const setsSince = subDays(new Date(), 400).toISOString();
-
-  // PostgREST caps a response at 1000 rows and a 4x/week program logs hundreds of sets a month: page through.
-  async function fetchSets(): Promise<RawSet[]> {
-    const rows: RawSet[] = [];
-    for (let page = 0; page < 10; page++) {
-      const { data } = await supabase
+  const selectedDate = isValidIsoDate(date) ? date : today;
+  const [all, profileResult, sets, templatesRaw, templateRows, catalogRaw] = await Promise.all([
+    fetchAllRows((from, to) =>
+      supabase
+        .from("workouts")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("workout_date", { ascending: false })
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false })
+        .range(from, to)
+    ),
+    supabase.from("profiles").select("sport_weekly_goal").eq("id", user.id).single(),
+    fetchAllRows((from, to) =>
+      supabase
         .from("workout_sets")
         .select("workout_id, exercise_name, muscle_group, exercise_position, set_number, reps, weight_kg")
-        .eq("user_id", user!.id)
-        .gte("created_at", setsSince)
+        .eq("user_id", user.id)
         .order("created_at", { ascending: true })
         .order("id", { ascending: true })
-        .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
-      const batch = (data ?? []) as RawSet[];
-      rows.push(...batch);
-      if (batch.length < PAGE_SIZE) break;
-    }
-    return rows;
-  }
-
-  const [{ data: workouts }, { data: profile }, sets, { data: templatesRaw }, { data: templateRows }, { data: catalogRaw }] =
-    await Promise.all([
-    supabase
-      .from("workouts")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("workout_date", { ascending: false })
-      .order("created_at", { ascending: false }),
-    supabase.from("profiles").select("sport_weekly_goal").eq("id", user.id).single(),
-    fetchSets(),
-    supabase
-      .from("workout_templates")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("position", { ascending: true })
-      .order("created_at", { ascending: true }),
-    supabase.from("workout_template_exercises").select("*").eq("user_id", user.id),
-    supabase.from("exercises").select("name, muscle_group").eq("user_id", user.id).order("name", { ascending: true }),
+        .range(from, to)
+    ),
+    fetchAllRows((from, to) =>
+      supabase
+        .from("workout_templates")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("position", { ascending: true })
+        .order("created_at", { ascending: true })
+        .order("id", { ascending: true })
+        .range(from, to)
+    ),
+    fetchAllRows((from, to) =>
+      supabase
+        .from("workout_template_exercises")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("template_id", { ascending: true })
+        .order("position", { ascending: true })
+        .order("id", { ascending: true })
+        .range(from, to)
+    ),
+    fetchAllRows((from, to) =>
+      supabase
+        .from("exercises")
+        .select("name, muscle_group")
+        .eq("user_id", user.id)
+        .order("name", { ascending: true })
+        .order("id", { ascending: true })
+        .range(from, to)
+    ),
   ]);
+  if (profileResult.error) throw new Error("Impossible de charger l’objectif sportif.");
+  const profile = profileResult.data;
 
-  const all = workouts ?? [];
   const weeklyGoal = profile?.sport_weekly_goal ?? 3;
   const stats = computeSportStats(all, weeklyGoal);
 

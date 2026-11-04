@@ -2,10 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { fetchAllRows } from "@/lib/paging";
 
 export type ActionResult = { error: string | null };
 
 export async function updateDisplayName(name: string): Promise<ActionResult> {
+  if (typeof name !== "string") return { error: "Nom invalide." };
   const display_name = name.trim();
   if (display_name.length < 1) return { error: "Le nom ne peut pas être vide." };
   if (display_name.length > 40) return { error: "40 caractères maximum." };
@@ -17,14 +19,15 @@ export async function updateDisplayName(name: string): Promise<ActionResult> {
   if (!user) return { error: "Non connecté." };
 
   const { error } = await supabase.from("profiles").update({ display_name }).eq("id", user.id);
-  if (error) return { error: error.message };
+  if (error) return { error: "Impossible d’enregistrer le nom du profil." };
 
   revalidatePath("/", "layout");
   return { error: null };
 }
 
 export async function changePassword(currentPassword: string, newPassword: string): Promise<ActionResult> {
-  if (newPassword.length < 6) return { error: "Le nouveau mot de passe doit contenir au moins 6 caractères." };
+  if (typeof currentPassword !== "string" || typeof newPassword !== "string") return { error: "Mot de passe invalide." };
+  if (newPassword.length < 6 || newPassword.length > 1024) return { error: "Le nouveau mot de passe doit contenir entre 6 et 1024 caractères." };
   if (newPassword === currentPassword) return { error: "Le nouveau mot de passe doit être différent de l'actuel." };
 
   const supabase = await createClient();
@@ -41,12 +44,13 @@ export async function changePassword(currentPassword: string, newPassword: strin
   if (verifyError) return { error: "Mot de passe actuel incorrect." };
 
   const { error } = await supabase.auth.updateUser({ password: newPassword });
-  if (error) return { error: error.message };
+  if (error) return { error: "Impossible de modifier le mot de passe. Réessaie plus tard." };
 
   return { error: null };
 }
 
 export async function saveAvatarUrl(url: string | null): Promise<ActionResult> {
+  if (url !== null && (typeof url !== "string" || url.length > 2048)) return { error: "Adresse de photo invalide." };
   const supabase = await createClient();
   const {
     data: { user },
@@ -54,12 +58,20 @@ export async function saveAvatarUrl(url: string | null): Promise<ActionResult> {
   if (!user) return { error: "Non connecté." };
 
   if (url !== null) {
-    const allowedPrefix = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/${user.id}/`;
-    if (!url.startsWith(allowedPrefix)) return { error: "Adresse de photo invalide." };
+    try {
+      const base = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "");
+      const candidate = new URL(url);
+      const allowedPath = `/storage/v1/object/public/avatars/${user.id}/`;
+      if (candidate.origin !== base.origin || !candidate.pathname.startsWith(allowedPath) || !/^https?:$/.test(candidate.protocol)) {
+        return { error: "Adresse de photo invalide." };
+      }
+    } catch {
+      return { error: "Adresse de photo invalide." };
+    }
   }
 
   const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", user.id);
-  if (error) return { error: error.message };
+  if (error) return { error: "Impossible d’enregistrer la photo de profil." };
 
   revalidatePath("/", "layout");
   return { error: null };
@@ -73,11 +85,12 @@ export async function exportMyData(): Promise<{ json: string | null; error: stri
   } = await supabase.auth.getUser();
   if (!user) return { json: null, error: "Non connecté." };
 
-  const byUser = (table: "habits" | "habit_logs" | "workouts" | "mood_entries" | "moments" | "foods" | "meal_entries" | "weight_logs" | "water_logs" | "meal_templates" | "meal_template_items") =>
-    supabase.from(table).select("*").eq("user_id", user.id);
+  const byUser = (table: "habits" | "habit_logs" | "workouts" | "mood_entries" | "moments" | "foods" | "meal_entries" | "weight_logs" | "water_logs" | "meal_templates" | "meal_template_items" | "exercises" | "workout_templates" | "workout_template_exercises" | "workout_sets") =>
+    fetchAllRows((from, to) => supabase.from(table).select("*").eq("user_id", user.id).order("id").range(from, to));
 
-  const [profile, habits, habitLogs, workouts, moods, moments, foods, meals, weights, water, templates, templateItems] =
-    await Promise.all([
+  try {
+    const [profile, habits, habitLogs, workouts, moods, moments, foods, meals, weights, water, templates, templateItems, exercises, workoutTemplates, workoutTemplateExercises, workoutSets] =
+      await Promise.all([
       supabase.from("profiles").select("*").eq("id", user.id).single(),
       byUser("habits"),
       byUser("habit_logs"),
@@ -90,33 +103,25 @@ export async function exportMyData(): Promise<{ json: string | null; error: stri
       byUser("water_logs"),
       byUser("meal_templates"),
       byUser("meal_template_items"),
+      byUser("exercises"),
+      byUser("workout_templates"),
+      byUser("workout_template_exercises"),
+      byUser("workout_sets"),
     ]);
+    if (profile.error) return { json: null, error: "Impossible de préparer l’export des données." };
 
-  const failed = [profile, habits, habitLogs, workouts, moods, moments, foods, meals, weights, water, templates, templateItems].find(
-    (r) => r.error
-  );
-  if (failed?.error) return { json: null, error: failed.error.message };
-
-  const json = JSON.stringify(
-    {
+    const json = JSON.stringify({
       exported_at: new Date().toISOString(),
       account: { id: user.id, email: user.email },
       profile: profile.data,
-      habits: habits.data,
-      habit_logs: habitLogs.data,
-      workouts: workouts.data,
-      mood_entries: moods.data,
-      moments: moments.data,
-      foods: foods.data,
-      meal_entries: meals.data,
-      weight_logs: weights.data,
-      water_logs: water.data,
-      meal_templates: templates.data,
-      meal_template_items: templateItems.data,
-    },
-    null,
-    2
-  );
+      habits, habit_logs: habitLogs, workouts, mood_entries: moods, moments, foods,
+      meal_entries: meals, weight_logs: weights, water_logs: water, meal_templates: templates,
+      meal_template_items: templateItems, exercises, workout_templates: workoutTemplates,
+      workout_template_exercises: workoutTemplateExercises, workout_sets: workoutSets,
+    }, null, 2);
 
-  return { json, error: null };
+    return { json, error: null };
+  } catch {
+    return { json: null, error: "Impossible de préparer l’export des données." };
+  }
 }

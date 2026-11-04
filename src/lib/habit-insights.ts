@@ -1,4 +1,4 @@
-import { eachDayOfInterval, format, getISODay } from "date-fns";
+import { eachDayOfInterval, format, getISODay, parseISO } from "date-fns";
 
 /** Success rate (0-100) over a date range, counting only days the habit was actually scheduled. */
 export function successRate(
@@ -7,6 +7,7 @@ export function successRate(
   start: Date,
   end: Date
 ): { rate: number; completed: number; expected: number } {
+  if (start > end || scheduledDays.length === 0) return { rate: 0, completed: 0, expected: 0 };
   const days = eachDayOfInterval({ start, end });
   let expected = 0;
   let completed = 0;
@@ -27,15 +28,18 @@ export function successRate(
  */
 export function bestWeekday(
   loggedDates: Set<string>,
-  scheduledDays: number[]
+  scheduledDays: number[],
+  createdAt?: string
 ): { day: number; rate: number } | null {
   if (scheduledDays.length === 0) return null;
 
   const allDates = Array.from(loggedDates).sort();
   if (allDates.length === 0) return null;
 
-  const firstDate = new Date(allDates[0]);
-  const days = eachDayOfInterval({ start: firstDate, end: new Date() });
+  const firstDate = createdAt ? parseISO(createdAt.slice(0, 10)) : new Date(allDates[0]);
+  const today = new Date();
+  if (firstDate > today) return null;
+  const days = eachDayOfInterval({ start: firstDate, end: today });
 
   const totals = new Map<number, { completed: number; expected: number }>();
   for (const dayNum of scheduledDays) totals.set(dayNum, { completed: 0, expected: 0 });
