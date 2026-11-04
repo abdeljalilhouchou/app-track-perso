@@ -44,6 +44,11 @@ const fr = {
   nav: {
     overview: "Vue d'ensemble",
     overviewShort: "Accueil",
+    habitsShort: "Habits",
+    sportShort: "Sport",
+    nutritionShort: "Repas",
+    moodShort: "Humeur",
+    primaryNavigation: "Navigation principale",
     habits: "Habitudes",
     sport: "Sport",
     nutrition: "Nutrition",
@@ -122,8 +127,8 @@ const fr = {
     profile: { title: "Profil", subtitle: "Ta progression, tes badges, ton parcours." },
   },
   tabs: {
-    nutrition: { today: "Aujourd'hui", journal: "Journal", recipes: "Recettes" },
-    sport: { session: "Séance", program: "Programme", progress: "Progression", history: "Historique", stats: "Stats" },
+    nutrition: { today: "Aujourd'hui", todayShort: "Aujourd'hui", journal: "Journal", journalShort: "Journal", recipes: "Recettes", recipesShort: "Recettes" },
+    sport: { session: "Séance", sessionShort: "Séance", program: "Programme", programShort: "Prog.", progress: "Progression", progressShort: "Progr.", history: "Historique", historyShort: "Histor.", stats: "Stats", statsShort: "Stats" },
   },
   language: {
     title: "Langue",
@@ -165,6 +170,11 @@ const en: Dictionary = {
   nav: {
     overview: "Overview",
     overviewShort: "Home",
+    habitsShort: "Habits",
+    sportShort: "Sport",
+    nutritionShort: "Food",
+    moodShort: "Mood",
+    primaryNavigation: "Main navigation",
     habits: "Habits",
     sport: "Sport",
     nutrition: "Nutrition",
@@ -243,8 +253,8 @@ const en: Dictionary = {
     profile: { title: "Profile", subtitle: "Your progress, your badges, your journey." },
   },
   tabs: {
-    nutrition: { today: "Today", journal: "Journal", recipes: "Recipes" },
-    sport: { session: "Session", program: "Program", progress: "Progress", history: "History", stats: "Stats" },
+    nutrition: { today: "Today", todayShort: "Today", journal: "Journal", journalShort: "Journal", recipes: "Recipes", recipesShort: "Recipes" },
+    sport: { session: "Session", sessionShort: "Train", program: "Program", programShort: "Plan", progress: "Progress", progressShort: "Trend", history: "History", historyShort: "History", stats: "Stats", statsShort: "Stats" },
   },
   language: {
     title: "Language",
@@ -286,6 +296,11 @@ const ar: Dictionary = {
   nav: {
     overview: "نظرة عامة",
     overviewShort: "الرئيسية",
+    habitsShort: "عادات",
+    sportShort: "رياضة",
+    nutritionShort: "طعام",
+    moodShort: "مزاج",
+    primaryNavigation: "التنقل الرئيسي",
     habits: "العادات",
     sport: "الرياضة",
     nutrition: "التغذية",
@@ -364,8 +379,8 @@ const ar: Dictionary = {
     profile: { title: "الملف الشخصي", subtitle: "تقدّمك، أوسمتك، مسيرتك." },
   },
   tabs: {
-    nutrition: { today: "اليوم", journal: "السجلّ", recipes: "الوصفات" },
-    sport: { session: "الحصة", program: "البرنامج", progress: "التقدّم", history: "السجلّ", stats: "إحصاءات" },
+    nutrition: { today: "اليوم", todayShort: "اليوم", journal: "السجلّ", journalShort: "السجلّ", recipes: "الوصفات", recipesShort: "وصفات" },
+    sport: { session: "الحصة", sessionShort: "حصة", program: "البرنامج", programShort: "برنامج", progress: "التقدّم", progressShort: "تقدّم", history: "السجلّ", historyShort: "السجلّ", stats: "إحصاءات", statsShort: "إحصاء" },
   },
   language: {
     title: "اللغة",

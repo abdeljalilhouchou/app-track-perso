@@ -86,7 +86,7 @@ function FoodRow({ food }: { food: Food }) {
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
               {t("nutrition.foodSettings.caloriesLabel")}
               <input name="calories" type="number" min={0} step="0.1" defaultValue={food.calories} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
@@ -104,7 +104,7 @@ function FoodRow({ food }: { food: Food }) {
               <input name="fat" type="number" min={0} step="0.1" defaultValue={food.fat} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
             </label>
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             <label className="flex flex-col gap-1 text-[10px] text-foreground-muted">
               {t("nutrition.foodSettings.fiberLabel")}
               <input name="fiber" type="number" min={0} step="0.1" defaultValue={food.fiber} className="rounded-lg border border-border bg-surface-muted px-2 py-1.5 text-xs outline-none focus:border-accent" />
@@ -218,7 +218,7 @@ export function FoodSettings({ foods }: { foods: Food[] }) {
         {t("nutrition.foodSettings.openButton")}
       </button>
 
-      <Dialog open={open} onClose={() => setOpen(false)} widthClassName="max-w-lg">
+      <Dialog open={open} onClose={() => setOpen(false)} widthClassName="max-w-lg" ariaLabel={t("nutrition.foodSettings.dialogTitle", { count: foods.length })}>
         <div className="rounded-2xl bg-surface shadow-2xl">
           <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-border bg-surface px-5 py-4">
             <span className="text-sm font-semibold">{t("nutrition.foodSettings.dialogTitle", { count: foods.length })}</span>

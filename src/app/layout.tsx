@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { themeInitScript } from "@/lib/theme";
@@ -17,6 +18,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "track.perso — Habitudes, sport, humeur",
   description: "Suis tes habitudes, ton sport et ton humeur au même endroit.",
+};
+
+export const viewport: Viewport = {
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

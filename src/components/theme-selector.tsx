@@ -3,16 +3,17 @@
 import { motion } from "framer-motion";
 import { MonitorIcon, MoonIcon, SunIcon } from "@/components/ui/nav-icons";
 import { useTheme } from "@/components/theme-provider";
+import { useT } from "@/components/language-provider";
 import type { Theme } from "@/lib/theme";
 
 // Fixed swatches: each preview must show its own palette regardless of the theme currently applied.
-const OPTIONS: { value: Theme; label: string; hint: string; Icon: typeof SunIcon; preview: React.CSSProperties }[] = [
-  { value: "light", label: "Clair", hint: "Fond lumineux", Icon: SunIcon, preview: { background: "#f7f7fb" } },
-  { value: "dark", label: "Sombre", hint: "Confortable la nuit", Icon: MoonIcon, preview: { background: "#0b0b10" } },
+const OPTIONS: { value: Theme; labelKey: string; hintKey: string; Icon: typeof SunIcon; preview: React.CSSProperties }[] = [
+  { value: "light", labelKey: "profile.themeLight", hintKey: "profile.themeLightHint", Icon: SunIcon, preview: { background: "#f7f7fb" } },
+  { value: "dark", labelKey: "profile.themeDark", hintKey: "profile.themeDarkHint", Icon: MoonIcon, preview: { background: "#0b0b10" } },
   {
     value: "system",
-    label: "Système",
-    hint: "Suit ton appareil",
+    labelKey: "profile.themeSystem",
+    hintKey: "profile.themeSystemHint",
     Icon: MonitorIcon,
     preview: { background: "linear-gradient(135deg, #f7f7fb 50%, #0b0b10 50%)" },
   },
@@ -36,11 +37,13 @@ function Mock({ dark, narrow }: { dark?: boolean; narrow?: boolean }) {
 
 export function ThemeSelector() {
   const { theme, setTheme } = useTheme();
+  const t = useT();
 
   return (
-    <div role="radiogroup" aria-label="Apparence" className="grid gap-3 sm:grid-cols-3">
-      {OPTIONS.map(({ value, label, hint, Icon, preview }) => {
+    <div role="radiogroup" aria-label={t("profile.appearanceHeading")} className="grid gap-3 sm:grid-cols-3">
+      {OPTIONS.map(({ value, labelKey, hintKey, Icon, preview }) => {
         const selected = theme === value;
+        const label = t(labelKey);
         return (
           <button
             key={value}
@@ -48,7 +51,7 @@ export function ThemeSelector() {
             role="radio"
             aria-checked={selected}
             onClick={() => setTheme(value)}
-            className="relative rounded-2xl border-[1.5px] p-3 text-left transition-colors"
+            className="relative min-h-11 rounded-2xl border-[1.5px] p-3 text-start transition-colors"
             style={{
               borderColor: selected ? "var(--accent)" : "var(--border)",
               background: selected ? "var(--accent-soft)" : "var(--surface)",
@@ -78,7 +81,7 @@ export function ThemeSelector() {
               <Icon className={`h-4.5 w-4.5 ${selected ? "text-accent" : "text-foreground-muted"}`} />
               <div>
                 <p className="text-sm font-medium">{label}</p>
-                <p className="text-xs text-foreground-muted">{hint}</p>
+                <p className="text-xs text-foreground-muted">{t(hintKey)}</p>
               </div>
             </div>
           </button>

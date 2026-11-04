@@ -400,7 +400,12 @@ export function TodaySession({
         </>
       )}
 
-      <Dialog open={markTarget !== null} onClose={() => setMarkTarget(null)} widthClassName="max-w-sm">
+      <Dialog
+        open={markTarget !== null}
+        onClose={() => setMarkTarget(null)}
+        widthClassName="max-w-sm"
+        ariaLabel={markTarget?.name ?? t("sport.todaySession.markDone")}
+      >
         <div className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5 shadow-2xl">
           <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.todaySession.markDone")}</p>
           <p className="mt-1 text-lg font-semibold tracking-tight">{markTarget?.name}</p>
