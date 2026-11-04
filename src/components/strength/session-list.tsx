@@ -2,14 +2,13 @@
 
 import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
-import { format, parseISO } from "date-fns";
-import { fr } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
-import { useT } from "@/components/language-provider";
+import { useLanguage, useT } from "@/components/language-provider";
 import { deleteWorkout } from "@/lib/actions/sport";
 import { formatWeight, muscleColor, muscleGroupI18nPath } from "@/lib/strength";
 import type { WorkoutDetail } from "@/lib/strength-stats";
+import { formatLocalizedDate } from "@/lib/format-date";
 
 export type SessionItem = {
   id: string;
@@ -33,6 +32,7 @@ export function SessionList({
   showDate?: boolean;
 }) {
   const t = useT();
+  const { language } = useLanguage();
   const muscleLabel = (group: string) => {
     const path = muscleGroupI18nPath(group);
     return path ? t(path) : group;
@@ -71,9 +71,9 @@ export function SessionList({
                     </span>
                   ))}
                   <span className="text-foreground-muted">
-                    {showDate && `${format(parseISO(s.date), "EEE d MMM", { locale: fr })} · `}
+                    {showDate && `${formatLocalizedDate(s.date, language, { weekday: "short", day: "numeric", month: "short" })} · `}
                     {t("sport.sessionList.durationIntensity", { duration: s.duration, intensity: s.intensity })}
-                    {detail && ` · ${t("sport.sessionList.detailSummary", { sets: detail.totalSets, volume: detail.volume.toLocaleString("fr-FR") })}`}
+                    {detail && ` · ${t("sport.sessionList.detailSummary", { sets: detail.totalSets, volume: detail.volume.toLocaleString(language === "en" ? "en-US" : language) })}`}
                   </span>
                 </p>
               </div>
@@ -124,7 +124,7 @@ export function SessionList({
                       title={t("sport.common.confirmDeleteSessionTitle")}
                       message={t("sport.sessionList.confirmDeleteWithSets", {
                         activity: s.activity,
-                        date: format(parseISO(s.date), "d MMMM", { locale: fr }),
+                        date: formatLocalizedDate(s.date, language, { day: "numeric", month: "long" }),
                       })}
                       className="text-xs text-foreground-muted transition hover:text-danger"
                     >
@@ -152,7 +152,7 @@ export function SessionList({
                   title={t("sport.common.confirmDeleteSessionTitle")}
                   message={t("sport.common.confirmDeleteMessage", {
                     activity: s.activity,
-                    date: format(parseISO(s.date), "d MMMM", { locale: fr }),
+                    date: formatLocalizedDate(s.date, language, { day: "numeric", month: "long" }),
                   })}
                   className="text-xs text-foreground-muted transition hover:text-danger"
                 >

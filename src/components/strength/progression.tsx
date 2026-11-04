@@ -1,19 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { format, parseISO } from "date-fns";
-import { fr } from "date-fns/locale";
 import { WeeklyLineChart } from "@/components/charts/weekly-line-chart";
-import { useT } from "@/components/language-provider";
+import { useLanguage, useT } from "@/components/language-provider";
 import { formatWeight, muscleColor, muscleGroupI18nPath } from "@/lib/strength";
 import type { ExerciseSummary, MuscleWeek } from "@/lib/strength-stats";
+import { formatLocalizedDate } from "@/lib/format-date";
 
 type MetricId = "topWeight" | "est1RM" | "volume";
 
-const day = (d: string) => format(parseISO(d), "d MMM yyyy", { locale: fr });
-
 export function MuscleVolume({ weeklyMuscles }: { weeklyMuscles: MuscleWeek[] }) {
   const t = useT();
+  const { language } = useLanguage();
   const muscleLabel = (group: string) => {
     const path = muscleGroupI18nPath(group);
     return path ? t(path) : group;
@@ -39,7 +37,7 @@ export function MuscleVolume({ weeklyMuscles }: { weeklyMuscles: MuscleWeek[] })
                   </span>
                   <span className="text-foreground-muted">
                     <strong className="text-foreground">{m.thisWeekSets}</strong> {t("sport.progression.setsWord")} ·{" "}
-                    {m.thisWeekVolume.toLocaleString("fr-FR")} kg
+                    {m.thisWeekVolume.toLocaleString(language === "en" ? "en-US" : language)} kg
                     {m.lastWeekSets > 0 && diff !== 0 && (
                       <span style={{ color: diff > 0 ? "var(--success)" : "var(--danger)" }}>
                         {" "}
@@ -63,6 +61,8 @@ export function MuscleVolume({ weeklyMuscles }: { weeklyMuscles: MuscleWeek[] })
 
 export function Progression({ exercises }: { exercises: ExerciseSummary[] }) {
   const t = useT();
+  const { language } = useLanguage();
+  const day = (date: string) => formatLocalizedDate(date, language, { day: "numeric", month: "short", year: "numeric" });
   const muscleLabel = (group: string) => {
     const path = muscleGroupI18nPath(group);
     return path ? t(path) : group;
@@ -80,10 +80,10 @@ export function Progression({ exercises }: { exercises: ExerciseSummary[] }) {
   const chart = useMemo(() => {
     if (!exercise) return [];
     return exercise.sessions.slice(-30).map((s) => ({
-      label: format(parseISO(s.date), "d MMM", { locale: fr }),
+      label: formatLocalizedDate(s.date, language, { day: "numeric", month: "short" }),
       value: s[metric] > 0 ? s[metric] : null,
     }));
-  }, [exercise, metric]);
+  }, [exercise, language, metric]);
 
   if (!exercise) {
     return (

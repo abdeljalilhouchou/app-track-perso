@@ -19,6 +19,9 @@ async function currentUser() {
 
 function refresh() {
   revalidatePath("/sport");
+  revalidatePath("/sport/musculation");
+  revalidatePath("/sport/calendar");
+  revalidatePath("/sport/stats");
   revalidatePath("/habits");
   revalidatePath("/dashboard");
 }

@@ -6,6 +6,13 @@ import { dbFail, fail, NOT_SIGNED_IN, ok, type ActionResult } from "@/lib/action
 import { checkSportHabits, syncNotice, uncheckSportHabits } from "@/lib/sport-habit-sync";
 import { isFiniteInRange, isUuid, isValidIsoDate } from "@/lib/actions/validation";
 
+function revalidateSportViews() {
+  revalidatePath("/sport");
+  revalidatePath("/sport/musculation");
+  revalidatePath("/sport/calendar");
+  revalidatePath("/sport/stats");
+}
+
 export async function logWorkout(formData: FormData): Promise<ActionResult> {
   const activity = String(formData.get("activity") ?? "").trim();
   const workout_date = String(formData.get("workout_date") ?? "");
@@ -35,7 +42,7 @@ export async function logWorkout(formData: FormData): Promise<ActionResult> {
 
   const checked = await checkSportHabits(supabase, user.id, workout_date);
 
-  revalidatePath("/sport");
+  revalidateSportViews();
   revalidatePath("/habits");
   revalidatePath("/dashboard");
 
@@ -59,7 +66,7 @@ export async function deleteWorkout(id: string): Promise<ActionResult> {
 
   const removed = workout ? await uncheckSportHabits(supabase, user.id, workout.workout_date) : 0;
 
-  revalidatePath("/sport");
+  revalidateSportViews();
   revalidatePath("/habits");
   revalidatePath("/dashboard");
 
@@ -82,7 +89,7 @@ export async function saveSportGoal(sessionsPerWeek: number): Promise<ActionResu
   const { error: error3 } = await supabase.from("profiles").update({ sport_weekly_goal }).eq("id", user.id);
   if (error3) return dbFail(error3);
 
-  revalidatePath("/sport");
+  revalidateSportViews();
 
   return ok;
 }
