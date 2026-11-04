@@ -1,4 +1,4 @@
-import { endOfMonth, format, startOfMonth, subMonths } from "date-fns";
+import { endOfMonth, format, parseISO, startOfMonth, subMonths } from "date-fns";
 import { fr } from "date-fns/locale";
 import { successRate } from "@/lib/habit-insights";
 import { getT } from "@/lib/i18n/get-dictionary";
@@ -16,8 +16,11 @@ export async function HabitsMonthly({ habits, logsByHabit }: { habits: Habit[]; 
   const rows = habits
     .map((h) => {
       const set = logsByHabit.get(h.id) ?? new Set<string>();
-      const cur = successRate(set, h.scheduled_days, thisStart, now);
-      const prev = successRate(set, h.scheduled_days, lastStart, lastEnd);
+      const created = parseISO(h.created_at.slice(0, 10));
+      const currentStart = created > thisStart ? created : thisStart;
+      const previousStart = created > lastStart ? created : lastStart;
+      const cur = successRate(set, h.scheduled_days, currentStart, now);
+      const prev = successRate(set, h.scheduled_days, previousStart, lastEnd);
       return { h, cur, prev };
     })
     .filter((r) => r.cur.expected > 0)

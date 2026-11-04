@@ -3,15 +3,14 @@
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
 import { useActionToast } from "@/components/toast/use-action-toast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { useT } from "@/components/language-provider";
+import { useLanguage, useT } from "@/components/language-provider";
 import { saveStrengthSession } from "@/lib/actions/strength";
 import { exerciseKey, formatWeight, muscleColor, muscleGroupI18nPath, setsVolume } from "@/lib/strength";
 import { ExercisePicker } from "@/components/strength/exercise-picker";
 import { detectRecords, type ExerciseSummary } from "@/lib/strength-stats";
+import { formatLocalizedDate } from "@/lib/format-date";
 
 export const DRAFT_KEY = "strength-draft-v1";
 export const DRAFT_EVENT = "strength-draft-change";
@@ -112,6 +111,7 @@ export function SessionLogger({
   onSaved: (result: SessionResult) => void;
 }) {
   const t = useT();
+  const { language } = useLanguage();
   const muscleLabel = (group: string) => {
     const path = muscleGroupI18nPath(group);
     return path ? t(path) : group;
@@ -304,7 +304,7 @@ export function SessionLogger({
                   {muscleLabel(g)}
                 </span>
               ))}
-              <span className="text-xs capitalize text-foreground-muted">{format(new Date(), "EEEE d MMMM", { locale: fr })}</span>
+              <span className="text-xs capitalize text-foreground-muted">{formatLocalizedDate(new Date(), language, { weekday: "long", day: "numeric", month: "long" })}</span>
             </div>
           </div>
           <div className="flex items-center gap-4 text-center">

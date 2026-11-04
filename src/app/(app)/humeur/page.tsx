@@ -7,8 +7,9 @@ import { MoodLineChart } from "@/components/charts/mood-line-chart";
 import { MoodEntryList } from "@/components/mood-entry-list";
 import { MoodCalendar } from "@/components/mood/mood-calendar";
 import { MoodInsights, MoodTiles, WeekdayBars } from "@/components/mood/mood-overview";
-import { buildMoodInsights, moodSummary, weekdayAverages } from "@/lib/mood-insights";
+import { buildMoodInsights, lowMoodStreak, moodSummary, weekdayAverages } from "@/lib/mood-insights";
 import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
+import { fetchAllRows } from "@/lib/paging";
 
 export default async function HumeurPage() {
   const supabase = await createClient();
@@ -25,33 +26,31 @@ export default async function HumeurPage() {
   const since120 = format(subDays(now, 120), "yyyy-MM-dd");
   const since365 = format(subDays(now, 365), "yyyy-MM-dd");
 
-  const [{ data: allEntries }, { data: workouts }, { data: meals }, { data: waterLogs }, { data: profile }] =
+  const [allEntries, workouts, meals, waterLogs, profileResult] =
     await Promise.all([
-      supabase
-        .from("mood_entries")
-        .select("*")
-        .eq("user_id", user.id)
-        .gte("entry_date", since365)
-        .order("entry_date", { ascending: true }),
-      supabase.from("workouts").select("workout_date").eq("user_id", user.id).gte("workout_date", since120),
-      supabase
-        .from("meal_entries")
-        .select("entry_date, protein, sugar, caffeine, unit, quantity_grams")
-        .eq("user_id", user.id)
-        .gte("entry_date", since120),
-      supabase.from("water_logs").select("entry_date, ml").eq("user_id", user.id).gte("entry_date", since120),
+      fetchAllRows((from, to) => supabase.from("mood_entries").select("*").eq("user_id", user.id)
+        .order("entry_date").order("id").range(from, to)),
+      fetchAllRows((from, to) => supabase.from("workouts").select("workout_date, id").eq("user_id", user.id).gte("workout_date", since120)
+        .order("workout_date").order("id").range(from, to)),
+      fetchAllRows((from, to) => supabase.from("meal_entries")
+        .select("entry_date, protein, sugar, caffeine, unit, quantity_grams, id")
+        .eq("user_id", user.id).gte("entry_date", since120).order("entry_date").order("id").range(from, to)),
+      fetchAllRows((from, to) => supabase.from("water_logs").select("entry_date, ml").eq("user_id", user.id).gte("entry_date", since120)
+        .order("entry_date").range(from, to)),
       supabase
         .from("profiles")
         .select("goal_protein, sugar_limit_g, caffeine_limit_mg, water_goal_ml")
         .eq("id", user.id)
         .single(),
     ]);
+  if (profileResult.error) throw new Error("Impossible de charger les objectifs du profil.");
+  const profile = profileResult.data;
 
-  const entries = (allEntries ?? []).filter((e) => e.entry_date >= since30);
+  const entries = allEntries.filter((e) => e.entry_date >= since30);
   const todayEntry = entries.find((e) => e.entry_date === today);
 
   const facts = new Map<string, { protein: number; sugar: number; caffeine: number; drinksMl: number; hasMeals: boolean }>();
-  for (const m of meals ?? []) {
+  for (const m of meals) {
     const f = facts.get(m.entry_date) ?? { protein: 0, sugar: 0, caffeine: 0, drinksMl: 0, hasMeals: true };
     f.protein += m.protein;
     f.sugar += m.sugar;
@@ -60,12 +59,12 @@ export default async function HumeurPage() {
     facts.set(m.entry_date, f);
   }
 
-  const recentMoods = (allEntries ?? []).filter((e) => e.entry_date >= since120);
+  const recentMoods = allEntries.filter((e) => e.entry_date >= since120);
   const insights = buildMoodInsights({
     moods: recentMoods,
-    workoutDates: new Set((workouts ?? []).map((w) => w.workout_date)),
+    workoutDates: new Set(workouts.map((w) => w.workout_date)),
     facts,
-    waterByDate: new Map((waterLogs ?? []).map((w) => [w.entry_date, w.ml])),
+    waterByDate: new Map(waterLogs.map((w) => [w.entry_date, w.ml])),
     goals: {
       protein: profile?.goal_protein ?? null,
       sugarLimit: profile?.sugar_limit_g ?? 50,
@@ -74,9 +73,8 @@ export default async function HumeurPage() {
     },
     t,
   });
-  const summary = moodSummary(allEntries ?? []);
-  const lastThree = (allEntries ?? []).slice(-3);
-  const lowStreak = lastThree.length === 3 && lastThree.every((e) => e.mood_score <= 2) ? lastThree : null;
+  const summary = moodSummary(allEntries, since30);
+  const lowStreak = lowMoodStreak(allEntries, now);
   const weekdays = weekdayAverages(recentMoods, t);
 
   const chartData = (entries ?? []).map((e) => ({
@@ -92,9 +90,9 @@ export default async function HumeurPage() {
         <p className="mt-1 text-sm text-foreground-muted">{dict.pages.mood.subtitle}</p>
       </div>
 
-      {lowStreak && (
+      {lowStreak >= 3 && (
         <Callout variant="warning" title={t("mood.page.lowStreakTitle")} dismissKey={`mood-low:${today}`}>
-          {t("mood.page.lowStreakMessage", { days: lowStreak.length })}
+          {t("mood.page.lowStreakMessage", { days: lowStreak })}
         </Callout>
       )}
       {!todayEntry && (
@@ -110,7 +108,7 @@ export default async function HumeurPage() {
       <div className="grid gap-4 lg:grid-cols-2">
         <MoodCalendar
           today={today}
-          days={(allEntries ?? []).map((e) => ({ date: e.entry_date, mood: e.mood_score, energy: e.energy_level, notes: e.notes }))}
+          days={allEntries.filter((e) => e.entry_date >= since365).map((e) => ({ date: e.entry_date, mood: e.mood_score, energy: e.energy_level, notes: e.notes }))}
         />
         <WeekdayBars data={weekdays} t={t} />
       </div>

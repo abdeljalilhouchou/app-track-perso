@@ -1,18 +1,18 @@
 "use client";
 
 import { useState, useTransition, type ReactNode } from "react";
-import { format, parseISO } from "date-fns";
-import { fr } from "date-fns/locale";
+import { format } from "date-fns";
 import { motion } from "framer-motion";
 import { useActionToast } from "@/components/toast/use-action-toast";
 import { ConfettiBurst } from "@/components/ui/confetti-burst";
 import { Dialog } from "@/components/ui/dialog";
-import { useT } from "@/components/language-provider";
+import { useLanguage, useT } from "@/components/language-provider";
 import { createDefaultProgram, markTemplateDone } from "@/lib/actions/strength";
 import { muscleColor, muscleGroupI18nPath } from "@/lib/strength";
 import type { ExerciseSummary } from "@/lib/strength-stats";
 import { SessionLogger, useSavedDraft, clearDraft, type Draft, type SessionResult } from "@/components/strength/session-logger";
 import type { CatalogItem, TemplateView } from "@/components/strength/types";
+import { formatLocalizedDate } from "@/lib/format-date";
 
 function draftFromTemplate(tpl: TemplateView): Draft {
   return {
@@ -66,6 +66,7 @@ export function TodaySession({
   cardio: ReactNode;
 }) {
   const t = useT();
+  const { language } = useLanguage();
   const muscleLabel = (group: string) => {
     const path = muscleGroupI18nPath(group);
     return path ? t(path) : group;
@@ -320,7 +321,7 @@ export function TodaySession({
                       </span>
                       <span className="shrink-0 text-[11px] text-foreground-muted">
                         {doneOn
-                          ? t("sport.todaySession.doneOn", { day: format(parseISO(doneOn), "EEE", { locale: fr }) })
+                          ? t("sport.todaySession.doneOn", { day: formatLocalizedDate(doneOn, language, { weekday: "short" }) })
                           : isNext
                             ? t("sport.todaySession.next")
                             : t("sport.todaySession.todo")}
@@ -400,7 +401,12 @@ export function TodaySession({
         </>
       )}
 
-      <Dialog open={markTarget !== null} onClose={() => setMarkTarget(null)} widthClassName="max-w-sm">
+      <Dialog
+        open={markTarget !== null}
+        onClose={() => setMarkTarget(null)}
+        widthClassName="max-w-sm"
+        ariaLabel={markTarget?.name ?? t("sport.todaySession.markDone")}
+      >
         <div className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5 shadow-2xl">
           <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.todaySession.markDone")}</p>
           <p className="mt-1 text-lg font-semibold tracking-tight">{markTarget?.name}</p>

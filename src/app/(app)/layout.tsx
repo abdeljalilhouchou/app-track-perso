@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/components/language-provider";
 import { ToastProvider } from "@/components/toast/toast-provider";
 import { isTheme } from "@/lib/theme";
 import { isLanguage } from "@/lib/language";
+import { MotionConfig } from "framer-motion";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -32,14 +33,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <ToastProvider>
       <ThemeProvider initialTheme={theme}>
       <LanguageProvider initialLanguage={language}>
-      <div className="flex min-h-screen flex-col md:flex-row">
-        <SidebarNav displayName={displayName} avatarUrl={profile?.avatar_url ?? null} />
-        <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
-          <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 md:px-10">
-            <PageTransition>{children}</PageTransition>
+        <MotionConfig reducedMotion="user">
+          <div className="app-shell flex min-h-dvh min-w-0 flex-col md:flex-row">
+            <SidebarNav displayName={displayName} avatarUrl={profile?.avatar_url ?? null} />
+            <main className="app-main min-w-0 flex-1 overflow-y-auto">
+              <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 md:px-10">
+                <PageTransition>{children}</PageTransition>
+              </div>
+            </main>
           </div>
-        </main>
-      </div>
+        </MotionConfig>
       </LanguageProvider>
       </ThemeProvider>
     </ToastProvider>

@@ -1,10 +1,9 @@
 "use client";
 
-import { format, parseISO } from "date-fns";
-import { fr } from "date-fns/locale";
+import { parseISO } from "date-fns";
 import { Heatmap } from "@/components/heatmap";
 import { TiltCard } from "@/components/ui/tilt-card";
-import { useT } from "@/components/language-provider";
+import { useLanguage, useT } from "@/components/language-provider";
 import type { computeSportStats } from "@/lib/sport-stats";
 
 type Stats = ReturnType<typeof computeSportStats>;
@@ -95,8 +94,10 @@ export function ActivityBreakdown({ stats }: { stats: Stats }) {
 
 export function SportRecords({ stats }: { stats: Stats }) {
   const t = useT();
+  const { language } = useLanguage();
   const { longest, hardest, bestWeek } = stats.records;
-  const day = (d: string) => format(parseISO(d), "d MMM yyyy", { locale: fr });
+  const locale = language === "ar" ? "ar" : language === "en" ? "en" : "fr";
+  const day = (d: string) => new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", year: "numeric" }).format(parseISO(d));
   const rows = [
     longest && { icon: "⏱️", label: t("sport.overview.longestSession"), value: `${longest.duration_minutes} min`, hint: `${longest.activity} · ${day(longest.workout_date)}` },
     hardest && {

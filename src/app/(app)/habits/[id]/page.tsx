@@ -8,6 +8,7 @@ import { bestWeekday, successRate } from "@/lib/habit-insights";
 import { MonthCalendar } from "@/components/month-calendar";
 import { CATEGORY_META, WEEKDAYS, categorySlug, weekdaySlug } from "@/lib/habit-categories";
 import { getT } from "@/lib/i18n/get-dictionary";
+import { fetchAllRows } from "@/lib/paging";
 
 export default async function HabitDetailPage({
   params,
@@ -35,15 +36,14 @@ export default async function HabitDetailPage({
 
   if (!habit) notFound();
 
-  const { data: allLogs } = await supabase
-    .from("habit_logs")
-    .select("log_date, note")
-    .eq("habit_id", id)
-    .eq("user_id", user.id);
+  const allLogs = await fetchAllRows((from, to) =>
+    supabase.from("habit_logs").select("log_date, note, id").eq("habit_id", id).eq("user_id", user.id)
+      .order("log_date").order("id").range(from, to)
+  );
 
-  const loggedDates = new Set((allLogs ?? []).map((l) => l.log_date));
+  const loggedDates = new Set(allLogs.map((l) => l.log_date));
   const notesByDate: Record<string, string> = {};
-  for (const log of allLogs ?? []) {
+  for (const log of allLogs) {
     if (log.note) notesByDate[log.log_date] = log.note;
   }
 
@@ -54,16 +54,20 @@ export default async function HabitDetailPage({
   const isCurrentMonth = format(month, "yyyy-MM") === format(today, "yyyy-MM");
   const effectiveMonthEnd = monthEnd < today ? monthEnd : today;
 
-  const thisMonthStats = successRate(loggedDates, habit.scheduled_days, monthStart, effectiveMonthEnd);
+  const created = parse(habit.created_at.slice(0, 10), "yyyy-MM-dd", today);
+  const currentMonthStart = created > monthStart ? created : monthStart;
+  const thisMonthStats = successRate(loggedDates, habit.scheduled_days, currentMonthStart, effectiveMonthEnd);
   const prevMonthDate = subMonths(month, 1);
+  const prevMonthStart = startOfMonth(prevMonthDate);
   const prevMonthStats = successRate(
     loggedDates,
     habit.scheduled_days,
-    startOfMonth(prevMonthDate),
+    created > prevMonthStart ? created : prevMonthStart,
     endOfMonth(prevMonthDate) < today ? endOfMonth(prevMonthDate) : today
   );
-  const threeMonthStats = successRate(loggedDates, habit.scheduled_days, subMonths(today, 3), today);
-  const weekdayInsight = bestWeekday(loggedDates, habit.scheduled_days);
+  const threeMonthStart = subMonths(today, 3);
+  const threeMonthStats = successRate(loggedDates, habit.scheduled_days, created > threeMonthStart ? created : threeMonthStart, today);
+  const weekdayInsight = bestWeekday(loggedDates, habit.scheduled_days, habit.created_at);
   const weekdayInsightLabel = weekdayInsight ? t(`habits.weekdaysLong.${weekdaySlug(weekdayInsight.day)}`) : null;
   const monthDiff = thisMonthStats.rate - prevMonthStats.rate;
 

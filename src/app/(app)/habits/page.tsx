@@ -1,4 +1,4 @@
-import { format, subDays } from "date-fns";
+import { format } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { computeStreak, countThisWeek } from "@/lib/streak";
 import { HabitCreateModal } from "@/components/habit-create-modal";
@@ -11,6 +11,7 @@ import { HabitsCalendar } from "@/components/habits/habits-calendar";
 import { HabitsMonthly } from "@/components/habits/habits-monthly";
 import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
 import { categorySlug } from "@/lib/habit-categories";
+import { fetchAllRows } from "@/lib/paging";
 
 export default async function HabitsPage() {
   const supabase = await createClient();
@@ -21,49 +22,34 @@ export default async function HabitsPage() {
   const dict = await getDictionary();
   const t = await getT();
 
-  const since = format(subDays(new Date(), 400), "yyyy-MM-dd");
   const today = format(new Date(), "yyyy-MM-dd");
 
-  const [{ data: habits }, { data: pausedHabits }, { data: logs }, { data: todayLogs }, { data: moments }] =
+  const [habits, pausedHabits, logs, todayLogs, moments] =
     await Promise.all([
-      supabase
-        .from("habits")
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("archived", false)
-        .order("position", { ascending: true }),
-      supabase
-        .from("habits")
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("archived", true)
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("habit_logs")
-        .select("habit_id, log_date")
-        .eq("user_id", user.id)
-        .gte("log_date", since),
-      supabase.from("habit_logs").select("habit_id, note").eq("user_id", user.id).eq("log_date", today),
-      supabase
-        .from("moments")
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("entry_date", today)
-        .order("occurred_at", { ascending: false }),
+      fetchAllRows((from, to) => supabase.from("habits").select("*").eq("user_id", user.id).eq("archived", false)
+        .order("position").order("id").range(from, to)),
+      fetchAllRows((from, to) => supabase.from("habits").select("*").eq("user_id", user.id).eq("archived", true)
+        .order("created_at", { ascending: false }).order("id", { ascending: false }).range(from, to)),
+      fetchAllRows((from, to) => supabase.from("habit_logs").select("habit_id, log_date").eq("user_id", user.id)
+        .order("log_date").order("habit_id").range(from, to)),
+      fetchAllRows((from, to) => supabase.from("habit_logs").select("habit_id, note").eq("user_id", user.id).eq("log_date", today)
+        .order("habit_id").range(from, to)),
+      fetchAllRows((from, to) => supabase.from("moments").select("*").eq("user_id", user.id).eq("entry_date", today)
+        .order("occurred_at", { ascending: false }).order("id", { ascending: false }).range(from, to)),
     ]);
 
   const logsByHabit = new Map<string, Set<string>>();
-  for (const log of logs ?? []) {
+  for (const log of logs) {
     if (!logsByHabit.has(log.habit_id)) logsByHabit.set(log.habit_id, new Set());
     logsByHabit.get(log.habit_id)!.add(log.log_date);
   }
 
   const todayNoteByHabit = new Map<string, string | null>();
-  for (const log of todayLogs ?? []) {
+  for (const log of todayLogs) {
     todayNoteByHabit.set(log.habit_id, log.note);
   }
 
-  const orderedHabits = habits ?? [];
+  const orderedHabits = habits;
 
   const groupsMap = new Map<string, HabitCardData[]>();
   orderedHabits.forEach((habit, globalIndex) => {
@@ -87,7 +73,7 @@ export default async function HabitsPage() {
   });
 
   const groups = Array.from(groupsMap.entries()).map(([category, habits]) => ({ category, habits }));
-  const allNames = [...orderedHabits, ...(pausedHabits ?? [])].map((h) => h.name);
+  const allNames = [...orderedHabits, ...pausedHabits].map((h) => h.name);
 
   const doneTodayCount = orderedHabits.filter((h) => logsByHabit.get(h.id)?.has(today)).length;
 
@@ -134,7 +120,7 @@ export default async function HabitsPage() {
         </Callout>
       )}
 
-      <MomentsJournal moments={moments ?? []} />
+      <MomentsJournal moments={moments} />
 
       <div className="rounded-2xl border-[1.5px] border-habit/50 bg-surface p-5">
         <SuggestedHabits existingNames={allNames} />

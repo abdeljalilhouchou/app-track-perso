@@ -43,7 +43,7 @@ export function WeeklyGoal({
             disabled={pending || value <= 1}
             onClick={() => change(value - 1)}
             aria-label={t("sport.weeklyGoal.decreaseAria")}
-            className="flex h-6 w-6 items-center justify-center rounded-full border border-sport/40 transition hover:bg-surface-muted disabled:opacity-40"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-full border border-sport/40 transition hover:bg-surface-muted disabled:opacity-40"
           >
             −
           </button>
@@ -55,7 +55,7 @@ export function WeeklyGoal({
             disabled={pending || value >= 14}
             onClick={() => change(value + 1)}
             aria-label={t("sport.weeklyGoal.increaseAria")}
-            className="flex h-6 w-6 items-center justify-center rounded-full border border-sport/40 transition hover:bg-surface-muted disabled:opacity-40"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-full border border-sport/40 transition hover:bg-surface-muted disabled:opacity-40"
           >
             +
           </button>

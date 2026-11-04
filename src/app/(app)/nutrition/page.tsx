@@ -17,6 +17,8 @@ import { weeklyTotals } from "@/lib/weekly";
 import { buildRings, sumMeals } from "@/lib/nutrition-totals";
 import { SugarMeter } from "@/components/sugar-meter";
 import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
+import { fetchAllRows } from "@/lib/paging";
+import { isValidIsoDate } from "@/lib/actions/validation";
 
 export default async function NutritionPage({
   searchParams,
@@ -36,72 +38,140 @@ export default async function NutritionPage({
   const seventyDaysAgo = format(subDays(new Date(), 70), "yyyy-MM-dd");
   const thirtyDaysAgo = format(subDays(new Date(), 30), "yyyy-MM-dd");
   const fourMonthsAgo = format(subDays(new Date(), 120), "yyyy-MM-dd");
-  const selectedDate = date && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : today;
+  const selectedDate = isValidIsoDate(date) ? date : today;
 
   const [
-    { data: profile },
-    { data: meals },
-    { data: selectedDayMeals },
-    { data: loggedDates },
-    { data: foods },
-    { data: recentMeals },
-    { data: favoriteMeals },
-    { data: weightLogs },
-    { data: todayWater },
-    { data: templates },
+    profileResult,
+    meals,
+    selectedDayMeals,
+    loggedDates,
+    foods,
+    recentMeals,
+    favoriteMeals,
+    weightLogs,
+    todayWaterResult,
+    templatesRaw,
+    templateItems,
   ] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", user.id).single(),
-    supabase
-      .from("meal_entries")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("entry_date", today)
-      .order("occurred_at", { ascending: true }),
-    supabase
-      .from("meal_entries")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("entry_date", selectedDate)
-      .order("occurred_at", { ascending: true }),
-    supabase.from("meal_entries").select("entry_date").eq("user_id", user.id).gte("entry_date", fourMonthsAgo),
-    supabase.from("foods").select("*").eq("user_id", user.id).order("name", { ascending: true }),
-    supabase
-      .from("meal_entries")
-      .select("entry_date, calories")
-      .eq("user_id", user.id)
-      .gte("entry_date", seventyDaysAgo),
-    supabase
-      .from("meal_entries")
-      .select("food_name")
-      .eq("user_id", user.id)
-      .gte("entry_date", thirtyDaysAgo),
-    supabase
-      .from("weight_logs")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("entry_date", { ascending: true }),
+    fetchAllRows((from, to) =>
+      supabase
+        .from("meal_entries")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("entry_date", today)
+        .order("occurred_at", { ascending: true })
+        .order("id", { ascending: true })
+        .range(from, to)
+    ),
+    fetchAllRows((from, to) =>
+      supabase
+        .from("meal_entries")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("entry_date", selectedDate)
+        .order("occurred_at", { ascending: true })
+        .order("id", { ascending: true })
+        .range(from, to)
+    ),
+    fetchAllRows((from, to) =>
+      supabase
+        .from("meal_entries")
+        .select("entry_date")
+        .eq("user_id", user.id)
+        .gte("entry_date", fourMonthsAgo)
+        .order("entry_date", { ascending: true })
+        .order("id", { ascending: true })
+        .range(from, to)
+    ),
+    fetchAllRows((from, to) =>
+      supabase
+        .from("foods")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("name", { ascending: true })
+        .order("id", { ascending: true })
+        .range(from, to)
+    ),
+    fetchAllRows((from, to) =>
+      supabase
+        .from("meal_entries")
+        .select("entry_date, calories")
+        .eq("user_id", user.id)
+        .gte("entry_date", seventyDaysAgo)
+        .order("entry_date", { ascending: true })
+        .order("id", { ascending: true })
+        .range(from, to)
+    ),
+    fetchAllRows((from, to) =>
+      supabase
+        .from("meal_entries")
+        .select("food_name")
+        .eq("user_id", user.id)
+        .gte("entry_date", thirtyDaysAgo)
+        .order("entry_date", { ascending: true })
+        .order("id", { ascending: true })
+        .range(from, to)
+    ),
+    fetchAllRows((from, to) =>
+      supabase
+        .from("weight_logs")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("entry_date", { ascending: true })
+        .range(from, to)
+    ),
     supabase.from("water_logs").select("ml").eq("user_id", user.id).eq("entry_date", today).maybeSingle(),
-    supabase
-      .from("meal_templates")
-      .select("*, meal_template_items(*)")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false }),
+    fetchAllRows((from, to) =>
+      supabase
+        .from("meal_templates")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false })
+        .range(from, to)
+    ),
+    fetchAllRows((from, to) =>
+      supabase
+        .from("meal_template_items")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("template_id", { ascending: true })
+        .order("id", { ascending: true })
+        .range(from, to)
+    ),
   ]);
 
-  const totals = sumMeals(meals ?? []);
-  const selectedTotals = sumMeals(selectedDayMeals ?? []);
+  if (profileResult.error) throw new Error("Impossible de charger les objectifs nutritionnels.");
+  const profile = profileResult.data;
+  const todayWater = todayWaterResult.data;
+  if (todayWaterResult.error) throw new Error("Impossible de charger l’hydratation du jour.");
 
-  const drinksMl = (meals ?? []).filter((m) => m.unit === "ml").reduce((sum, m) => sum + m.quantity_grams, 0);
+  const itemsByTemplate = new Map<string, typeof templateItems>();
+  for (const item of templateItems) {
+    const items = itemsByTemplate.get(item.template_id) ?? [];
+    items.push(item);
+    itemsByTemplate.set(item.template_id, items);
+  }
+  const templates = templatesRaw.map((template) => ({
+    ...template,
+    meal_template_items: itemsByTemplate.get(template.id) ?? [],
+  }));
+
+  const totals = sumMeals(meals);
+  const selectedTotals = sumMeals(selectedDayMeals);
+
+  const drinksMl = meals.filter((m) => m.unit === "ml").reduce((sum, m) => sum + m.quantity_grams, 0);
   const caffeineMg = totals.caffeine;
   const CAFFEINE_LIMIT_MG = profile?.caffeine_limit_mg ?? 400;
 
   const caloriesChart = weeklyTotals(
-    (recentMeals ?? []).map((m) => ({ date: m.entry_date, value: m.calories })),
+    recentMeals.map((m) => ({ date: m.entry_date, value: m.calories })),
     10
   );
 
   const favoriteCounts = new Map<string, number>();
-  for (const m of favoriteMeals ?? []) {
+  for (const m of favoriteMeals) {
     favoriteCounts.set(m.food_name, (favoriteCounts.get(m.food_name) ?? 0) + 1);
   }
   const topNames = Array.from(favoriteCounts.entries())
@@ -109,7 +179,7 @@ export default async function NutritionPage({
     .slice(0, 6)
     .map(([name]) => name);
   const quickFoods = topNames
-    .map((name) => (foods ?? []).find((f) => f.name === name))
+    .map((name) => foods.find((f) => f.name === name))
     .filter((f): f is NonNullable<typeof f> => Boolean(f));
 
   const macroRingLabels = {
@@ -134,7 +204,7 @@ export default async function NutritionPage({
             <p className="mt-0.5 text-sm text-foreground-muted">{dict.pages.nutrition.subtitle}</p>
           </div>
         </div>
-        <FoodSettings foods={foods ?? []} />
+        <FoodSettings foods={foods} />
       </div>
 
       <NutritionTabs
@@ -219,7 +289,7 @@ export default async function NutritionPage({
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
                 {t("nutrition.page.addFoodHeading")}
               </p>
-              <MealForm foods={foods ?? []} quickFoods={quickFoods} />
+              <MealForm foods={foods} quickFoods={quickFoods} />
             </div>
           </>
         }
@@ -227,7 +297,7 @@ export default async function NutritionPage({
           <>
             <NutritionJournal
               selectedDate={selectedDate}
-              meals={selectedDayMeals ?? []}
+              meals={selectedDayMeals}
               markedDates={Array.from(new Set((loggedDates ?? []).map((d) => d.entry_date)))}
               totals={selectedTotals}
               rings={selectedRings}

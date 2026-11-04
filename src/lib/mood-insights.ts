@@ -1,4 +1,4 @@
-import { getISODay, parseISO } from "date-fns";
+import { format, getISODay, parseISO, subDays } from "date-fns";
 import { computeStreak } from "@/lib/streak";
 import type { Insight } from "@/lib/dashboard";
 import type { Vars } from "@/lib/i18n/translate";
@@ -40,8 +40,8 @@ export function weekdayAverages(moods: Mood[], t: Translator) {
   });
 }
 
-export function moodSummary(moods: Mood[]) {
-  const last30 = moods.slice(-30);
+export function moodSummary(moods: Mood[], since: string) {
+  const last30 = moods.filter((m) => m.entry_date >= since);
   const best = last30.reduce<Mood | null>((b, m) => (!b || m.mood_score > b.mood_score ? m : b), null);
   const meanMood = avg(last30.map((m) => m.mood_score));
   const meanEnergy = avg(last30.map((m) => m.energy_level));
@@ -50,8 +50,28 @@ export function moodSummary(moods: Mood[]) {
     energy: meanEnergy === null ? null : Math.round(meanEnergy * 10) / 10,
     best,
     streak: computeStreak(new Set(moods.map((m) => m.entry_date))),
-    count: moods.length,
+    count: last30.length,
   };
+}
+
+/** Consecutive low-mood calendar days ending today, or yesterday if today has no entry. */
+export function lowMoodStreak(moods: Mood[], today = new Date()): number {
+  const byDate = new Map(moods.map((m) => [m.entry_date, m.mood_score]));
+  const todayKey = format(today, "yyyy-MM-dd");
+  let cursor = today;
+
+  if (byDate.has(todayKey)) {
+    if ((byDate.get(todayKey) ?? 5) > 2) return 0;
+  } else {
+    cursor = subDays(today, 1);
+  }
+
+  let streak = 0;
+  while ((byDate.get(format(cursor, "yyyy-MM-dd")) ?? 5) <= 2) {
+    streak += 1;
+    cursor = subDays(cursor, 1);
+  }
+  return streak;
 }
 
 type DayFacts = { protein: number; sugar: number; caffeine: number; drinksMl: number; hasMeals: boolean };

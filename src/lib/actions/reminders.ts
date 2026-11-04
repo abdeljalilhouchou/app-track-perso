@@ -3,8 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { dbFail, fail, NOT_SIGNED_IN, ok, type ActionResult } from "@/lib/actions/result";
+import { isValidTime, isValidTimezone } from "@/lib/actions/validation";
 
 export async function enableEmailReminders(timezone: string, time: string): Promise<ActionResult> {
+  if (!isValidTimezone(timezone) || !isValidTime(time)) return fail("Fuseau horaire ou heure invalide.");
   const supabase = await createClient();
   const {
     data: { user },
@@ -23,6 +25,7 @@ export async function enableEmailReminders(timezone: string, time: string): Prom
 }
 
 export async function updateReminderTime(time: string): Promise<ActionResult> {
+  if (!isValidTime(time)) return fail("Heure de rappel invalide.");
   const supabase = await createClient();
   const {
     data: { user },

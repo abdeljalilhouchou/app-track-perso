@@ -76,6 +76,32 @@ export function UserCircleIcon({ className }: IconProps) {
   );
 }
 
+export function DumbbellIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M4 9v6M7 6v12M17 6v12M20 9v6M7 12h10M2.5 10v4M21.5 10v4" />
+    </svg>
+  );
+}
+
+export function RunIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <circle cx="15.5" cy="4.5" r="2" />
+      <path d="m12.5 9 3-2 3 2 2 4M11.5 10 8 13l-3.5-.5M13 10l-1 5-4 5M12 15l5 1 2 4" />
+    </svg>
+  );
+}
+
+export function ChartIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M4 19V5M4 19h16M7 15l3-4 3 2 5-7" />
+      <path d="M15 6h3v3" />
+    </svg>
+  );
+}
+
 export function SunIcon({ className }: IconProps) {
   return (
     <svg {...base} className={className}>

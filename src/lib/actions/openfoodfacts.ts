@@ -21,8 +21,9 @@ type OffProduct = {
 };
 
 export async function searchOpenFoodFacts(query: string): Promise<OffResult[]> {
+  if (typeof query !== "string") return [];
   const q = query.trim();
-  if (q.length < 2) return [];
+  if (q.length < 2 || q.length > 100) return [];
 
   try {
     const url = new URL("https://world.openfoodfacts.org/cgi/search.pl");
@@ -51,8 +52,8 @@ export async function searchOpenFoodFacts(query: string): Promise<OffResult[]> {
         const n = p.nutriments!;
         return {
           id: p.code ?? crypto.randomUUID(),
-          name: p.product_name!,
-          brand: p.brands ?? null,
+          name: p.product_name!.slice(0, 120),
+          brand: p.brands?.slice(0, 120) ?? null,
           calories: Math.round(n["energy-kcal_100g"] ?? 0),
           protein: Math.round((n["proteins_100g"] ?? 0) * 10) / 10,
           carbs: Math.round((n["carbohydrates_100g"] ?? 0) * 10) / 10,

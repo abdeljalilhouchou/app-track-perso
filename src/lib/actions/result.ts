@@ -26,7 +26,7 @@ export function dbFail(error: { message: string; code?: string }): ActionResult 
   if (m.includes("fetch failed") || m.includes("network")) {
     return fail("Connexion impossible. Vérifie ton réseau et réessaie.");
   }
-  return fail(error.message);
+  return fail("Une erreur est survenue. Réessaie dans un instant.");
 }
 
 export const NOT_SIGNED_IN = "Ta session a expiré : reconnecte-toi.";

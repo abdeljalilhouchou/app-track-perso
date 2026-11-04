@@ -70,7 +70,7 @@ export function HabitCreateModal() {
         {t("habits.createModal.newHabit")}
       </button>
 
-      <Dialog open={open} onClose={close}>
+      <Dialog open={open} onClose={close} ariaLabel={t("habits.createModal.newHabit")}>
         <form action={submit} className="rounded-2xl bg-surface shadow-2xl">
           <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-2xl border-b border-border bg-surface px-5 py-4">
             <span className="text-sm font-semibold">{t("habits.createModal.newHabit")}</span>

@@ -7,6 +7,8 @@ import { dbFail, fail, NOT_SIGNED_IN, ok, type ActionResult } from "@/lib/action
 import { computeNutritionTargets, type ActivityLevel, type NutritionGoal } from "@/lib/nutrition-calculator";
 import { DEFAULT_DRINKS, DEFAULT_FOODS, type SeedFood } from "@/lib/food-database";
 import type { MealEntry } from "@/types/database";
+import { fetchAllRows } from "@/lib/paging";
+import { isFiniteInRange, isUuid, isValidIsoDate } from "@/lib/actions/validation";
 
 const MEAL_TYPES: MealEntry["meal_type"][] = ["petit-dejeuner", "dejeuner", "diner", "collation", "autre"];
 
@@ -16,6 +18,22 @@ function parseMealType(raw: string): MealEntry["meal_type"] {
 
 function parseUnit(raw: FormDataEntryValue | null): "g" | "ml" {
   return raw === "ml" ? "ml" : "g";
+}
+
+const NUTRIENT_FIELDS = ["calories", "protein", "carbs", "fat", "fiber", "sugar", "sodium", "caffeine"] as const;
+function validNutrients(values: Record<(typeof NUTRIENT_FIELDS)[number], number>) {
+  return NUTRIENT_FIELDS.every((field) => isFiniteInRange(values[field], 0, 100_000));
+}
+
+function validTemplateItems(items: unknown): items is TemplateItemInput[] {
+  if (!Array.isArray(items) || items.length < 1 || items.length > 100) return false;
+  return items.every((item) => item && typeof item === "object" &&
+    (item.food_id === null || isUuid(item.food_id)) &&
+    typeof item.food_name === "string" && item.food_name.trim().length > 0 && item.food_name.length <= 120 &&
+    typeof item.icon === "string" && item.icon.length <= 24 &&
+    (item.unit === "g" || item.unit === "ml") &&
+    isFiniteInRange(item.quantity_grams, 0.1, 100_000) &&
+    NUTRIENT_FIELDS.every((field) => isFiniteInRange(item[field], 0, 100_000)));
 }
 
 export async function logMeal(formData: FormData): Promise<ActionResult> {
@@ -34,7 +52,12 @@ export async function logMeal(formData: FormData): Promise<ActionResult> {
   const unit = parseUnit(formData.get("unit"));
   const entry_date = String(formData.get("entry_date") ?? "").trim() || format(new Date(), "yyyy-MM-dd");
 
-  if (!food_name || quantity_grams <= 0) return fail("Choisis un aliment et une quantité valide.");
+  if (!food_name || food_name.length > 120 || icon.length > 24 || !isFiniteInRange(quantity_grams, 0.1, 100_000) ||
+    !validNutrients({ calories, protein, carbs, fat, fiber, sugar, sodium, caffeine }) ||
+    !MEAL_TYPES.includes(String(formData.get("meal_type") ?? "autre") as MealEntry["meal_type"]) ||
+    (formData.get("unit") !== "g" && formData.get("unit") !== "ml") || !isValidIsoDate(entry_date)) {
+    return fail("Choisis un aliment et vérifie les valeurs renseignées.");
+  }
 
   const supabase = await createClient();
   const {
@@ -67,8 +90,11 @@ export async function logMeal(formData: FormData): Promise<ActionResult> {
 }
 
 export async function deleteMeal(id: string): Promise<ActionResult> {
+  if (!isUuid(id)) return fail("Repas invalide.");
   const supabase = await createClient();
-  const { error: error2 } = await supabase.from("meal_entries").delete().eq("id", id);
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return fail(NOT_SIGNED_IN);
+  const { error: error2 } = await supabase.from("meal_entries").delete().eq("id", id).eq("user_id", user.id);
   if (error2) return dbFail(error2);
   revalidatePath("/nutrition");
 
@@ -83,7 +109,9 @@ export async function saveNutritionProfile(formData: FormData): Promise<ActionRe
   const activityLevel = String(formData.get("activity_level") ?? "leger") as ActivityLevel;
   const goal = String(formData.get("nutrition_goal") ?? "maintenir") as NutritionGoal;
 
-  if (!heightCm || !weightKg || !age) return fail("Renseigne ta taille, ton poids et ton âge.");
+  if (!isFiniteInRange(heightCm, 100, 250) || !isFiniteInRange(weightKg, 30, 300) || !isFiniteInRange(age, 10, 100, true) ||
+    !["homme", "femme"].includes(sex) || !["sedentaire", "leger", "modere", "actif", "tres_actif"].includes(activityLevel) ||
+    !["perdre", "maintenir", "prendre"].includes(goal)) return fail("Vérifie ta taille, ton poids, ton âge et tes objectifs.");
 
   const targets = computeNutritionTargets({ heightCm, weightKg, age, sex, activityLevel, goal });
 
@@ -138,9 +166,14 @@ export async function addFood(formData: FormData): Promise<ActionResult> {
   const caffeine = Number(formData.get("caffeine") ?? 0);
   const unit = parseUnit(formData.get("unit"));
   const portion_label = String(formData.get("portion_label") ?? "").trim() || null;
-  const portion_grams = Number(formData.get("portion_grams") ?? 0) || null;
+  const portionRaw = String(formData.get("portion_grams") ?? "").trim();
+  const portion_grams = portionRaw ? Number(portionRaw) : null;
 
-  if (!name) return fail("Le nom est requis.");
+  if (!name || name.length > 120 || icon.length > 24 || category.length > 60 || (formData.get("unit") !== "g" && formData.get("unit") !== "ml") ||
+    !validNutrients({ calories, protein, carbs, fat, fiber, sugar, sodium, caffeine }) ||
+    (portion_grams !== null && !isFiniteInRange(portion_grams, 0.1, 100_000)) || (portion_label && portion_label.length > 80)) {
+    return fail("Vérifie le nom, l’unité et les valeurs nutritionnelles.");
+  }
 
   const supabase = await createClient();
   const {
@@ -185,15 +218,24 @@ export async function updateFood(id: string, formData: FormData): Promise<Action
   const caffeine = Number(formData.get("caffeine") ?? 0);
   const unit = parseUnit(formData.get("unit"));
   const portion_label = String(formData.get("portion_label") ?? "").trim() || null;
-  const portion_grams = Number(formData.get("portion_grams") ?? 0) || null;
+  const portionRaw = String(formData.get("portion_grams") ?? "").trim();
+  const portion_grams = portionRaw ? Number(portionRaw) : null;
 
-  if (!name) return fail("Le nom est requis.");
+  if (!isUuid(id) || !name || name.length > 120 || icon.length > 24 || category.length > 60 ||
+    (formData.get("unit") !== "g" && formData.get("unit") !== "ml") ||
+    !validNutrients({ calories, protein, carbs, fat, fiber, sugar, sodium, caffeine }) ||
+    (portion_grams !== null && !isFiniteInRange(portion_grams, 0.1, 100_000)) || (portion_label && portion_label.length > 80)) {
+    return fail("Vérifie le nom, l’unité et les valeurs nutritionnelles.");
+  }
 
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return fail(NOT_SIGNED_IN);
   const { error: error6 } = await supabase
     .from("foods")
     .update({ name, icon, category, calories, protein, carbs, fat, fiber, sugar, sodium, caffeine, unit, portion_label, portion_grams })
-    .eq("id", id);
+    .eq("id", id)
+    .eq("user_id", user.id);
   if (error6) return dbFail(error6);
   revalidatePath("/nutrition");
 
@@ -201,8 +243,11 @@ export async function updateFood(id: string, formData: FormData): Promise<Action
 }
 
 export async function deleteFood(id: string): Promise<ActionResult> {
+  if (!isUuid(id)) return fail("Aliment invalide.");
   const supabase = await createClient();
-  const { error: error7 } = await supabase.from("foods").delete().eq("id", id);
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return fail(NOT_SIGNED_IN);
+  const { error: error7 } = await supabase.from("foods").delete().eq("id", id).eq("user_id", user.id);
   if (error7) return dbFail(error7);
   revalidatePath("/nutrition");
 
@@ -242,7 +287,7 @@ export async function seedDefaultFoods(): Promise<SeedResult> {
 
   const rows = [...DEFAULT_FOODS, ...DEFAULT_DRINKS].map((f) => toFoodRow(user.id, f));
   const { error } = await supabase.from("foods").insert(rows);
-  if (error) return { added: 0, error: error.message };
+  if (error) return { added: 0, error: "Impossible d’ajouter les aliments par défaut." };
 
   revalidatePath("/nutrition");
   return { added: rows.length, error: null };
@@ -256,13 +301,19 @@ export async function seedDefaultDrinks(): Promise<SeedResult> {
   } = await supabase.auth.getUser();
   if (!user) return { added: 0, error: "Non connecté." };
 
-  const { data: existing } = await supabase.from("foods").select("name").eq("user_id", user.id);
-  const existingNames = new Set((existing ?? []).map((f) => f.name.toLowerCase()));
+  let existing;
+  try {
+    existing = await fetchAllRows((from, to) => supabase.from("foods").select("name, id").eq("user_id", user.id)
+      .order("id").range(from, to));
+  } catch {
+    return { added: 0, error: "Impossible de charger les aliments enregistrés." };
+  }
+  const existingNames = new Set(existing.map((f) => f.name.toLowerCase()));
   const rows = DEFAULT_DRINKS.filter((d) => !existingNames.has(d.name.toLowerCase())).map((d) => toFoodRow(user.id, d));
   if (rows.length === 0) return { added: 0, error: null };
 
   const { error } = await supabase.from("foods").insert(rows);
-  if (error) return { added: 0, error: error.message };
+  if (error) return { added: 0, error: "Impossible d’ajouter les boissons par défaut." };
 
   revalidatePath("/nutrition");
   return { added: rows.length, error: null };
@@ -285,11 +336,13 @@ export async function resyncFoodDefaults(): Promise<ResyncResult> {
   } = await supabase.auth.getUser();
   if (!user) return { updated: 0, error: "Non connecté." };
 
-  const { data: existing, error: fetchError } = await supabase
-    .from("foods")
-    .select("id, name, fiber, sugar, sodium, caffeine, portion_grams")
-    .eq("user_id", user.id);
-  if (fetchError) return { updated: 0, error: fetchError.message };
+  let existing;
+  try {
+    existing = await fetchAllRows((from, to) => supabase.from("foods")
+      .select("id, name, fiber, sugar, sodium, caffeine, portion_grams").eq("user_id", user.id).order("id").range(from, to));
+  } catch {
+    return { updated: 0, error: "Impossible de charger les aliments." };
+  }
 
   const seedByName = new Map(
     [...DEFAULT_FOODS, ...DEFAULT_DRINKS].map((f) => [f.name.toLowerCase(), f])
@@ -318,7 +371,7 @@ export async function resyncFoodDefaults(): Promise<ResyncResult> {
     })
   );
   const failed = results.find((r) => r.error);
-  if (failed?.error) return { updated: 0, error: failed.error.message };
+  if (failed?.error) return { updated: 0, error: "Impossible de mettre à jour les aliments par défaut." };
 
   revalidatePath("/nutrition");
   return { updated: stale.length, error: null };
@@ -329,6 +382,9 @@ export async function updateGoalsManually(formData: FormData): Promise<ActionRes
   const goal_protein = Number(formData.get("goal_protein"));
   const goal_carbs = Number(formData.get("goal_carbs"));
   const goal_fat = Number(formData.get("goal_fat"));
+
+  if (!isFiniteInRange(goal_calories, 500, 10_000) || !isFiniteInRange(goal_protein, 0, 1_000) ||
+    !isFiniteInRange(goal_carbs, 0, 1_000) || !isFiniteInRange(goal_fat, 0, 1_000)) return fail("Vérifie les objectifs nutritionnels.");
 
   const supabase = await createClient();
   const {
@@ -348,10 +404,11 @@ export async function updateGoalsManually(formData: FormData): Promise<ActionRes
 }
 
 export async function saveDailyLimits(formData: FormData): Promise<ActionResult> {
-  const clamp = (n: number, min: number, max: number) => Math.min(max, Math.max(min, Math.round(n)));
-  const water_goal_ml = clamp(Number(formData.get("water_goal_ml")) || 2000, 500, 10000);
-  const caffeine_limit_mg = clamp(Number(formData.get("caffeine_limit_mg")) || 400, 50, 1000);
-  const sugar_limit_g = clamp(Number(formData.get("sugar_limit_g")) || 50, 5, 300);
+  const water_goal_ml = Number(formData.get("water_goal_ml"));
+  const caffeine_limit_mg = Number(formData.get("caffeine_limit_mg"));
+  const sugar_limit_g = Number(formData.get("sugar_limit_g"));
+  if (!isFiniteInRange(water_goal_ml, 500, 10_000, true) || !isFiniteInRange(caffeine_limit_mg, 50, 1_000, true) ||
+    !isFiniteInRange(sugar_limit_g, 5, 300)) return fail("Vérifie les limites quotidiennes.");
 
   const supabase = await createClient();
   const {
@@ -371,6 +428,7 @@ export async function saveDailyLimits(formData: FormData): Promise<ActionResult>
 // --- Water ---
 
 export async function addWater(amountMl: number): Promise<ActionResult> {
+  if (!isFiniteInRange(amountMl, -10_000, 10_000, true)) return fail("Quantité d’eau invalide.");
   const supabase = await createClient();
   const {
     data: { user },
@@ -378,14 +436,15 @@ export async function addWater(amountMl: number): Promise<ActionResult> {
   if (!user) return fail(NOT_SIGNED_IN);
 
   const today = format(new Date(), "yyyy-MM-dd");
-  const { data: existing } = await supabase
+  const { data: existing, error: readError } = await supabase
     .from("water_logs")
     .select("ml")
     .eq("user_id", user.id)
     .eq("entry_date", today)
     .maybeSingle();
+  if (readError) return dbFail(readError);
 
-  const newMl = Math.max(0, (existing?.ml ?? 0) + amountMl);
+  const newMl = Math.min(50_000, Math.max(0, (existing?.ml ?? 0) + amountMl));
 
   const { error: error10 } = await supabase
     .from("water_logs")
@@ -403,7 +462,7 @@ export async function addWater(amountMl: number): Promise<ActionResult> {
 export async function logWeight(formData: FormData): Promise<ActionResult> {
   const weight_kg = Number(formData.get("weight_kg") ?? 0);
   const entry_date = String(formData.get("entry_date") ?? "").trim() || format(new Date(), "yyyy-MM-dd");
-  if (!weight_kg) return fail("Entre un poids valide.");
+  if (!isFiniteInRange(weight_kg, 30, 300) || !isValidIsoDate(entry_date)) return fail("Entre un poids et une date valides.");
 
   const supabase = await createClient();
   const {
@@ -416,7 +475,10 @@ export async function logWeight(formData: FormData): Promise<ActionResult> {
     .upsert({ user_id: user.id, entry_date, weight_kg }, { onConflict: "user_id,entry_date" });
   if (error11) return dbFail(error11);
 
-  const { error: error12 } = await supabase.from("profiles").update({ weight_kg }).eq("id", user.id);
+  const { data: latest, error: latestError } = await supabase.from("weight_logs").select("weight_kg")
+    .eq("user_id", user.id).order("entry_date", { ascending: false }).order("id", { ascending: false }).limit(1).maybeSingle();
+  if (latestError) return dbFail(latestError);
+  const { error: error12 } = await supabase.from("profiles").update({ weight_kg: latest?.weight_kg ?? weight_kg }).eq("id", user.id);
   if (error12) return dbFail(error12);
 
   revalidatePath("/nutrition");
@@ -425,9 +487,17 @@ export async function logWeight(formData: FormData): Promise<ActionResult> {
 }
 
 export async function deleteWeightLog(id: string): Promise<ActionResult> {
+  if (!isUuid(id)) return fail("Mesure invalide.");
   const supabase = await createClient();
-  const { error: error13 } = await supabase.from("weight_logs").delete().eq("id", id);
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return fail(NOT_SIGNED_IN);
+  const { error: error13 } = await supabase.from("weight_logs").delete().eq("id", id).eq("user_id", user.id);
   if (error13) return dbFail(error13);
+  const { data: latest, error: latestError } = await supabase.from("weight_logs").select("weight_kg")
+    .eq("user_id", user.id).order("entry_date", { ascending: false }).order("id", { ascending: false }).limit(1).maybeSingle();
+  if (latestError) return dbFail(latestError);
+  const { error: profileError } = await supabase.from("profiles").update({ weight_kg: latest?.weight_kg ?? null }).eq("id", user.id);
+  if (profileError) return dbFail(profileError);
   revalidatePath("/nutrition");
 
   return ok;
@@ -452,7 +522,8 @@ export type TemplateItemInput = {
 };
 
 export async function createMealTemplate(name: string, icon: string, items: TemplateItemInput[]): Promise<ActionResult> {
-  if (!name.trim() || items.length === 0) return fail("Donne un nom à la recette et ajoute au moins un aliment.");
+  if (typeof name !== "string" || name.trim().length < 1 || name.length > 100 || typeof icon !== "string" || icon.length > 24 ||
+    !validTemplateItems(items)) return fail("Vérifie le nom et le contenu de la recette.");
 
   const supabase = await createClient();
   const {
@@ -460,13 +531,13 @@ export async function createMealTemplate(name: string, icon: string, items: Temp
   } = await supabase.auth.getUser();
   if (!user) return fail(NOT_SIGNED_IN);
 
-  const { data: template } = await supabase
+  const { data: template, error: templateError } = await supabase
     .from("meal_templates")
     .insert({ user_id: user.id, name: name.trim(), icon })
     .select("id")
     .single();
 
-  if (!template) return fail("Action impossible.");
+  if (!template || templateError) return fail("Impossible de créer la recette.");
 
   const { error: error14 } = await supabase.from("meal_template_items").insert(
     items.map((item) => ({
@@ -475,7 +546,10 @@ export async function createMealTemplate(name: string, icon: string, items: Temp
       ...item,
     }))
   );
-  if (error14) return dbFail(error14);
+  if (error14) {
+    await supabase.from("meal_templates").delete().eq("id", template.id).eq("user_id", user.id);
+    return dbFail(error14);
+  }
 
   revalidatePath("/nutrition");
 
@@ -488,7 +562,8 @@ export async function updateMealTemplate(
   icon: string,
   items: TemplateItemInput[]
 ): Promise<{ error: string | null }> {
-  if (!name.trim() || items.length === 0) return { error: "Nom et au moins un aliment requis." };
+  if (!isUuid(id) || typeof name !== "string" || name.trim().length < 1 || name.length > 100 ||
+    typeof icon !== "string" || icon.length > 24 || !validTemplateItems(items)) return { error: "Vérifie le nom et le contenu de la recette." };
 
   const supabase = await createClient();
   const {
@@ -499,11 +574,14 @@ export async function updateMealTemplate(
   const { error: updateError } = await supabase
     .from("meal_templates")
     .update({ name: name.trim(), icon })
-    .eq("id", id);
-  if (updateError) return { error: updateError.message };
+    .eq("id", id)
+    .eq("user_id", user.id);
+  if (updateError) return { error: "Impossible de modifier la recette." };
 
   // Insert the new items first, then drop the old ones, so a failed insert never loses the recipe.
-  const { data: oldItems } = await supabase.from("meal_template_items").select("id").eq("template_id", id);
+  const { data: oldItems, error: oldItemsError } = await supabase.from("meal_template_items").select("id")
+    .eq("template_id", id).eq("user_id", user.id);
+  if (oldItemsError) return { error: "Impossible de charger les aliments de la recette." };
 
   const { error: insertError } = await supabase.from("meal_template_items").insert(
     items.map((item) => ({
@@ -512,18 +590,24 @@ export async function updateMealTemplate(
       ...item,
     }))
   );
-  if (insertError) return { error: insertError.message };
+  if (insertError) return { error: "Impossible d’enregistrer les aliments de la recette." };
 
   const oldIds = (oldItems ?? []).map((o) => o.id);
-  if (oldIds.length > 0) await supabase.from("meal_template_items").delete().in("id", oldIds);
+  if (oldIds.length > 0) {
+    const { error: deleteError } = await supabase.from("meal_template_items").delete().in("id", oldIds).eq("user_id", user.id);
+    if (deleteError) return { error: "La recette a été enregistrée, mais son ancienne version n’a pas pu être nettoyée." };
+  }
 
   revalidatePath("/nutrition");
   return { error: null };
 }
 
 export async function deleteMealTemplate(id: string): Promise<ActionResult> {
+  if (!isUuid(id)) return fail("Recette invalide.");
   const supabase = await createClient();
-  const { error: error15 } = await supabase.from("meal_templates").delete().eq("id", id);
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return fail(NOT_SIGNED_IN);
+  const { error: error15 } = await supabase.from("meal_templates").delete().eq("id", id).eq("user_id", user.id);
   if (error15) return dbFail(error15);
   revalidatePath("/nutrition");
 
@@ -531,18 +615,25 @@ export async function deleteMealTemplate(id: string): Promise<ActionResult> {
 }
 
 export async function logMealTemplate(templateId: string, mealType: string): Promise<ActionResult> {
+  if (!isUuid(templateId) || !MEAL_TYPES.includes(mealType as MealEntry["meal_type"])) return fail("Recette ou type de repas invalide.");
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return fail(NOT_SIGNED_IN);
 
-  const { data: items } = await supabase
-    .from("meal_template_items")
-    .select("*")
-    .eq("template_id", templateId);
+  const { data: template, error: templateError } = await supabase.from("meal_templates").select("id")
+    .eq("id", templateId).eq("user_id", user.id).maybeSingle();
+  if (templateError || !template) return fail("Recette introuvable.");
+  let items;
+  try {
+    items = await fetchAllRows((from, to) => supabase.from("meal_template_items").select("*")
+      .eq("template_id", templateId).eq("user_id", user.id).order("id").range(from, to));
+  } catch {
+    return fail("Impossible de charger cette recette.");
+  }
 
-  if (!items || items.length === 0) return fail("Cette recette ne contient aucun aliment.");
+  if (items.length === 0) return fail("Cette recette ne contient aucun aliment.");
 
   const entry_date = format(new Date(), "yyyy-MM-dd");
   const meal_type = parseMealType(mealType);

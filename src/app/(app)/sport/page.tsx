@@ -1,273 +1,209 @@
-import { format, parseISO, startOfWeek, subDays, subWeeks } from "date-fns";
-import { fr } from "date-fns/locale";
-import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { ActivityIcon, CalendarIcon, DumbbellIcon, RunIcon, SparkleIcon } from "@/components/ui/nav-icons";
 import { WeeklyBarChart } from "@/components/charts/weekly-bar-chart";
-import { DayNavigator } from "@/components/journal/day-navigator";
-import { Callout } from "@/components/ui/callout";
-import { InViewFade } from "@/components/ui/in-view-fade";
-import { WorkoutForm } from "@/components/sport/workout-form";
 import { WeeklyGoal } from "@/components/sport/weekly-goal";
-import { SportTabs } from "@/components/sport/sport-tabs";
-import { ActivityBreakdown, SportHeatmap, SportRecords, SportTiles } from "@/components/sport/sport-overview";
-import { TodaySession } from "@/components/strength/today-session";
-import { ProgramManager } from "@/components/strength/program-manager";
-import { MuscleVolume, Progression } from "@/components/strength/progression";
-import { SessionList, type SessionItem } from "@/components/strength/session-list";
-import type { CatalogItem, TemplateView } from "@/components/strength/types";
-import { computeSportStats } from "@/lib/sport-stats";
-import { computeStrengthData, suggestNextTemplate, type RawSet } from "@/lib/strength-stats";
-import { muscleGroupI18nPath } from "@/lib/strength";
-import { weeklyTotals } from "@/lib/weekly";
-import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
+import { loadSportHubData, formatSportDate, sportWeeklyDuration } from "@/lib/sport-hub-data";
+import { getT } from "@/lib/i18n/get-dictionary";
 
-const PAGE_SIZE = 1000;
+function SummaryCard({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="min-w-0 rounded-2xl border border-border bg-surface p-4 sm:p-5">
+      <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{title}</h2>
+      {children}
+    </section>
+  );
+}
 
-export default async function SportPage({ searchParams }: { searchParams: Promise<{ date?: string }> }) {
+function DisciplineCard({
+  href,
+  title,
+  description,
+  Icon,
+  detail,
+}: {
+  href: string;
+  title: string;
+  description: string;
+  Icon: React.ComponentType<{ className?: string }>;
+  detail?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="group flex min-h-40 min-w-0 flex-col rounded-2xl border border-border bg-surface p-4 transition-colors hover:border-sport/50 hover:bg-surface-muted sm:p-5"
+    >
+      <span aria-hidden className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-sport-soft text-sport">
+        <Icon className="h-5 w-5" />
+      </span>
+      <h3 className="text-sm font-semibold group-hover:text-sport">{title}</h3>
+      <p className="mt-1 flex-1 text-xs leading-relaxed text-foreground-muted">{description}</p>
+      {detail && <p className="mt-3 text-xs font-medium text-sport">{detail}</p>}
+    </Link>
+  );
+}
+
+export default async function SportPage({ searchParams }: { searchParams: Promise<{ date?: string | string[] }> }) {
   const { date } = await searchParams;
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-  const dict = await getDictionary();
+  if (date !== undefined) {
+    const selectedDate = Array.isArray(date) ? date[0] ?? "" : date;
+    redirect(`/sport/musculation?${new URLSearchParams({ date: selectedDate })}`);
+  }
+
+  const data = await loadSportHubData({ identifyStrength: true });
+  if (!data) return null;
   const t = await getT();
-
-  const today = format(new Date(), "yyyy-MM-dd");
-  const selectedDate = date && /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : today;
-  const setsSince = subDays(new Date(), 400).toISOString();
-
-  // PostgREST caps a response at 1000 rows and a 4x/week program logs hundreds of sets a month: page through.
-  async function fetchSets(): Promise<RawSet[]> {
-    const rows: RawSet[] = [];
-    for (let page = 0; page < 10; page++) {
-      const { data } = await supabase
-        .from("workout_sets")
-        .select("workout_id, exercise_name, muscle_group, exercise_position, set_number, reps, weight_kg")
-        .eq("user_id", user!.id)
-        .gte("created_at", setsSince)
-        .order("created_at", { ascending: true })
-        .order("id", { ascending: true })
-        .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
-      const batch = (data ?? []) as RawSet[];
-      rows.push(...batch);
-      if (batch.length < PAGE_SIZE) break;
-    }
-    return rows;
-  }
-
-  const [{ data: workouts }, { data: profile }, sets, { data: templatesRaw }, { data: templateRows }, { data: catalogRaw }] =
-    await Promise.all([
-    supabase
-      .from("workouts")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("workout_date", { ascending: false })
-      .order("created_at", { ascending: false }),
-    supabase.from("profiles").select("sport_weekly_goal").eq("id", user.id).single(),
-    fetchSets(),
-    supabase
-      .from("workout_templates")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("position", { ascending: true })
-      .order("created_at", { ascending: true }),
-    supabase.from("workout_template_exercises").select("*").eq("user_id", user.id),
-    supabase.from("exercises").select("name, muscle_group").eq("user_id", user.id).order("name", { ascending: true }),
-  ]);
-
-  const all = workouts ?? [];
-  const weeklyGoal = profile?.sport_weekly_goal ?? 3;
-  const stats = computeSportStats(all, weeklyGoal);
-
-  // Program
-  const templates: TemplateView[] = (templatesRaw ?? []).map((tRow) => ({
-    id: tRow.id,
-    name: tRow.name,
-    muscleGroups: tRow.muscle_groups,
-    exercises: (templateRows ?? [])
-      .filter((e) => e.template_id === tRow.id)
-      .sort((a, b) => a.position - b.position)
-      .map((e) => ({ name: e.exercise_name, muscle: e.muscle_group, sets: e.target_sets, reps: e.target_reps })),
-  }));
-  const catalog: CatalogItem[] = (catalogRaw ?? []).map((c) => ({ name: c.name, muscle: c.muscle_group }));
-
-  const weekStart = format(startOfWeek(new Date(), { weekStartsOn: 1 }), "yyyy-MM-dd");
-  const doneThisWeek: Record<string, string> = {};
-  for (const w of all) {
-    if (w.template_id && w.workout_date >= weekStart && !doneThisWeek[w.template_id]) doneThisWeek[w.template_id] = w.workout_date;
-  }
-  const suggestedId = suggestNextTemplate(
-    templates.map((tpl) => tpl.id),
-    all
-  );
-
-  // Strength analytics
-  const workoutDates = Object.fromEntries(all.map((w) => [w.id, w.workout_date]));
-  const strength = computeStrengthData(sets, workoutDates);
-
-  const toItem = (w: (typeof all)[number]): SessionItem => ({
-    id: w.id,
-    date: w.workout_date,
-    activity: w.activity,
-    duration: w.duration_minutes,
-    intensity: w.intensity,
-    notes: w.notes,
-    muscleGroups: w.muscle_groups ?? [],
-  });
-  const selectedDaySessions = all.filter((w) => w.workout_date === selectedDate).map(toItem);
-  const recentSessions = all.slice(0, 12).map(toItem);
-
-  // Quick-pick chips for the cardio form: skip the names that come from the strength program
-  // (the "free session" default name is user-facing and translated; all language variants are
-  // excluded here so the chip list stays clean regardless of which language a session was logged in)
-  const strengthNames = new Set([
-    ...templates.map((tpl) => tpl.name.toLowerCase()),
-    "séance libre",
-    "free session",
-    "حصة حرة",
-    "séance de musculation",
-  ]);
-  const cardioFavorites = stats.activities.filter((a) => !strengthNames.has(a.name.toLowerCase())).slice(0, 6);
-
-  const since = format(subWeeks(new Date(), 10), "yyyy-MM-dd");
-  const chartData = weeklyTotals(
-    all.filter((w) => w.workout_date >= since).map((w) => ({ date: w.workout_date, value: w.duration_minutes })),
-    10
-  );
-
-  // Notes and warnings for the training week
-  const yesterday = format(subDays(new Date(), 1), "yyyy-MM-dd");
-  const trainedYesterday = new Set(all.filter((w) => w.workout_date === yesterday).flatMap((w) => w.muscle_groups ?? []));
-  const suggestedTemplate = templates.find((tpl) => tpl.id === suggestedId);
-  const overlap = suggestedTemplate ? suggestedTemplate.muscleGroups.filter((g) => trainedYesterday.has(g)) : [];
-  const isoToday = new Date().getDay() === 0 ? 7 : new Date().getDay();
-  const missingSessions = weeklyGoal - stats.thisWeek.sessions;
-  const daysLeft = 8 - isoToday;
-
-  const muscleLabel = (group: string) => {
-    const path = muscleGroupI18nPath(group);
-    return path ? t(path) : group;
-  };
-
-  const notes = (
-    <div className="space-y-2.5">
-      {overlap.length > 0 && (
-        <Callout variant="warning" title={t("sport.page.restWarningTitle")} dismissKey={`sport-rest:${today}`} compact>
-          {t("sport.page.restWarningPrefix")} <strong>{overlap.map(muscleLabel).join(", ")}</strong> {t("sport.page.restWarningSuffix")}
-        </Callout>
-      )}
-      {missingSessions > 0 && missingSessions >= daysLeft && (
-        <Callout variant="warning" title={t("sport.page.goalAtRiskTitle")} dismissKey={`sport-goal-risk:${today}`} compact>
-          {t("sport.page.goalAtRiskBody", {
-            missing: missingSessions,
-            missingUnit: t(missingSessions > 1 ? "sport.common.sessionOther" : "sport.common.sessionOne"),
-            days: daysLeft,
-            daysUnit: t(daysLeft > 1 ? "sport.common.dayOther" : "sport.common.dayOne"),
-            goal: weeklyGoal,
-          })}
-        </Callout>
-      )}
-      {missingSessions <= 0 && stats.thisWeek.sessions > 0 && (
-        <Callout variant="success" dismissKey={`sport-goal-done:${today}`} compact>
-          {t("sport.page.goalReachedBody", { sessions: stats.thisWeek.sessions, goal: weeklyGoal })}
-        </Callout>
-      )}
-      {templates.length > 0 && stats.totalSessions > 0 && sets.length === 0 && (
-        <Callout variant="tip" dismissKey="sport-log-sets" compact>
-          {t("sport.page.tipBody", { start: t("sport.todaySession.startSession"), markDone: t("sport.todaySession.markDone") })}
-        </Callout>
-      )}
-    </div>
-  );
-
-  const panels = {
-    session: (
-      <TodaySession
-        templates={templates}
-        doneThisWeek={doneThisWeek}
-        suggestedId={suggestedId}
-        sessionsThisWeek={stats.thisWeek.sessions}
-        goal={weeklyGoal}
-        summaries={strength.exercises}
-        catalog={catalog}
-        today={today}
-        cardio={<WorkoutForm today={today} favorites={cardioFavorites} />}
-      />
-    ),
-    program: <ProgramManager templates={templates} catalog={catalog} />,
-    progress: (
-      <>
-        <MuscleVolume weeklyMuscles={strength.weeklyMuscles} />
-        <Progression exercises={strength.exercises} />
-      </>
-    ),
-    history: (
-      <>
-        <div className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5">
-          <DayNavigator
-            selectedDate={selectedDate}
-            basePath="/sport"
-            markedDates={Array.from(new Set(all.map((w) => w.workout_date)))}
-            markColor="var(--sport)"
-          />
-          <div className="mb-3 mt-6">
-            <p className="text-lg font-semibold capitalize">{format(parseISO(selectedDate), "EEEE d MMMM", { locale: fr })}</p>
-            <p className="text-xs text-foreground-muted">
-              {selectedDaySessions.length === 0
-                ? t("sport.page.noSessionsThatDay")
-                : t("sport.page.daySessionsCount", {
-                    count: selectedDaySessions.length,
-                    unit: t(selectedDaySessions.length > 1 ? "sport.common.sessionOther" : "sport.common.sessionOne"),
-                  })}
-            </p>
-          </div>
-          <SessionList
-            sessions={selectedDaySessions}
-            details={strength.details}
-            emptyLabel={t("sport.page.restDayEmpty")}
-            showDate={false}
-          />
-        </div>
-        <div>
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.page.recentSessionsTitle")}</h2>
-          <SessionList sessions={recentSessions} details={strength.details} emptyLabel={t("sport.common.noSessionsRecorded")} />
-        </div>
-      </>
-    ),
-    stats: (
-      <>
-        <SportTiles stats={stats} />
-        <div className="grid gap-4 lg:grid-cols-2">
-          <WeeklyGoal sessions={stats.thisWeek.sessions} goal={weeklyGoal} goalWeeks={stats.records.goalWeeks} />
-          <SportRecords stats={stats} />
-        </div>
-        <div className="grid gap-4 lg:grid-cols-2">
-          <InViewFade className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5">
-            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.page.minutesPerWeekTitle")}</h2>
-            <WeeklyBarChart data={chartData} color="var(--sport)" unit="min" />
-          </InViewFade>
-          <ActivityBreakdown stats={stats} />
-        </div>
-        <SportHeatmap heat={stats.heat} />
-      </>
-    ),
-  };
+  const { workouts, workoutSetIds, weeklyGoal, language, stats } = data;
+  const recent = workouts.slice(0, 6);
+  const lastSession = workouts[0];
+  const identifiedCalisthenics = workouts.filter((workout) => workout.discipline === "calisthenics").length;
+  const identifiedStrength = workouts.filter((workout) => workout.discipline === "strength" ||
+    (workout.discipline !== "calisthenics" && (Boolean(workout.template_id) || workoutSetIds.has(workout.id)))).length;
+  const unclassified = Math.max(0, workouts.length - identifiedStrength - identifiedCalisthenics);
+  const chartData = sportWeeklyDuration(workouts, language);
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex items-center gap-3">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-[1.5px] border-sport text-xl">
-          🏋️
-        </span>
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{dict.pages.sport.title}</h1>
-          <p className="mt-0.5 text-sm text-foreground-muted">{dict.pages.sport.subtitle}</p>
+      <header className="rounded-3xl border border-sport/30 bg-surface p-5 sm:p-7">
+        <div className="flex items-start gap-3 sm:gap-4">
+          <span aria-hidden className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sport-soft text-sport">
+            <ActivityIcon className="h-6 w-6" />
+          </span>
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sport">{t("sport.hub.nav.overview")}</p>
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">{t("sport.hub.title")}</h1>
+            <p className="mt-1 text-sm text-foreground-muted">{t("sport.hub.description")}</p>
+          </div>
         </div>
-      </div>
+      </header>
 
-      {notes}
+      <section aria-labelledby="sport-week-title" className="space-y-3">
+        <h2 id="sport-week-title" className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">
+          {t("sport.hub.weekSummary")}
+        </h2>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <SummaryCard title={t("sport.hub.sessionsThisWeek")}>
+            <p className="mt-2 text-3xl font-semibold text-sport">{stats.thisWeek.sessions}</p>
+          </SummaryCard>
+          <SummaryCard title={t("sport.hub.minutesThisWeek")}>
+            <p className="mt-2 text-3xl font-semibold text-sport">{stats.thisWeek.minutes}</p>
+            <p className="mt-1 text-xs text-foreground-muted">{t("sport.common.min")}</p>
+          </SummaryCard>
+          <SummaryCard title={t("sport.hub.lastSession")}>
+            {lastSession ? (
+              <>
+                <p className="mt-2 truncate text-base font-semibold">{lastSession.activity}</p>
+                <p className="mt-1 text-xs text-foreground-muted">
+                  {t("sport.hub.sessionDate", {
+                    date: formatSportDate(lastSession.workout_date, language),
+                    minutes: lastSession.duration_minutes,
+                  })}
+                </p>
+              </>
+            ) : (
+              <p className="mt-2 text-sm text-foreground-muted">{t("sport.hub.lastSessionEmpty")}</p>
+            )}
+          </SummaryCard>
+        </div>
+        <WeeklyGoal sessions={stats.thisWeek.sessions} goal={weeklyGoal} goalWeeks={stats.records.goalWeeks} />
+      </section>
 
-      <SportTabs panels={panels} initialTab={date ? "history" : "session"} />
+      <section className="grid min-w-0 gap-4 lg:grid-cols-2">
+        <div className="min-w-0 rounded-2xl border border-border bg-surface p-4 sm:p-5">
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.hub.progressTitle")}</h2>
+          <WeeklyBarChart data={chartData} color="var(--sport)" unit={t("sport.common.min")} />
+        </div>
+        <div className="min-w-0 rounded-2xl border border-border bg-surface p-4 sm:p-5">
+          <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.hub.identifiedTitle")}</h2>
+          <p className="-mt-2 mb-4 text-xs text-foreground-muted">{t("sport.hub.distributionScope")}</p>
+          {workouts.length === 0 ? (
+            <p className="text-sm text-foreground-muted">{t("sport.hub.distributionEmpty")}</p>
+          ) : (
+            <div className="space-y-4">
+              {[
+                { label: t("sport.hub.identifiedStrength"), count: identifiedStrength },
+                { label: t("sport.hub.calisthenics.title"), count: identifiedCalisthenics },
+                { label: t("sport.hub.unclassifiedActivity"), count: unclassified },
+              ].map(({ label, count }) => (
+                <div key={label}>
+                  <div className="mb-1.5 flex items-center justify-between gap-3 text-xs">
+                    <span className="min-w-0 truncate">{label}</span>
+                    <span className="shrink-0 font-semibold tabular-nums">{count}</span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-surface-muted">
+                    <div className="h-full rounded-full bg-sport" style={{ width: `${Math.round((count / workouts.length) * 100)}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section aria-labelledby="sport-disciplines-title" className="space-y-3">
+        <h2 id="sport-disciplines-title" className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">
+          {t("sport.hub.disciplinesTitle")}
+        </h2>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <DisciplineCard
+            href="/sport/musculation"
+            title={t("sport.hub.nav.strength")}
+            description={t("sport.hub.strengthDescription")}
+            detail={identifiedStrength > 0 ? `${identifiedStrength} · ${t("sport.hub.identifiedStrength")}` : undefined}
+            Icon={DumbbellIcon}
+          />
+          <DisciplineCard
+            href="/sport/calisthenics"
+            title={t("sport.hub.calisthenics.title")}
+            description={t("sport.hub.calisthenicsDescription")}
+            detail={identifiedCalisthenics > 0 ? `${identifiedCalisthenics} · ${t("sport.hub.calisthenics.sessionsTitle").toLowerCase()}` : undefined}
+            Icon={SparkleIcon}
+          />
+          <DisciplineCard
+            href="/sport/running"
+            title={t("sport.hub.running.title")}
+            description={t("sport.hub.runningDescription")}
+            Icon={RunIcon}
+          />
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.hub.recentTitle")}</h2>
+          <Link href="/sport/calendar" className="inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-xs font-medium text-sport hover:bg-sport-soft">
+            <span aria-hidden><CalendarIcon className="h-4 w-4" /></span>
+            {t("sport.hub.nav.calendar")}
+          </Link>
+        </div>
+        {recent.length === 0 ? (
+          <div className="rounded-xl bg-surface-muted px-4 py-5 text-sm text-foreground-muted">
+            <p className="font-medium text-foreground">{t("sport.hub.emptyTitle")}</p>
+            <p className="mt-1">{t("sport.hub.emptyBody")}</p>
+          </div>
+        ) : (
+          <ul className="divide-y divide-border">
+            {recent.map((workout) => (
+              <li key={workout.id}>
+                <Link
+                  href={workout.discipline === "calisthenics" ? `/sport/calisthenics?session=${encodeURIComponent(workout.id)}` : `/sport/musculation?date=${encodeURIComponent(workout.workout_date)}`}
+                  className="flex min-h-14 items-center justify-between gap-3 py-3 transition hover:text-sport"
+                >
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-medium">{workout.activity}</span>
+                    <span className="mt-0.5 block text-xs text-foreground-muted">
+                      {formatSportDate(workout.workout_date, language, { weekday: "short", day: "numeric", month: "short" })}
+                    </span>
+                  </span>
+                  <span className="shrink-0 text-xs tabular-nums text-foreground-muted">
+                    {t("sport.hub.sessionMinutes", { minutes: workout.duration_minutes })}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }
