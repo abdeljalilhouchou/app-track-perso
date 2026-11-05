@@ -5,6 +5,8 @@
  * since these keys are not part of the strongly-typed central Dictionary yet).
  */
 
+import { runningExtraAr, runningExtraEn, runningExtraFr } from "./running";
+
 const calisthenicsExtraFr = {
   continueTraining: "Tes séances et ta progression sont synchronisées avec le Sport Hub.",
   notStarted: "Pas commencé",
@@ -37,6 +39,7 @@ const calisthenicsExtraAr = {
 };
 
 export const sportFr = {
+  runningUi: runningExtraFr,
   calisthenicsUi: {
     ...calisthenicsExtraFr,
     navigationLabel: "Navigation Calisthenics",
@@ -85,7 +88,7 @@ export const sportFr = {
     disciplinesTitle: "Mes disciplines",
     strengthDescription: "Programmes, séances guidées et progression musculaire.",
     calisthenicsDescription: "Prépare tes futures séances au poids du corps et tes skills.",
-    runningDescription: "Un espace prêt pour tes sorties, distances et allures.",
+    runningDescription: "Enregistre tes courses, suis les distances et observe ta progression.",
     identifiedTitle: "Répartition identifiable",
     distributionScope: "Sur l'ensemble des séances enregistrées.",
     identifiedStrength: "Musculation identifiée",
@@ -108,6 +111,7 @@ export const sportFr = {
     running: {
       title: "Running",
       description: "Un espace conçu pour suivre tes sorties et ta progression en course.",
+      sessionsTitle: "Courses enregistrées",
       distanceTitle: "Distance",
       paceTitle: "Allure",
       progressTitle: "Progression",
@@ -377,6 +381,7 @@ export const sportFr = {
 };
 
 export const sportEn = {
+  runningUi: runningExtraEn,
   calisthenicsUi: {
     ...calisthenicsExtraEn,
     navigationLabel: "Calisthenics navigation",
@@ -425,7 +430,7 @@ export const sportEn = {
     disciplinesTitle: "My disciplines",
     strengthDescription: "Programs, guided sessions and strength progress.",
     calisthenicsDescription: "A home for future bodyweight sessions and skills.",
-    runningDescription: "A space ready for your runs, distances and pace.",
+    runningDescription: "Log your runs, track distance, and follow your progress.",
     identifiedTitle: "Identifiable activity",
     distributionScope: "Across all recorded sessions.",
     identifiedStrength: "Identified strength sessions",
@@ -448,6 +453,7 @@ export const sportEn = {
     running: {
       title: "Running",
       description: "A space designed to track your runs and running progress.",
+      sessionsTitle: "Recorded runs",
       distanceTitle: "Distance",
       paceTitle: "Pace",
       progressTitle: "Progress",
@@ -717,6 +723,7 @@ export const sportEn = {
 };
 
 export const sportAr = {
+  runningUi: runningExtraAr,
   calisthenicsUi: {
     ...calisthenicsExtraAr,
     navigationLabel: "تنقل الكاليستنكس",
@@ -765,7 +772,7 @@ export const sportAr = {
     disciplinesTitle: "رياضاتي",
     strengthDescription: "البرامج والحصص الموجهة وتقدم تمارين القوة.",
     calisthenicsDescription: "مساحة للحصص المستقبلية بوزن الجسم والمهارات.",
-    runningDescription: "مساحة جاهزة لعرض جولات الجري والمسافة والوتيرة.",
+    runningDescription: "سجّل جولاتك وتابع المسافة وتقدمك.",
     identifiedTitle: "الأنشطة التي أمكن تحديدها",
     distributionScope: "من جميع الحصص المسجلة.",
     identifiedStrength: "حصص قوة محددة",
@@ -788,6 +795,7 @@ export const sportAr = {
     running: {
       title: "الجري",
       description: "مساحة لمتابعة جولات الجري والتقدم فيها.",
+      sessionsTitle: "الجولات المسجلة",
       distanceTitle: "المسافة",
       paceTitle: "الوتيرة",
       progressTitle: "التقدم",

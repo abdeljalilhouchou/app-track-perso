@@ -10,6 +10,7 @@ function revalidateSportViews() {
   revalidatePath("/sport");
   revalidatePath("/sport/musculation");
   revalidatePath("/sport/calisthenics");
+  revalidatePath("/sport/running");
   revalidatePath("/sport/calendar");
   revalidatePath("/sport/stats");
 }
@@ -71,6 +72,8 @@ export async function deleteWorkout(id: string): Promise<ActionResult> {
     return dbFail(classifiedError);
   } else if (classifiedWorkout?.discipline === "calisthenics") {
     return fail("Supprime cette séance depuis le module Calisthenics.");
+  } else if (classifiedWorkout?.discipline === "running") {
+    return fail("Supprime cette séance depuis le module Running.");
   }
 
   const { error: error2 } = await supabase.from("workouts").delete().eq("id", id).eq("user_id", user.id);

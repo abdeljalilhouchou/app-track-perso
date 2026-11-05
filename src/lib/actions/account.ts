@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { fetchAllRows } from "@/lib/paging";
+import { isRunningSchemaReady } from "@/lib/running/config";
 
 export type ActionResult = { error: string | null };
 
@@ -85,11 +86,11 @@ export async function exportMyData(): Promise<{ json: string | null; error: stri
   } = await supabase.auth.getUser();
   if (!user) return { json: null, error: "Non connecté." };
 
-  const byUser = (table: "habits" | "habit_logs" | "workouts" | "mood_entries" | "moments" | "foods" | "meal_entries" | "weight_logs" | "water_logs" | "meal_templates" | "meal_template_items" | "exercises" | "workout_templates" | "workout_template_exercises" | "workout_sets") =>
+  const byUser = (table: "habits" | "habit_logs" | "workouts" | "mood_entries" | "moments" | "foods" | "meal_entries" | "weight_logs" | "water_logs" | "meal_templates" | "meal_template_items" | "exercises" | "workout_templates" | "workout_template_exercises" | "workout_sets" | "calisthenics_exercises" | "calisthenics_programs" | "calisthenics_program_sessions" | "calisthenics_program_exercises" | "calisthenics_sets" | "calisthenics_skills" | "calisthenics_skill_logs") =>
     fetchAllRows((from, to) => supabase.from(table).select("*").eq("user_id", user.id).order("id").range(from, to));
 
   try {
-    const [profile, habits, habitLogs, workouts, moods, moments, foods, meals, weights, water, templates, templateItems, exercises, workoutTemplates, workoutTemplateExercises, workoutSets] =
+    const [profile, habits, habitLogs, workouts, moods, moments, foods, meals, weights, water, templates, templateItems, exercises, workoutTemplates, workoutTemplateExercises, workoutSets, calisthenicsExercises, calisthenicsPrograms, calisthenicsSessions, calisthenicsProgramExercises, calisthenicsSets, calisthenicsSkills, calisthenicsSkillLogs, runningSessions, runningGoals] =
       await Promise.all([
       supabase.from("profiles").select("*").eq("id", user.id).single(),
       byUser("habits"),
@@ -107,6 +108,22 @@ export async function exportMyData(): Promise<{ json: string | null; error: stri
       byUser("workout_templates"),
       byUser("workout_template_exercises"),
       byUser("workout_sets"),
+      byUser("calisthenics_exercises"),
+      byUser("calisthenics_programs"),
+      byUser("calisthenics_program_sessions"),
+      byUser("calisthenics_program_exercises"),
+      byUser("calisthenics_sets"),
+      byUser("calisthenics_skills"),
+      byUser("calisthenics_skill_logs"),
+      isRunningSchemaReady()
+        ? fetchAllRows((from, to) => supabase.from("running_sessions").select("*").eq("user_id", user.id).order("workout_id").range(from, to))
+        : Promise.resolve([]),
+      isRunningSchemaReady()
+        ? supabase.from("running_goals").select("*").eq("user_id", user.id).maybeSingle().then(({ data, error }) => {
+            if (error) throw error;
+            return data ? [data] : [];
+          })
+        : Promise.resolve([]),
     ]);
     if (profile.error) return { json: null, error: "Impossible de préparer l’export des données." };
 
@@ -118,6 +135,10 @@ export async function exportMyData(): Promise<{ json: string | null; error: stri
       meal_entries: meals, weight_logs: weights, water_logs: water, meal_templates: templates,
       meal_template_items: templateItems, exercises, workout_templates: workoutTemplates,
       workout_template_exercises: workoutTemplateExercises, workout_sets: workoutSets,
+      calisthenics_exercises: calisthenicsExercises, calisthenics_programs: calisthenicsPrograms,
+      calisthenics_program_sessions: calisthenicsSessions, calisthenics_program_exercises: calisthenicsProgramExercises,
+      calisthenics_sets: calisthenicsSets, calisthenics_skills: calisthenicsSkills, calisthenics_skill_logs: calisthenicsSkillLogs,
+      running_sessions: runningSessions, running_goals: runningGoals,
     }, null, 2);
 
     return { json, error: null };

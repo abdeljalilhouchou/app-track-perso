@@ -416,11 +416,40 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["calisthenics_skill_logs"]["Row"]>;
         Relationships: [];
       };
+      running_sessions: {
+        Row: {
+          workout_id: string; user_id: string; name: string;
+          run_type: "easy" | "endurance" | "long" | "tempo" | "interval" | "recovery" | "free" | "race";
+          distance_km: number; duration_seconds: number; elevation_gain_m: number | null;
+          average_heart_rate: number | null; cadence_spm: number | null; created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["running_sessions"]["Row"]> & { workout_id: string; user_id: string; run_type: "easy" | "endurance" | "long" | "tempo" | "interval" | "recovery" | "free" | "race"; distance_km: number; duration_seconds: number };
+        Update: Partial<Database["public"]["Tables"]["running_sessions"]["Row"]>;
+        Relationships: [];
+      };
+      running_goals: {
+        Row: {
+          user_id: string; weekly_distance_km: number | null; weekly_runs: number | null;
+          monthly_distance_km: number | null; target_5k_seconds: number | null; target_10k_seconds: number | null;
+          created_at: string; updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["running_goals"]["Row"]> & { user_id: string };
+        Update: Partial<Database["public"]["Tables"]["running_goals"]["Row"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
       save_calisthenics_program: {
         Args: { p_program_id: string | null; p_name: string; p_notes: string; p_sessions: Json };
+        Returns: string;
+      };
+      save_running_session: {
+        Args: { p_workout_id: string | null; p_workout_date: string; p_name: string; p_run_type: string; p_distance_km: number; p_duration_seconds: number; p_intensity: number; p_notes: string; p_elevation_gain_m: number | null; p_average_heart_rate: number | null; p_cadence_spm: number | null };
+        Returns: string;
+      };
+      delete_running_session: {
+        Args: { p_workout_id: string };
         Returns: string;
       };
     };
@@ -452,3 +481,5 @@ export type CalisthenicsProgramExercise = Database["public"]["Tables"]["calisthe
 export type CalisthenicsSet = Database["public"]["Tables"]["calisthenics_sets"]["Row"];
 export type CalisthenicsSkill = Database["public"]["Tables"]["calisthenics_skills"]["Row"];
 export type CalisthenicsSkillLog = Database["public"]["Tables"]["calisthenics_skill_logs"]["Row"];
+export type RunningSession = Database["public"]["Tables"]["running_sessions"]["Row"];
+export type RunningGoal = Database["public"]["Tables"]["running_goals"]["Row"];

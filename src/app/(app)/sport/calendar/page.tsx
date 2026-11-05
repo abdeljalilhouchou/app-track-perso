@@ -114,7 +114,7 @@ export default async function SportCalendarPage({
             {monthWorkouts.map((workout) => (
               <li key={workout.id}>
                 <Link
-                  href={workout.discipline === "calisthenics" ? `/sport/calisthenics?session=${encodeURIComponent(workout.id)}` : `/sport/musculation?date=${encodeURIComponent(workout.workout_date)}`}
+                  href={workout.discipline === "calisthenics" ? `/sport/calisthenics?session=${encodeURIComponent(workout.id)}` : workout.discipline === "running" ? `/sport/running?session=${encodeURIComponent(workout.id)}` : `/sport/musculation?date=${encodeURIComponent(workout.workout_date)}`}
                   className="flex min-h-14 items-center justify-between gap-3 py-3 hover:text-sport"
                 >
                   <span className="min-w-0">

@@ -335,7 +335,7 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
     <header className="rounded-3xl border border-sport/30 bg-surface p-5 sm:p-7">
       <div className="flex items-start gap-3">
         <span aria-hidden className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sport-soft text-sport"><span className="text-xl">✦</span></span>
-        <div className="min-w-0"><p className="text-xs font-semibold uppercase tracking-[0.16em] text-sport">{t("sport.hub.calisthenics.title")}</p><h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">{t("sport.calisthenicsUi.overviewTitle")}</h1><p className="mt-1 text-sm text-foreground-muted">{t("sport.hub.calisthenics.description")}</p></div>
+        <div className="min-w-0"><p className="text-xs font-semibold uppercase tracking-[0.16em] text-sport">{t("sport.hub.calisthenics.title")}</p><h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">{section === "overview" ? t("sport.calisthenicsUi.overviewTitle") : t(`sport.calisthenicsUi.sections.${section}`)}</h1><p className="mt-1 text-sm text-foreground-muted">{t("sport.hub.calisthenics.description")}</p></div>
       </div>
     </header>
     {navigation}
