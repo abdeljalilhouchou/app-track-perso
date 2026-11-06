@@ -3,6 +3,7 @@ import { ActivityBreakdown, SportHeatmap, SportRecords, SportTiles } from "@/com
 import { WeeklyGoal } from "@/components/sport/weekly-goal";
 import { getT } from "@/lib/i18n/get-dictionary";
 import { loadSportHubData, sportWeeklyDuration } from "@/lib/sport-hub-data";
+import { SportPageHeader } from "@/components/sport/ui/sport-primitives";
 
 export default async function SportStatsPage() {
   const data = await loadSportHubData();
@@ -12,10 +13,7 @@ export default async function SportStatsPage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("sport.hub.stats.title")}</h1>
-        <p className="mt-1 text-sm text-foreground-muted">{t("sport.hub.stats.description")}</p>
-      </header>
+      <SportPageHeader title={t("sport.hub.stats.title")} description={t("sport.hub.stats.description")} icon="stats" />
       <SportTiles stats={data.stats} />
       <div className="grid gap-4 lg:grid-cols-2">
         <WeeklyGoal sessions={data.stats.thisWeek.sessions} goal={data.weeklyGoal} goalWeeks={data.stats.records.goalWeeks} />

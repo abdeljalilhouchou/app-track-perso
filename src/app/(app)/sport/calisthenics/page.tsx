@@ -5,8 +5,8 @@ import { loadCalisthenicsData } from "@/lib/calisthenics/data";
 import { getT } from "@/lib/i18n/get-dictionary";
 
 export default async function CalisthenicsPage({ searchParams }: { searchParams: Promise<{ session?: string | string[] }> }) {
-  const t = await getT();
   if (!isCalisthenicsSchemaReady()) {
+    const t = await getT();
     return (
       <section className="rounded-3xl border border-dashed border-sport/50 bg-surface p-5 sm:p-8">
         <span aria-hidden className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-sport-soft text-sport">

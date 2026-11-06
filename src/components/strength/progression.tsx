@@ -1,5 +1,7 @@
 "use client";
 
+import { ExerciseGuideButton } from "@/components/sport/exercises/exercise-guide-button";
+
 import { useMemo, useState } from "react";
 import { WeeklyLineChart } from "@/components/charts/weekly-line-chart";
 import { useLanguage, useT } from "@/components/language-provider";
@@ -119,6 +121,7 @@ export function Progression({ exercises }: { exercises: ExerciseSummary[] }) {
               </option>
             ))}
           </select>
+          <ExerciseGuideButton name={exercise.name} />
           <div className="flex gap-1 rounded-xl border border-sport/40 bg-surface-muted p-1">
             {METRICS.map((m) => (
               <button

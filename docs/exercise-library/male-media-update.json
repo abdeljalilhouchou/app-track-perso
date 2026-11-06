@@ -1,0 +1,26 @@
+{
+  "tool": "image_gen intégré",
+  "reason": "Préférence utilisateur : uniquement des hommes sur les visuels sportifs.",
+  "images": [
+    {
+      "key": "one-arm-dumbbell-row",
+      "path": "public/images/exercises/one-arm-dumbbell-row.webp",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b0c8-1fb9-7b73-9326-c57611ac556a\\exec-4765b2e6-6027-49a6-8a24-12dabc7decd0.png",
+      "prompt": "Edit this exercise reference photograph for the Track Perso fitness app. Replace the sole female athlete with an adult MALE athlete, matching the user's explicit preference for images of men. Natural athletic male proportions, short dark hair, discreet short beard, black sleeveless training top, black shorts and training shoes. Preserve the exact exercise and clear side view: bench-supported one-arm dumbbell row; one hand and same-side knee on a flat bench, opposite foot flat on floor, working arm elbow bent with dumbbell near hip. Neutral straight back, square hips and shoulders, no torso rotation. Keep the entire bench, athlete's limbs and dumbbell visible with realistic anatomy. Preserve the calm modern gym, lighting and landscape 3:2 crop. No women, no other people, no text, brand logos or extra limbs. Professional photorealistic educational exercise image.",
+      "source": "image_gen intégré, édition originale le 2026-11-06 à la demande explicite de modèles masculins",
+      "author": "Outil image_gen (IA), prompt fourni par Codex",
+      "license": "Sortie générée pour ce projet ; aucune licence tierce ou Creative Commons revendiquée.",
+      "attribution": "Visuel généré par IA pour track.perso"
+    },
+    {
+      "key": "push-up",
+      "path": "public/images/exercises/push-up.webp",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b0c8-1fb9-7b73-9326-c57611ac556a\\exec-ba32290a-2e70-4344-acdc-3a06b08305ee.png",
+      "prompt": "Edit this exercise reference photograph for the Track Perso fitness app. Replace the sole female athlete with an adult MALE athlete, matching the user's explicit preference for images of men. Natural athletic male proportions, short dark hair, fitted opaque black training t-shirt, black shorts and training shoes. Preserve the exact floor push-up exercise and full-body side view: hands slightly wider than shoulders, elbows bent diagonally backward, body aligned from head to heels, toes grounded, hips neither sagging nor raised. Keep both hands and feet entirely visible and anatomy realistic. Preserve natural gym lighting, uncluttered charcoal gym and landscape 3:2 crop. No women, no other people, no text, brand logos, additional limbs or exaggerated anatomy. Professional photorealistic educational exercise image.",
+      "source": "image_gen intégré, édition originale le 2026-11-06 à la demande explicite de modèles masculins",
+      "author": "Outil image_gen (IA), prompt fourni par Codex",
+      "license": "Sortie générée pour ce projet ; aucune licence tierce ou Creative Commons revendiquée.",
+      "attribution": "Visuel généré par IA pour track.perso"
+    }
+  ]
+}

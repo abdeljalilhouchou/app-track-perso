@@ -1,0 +1,41 @@
+.sport-ui .exercise-search-row { display: flex; align-items: end; gap: 12px; }
+.sport-ui .exercise-field { display: flex; min-width: 0; flex-direction: column; gap: 7px; font-size: 12px; color: var(--foreground-muted); }
+.sport-ui .exercise-field input, .sport-ui .exercise-field select { width: 100%; min-height: 44px; min-width: 0; border: 1px solid var(--sport-control-border); border-radius: 12px; padding: 10px 12px; color: var(--foreground); background: var(--surface-muted); font-size: 14px; }
+.sport-ui .exercise-field input:focus-visible, .sport-ui .exercise-field select:focus-visible { outline: 3px solid var(--sport); outline-offset: 2px; }
+.sport-ui .exercise-filter-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+.sport-ui .exercise-filters summary { width: fit-content; max-width: 100%; text-align: start; cursor: pointer; font-size: 12px; }
+.sport-ui .exercise-movement-sketch { width: 100%; height: 100%; max-height: 260px; color: var(--sport-ink); }
+.sport-ui .exercise-sketch-equipment { stroke: var(--foreground-muted); stroke-width: 3px; }
+.sport-ui .exercise-facts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); padding: 16px; }
+.sport-ui .exercise-facts dt { color: var(--foreground-muted); font-size: 12px; }
+.sport-ui .exercise-facts dd { margin-top: 5px; font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+.sport-ui .exercise-section-links { display: flex; gap: 6px; overflow-x: auto; padding-block: 4px; }
+.sport-ui .exercise-section-links a { display: inline-flex; align-items: center; justify-content: center; flex: 1 0 auto; min-height: 44px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 12px; color: var(--sport-ink); background: var(--surface-muted); font-size: 12px; font-weight: 600; }
+.sport-ui .exercise-section-links a:focus-visible, .sport-ui .exercise-source-link:focus-visible, .sport-ui .exercise-guide-button:focus-visible { outline: 3px solid var(--sport); outline-offset: 2px; }
+.sport-ui .exercise-steps { display: grid; gap: 20px; }
+.sport-ui .exercise-steps li { display: flex; align-items: start; gap: 12px; }
+.sport-ui .exercise-steps li > span { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--sport-soft); color: var(--sport-ink); font-size: 12px; font-weight: 700; }
+.sport-ui .exercise-prose-list { list-style: disc; padding-inline-start: 20px; font-size: 14px; line-height: 1.7; color: var(--foreground-muted); }
+.sport-ui .exercise-prose-list li + li { margin-top: 8px; }
+.sport-ui .exercise-advice { display: grid; gap: 16px; }
+.sport-ui .exercise-advice dt { font-weight: 600; }
+.sport-ui .exercise-advice dd { color: var(--foreground-muted); font-size: 14px; line-height: 1.65; margin-top: 4px; }
+.sport-ui .exercise-safety { padding: 14px; border-inline-start: 3px solid var(--sport-ink); background: var(--surface-muted); border-radius: 12px; }
+.sport-ui .exercise-source-link { display: inline-flex; align-items: center; min-height: 44px; color: var(--sport-ink); text-decoration: underline; text-underline-offset: 3px; font-size: 13px; }
+.sport-ui .muscle-outline { fill: var(--surface-muted); stroke: var(--foreground-muted); stroke-width: 1.5px; }
+.sport-ui .muscle-zone-neutral { fill: transparent; }
+.sport-ui .muscle-zone-primary { fill: var(--sport-ink); stroke: var(--foreground); stroke-width: .5px; }
+.sport-ui .muscle-zone-secondary { fill: var(--accent); stroke: var(--foreground); stroke-width: 1px; stroke-dasharray: 3 2; }
+.sport-ui .exercise-guide-button { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; flex-shrink: 0; border: 1px solid var(--border); border-radius: 12px; color: var(--sport-ink); background: var(--surface); transition: background-color 160ms ease; }
+.sport-ui .exercise-guide-button:hover { background: var(--sport-soft); }
+.sport-ui.exercise-guide-dialog { box-sizing: border-box; position: fixed; inset: 0; margin: auto; width: min(760px,calc(100vw - 20px)); max-width: 760px; max-height: calc(100dvh - 24px); overflow-y: auto; overscroll-behavior: contain; border: 1px solid var(--border); border-radius: 24px; background: var(--background); color: var(--foreground); padding: 0; box-shadow: 0 28px 80px #0005; }
+.sport-ui.exercise-guide-dialog::backdrop { background: #080b18b3; }
+.sport-ui .exercise-guide-dialog-header { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
+@media (max-width: 480px) {
+  .sport-ui .exercise-search-row { flex-direction: column; align-items: stretch; }
+  .sport-ui .exercise-filter-grid { grid-template-columns: 1fr; }
+  .sport-ui .exercise-facts { grid-template-columns: 1fr; }
+  .sport-ui.exercise-guide-dialog { width: 100%; max-height: calc(100dvh - 12px); inset-block-start: auto; margin: 0; border-end-start-radius: 0; border-end-end-radius: 0; padding-bottom: env(safe-area-inset-bottom); }
+}
+@media (prefers-reduced-motion: reduce) { .sport-ui .exercise-guide-button { transition: none; } }
+.sport-ui [data-exercise-library] > .sport-card, .sport-ui .exercise-detail > section > .sport-card { padding: 16px; }

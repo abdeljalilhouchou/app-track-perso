@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import dynamic from "next/dynamic";
+import { ChartPlaceholder } from "@/components/charts/deferred-chart";
 import { useT } from "@/components/language-provider";
 import { deleteRunningSession, saveRunningGoals, saveRunningSession } from "@/lib/actions/running";
 import { formatLocalizedDate } from "@/lib/format-date";
@@ -11,6 +12,8 @@ import type { RunningGoal } from "@/types/database";
 import { calculateRunningMetrics, computeRunningStats, formatDuration, formatPace, RUN_TYPES, type RunningGoals, type RunningRun, type RunType } from "@/lib/running/stats";
 
 type Section = "overview" | "newRun" | "history" | "progress" | "goals";
+const RunningDistanceChart = dynamic(() => import("@/components/charts/running-plots").then((module) => module.RunningDistanceChart), { ssr: false, loading: ChartPlaceholder });
+const RunningPaceChart = dynamic(() => import("@/components/charts/running-plots").then((module) => module.RunningPaceChart), { ssr: false, loading: ChartPlaceholder });
 type RunForm = {
   date: string; name: string; runType: RunType; distance: string; hours: string; minutes: string; seconds: string;
   intensity: string; notes: string; elevation: string; heartRate: string; cadence: string;
@@ -353,7 +356,7 @@ export function RunningWorkspace({
       {section === "progress" && <div className="space-y-4">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5"><MetricCard title={t("sport.runningUi.totalRuns")} value={stats.runCount} /><MetricCard title={t("sport.runningUi.totalDistance")} value={formatDistance(stats.totalDistanceKm, language)} unit="km" /><MetricCard title={t("sport.runningUi.totalTime")} value={formatDuration(stats.totalDurationSeconds)} /><MetricCard title={t("sport.runningUi.averagePace")} value={formatPace(stats.weightedAveragePace)} unit={t("sport.runningUi.minPerKm")} /><MetricCard title={t("sport.runningUi.bestPace")} value={formatPace(stats.bestPace)} unit={t("sport.runningUi.minPerKm")} /></div>
         <div className="grid min-w-0 gap-4 lg:grid-cols-2"><ChartCard title={t("sport.runningUi.weeklyDistance")} data={chartWeeks} unit="km" /><ChartCard title={t("sport.runningUi.monthlyDistance")} data={chartMonths} unit="km" /></div>
-        <section className="min-w-0 rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="mb-3 text-sm font-semibold">{t("sport.runningUi.paceTrend")}</h2>{paceTrend.length ? <div className="h-56 w-full"><ResponsiveContainer width="100%" height="100%"><LineChart accessibilityLayer data={paceTrend} margin={{ top: 8, right: 12, bottom: 0, left: -12 }}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} axisLine={false} tickLine={false} /><YAxis reversed tickFormatter={(value) => formatPace(Number(value))} tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} axisLine={false} tickLine={false} /><Tooltip contentStyle={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }} formatter={(value) => [`${formatPace(Number(value))} ${t("sport.runningUi.minPerKm")}`, t("sport.runningUi.pace")]} /><Line type="monotone" dataKey="pace" stroke="var(--sport)" strokeWidth={2.5} dot={{ r: 3, fill: "var(--sport)" }} /></LineChart></ResponsiveContainer></div> : <p className="text-sm text-foreground-muted">{t("sport.runningUi.noRunsBody")}</p>}</section>
+        <section className="min-w-0 rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="mb-3 text-sm font-semibold">{t("sport.runningUi.paceTrend")}</h2>{paceTrend.length ? <div className="h-56 w-full"><RunningPaceChart data={paceTrend} unit={t("sport.runningUi.minPerKm")} label={t("sport.runningUi.pace")} /></div> : <p className="text-sm text-foreground-muted">{t("sport.runningUi.noRunsBody")}</p>}</section>
         <div className="grid gap-4 sm:grid-cols-2"><RecordCard title={t("sport.runningUi.longestRun")} run={stats.longestDistance} value={(run) => `${formatDistance(run.distance_km, language)} km`} language={language} /><RecordCard title={t("sport.runningUi.longestDuration")} run={stats.longestDuration} value={(run) => formatDuration(run.duration_seconds)} language={language} /></div>
         <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="text-sm font-semibold">{t("sport.runningUi.records")}</h2><p className="mt-1 text-xs leading-relaxed text-foreground-muted">{t("sport.runningUi.toleranceNote")}</p><div className="mt-4 grid gap-3 sm:grid-cols-2"><ComparableRecord title={t("sport.runningUi.record5k")} run={stats.comparable5k} language={language} /><ComparableRecord title={t("sport.runningUi.record10k")} run={stats.comparable10k} language={language} /></div></section>
         <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="text-sm font-semibold">{t("sport.runningUi.consistency")}</h2><p className="mt-2 text-3xl font-semibold text-sport">{stats.weeklyConsistency} / 8</p></section>
@@ -371,7 +374,7 @@ export function RunningWorkspace({
   }
 
   function ChartCard({ title, data, unit }: { title: string; data: { label: string; value: number }[]; unit: string }) {
-    return <section className="min-w-0 rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="mb-3 text-sm font-semibold">{title}</h2><div className="h-56 w-full"><ResponsiveContainer width="100%" height="100%"><LineChart accessibilityLayer data={data} margin={{ top: 8, right: 8, bottom: 0, left: -18 }}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="label" tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} axisLine={false} tickLine={false} /><YAxis tick={{ fontSize: 11, fill: "var(--foreground-muted)" }} axisLine={false} tickLine={false} /><Tooltip contentStyle={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }} formatter={(value) => [`${formatDistance(Number(value), language)} ${unit}`, ""]} /><Line type="monotone" dataKey="value" stroke="var(--sport)" strokeWidth={2.5} dot={{ r: 3, fill: "var(--sport)" }} /></LineChart></ResponsiveContainer></div></section>;
+    return <section className="min-w-0 rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="mb-3 text-sm font-semibold">{title}</h2><div className="h-56 w-full"><RunningDistanceChart data={data} unit={unit} language={language} /></div></section>;
   }
 
   function RecordCard({ title, run, value, language: recordLanguage }: { title: string; run: RunningRun | null; value: (run: RunningRun) => string; language: Language }) {

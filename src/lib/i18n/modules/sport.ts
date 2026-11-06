@@ -6,6 +6,9 @@
  */
 
 import { runningExtraAr, runningExtraEn, runningExtraFr } from "./running";
+import { sportUiAr, sportUiEn, sportUiFr } from "./sport-ui";
+import { sportHubAr, sportHubEn, sportHubFr } from "./sport-hub";
+import { exerciseLibraryAr, exerciseLibraryEn, exerciseLibraryFr } from "./exercise-library";
 
 const calisthenicsExtraFr = {
   continueTraining: "Tes séances et ta progression sont synchronisées avec le Sport Hub.",
@@ -39,6 +42,9 @@ const calisthenicsExtraAr = {
 };
 
 export const sportFr = {
+  library: exerciseLibraryFr,
+  hubDashboard: sportHubFr,
+  ui: sportUiFr,
   runningUi: runningExtraFr,
   calisthenicsUi: {
     ...calisthenicsExtraFr,
@@ -381,6 +387,9 @@ export const sportFr = {
 };
 
 export const sportEn = {
+  library: exerciseLibraryEn,
+  hubDashboard: sportHubEn,
+  ui: sportUiEn,
   runningUi: runningExtraEn,
   calisthenicsUi: {
     ...calisthenicsExtraEn,
@@ -723,6 +732,9 @@ export const sportEn = {
 };
 
 export const sportAr = {
+  library: exerciseLibraryAr,
+  hubDashboard: sportHubAr,
+  ui: sportUiAr,
   runningUi: runningExtraAr,
   calisthenicsUi: {
     ...calisthenicsExtraAr,

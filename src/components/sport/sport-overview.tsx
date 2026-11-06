@@ -2,7 +2,8 @@
 
 import { parseISO } from "date-fns";
 import { Heatmap } from "@/components/heatmap";
-import { TiltCard } from "@/components/ui/tilt-card";
+import { SportStatCard } from "@/components/sport/ui/sport-stat-card";
+import { SportIcon, type SportIconName } from "@/components/sport/ui/sport-icons";
 import { useLanguage, useT } from "@/components/language-provider";
 import type { computeSportStats } from "@/lib/sport-stats";
 
@@ -20,18 +21,9 @@ function delta(current: number, previous: number, unit: string, t: ReturnType<ty
   );
 }
 
-function Tile({ label, value, children }: { label: string; value: string; children?: React.ReactNode }) {
+function Tile({ label, value, icon, children }: { label: string; value: string; icon?: SportIconName; children?: React.ReactNode }) {
   return (
-    <TiltCard
-      className="rounded-2xl border-[1.5px] bg-surface p-5"
-      style={{ borderColor: "color-mix(in srgb, var(--sport) 50%, var(--border))" }}
-    >
-      <p className="text-sm text-foreground-muted">{label}</p>
-      <p className="mt-1 text-2xl font-semibold" style={{ color: "var(--sport)" }}>
-        {value}
-      </p>
-      {children && <p className="mt-1 text-xs">{children}</p>}
-    </TiltCard>
+    <SportStatCard label={label} value={value} icon={icon}>{children}</SportStatCard>
   );
 }
 
@@ -39,17 +31,17 @@ export function SportTiles({ stats }: { stats: Stats }) {
   const t = useT();
   const hours = Math.floor(stats.totalMinutes / 60);
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <Tile label={t("sport.overview.minutesThisWeek")} value={`${stats.thisWeek.minutes} min`}>
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <Tile label={t("sport.overview.minutesThisWeek")} value={`${stats.thisWeek.minutes} min`} icon="time">
         {delta(stats.thisWeek.minutes, stats.lastWeek.minutes, " min", t)}
       </Tile>
-      <Tile label={t("sport.overview.sessionsThisWeek")} value={String(stats.thisWeek.sessions)}>
+      <Tile label={t("sport.overview.sessionsThisWeek")} value={String(stats.thisWeek.sessions)} icon="calendar">
         {delta(stats.thisWeek.sessions, stats.lastWeek.sessions, "", t)}
       </Tile>
-      <Tile label={t("sport.overview.activeStreak")} value={t("sport.overview.streakValue", { value: stats.records.currentDayStreak })}>
+      <Tile label={t("sport.overview.activeStreak")} value={t("sport.overview.streakValue", { value: stats.records.currentDayStreak })} icon="target">
         <span className="text-foreground-muted">{t("sport.overview.streakRecord", { value: stats.records.bestDayStreak })}</span>
       </Tile>
-      <Tile label={t("sport.overview.total")} value={t("sport.overview.totalSessionsValue", { value: stats.totalSessions })}>
+      <Tile label={t("sport.overview.total")} value={t("sport.overview.totalSessionsValue", { value: stats.totalSessions })} icon="activity">
         <span className="text-foreground-muted">
           {hours > 0
             ? t("sport.overview.totalHours", { hours, minutes: stats.totalMinutes % 60 })
@@ -64,7 +56,7 @@ export function ActivityBreakdown({ stats }: { stats: Stats }) {
   const t = useT();
   const max = Math.max(1, ...stats.activities.map((a) => a.minutes));
   return (
-    <div className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5">
+    <div className="sport-card p-4 sm:p-5">
       <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.overview.breakdownTitle")}</h2>
       {stats.activities.length === 0 ? (
         <p className="text-sm text-foreground-muted">{t("sport.overview.breakdownEmpty")}</p>
@@ -99,24 +91,24 @@ export function SportRecords({ stats }: { stats: Stats }) {
   const locale = language === "ar" ? "ar" : language === "en" ? "en" : "fr";
   const day = (d: string) => new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", year: "numeric" }).format(parseISO(d));
   const rows = [
-    longest && { icon: "⏱️", label: t("sport.overview.longestSession"), value: `${longest.duration_minutes} min`, hint: `${longest.activity} · ${day(longest.workout_date)}` },
+    longest && { icon: "time", label: t("sport.overview.longestSession"), value: `${longest.duration_minutes} min`, hint: `${longest.activity} · ${day(longest.workout_date)}` },
     hardest && {
-      icon: "💥",
+      icon: "activity",
       label: t("sport.overview.hardestSession"),
       value: `${hardest.duration_minutes} min × ${hardest.intensity}/5`,
       hint: `${hardest.activity} · ${day(hardest.workout_date)}`,
     },
-    bestWeek && { icon: "📆", label: t("sport.overview.bestWeek"), value: `${bestWeek.minutes} min`, hint: t("sport.overview.weekOf", { date: day(bestWeek.weekStart) }) },
+    bestWeek && { icon: "calendar", label: t("sport.overview.bestWeek"), value: `${bestWeek.minutes} min`, hint: t("sport.overview.weekOf", { date: day(bestWeek.weekStart) }) },
     {
-      icon: "🔥",
+      icon: "trophy",
       label: t("sport.overview.longestStreak"),
       value: t("sport.overview.streakValue", { value: stats.records.bestDayStreak }),
       hint: t("sport.overview.consecutiveDaysHint"),
     },
-  ].filter(Boolean) as { icon: string; label: string; value: string; hint: string }[];
+  ].filter(Boolean) as { icon: SportIconName; label: string; value: string; hint: string }[];
 
   return (
-    <div className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5">
+    <div className="sport-card p-4 sm:p-5">
       <h2 className="mb-4 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.overview.recordsTitle")}</h2>
       {stats.totalSessions === 0 ? (
         <p className="text-sm text-foreground-muted">{t("sport.overview.recordsEmpty")}</p>
@@ -124,12 +116,12 @@ export function SportRecords({ stats }: { stats: Stats }) {
         <ul className="space-y-2.5">
           {rows.map((r) => (
             <li key={r.label} className="flex items-center gap-3 rounded-xl bg-surface-muted px-3 py-2.5">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-surface text-sm">{r.icon}</span>
+              <span className="sport-icon-tile"><SportIcon name={r.icon} className="h-4 w-4" /></span>
               <div className="min-w-0 flex-1">
                 <p className="text-xs text-foreground-muted">{r.label}</p>
                 <p className="truncate text-xs text-foreground-muted/80">{r.hint}</p>
               </div>
-              <span className="shrink-0 text-sm font-semibold" style={{ color: "var(--sport)" }}>
+              <span className="shrink-0 text-sm font-semibold" style={{ color: "var(--sport-ink)" }}>
                 {r.value}
               </span>
             </li>
@@ -143,7 +135,7 @@ export function SportRecords({ stats }: { stats: Stats }) {
 export function SportHeatmap({ heat }: { heat: Record<string, number> }) {
   const t = useT();
   return (
-    <div className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5">
+    <div className="sport-card p-4 sm:p-5">
       <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
         {t("sport.overview.heatmapTitle", { weeks: 18 })}
       </h2>

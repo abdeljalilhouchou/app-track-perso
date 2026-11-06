@@ -1,0 +1,56 @@
+{
+  "mode": "Edge headless + next start + local auth/REST fixtures; not real-device or deployed-environment measurements",
+  "viewports": [
+    {
+      "width": 320,
+      "viewport": 320,
+      "content": 320
+    },
+    {
+      "width": 360,
+      "viewport": 360,
+      "content": 360
+    },
+    {
+      "width": 375,
+      "viewport": 375,
+      "content": 375
+    },
+    {
+      "width": 390,
+      "viewport": 390,
+      "content": 390
+    },
+    {
+      "width": 430,
+      "viewport": 430,
+      "content": 430
+    },
+    {
+      "width": 768,
+      "viewport": 768,
+      "content": 758
+    },
+    {
+      "width": 1440,
+      "viewport": 1440,
+      "content": 1430
+    }
+  ],
+  "navigation": [
+    "/sport/musculation",
+    "/sport/calendar",
+    "/sport/stats",
+    "/sport/calisthenics",
+    "/sport/running",
+    "/sport",
+    "fr/light",
+    "en/dark",
+    "ar/system"
+  ],
+  "consoleErrors": [],
+  "writes": [],
+  "draftPreservedAcrossTabs": true,
+  "deferredChartRendered": true,
+  "requestCount": 117
+}

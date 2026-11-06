@@ -1,18 +1,13 @@
-import { createClient } from "@/lib/supabase/server";
+import { cache } from "react";
+import { getProfilePreferences } from "@/lib/supabase/read-context";
 import { isLanguage, type Language } from "@/lib/language";
 import { dictionaries, type Dictionary } from "./dictionary";
 import { translate, type Vars } from "./translate";
 
-async function resolveLanguage(): Promise<Language> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return "fr";
-
-  const { data: profile } = await supabase.from("profiles").select("language").eq("id", user.id).single();
+const resolveLanguage = cache(async (): Promise<Language> => {
+  const { data: profile } = await getProfilePreferences();
   return isLanguage(profile?.language) ? profile.language : "fr";
-}
+});
 
 /** Server-side counterpart to useLanguage(), for Server Components rendering the page shell. */
 export async function getDictionary(): Promise<Dictionary> {

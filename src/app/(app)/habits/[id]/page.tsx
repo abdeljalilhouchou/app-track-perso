@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { addMonths, endOfMonth, format, parse, startOfMonth, subMonths } from "date-fns";
 import { fr } from "date-fns/locale";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/supabase/read-context";
 import { computeStreak, longestStreakEver } from "@/lib/streak";
 import { bestWeekday, successRate } from "@/lib/habit-insights";
 import { MonthCalendar } from "@/components/month-calendar";
@@ -22,9 +23,7 @@ export default async function HabitDetailPage({
   const t = await getT();
 
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) return null;
 
   const { data: habit } = await supabase

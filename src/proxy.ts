@@ -7,6 +7,7 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // Public anatomy assets and their license notices need no session refresh.
+    "/((?!api|_next/static|_next/image|favicon.ico|models/anatomy/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

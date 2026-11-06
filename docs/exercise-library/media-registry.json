@@ -1,0 +1,128 @@
+{
+  "generatedMedia": [
+    {
+      "exercise": "one-arm-dumbbell-row",
+      "path": "public/images/exercises/one-arm-dumbbell-row.webp",
+      "source": "image_gen intégré, édition originale le 2026-11-06 à la demande explicite de modèles masculins",
+      "author": "Outil image_gen (IA), prompt fourni par Codex",
+      "license": "Sortie générée pour ce projet ; aucune licence tierce ou Creative Commons revendiquée.",
+      "attribution": "Pas de source photographique tierce ; mention IA affichée sur les fiches.",
+      "prompt": "Edit this exercise reference photograph for the Track Perso fitness app. Replace the sole female athlete with an adult MALE athlete, matching the user's explicit preference for images of men. Natural athletic male proportions, short dark hair, discreet short beard, black sleeveless training top, black shorts and training shoes. Preserve the exact exercise and clear side view: bench-supported one-arm dumbbell row; one hand and same-side knee on a flat bench, opposite foot flat on floor, working arm elbow bent with dumbbell near hip. Neutral straight back, square hips and shoulders, no torso rotation. Keep the entire bench, athlete's limbs and dumbbell visible with realistic anatomy. Preserve the calm modern gym, lighting and landscape 3:2 crop. No women, no other people, no text, brand logos or extra limbs. Professional photorealistic educational exercise image.",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b0c8-1fb9-7b73-9326-c57611ac556a\\exec-4765b2e6-6027-49a6-8a24-12dabc7decd0.png",
+      "alt": {
+        "fr": "Rowing sur banc : une main et un genou en appui, haltère près de la hanche, dos stable.",
+        "en": "Bench-supported row: one hand and knee supported, dumbbell beside the hip, back stable.",
+        "ar": "تجديف على مقعد مع ارتكاز يد وركبة والدمبل قرب الورك والظهر ثابت."
+      },
+      "width": 960,
+      "height": 640,
+      "bytes": 50120,
+      "sha256": "8be1fb60363239f44efe02278b020822d5bfbc415d22978edb62caea9a43e569",
+      "subject": "adult male athlete",
+      "previousRevision": {
+        "exercise": "one-arm-dumbbell-row",
+        "path": "public/images/exercises/one-arm-dumbbell-row.webp",
+        "source": "image_gen intégré, génération originale pour ce projet le 2026-11-06",
+        "author": "Outil image_gen (IA), prompt fourni par Codex",
+        "license": "Sortie générée pour ce projet ; aucune licence tierce ou Creative Commons revendiquée.",
+        "attribution": "Pas de source photographique tierce ; mention IA affichée sur les fiches.",
+        "prompt": "Use case: photorealistic-natural. Asset: an exercise-specific tutorial photo for a premium sports app, wide landscape 3:2 crop. Show exactly ONE adult athlete performing a bench-supported one-arm dumbbell row, side three-quarter camera showing all limbs clearly. Black sportswear, naturally proportioned body. Left knee and left hand supported on a stable flat bench, right foot flat on rubber floor, right hand holding one dumbbell close to the right hip at the top of the row, right elbow flexed beside torso. Torso nearly horizontal, neutral straight back, hips and shoulders square to floor, relaxed neck. Show entire bench, both feet and dumbbell with breathing room. Quiet modern gym, charcoal equipment, soft natural side lighting, subtle green highlights. No text, labels, logos, other athletes, duplicated limbs, exaggerated muscles, skin exposure or motion blur. The image must precisely represent this movement, no unrelated gym still life.",
+        "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b0c8-1fb9-7b73-9326-c57611ac556a\\exec-67e77a02-c168-4a81-b863-38734d59cdb4.png",
+        "alt": {
+          "fr": "Rowing sur banc : une main et un genou en appui, haltère près de la hanche, dos stable.",
+          "en": "Bench-supported row: one hand and knee supported, dumbbell beside the hip, back stable.",
+          "ar": "تجديف على مقعد مع ارتكاز يد وركبة والدمبل قرب الورك والظهر ثابت."
+        },
+        "width": 960,
+        "height": 640,
+        "bytes": 47048,
+        "sha256": "cde6f86b74fa535918416e878407d01e016c54e79753c0c69b7790a97a43e5c2"
+      }
+    },
+    {
+      "exercise": "push-up",
+      "path": "public/images/exercises/push-up.webp",
+      "source": "image_gen intégré, édition originale le 2026-11-06 à la demande explicite de modèles masculins",
+      "author": "Outil image_gen (IA), prompt fourni par Codex",
+      "license": "Sortie générée pour ce projet ; aucune licence tierce ou Creative Commons revendiquée.",
+      "attribution": "Pas de source photographique tierce ; mention IA affichée sur les fiches.",
+      "prompt": "Edit this exercise reference photograph for the Track Perso fitness app. Replace the sole female athlete with an adult MALE athlete, matching the user's explicit preference for images of men. Natural athletic male proportions, short dark hair, fitted opaque black training t-shirt, black shorts and training shoes. Preserve the exact floor push-up exercise and full-body side view: hands slightly wider than shoulders, elbows bent diagonally backward, body aligned from head to heels, toes grounded, hips neither sagging nor raised. Keep both hands and feet entirely visible and anatomy realistic. Preserve natural gym lighting, uncluttered charcoal gym and landscape 3:2 crop. No women, no other people, no text, brand logos, additional limbs or exaggerated anatomy. Professional photorealistic educational exercise image.",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b0c8-1fb9-7b73-9326-c57611ac556a\\exec-ba32290a-2e70-4344-acdc-3a06b08305ee.png",
+      "alt": {
+        "fr": "Pompe au sol, coudes fléchis et corps aligné des épaules aux talons.",
+        "en": "Floor push-up with bent elbows and body aligned from shoulders to heels.",
+        "ar": "تمرين ضغط أرضي مع ثني المرفقين واستقامة الجسم حتى الكعبين."
+      },
+      "width": 960,
+      "height": 640,
+      "bytes": 41694,
+      "sha256": "d20b4ae1dfb9ea02c2520c6cfec73d42bf12ea41cc209b51324a5a1e5cedd706",
+      "subject": "adult male athlete",
+      "previousRevision": {
+        "exercise": "push-up",
+        "path": "public/images/exercises/push-up.webp",
+        "source": "image_gen intégré, génération originale pour ce projet le 2026-11-06",
+        "author": "Outil image_gen (IA), prompt fourni par Codex",
+        "license": "Sortie générée pour ce projet ; aucune licence tierce ou Creative Commons revendiquée.",
+        "attribution": "Pas de source photographique tierce ; mention IA affichée sur les fiches.",
+        "prompt": "Use case: photorealistic-natural. Asset: precise exercise tutorial photograph for premium sport library. Landscape 3:2 crop, ONE adult female athlete in opaque charcoal fitness clothes and shoes doing a standard floor push-up midway down. Side camera slightly from front, full body entirely visible including both hands and feet, both hands on floor just wider than shoulders, elbows bent roughly 45 degrees from torso, straight trunk from head through hips to heels, toes grounded, hips neither sagging nor raised. Simple rubber gym floor, natural side light, calm dark neutral gym, subtle green accent. Clear anatomy, realistic limbs, no text, logos, duplicate body parts, no bench or weights. Educational representative photograph, no extreme pose.",
+        "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b0c8-1fb9-7b73-9326-c57611ac556a\\exec-76284e54-fea5-413f-a634-764b5dd5f943.png",
+        "alt": {
+          "fr": "Pompe au sol, coudes fléchis et corps aligné des épaules aux talons.",
+          "en": "Floor push-up with bent elbows and body aligned from shoulders to heels.",
+          "ar": "تمرين ضغط أرضي مع ثني المرفقين واستقامة الجسم حتى الكعبين."
+        },
+        "width": 960,
+        "height": 640,
+        "bytes": 41516,
+        "sha256": "77ec4f9768c32a202314b963ebbd21d56c10053c4f2830a8b8bda4219bbbe37e"
+      }
+    },
+    {
+      "exercise": "dumbbell-curl",
+      "path": "public/images/exercises/dumbbell-curl.webp",
+      "source": "image_gen intégré, génération originale pour ce projet le 2026-11-06",
+      "author": "Outil image_gen (IA), prompt fourni par Codex",
+      "license": "Sortie générée pour ce projet ; aucune licence tierce ou Creative Commons revendiquée.",
+      "attribution": "Pas de source photographique tierce ; mention IA affichée sur les fiches.",
+      "prompt": "Use case: photorealistic-natural. Asset: exercise-specific tutorial photograph for a premium fitness app. Landscape 3:2 crop. One adult athlete standing upright with feet hip-width, performing a strict supinated dumbbell biceps curl with two dumbbells at about 90 degrees elbow flexion. Both upper arms stay vertical beside torso, elbows tucked, palms up and wrists straight, trunk vertical without backward lean. Full body and both dumbbells visible, anatomically normal. Opaque dark green t-shirt and black shorts, neutral modern gym, soft natural side light, uncluttered dark background. No text, logos, other athletes, duplicated limbs, exaggerated anatomy, motion blur. This is a dumbbell curl, not a hammer curl or press.",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b0c8-1fb9-7b73-9326-c57611ac556a\\exec-51b19491-3783-495f-894d-162d121d5902.png",
+      "alt": {
+        "fr": "Curl debout avec deux haltères, paumes vers le haut et coudes près du buste.",
+        "en": "Standing dumbbell curl with palms up and elbows beside the torso.",
+        "ar": "ثني المرفقين واقفاً بالدمبل مع راحتي اليدين للأعلى والمرفقين قرب الجذع."
+      },
+      "width": 960,
+      "height": 640,
+      "bytes": 27420,
+      "sha256": "c585b9aca7c81395a5663741717a411d0efdea67bc03739f7a371631c48484ce"
+    }
+  ],
+  "diagrams": {
+    "source": "src/components/sport/exercises/movement-sketch.tsx",
+    "exercises": [
+      "barbell-bench-press",
+      "forearm-plank",
+      "pull-up",
+      "seated-cable-row",
+      "bodyweight-squat"
+    ],
+    "author": "Original code created for this repository",
+    "license": "Original project source; no third-party asset or external license claimed"
+  },
+  "anatomy": {
+    "source": "src/components/sport/exercises/muscle-map.tsx",
+    "exercises": [
+      "one-arm-dumbbell-row",
+      "barbell-bench-press",
+      "dumbbell-curl",
+      "push-up",
+      "forearm-plank",
+      "pull-up",
+      "seated-cable-row",
+      "bodyweight-squat"
+    ],
+    "author": "Original code created for this repository",
+    "license": "Original project source; no external anatomical artwork copied"
+  }
+}

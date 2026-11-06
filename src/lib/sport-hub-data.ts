@@ -1,30 +1,36 @@
 import { format, parseISO, startOfWeek, subWeeks } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser, getProfilePreferences } from "@/lib/supabase/read-context";
 import { fetchAllRows } from "@/lib/paging";
 import { isLanguage, type Language } from "@/lib/language";
 import { computeSportStats } from "@/lib/sport-stats";
 import { formatLocalizedDate } from "@/lib/format-date";
 import type { Workout } from "@/types/database";
+import { summarizeHubTraining, type HubSet, type HubTemplate } from "@/lib/sport-hub";
 
-export async function loadSportHubData({ identifyStrength = false }: { identifyStrength?: boolean } = {}) {
+export async function loadSportHubData({ identifyStrength = false, dashboard = false }: { identifyStrength?: boolean; dashboard?: boolean } = {}) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) return null;
 
-  const setRowsPromise = identifyStrength
+  const setRowsPromise = identifyStrength || dashboard
     ? fetchAllRows((from, to) =>
         supabase
           .from("workout_sets")
-          .select("id, workout_id")
+          .select("id, workout_id, reps, weight_kg")
           .eq("user_id", user.id)
           .order("id", { ascending: true })
           .range(from, to)
       )
-    : Promise.resolve([] as { id: string; workout_id: string }[]);
+    : Promise.resolve([] as HubSet[]);
 
-  const [workouts, setRows, profileResult] = await Promise.all([
+  const templatesPromise = dashboard
+    ? fetchAllRows((from, to) => supabase.from("workout_templates")
+        .select("id, name, muscle_groups").eq("user_id", user.id)
+        .order("position").order("created_at").order("id").range(from, to))
+    : Promise.resolve([] as HubTemplate[]);
+
+  const [workouts, setRows, profileResult, templates] = await Promise.all([
     fetchAllRows((from, to) =>
       supabase
         .from("workouts")
@@ -36,7 +42,8 @@ export async function loadSportHubData({ identifyStrength = false }: { identifyS
         .range(from, to)
     ),
     setRowsPromise,
-    supabase.from("profiles").select("sport_weekly_goal, language").eq("id", user.id).maybeSingle(),
+    getProfilePreferences(),
+    templatesPromise,
   ]);
 
   if (profileResult.error) throw new Error("Impossible de charger l’objectif sportif.");
@@ -51,6 +58,7 @@ export async function loadSportHubData({ identifyStrength = false }: { identifyS
     weeklyGoal,
     language,
     stats: computeSportStats(workouts, weeklyGoal),
+    training: dashboard ? summarizeHubTraining(workouts as Workout[], setRows, templates) : null,
   };
 }
 

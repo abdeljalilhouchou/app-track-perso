@@ -1,0 +1,91 @@
+{
+  "method": "Initial route manifests checked for actual Three.js implementation markers; deferred files measured from build output, not a browser transfer measurement.",
+  "initialEngineAbsent": true,
+  "routes": [
+    {
+      "route": "/dashboard",
+      "beforeGzip": 300184,
+      "afterGzip": 300216,
+      "deltaGzip": 32
+    },
+    {
+      "route": "/habits",
+      "beforeGzip": 314943,
+      "afterGzip": 314975,
+      "deltaGzip": 32
+    },
+    {
+      "route": "/nutrition",
+      "beforeGzip": 322397,
+      "afterGzip": 322429,
+      "deltaGzip": 32
+    },
+    {
+      "route": "/humeur",
+      "beforeGzip": 308790,
+      "afterGzip": 308822,
+      "deltaGzip": 32
+    },
+    {
+      "route": "/profil",
+      "beforeGzip": 369849,
+      "afterGzip": 369881,
+      "deltaGzip": 32
+    },
+    {
+      "route": "/sport",
+      "beforeGzip": 302466,
+      "afterGzip": 302563,
+      "deltaGzip": 97
+    },
+    {
+      "route": "/sport/musculation",
+      "beforeGzip": 326192,
+      "afterGzip": 326696,
+      "deltaGzip": 504
+    },
+    {
+      "route": "/sport/calendar",
+      "beforeGzip": 294175,
+      "afterGzip": 294272,
+      "deltaGzip": 97
+    },
+    {
+      "route": "/sport/stats",
+      "beforeGzip": 305792,
+      "afterGzip": 305889,
+      "deltaGzip": 97
+    },
+    {
+      "route": "/sport/calisthenics",
+      "beforeGzip": 314560,
+      "afterGzip": 314656,
+      "deltaGzip": 96
+    },
+    {
+      "route": "/sport/running",
+      "beforeGzip": 309837,
+      "afterGzip": 309934,
+      "deltaGzip": 97
+    },
+    {
+      "route": "/sport/exercises",
+      "beforeGzip": 303763,
+      "afterGzip": 303860,
+      "deltaGzip": 97
+    },
+    {
+      "route": "/sport/exercises/[key]",
+      "beforeGzip": 306251,
+      "afterGzip": 307021,
+      "deltaGzip": 770
+    }
+  ],
+  "deferredEngineFiles": [
+    {
+      "file": "static/chunks/0s9ue278-uf7p.js",
+      "bytes": 650810,
+      "gzip": 160757
+    }
+  ]
+}

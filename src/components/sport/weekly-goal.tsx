@@ -2,9 +2,10 @@
 
 import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
-import { motion } from "framer-motion";
-import { useT } from "@/components/language-provider";
+import { useLanguage, useT } from "@/components/language-provider";
 import { saveSportGoal } from "@/lib/actions/sport";
+import { SportButton, SportCard } from "@/components/sport/ui/sport-primitives";
+import { SportProgressBar } from "@/components/sport/ui/sport-progress";
 
 export function WeeklyGoal({
   sessions,
@@ -16,6 +17,8 @@ export function WeeklyGoal({
   goalWeeks: number;
 }) {
   const t = useT();
+  const { language } = useLanguage();
+  const number = new Intl.NumberFormat(language);
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const [value, setValue] = useState(goal);
@@ -34,46 +37,40 @@ export function WeeklyGoal({
   }
 
   return (
-    <div className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5">
-      <div className="mb-3 flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.weeklyGoal.title")}</p>
+    <SportCard className="p-4 sm:p-5">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <p className="sport-eyebrow">{t("sport.weeklyGoal.title")}</p>
         <div className="flex items-center gap-1.5 text-xs text-foreground-muted">
-          <button
+          <SportButton
             type="button"
             disabled={pending || value <= 1}
             onClick={() => change(value - 1)}
             aria-label={t("sport.weeklyGoal.decreaseAria")}
-            className="flex min-h-11 min-w-11 items-center justify-center rounded-full border border-sport/40 transition hover:bg-surface-muted disabled:opacity-40"
+            variant="secondary"
+            className="px-2.5"
+            icon="minus"
           >
-            −
-          </button>
+          </SportButton>
           <span className="min-w-14 text-center">
-            {value} {t(value > 1 ? "sport.common.sessionOther" : "sport.common.sessionOne")}
+            <bdi>{number.format(value)}</bdi> {t(value > 1 ? "sport.common.sessionOther" : "sport.common.sessionOne")}
           </span>
-          <button
+          <SportButton
             type="button"
             disabled={pending || value >= 14}
             onClick={() => change(value + 1)}
             aria-label={t("sport.weeklyGoal.increaseAria")}
-            className="flex min-h-11 min-w-11 items-center justify-center rounded-full border border-sport/40 transition hover:bg-surface-muted disabled:opacity-40"
+            variant="secondary"
+            className="px-2.5"
+            icon="plus"
           >
-            +
-          </button>
+          </SportButton>
         </div>
       </div>
 
-      <p className="mb-2 text-2xl font-semibold" style={{ color: "var(--sport)" }}>
-        {sessions} <span className="text-base font-normal text-foreground-muted">/ {value}</span>
+      <p className="mb-3 text-2xl font-semibold tabular-nums" style={{ color: "var(--sport-ink)" }}>
+        <bdi>{number.format(sessions)} <span className="text-base font-normal text-foreground-muted">/ {number.format(value)}</span></bdi>
       </p>
-      <div className="h-2 w-full overflow-hidden rounded-full bg-surface-muted">
-        <motion.div
-          className="h-full rounded-full"
-          style={{ background: "var(--sport)" }}
-          initial={false}
-          animate={{ width: `${pct}%` }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-        />
-      </div>
+      <SportProgressBar label={t("sport.weeklyGoal.title")} value={pct} valueText={`${number.format(sessions)} / ${number.format(value)}`} />
       <p className="mt-2 text-xs text-foreground-muted">
         {reached
           ? t("sport.weeklyGoal.reachedMessage")
@@ -84,6 +81,6 @@ export function WeeklyGoal({
         {goalWeeks > 0 &&
           t("sport.weeklyGoal.streakSuffix", { count: goalWeeks, unit: t(goalWeeks > 1 ? "sport.common.weekOther" : "sport.common.weekOne") })}
       </p>
-    </div>
+    </SportCard>
   );
 }

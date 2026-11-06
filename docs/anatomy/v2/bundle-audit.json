@@ -1,0 +1,93 @@
+{
+  "method": "Initial route manifests checked for actual Three.js implementation markers; deferred files measured from build output, not a browser transfer measurement.",
+  "beforePath": "docs/anatomy/v2/before-build.json",
+  "afterPath": "docs/anatomy/v2/after-build.json",
+  "initialEngineAbsent": true,
+  "routes": [
+    {
+      "route": "/dashboard",
+      "beforeGzip": 300216,
+      "afterGzip": 300216,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/habits",
+      "beforeGzip": 314975,
+      "afterGzip": 314975,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/nutrition",
+      "beforeGzip": 322429,
+      "afterGzip": 322429,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/humeur",
+      "beforeGzip": 308822,
+      "afterGzip": 308822,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/profil",
+      "beforeGzip": 369881,
+      "afterGzip": 369881,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/sport",
+      "beforeGzip": 302563,
+      "afterGzip": 302563,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/sport/musculation",
+      "beforeGzip": 326697,
+      "afterGzip": 326698,
+      "deltaGzip": 1
+    },
+    {
+      "route": "/sport/calendar",
+      "beforeGzip": 294272,
+      "afterGzip": 294272,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/sport/stats",
+      "beforeGzip": 305889,
+      "afterGzip": 305889,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/sport/calisthenics",
+      "beforeGzip": 314658,
+      "afterGzip": 314657,
+      "deltaGzip": -1
+    },
+    {
+      "route": "/sport/running",
+      "beforeGzip": 309934,
+      "afterGzip": 309934,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/sport/exercises",
+      "beforeGzip": 303860,
+      "afterGzip": 303860,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/sport/exercises/[key]",
+      "beforeGzip": 307022,
+      "afterGzip": 307022,
+      "deltaGzip": 0
+    }
+  ],
+  "deferredEngineFiles": [
+    {
+      "file": "static/chunks/0o2htp1s3nd29.js",
+      "bytes": 653908,
+      "gzip": 161794
+    }
+  ]
+}

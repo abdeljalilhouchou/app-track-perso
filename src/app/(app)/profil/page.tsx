@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/supabase/read-context";
 import { BADGES } from "@/lib/gamification";
 import { computeProfileStats, summarizeProgress } from "@/lib/profile-stats";
 import { ReminderSettings } from "@/components/reminder-settings";
@@ -16,21 +17,20 @@ import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
 
 export default async function ProfilPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) return null;
-  const dict = await getDictionary();
-  const t = await getT();
 
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("display_name, created_at, reminder_time, avatar_url")
-    .eq("id", user.id)
-    .single();
+  const [dict, t, { data: profile, error: profileError }, stats] = await Promise.all([
+    getDictionary(),
+    getT(),
+    supabase.from("profiles")
+      .select("display_name, created_at, reminder_time, avatar_url")
+      .eq("id", user.id)
+      .single(),
+    computeProfileStats(supabase, user.id),
+  ]);
   if (profileError) throw new Error("Impossible de charger le profil.");
 
-  const stats = await computeProfileStats(supabase, user.id);
   const { points, level, pointsIntoLevel, pointsForNextLevel, progressPct, unlocked: unlockedBadges, locked: lockedBadges } =
     summarizeProgress(stats);
   const bestStreak = stats.bestStreak;

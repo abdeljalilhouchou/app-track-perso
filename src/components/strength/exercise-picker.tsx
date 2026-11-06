@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useT } from "@/components/language-provider";
 import { MUSCLE_GROUPS, exerciseKey, muscleColor, muscleGroupI18nPath } from "@/lib/strength";
 import type { CatalogItem } from "@/components/strength/types";
+import { ExerciseGuideButton } from "@/components/sport/exercises/exercise-guide-button";
 
 /** Search the exercise catalog, or create a new exercise on the fly with its muscle group. */
 export function ExercisePicker({
@@ -50,17 +51,18 @@ export function ExercisePicker({
       {q && (
         <ul className="mt-2 space-y-1 rounded-xl border border-sport/40 bg-surface p-1.5">
           {matches.map((c) => (
-            <li key={c.name}>
+            <li key={c.name} className="flex items-center gap-1">
               <button
                 type="button"
                 onClick={() => pick(c.name, c.muscle)}
-                className="flex w-full items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-left text-sm transition hover:bg-surface-muted"
+                className="flex min-h-11 min-w-0 flex-1 items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-start text-sm transition hover:bg-surface-muted"
               >
                 <span>{c.name}</span>
                 <span className="text-xs" style={{ color: muscleColor(c.muscle) }}>
                   {muscleLabel(c.muscle)}
                 </span>
               </button>
+              <ExerciseGuideButton name={c.name} />
             </li>
           ))}
           {!exact && (

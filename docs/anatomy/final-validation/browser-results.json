@@ -1,0 +1,309 @@
+{
+  "mode": "Edge headless + next start + local auth/REST fixtures; not real-device or deployed-environment measurements",
+  "viewports": [],
+  "navigation": [],
+  "consoleErrors": [],
+  "writes": [],
+  "anatomy": {
+    "mode": "Real WebGL2 in Edge with software GPU; local Auth/REST fixtures, not a physical phone",
+    "cases": [
+      {
+        "language": "fr",
+        "theme": "light",
+        "width": 320,
+        "viewport": 320,
+        "content": 320,
+        "dialog": 308,
+        "scroll": 308
+      },
+      {
+        "language": "fr",
+        "theme": "light",
+        "width": 390,
+        "viewport": 390,
+        "content": 390,
+        "dialog": 378,
+        "scroll": 378
+      },
+      {
+        "language": "fr",
+        "theme": "light",
+        "width": 430,
+        "viewport": 430,
+        "content": 430,
+        "dialog": 418,
+        "scroll": 418
+      },
+      {
+        "language": "fr",
+        "theme": "light",
+        "width": 1440,
+        "viewport": 1440,
+        "content": 1440,
+        "dialog": 1068,
+        "scroll": 1068
+      },
+      {
+        "language": "fr",
+        "theme": "dark",
+        "width": 320,
+        "viewport": 320,
+        "content": 320,
+        "dialog": 308,
+        "scroll": 308
+      },
+      {
+        "language": "fr",
+        "theme": "dark",
+        "width": 390,
+        "viewport": 390,
+        "content": 390,
+        "dialog": 378,
+        "scroll": 378
+      },
+      {
+        "language": "fr",
+        "theme": "dark",
+        "width": 430,
+        "viewport": 430,
+        "content": 430,
+        "dialog": 418,
+        "scroll": 418
+      },
+      {
+        "language": "fr",
+        "theme": "dark",
+        "width": 1440,
+        "viewport": 1440,
+        "content": 1440,
+        "dialog": 1068,
+        "scroll": 1068
+      },
+      {
+        "language": "en",
+        "theme": "light",
+        "width": 320,
+        "viewport": 320,
+        "content": 320,
+        "dialog": 308,
+        "scroll": 308
+      },
+      {
+        "language": "en",
+        "theme": "light",
+        "width": 390,
+        "viewport": 390,
+        "content": 390,
+        "dialog": 378,
+        "scroll": 378
+      },
+      {
+        "language": "en",
+        "theme": "light",
+        "width": 430,
+        "viewport": 430,
+        "content": 430,
+        "dialog": 418,
+        "scroll": 418
+      },
+      {
+        "language": "en",
+        "theme": "light",
+        "width": 1440,
+        "viewport": 1440,
+        "content": 1440,
+        "dialog": 1068,
+        "scroll": 1068
+      },
+      {
+        "language": "en",
+        "theme": "dark",
+        "width": 320,
+        "viewport": 320,
+        "content": 320,
+        "dialog": 308,
+        "scroll": 308
+      },
+      {
+        "language": "en",
+        "theme": "dark",
+        "width": 390,
+        "viewport": 390,
+        "content": 390,
+        "dialog": 378,
+        "scroll": 378
+      },
+      {
+        "language": "en",
+        "theme": "dark",
+        "width": 430,
+        "viewport": 430,
+        "content": 430,
+        "dialog": 418,
+        "scroll": 418
+      },
+      {
+        "language": "en",
+        "theme": "dark",
+        "width": 1440,
+        "viewport": 1440,
+        "content": 1440,
+        "dialog": 1068,
+        "scroll": 1068
+      },
+      {
+        "language": "ar",
+        "theme": "light",
+        "width": 320,
+        "viewport": 320,
+        "content": 320,
+        "dialog": 308,
+        "scroll": 308
+      },
+      {
+        "language": "ar",
+        "theme": "light",
+        "width": 390,
+        "viewport": 390,
+        "content": 390,
+        "dialog": 378,
+        "scroll": 378
+      },
+      {
+        "language": "ar",
+        "theme": "light",
+        "width": 430,
+        "viewport": 430,
+        "content": 430,
+        "dialog": 418,
+        "scroll": 418
+      },
+      {
+        "language": "ar",
+        "theme": "light",
+        "width": 1440,
+        "viewport": 1440,
+        "content": 1440,
+        "dialog": 1068,
+        "scroll": 1068
+      },
+      {
+        "language": "ar",
+        "theme": "dark",
+        "width": 320,
+        "viewport": 320,
+        "content": 320,
+        "dialog": 308,
+        "scroll": 308
+      },
+      {
+        "language": "ar",
+        "theme": "dark",
+        "width": 390,
+        "viewport": 390,
+        "content": 390,
+        "dialog": 378,
+        "scroll": 378
+      },
+      {
+        "language": "ar",
+        "theme": "dark",
+        "width": 430,
+        "viewport": 430,
+        "content": 430,
+        "dialog": 418,
+        "scroll": 418
+      },
+      {
+        "language": "ar",
+        "theme": "dark",
+        "width": 1440,
+        "viewport": 1440,
+        "content": 1440,
+        "dialog": 1068,
+        "scroll": 1068
+      }
+    ],
+    "noModelBeforeOpening": true,
+    "timerContinues": true,
+    "noSupabaseReadOrWriteOnOpen": true,
+    "idleRenderingStopped": true,
+    "viewButtons": true,
+    "mouseRotation": true,
+    "touchRotation": true,
+    "pinchZoom": true,
+    "zoomBoundsAndReset": true,
+    "actualMeshSelection": true,
+    "selectionDetails": [
+      {
+        "id": "lats",
+        "name": "Grand dorsal",
+        "description": "Participe à ramener le bras près du tronc et vers la hanche pendant le tirage.",
+        "role": "primary"
+      },
+      {
+        "id": "rhomboids",
+        "name": "Rhomboïdes",
+        "description": "Participent au rapprochement et au contrôle de l’omoplate. Ils se trouvent sous le trapèze.",
+        "role": "secondary"
+      },
+      {
+        "id": "middleTraps",
+        "name": "Trapèze moyen",
+        "description": "Accompagne le rapprochement de l’omoplate lorsque le coude recule.",
+        "role": "secondary"
+      },
+      {
+        "id": "lowerTraps",
+        "name": "Trapèze inférieur",
+        "description": "Contribue au contrôle de la position de l’omoplate, en coordination avec les autres muscles scapulaires.",
+        "role": "secondary"
+      },
+      {
+        "id": "rearDeltoid",
+        "name": "Deltoïde postérieur",
+        "description": "Aide au déplacement du bras vers l’arrière. Sa contribution varie avec l’écartement du coude.",
+        "role": "secondary"
+      },
+      {
+        "id": "biceps",
+        "name": "Biceps brachial",
+        "description": "Assiste la flexion du coude au cours du tirage, sans remplacer le mouvement du bras et de l’omoplate.",
+        "role": "secondary"
+      },
+      {
+        "id": "elbowFlexors",
+        "name": "Brachial et brachio-radial",
+        "description": "Aident à fléchir le coude ; leur contribution dépend aussi de l’orientation de la prise.",
+        "role": "secondary"
+      },
+      {
+        "id": "abdominals",
+        "name": "Paroi abdominale",
+        "description": "Contribue au maintien du tronc et au contrôle de sa rotation malgré la charge d’un seul côté.",
+        "role": "stabilizer"
+      },
+      {
+        "id": "spinalStabilizers",
+        "name": "Stabilisateurs lombaires",
+        "description": "Aident à conserver la position du rachis. L’appui sur banc réduit le besoin de soutenir le buste par rapport à une variante sans appui.",
+        "role": "stabilizer"
+      }
+    ],
+    "sideAndColorControls": true,
+    "expandableSheet": true,
+    "timerBeforeAfter": {
+      "before": "1:31",
+      "after": "1:09",
+      "elapsedSeconds": 21.567,
+      "pausedOrReset": false
+    },
+    "draftSeriesFocusAndDisposal": true,
+    "creditsLicenseAndAdaptation": true,
+    "systemAndReducedMotion": true,
+    "contextLossFallback": true,
+    "noWebGLFallback": true,
+    "pilotOnly": true
+  },
+  "requestCount": 286
+}

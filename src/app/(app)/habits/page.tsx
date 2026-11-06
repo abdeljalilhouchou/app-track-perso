@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/supabase/read-context";
 import { computeStreak, countThisWeek } from "@/lib/streak";
 import { HabitCreateModal } from "@/components/habit-create-modal";
 import { HabitsBoard, type HabitCardData } from "@/components/habits-board";
@@ -15,17 +16,15 @@ import { fetchAllRows } from "@/lib/paging";
 
 export default async function HabitsPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) return null;
-  const dict = await getDictionary();
-  const t = await getT();
 
   const today = format(new Date(), "yyyy-MM-dd");
 
-  const [habits, pausedHabits, logs, todayLogs, moments] =
+  const [dict, t, habits, pausedHabits, logs, todayLogs, moments] =
     await Promise.all([
+      getDictionary(),
+      getT(),
       fetchAllRows((from, to) => supabase.from("habits").select("*").eq("user_id", user.id).eq("archived", false)
         .order("position").order("id").range(from, to)),
       fetchAllRows((from, to) => supabase.from("habits").select("*").eq("user_id", user.id).eq("archived", true)

@@ -1,0 +1,11 @@
+{
+  "repository": "slfresh/fitmitwith-anatomy-atlas",
+  "commit": "4120ee68b6604b8f2f69105d6de6166fad4734c4",
+  "source": "https://raw.githubusercontent.com/slfresh/fitmitwith-anatomy-atlas/4120ee68b6604b8f2f69105d6de6166fad4734c4/models/full-body-male-mobile.glb",
+  "sha256": "d80bebc4045069b660ca8e7afe599d76d15ccc7d96410b3727c600ef01d24e54",
+  "bytes": 2545068,
+  "meshCount": 221,
+  "triangles": 128917,
+  "license": "CC-BY-SA-4.0",
+  "changes": "Male GLB copied without geometry changes. Runtime presentation adapted: materials, lighting, role colors, and camera framing. Original meshes and metadata retained."
+}

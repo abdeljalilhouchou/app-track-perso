@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser, getProfilePreferences } from "@/lib/supabase/read-context";
 import { fetchAllRows } from "@/lib/paging";
 import type { Language } from "@/lib/language";
 import type { RunningGoal, RunningSession, Workout } from "@/types/database";
@@ -6,7 +7,7 @@ import type { RunningRun } from "./stats";
 
 export async function loadRunningData(): Promise<{ runs: RunningRun[]; goals: RunningGoal | null; language: Language } | null> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) return null;
 
   const [sessions, workouts, goalResult, profileResult] = await Promise.all([
@@ -17,7 +18,7 @@ export async function loadRunningData(): Promise<{ runs: RunningRun[]; goals: Ru
       .order("workout_date", { ascending: false }).order("created_at", { ascending: false }).order("id", { ascending: false })
       .range(from, to)),
     supabase.from("running_goals").select("*").eq("user_id", user.id).maybeSingle(),
-    supabase.from("profiles").select("language").eq("id", user.id).maybeSingle(),
+    getProfilePreferences(),
   ]);
   if (goalResult.error || profileResult.error) throw new Error("Impossible de charger les données Running.");
 

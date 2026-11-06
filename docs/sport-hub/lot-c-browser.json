@@ -1,0 +1,373 @@
+{
+  "mode": "Edge headless + next start + local auth/REST fixtures; not real-device or deployed-environment measurements",
+  "viewports": [
+    {
+      "width": 320,
+      "viewport": 320,
+      "content": 320
+    },
+    {
+      "width": 360,
+      "viewport": 360,
+      "content": 360
+    },
+    {
+      "width": 375,
+      "viewport": 375,
+      "content": 375
+    },
+    {
+      "width": 390,
+      "viewport": 390,
+      "content": 390
+    },
+    {
+      "width": 430,
+      "viewport": 430,
+      "content": 430
+    },
+    {
+      "width": 768,
+      "viewport": 768,
+      "content": 758
+    },
+    {
+      "width": 1440,
+      "viewport": 1440,
+      "content": 1430
+    }
+  ],
+  "navigation": [
+    "/sport/musculation",
+    "/sport/calendar",
+    "/sport/stats",
+    "/sport/calisthenics",
+    "/sport/running",
+    "/sport",
+    "fr/light",
+    "en/dark",
+    "ar/system"
+  ],
+  "consoleErrors": [],
+  "writes": [],
+  "draftPreservedAcrossTabs": true,
+  "queryNavigationPreservesDraft": true,
+  "contextMenuEscape": true,
+  "deferredChartRendered": true,
+  "hubCases": [
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 320,
+      "viewport": 320,
+      "content": 320
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 360,
+      "viewport": 360,
+      "content": 360
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 375,
+      "viewport": 375,
+      "content": 375
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 390,
+      "viewport": 390,
+      "content": 390
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 430,
+      "viewport": 430,
+      "content": 430
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 768,
+      "viewport": 768,
+      "content": 758
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 1440,
+      "viewport": 1440,
+      "content": 1430
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 320,
+      "viewport": 320,
+      "content": 320
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 360,
+      "viewport": 360,
+      "content": 360
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 375,
+      "viewport": 375,
+      "content": 375
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 390,
+      "viewport": 390,
+      "content": 390
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 430,
+      "viewport": 430,
+      "content": 430
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 768,
+      "viewport": 768,
+      "content": 758
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 1440,
+      "viewport": 1440,
+      "content": 1430
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 320,
+      "viewport": 320,
+      "content": 320
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 360,
+      "viewport": 360,
+      "content": 360
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 375,
+      "viewport": 375,
+      "content": 375
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 390,
+      "viewport": 390,
+      "content": 390
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 430,
+      "viewport": 430,
+      "content": 430
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 768,
+      "viewport": 768,
+      "content": 758
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 1440,
+      "viewport": 1440,
+      "content": 1430
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 320,
+      "viewport": 320,
+      "content": 320
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 360,
+      "viewport": 360,
+      "content": 360
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 375,
+      "viewport": 375,
+      "content": 375
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 390,
+      "viewport": 390,
+      "content": 390
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 430,
+      "viewport": 430,
+      "content": 430
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 768,
+      "viewport": 768,
+      "content": 758
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 1440,
+      "viewport": 1440,
+      "content": 1430
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 320,
+      "viewport": 320,
+      "content": 320
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 360,
+      "viewport": 360,
+      "content": 360
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 375,
+      "viewport": 375,
+      "content": 375
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 390,
+      "viewport": 390,
+      "content": 390
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 430,
+      "viewport": 430,
+      "content": 430
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 768,
+      "viewport": 768,
+      "content": 758
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 1440,
+      "viewport": 1440,
+      "content": 1430
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 320,
+      "viewport": 320,
+      "content": 320
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 360,
+      "viewport": 360,
+      "content": 360
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 375,
+      "viewport": 375,
+      "content": 375
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 390,
+      "viewport": 390,
+      "content": 390
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 430,
+      "viewport": 430,
+      "content": 430
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 768,
+      "viewport": 768,
+      "content": 758
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 1440,
+      "viewport": 1440,
+      "content": 1430
+    }
+  ],
+  "systemThemes": [
+    {
+      "scheme": "light",
+      "background": "rgb(247, 247, 251)"
+    },
+    {
+      "scheme": "dark",
+      "background": "rgb(11, 11, 16)"
+    }
+  ],
+  "hubEmptyState": true,
+  "hubUnknownVolume": true,
+  "legacyDateRedirect": true,
+  "intentionalReadFailure": {
+    "recovered": true,
+    "reportedErrors": [
+      "Error: Minified React error #441; visit https://react.dev/errors/441 for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+    ]
+  },
+  "requestCount": 522
+}

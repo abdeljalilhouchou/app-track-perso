@@ -9,6 +9,8 @@ import { useLanguage, useT } from "@/components/language-provider";
 import { saveStrengthSession } from "@/lib/actions/strength";
 import { exerciseKey, formatWeight, muscleColor, muscleGroupI18nPath, setsVolume } from "@/lib/strength";
 import { ExercisePicker } from "@/components/strength/exercise-picker";
+import { ExerciseGuideButton } from "@/components/sport/exercises/exercise-guide-button";
+import { ExerciseMuscleButton } from "@/components/sport/anatomy/exercise-muscle-button";
 import { detectRecords, type ExerciseSummary } from "@/lib/strength-stats";
 import { formatLocalizedDate } from "@/lib/format-date";
 
@@ -358,7 +360,7 @@ export function SessionLogger({
           >
             <div className="mb-3 flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <p className="truncate font-medium">{exercise.name}</p>
+                <div className="flex items-center gap-2"><p className="min-w-0 truncate font-medium">{exercise.name}</p><ExerciseGuideButton name={exercise.name} /></div>
                 <p className="text-xs" style={{ color: muscleColor(exercise.muscle) }}>
                   {muscleLabel(exercise.muscle)}
                   {exercise.targetReps ? (
@@ -406,6 +408,7 @@ export function SessionLogger({
               </div>
             </div>
 
+            <ExerciseMuscleButton name={exercise.name} muscle={exercise.muscle} />
             <div className="mb-1 grid grid-cols-[2rem_1fr_1fr_2.5rem_1.5rem] items-center gap-2 text-center text-[10px] uppercase tracking-wide text-foreground-muted">
               <span>{t("sport.sessionLogger.colSet")}</span>
               <span>kg</span>

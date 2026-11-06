@@ -1,6 +1,7 @@
 import { format, subDays } from "date-fns";
 import { fr } from "date-fns/locale";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/supabase/read-context";
 import { MoodForm } from "@/components/mood/mood-form";
 import { Callout } from "@/components/ui/callout";
 import { MoodLineChart } from "@/components/charts/mood-line-chart";
@@ -13,12 +14,8 @@ import { fetchAllRows } from "@/lib/paging";
 
 export default async function HumeurPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) return null;
-  const dict = await getDictionary();
-  const t = await getT();
 
   const now = new Date();
   const today = format(now, "yyyy-MM-dd");
@@ -26,8 +23,10 @@ export default async function HumeurPage() {
   const since120 = format(subDays(now, 120), "yyyy-MM-dd");
   const since365 = format(subDays(now, 365), "yyyy-MM-dd");
 
-  const [allEntries, workouts, meals, waterLogs, profileResult] =
+  const [dict, t, allEntries, workouts, meals, waterLogs, profileResult] =
     await Promise.all([
+      getDictionary(),
+      getT(),
       fetchAllRows((from, to) => supabase.from("mood_entries").select("*").eq("user_id", user.id)
         .order("entry_date").order("id").range(from, to)),
       fetchAllRows((from, to) => supabase.from("workouts").select("workout_date, id").eq("user_id", user.id).gte("workout_date", since120)

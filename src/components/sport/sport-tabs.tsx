@@ -4,7 +4,8 @@ import { useState, type KeyboardEvent, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import { useT } from "@/components/language-provider";
 
-export type SportTabId = "session" | "program" | "progress" | "history" | "stats";
+import type { SportTabId } from "@/lib/sport-navigation";
+export type { SportTabId } from "@/lib/sport-navigation";
 
 export function SportTabs({
   panels,
@@ -14,7 +15,22 @@ export function SportTabs({
   initialTab?: SportTabId;
 }) {
   const [active, setActive] = useState<SportTabId>(initialTab);
+  const [visited, setVisited] = useState<SportTabId[]>([initialTab]);
+  const [previousInitialTab, setPreviousInitialTab] = useState(initialTab);
   const t = useT();
+
+  // A query-string shortcut may update this page without unmounting it.
+  // Adjust only the selection; keep visited panels and the live draft mounted.
+  if (previousInitialTab !== initialTab) {
+    setPreviousInitialTab(initialTab);
+    setActive(initialTab);
+    setVisited((current) => current.includes(initialTab) ? current : [...current, initialTab]);
+  }
+
+  function activate(tab: SportTabId) {
+    setVisited((current) => current.includes(tab) ? current : [...current, tab]);
+    setActive(tab);
+  }
 
   const TABS: { id: SportTabId; label: string; icon: string }[] = [
     { id: "session", label: t("tabs.sport.session"), icon: "🏋️" },
@@ -39,7 +55,7 @@ export function SportTabs({
     if (targetIndex < 0) return;
     event.preventDefault();
     const target = TABS[targetIndex];
-    setActive(target.id);
+    activate(target.id);
     document.getElementById(`sport-tab-${target.id}`)?.focus();
   }
 
@@ -60,7 +76,7 @@ export function SportTabs({
             aria-controls={`sport-panel-${tab.id}`}
             aria-selected={active === tab.id}
             tabIndex={active === tab.id ? 0 : -1}
-            onClick={() => setActive(tab.id)}
+            onClick={() => activate(tab.id)}
             onKeyDown={(event) => handleTabKeyDown(event, index)}
             className="relative min-w-0 rounded-lg px-1 py-2 text-sm font-medium transition-colors sm:px-3.5"
             style={{ color: active === tab.id ? "var(--on-accent)" : "var(--foreground-muted)" }}
@@ -83,7 +99,7 @@ export function SportTabs({
           </button>
         ))}
       </div>
-      {/* Every panel stays mounted so a session in progress survives switching tabs */}
+      {/* Mount on first visit, then retain state, including unsaved sessions. */}
       {TABS.map((tab) => (
         <div
           key={tab.id}
@@ -94,7 +110,7 @@ export function SportTabs({
           hidden={active !== tab.id}
           className={active === tab.id ? "animate-fade-in space-y-6" : "space-y-6"}
         >
-          {panels[tab.id]}
+          {visited.includes(tab.id) ? panels[tab.id] : null}
         </div>
       ))}
     </div>

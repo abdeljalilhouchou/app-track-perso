@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser, getProfilePreferences } from "@/lib/supabase/read-context";
 import { fetchAllRows } from "@/lib/paging";
 import { isLanguage, type Language } from "@/lib/language";
 import { isCalisthenicsSchemaReady } from "@/lib/calisthenics/config";
@@ -28,11 +29,11 @@ export async function loadCalisthenicsData(): Promise<CalisthenicsData | null> {
   if (!isCalisthenicsSchemaReady()) return null;
 
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) return null;
 
   const [profile, exercises, programs, sessions, programExercises, workouts, sets, skills, logs] = await Promise.all([
-    supabase.from("profiles").select("language").eq("id", user.id).maybeSingle(),
+    getProfilePreferences(),
     fetchAllRows((from, to) => supabase.from("calisthenics_exercises").select("*")
       .order("category").order("exercise_key").range(from, to)),
     fetchAllRows((from, to) => supabase.from("calisthenics_programs").select("*")

@@ -1,5 +1,7 @@
 "use client";
 
+import { ExerciseGuideButton } from "@/components/sport/exercises/exercise-guide-button";
+
 import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -97,7 +99,7 @@ export function SessionList({
                     {detail.exercises.map((ex) => (
                       <div key={ex.name} className="rounded-xl bg-surface-muted px-3 py-2.5">
                         <div className="flex items-center justify-between gap-2">
-                          <p className="truncate text-sm font-medium">{ex.name}</p>
+                          <div className="flex min-w-0 items-center gap-2"><p className="min-w-0 truncate text-sm font-medium">{ex.name}</p><ExerciseGuideButton name={ex.name} /></div>
                           <span className="shrink-0 text-[11px]" style={{ color: muscleColor(ex.muscle) }}>
                             {muscleLabel(ex.muscle)}
                           </span>

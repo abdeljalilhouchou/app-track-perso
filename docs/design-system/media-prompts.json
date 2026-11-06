@@ -1,0 +1,10 @@
+{
+  "tool": "Built-in image_gen.imagegen",
+  "date": "2026-11-06",
+  "purpose": "Generated discipline mood imagery, never exercise technique demonstrations",
+  "prompts": {
+    "strength": "Use case: photorealistic-natural. Asset type: a background photo for a premium sports app discipline card, landscape 3:2. Primary request: understated professional editorial still life of a pair of black dumbbells resting on a dark rubber gym floor beside a workout bench, soft daylight, subtle emerald reflection, clean uncluttered scene, tactile metal and rubber, shallow depth of field. Composition: weights in center, generously crop safe edges, no text, no numbers, no logos, no people, no watermarks. A standalone photograph, never a website or phone mockup.",
+    "calisthenics": "Use case: photorealistic-natural. Asset type: a background photo for a premium sports app discipline card, landscape 3:2. Primary request: understated professional editorial photograph of wooden gymnastic rings hanging still from black straps at an outdoor calisthenics park, pull-up bars softly out of focus behind, natural warm morning light, subtle green surroundings, clean uncluttered scene, realistic materials. Composition centered and crop-safe. No people performing movements, no text, no logos, no numbers, no watermarks. A standalone photograph, never a website or phone mockup.",
+    "running": "Use case: photorealistic-natural. Asset type: a background photo for a premium sports app discipline card, landscape 3:2. Primary request: understated professional editorial still life of a pair of unbranded charcoal running shoes neatly placed on a running track with track lines receding into a softly out of focus background, natural dawn light, quiet athletic mood, subtle lavender gray highlights, realistic shoe fabric and track texture, clean uncluttered scene. Centered crop-safe subject. No people, no text, no logos, no readable numbers, no watermarks. A standalone photograph, never a website or phone mockup."
+  }
+}

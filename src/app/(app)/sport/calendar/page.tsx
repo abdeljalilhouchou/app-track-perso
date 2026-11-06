@@ -2,7 +2,10 @@ import Link from "next/link";
 import { eachDayOfInterval, endOfMonth, endOfWeek, format, isSameMonth, parseISO, startOfMonth, startOfWeek, subMonths } from "date-fns";
 import { CalendarIcon } from "@/components/ui/nav-icons";
 import { getT } from "@/lib/i18n/get-dictionary";
-import { formatSportDate, loadSportHubData } from "@/lib/sport-hub-data";
+import { formatSportDate } from "@/lib/sport-hub-data";
+import { sportCalendarRange } from "@/lib/sport-calendar";
+import { loadSportCalendarData } from "@/lib/sport-calendar-data";
+import { SportPageHeader } from "@/components/sport/ui/sport-primitives";
 
 function monthHref(month: Date) {
   return `/sport/calendar?month=${format(month, "yyyy-MM")}`;
@@ -13,26 +16,19 @@ export default async function SportCalendarPage({
 }: {
   searchParams: Promise<{ month?: string | string[] }>;
 }) {
-  const [{ month: rawMonth }, data] = await Promise.all([searchParams, loadSportHubData()]);
+  const { month: rawMonth } = await searchParams;
+  const range = sportCalendarRange(rawMonth);
+  const [data, t] = await Promise.all([loadSportCalendarData(range), getT()]);
   if (!data) return null;
 
-  const t = await getT();
-  const now = new Date();
-  const today = format(now, "yyyy-MM-dd");
-  const currentMonthKey = format(now, "yyyy-MM");
-  const requestedMonth = Array.isArray(rawMonth) ? rawMonth[0] : rawMonth;
-  const selectedMonthKey = requestedMonth && /^\d{4}-(0[1-9]|1[0-2])$/.test(requestedMonth) && requestedMonth <= currentMonthKey
-    ? requestedMonth
-    : currentMonthKey;
+  const { today, currentMonthKey, selectedMonthKey } = range;
   const monthDate = parseISO(`${selectedMonthKey}-01`);
   const monthStart = startOfMonth(monthDate);
   const days = eachDayOfInterval({
     start: startOfWeek(monthStart, { weekStartsOn: 1 }),
     end: endOfWeek(endOfMonth(monthDate), { weekStartsOn: 1 }),
   });
-  const monthWorkouts = data.workouts.filter(
-    (workout) => workout.workout_date.startsWith(selectedMonthKey) && workout.workout_date <= today
-  );
+  const monthWorkouts = data.workouts;
   const workoutCountByDate = new Map<string, number>();
   for (const workout of monthWorkouts) {
     workoutCountByDate.set(workout.workout_date, (workoutCountByDate.get(workout.workout_date) ?? 0) + 1);
@@ -41,10 +37,7 @@ export default async function SportCalendarPage({
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">{t("sport.hub.calendar.title")}</h1>
-        <p className="mt-1 text-sm text-foreground-muted">{t("sport.hub.calendar.description")}</p>
-      </header>
+      <SportPageHeader title={t("sport.hub.calendar.title")} description={t("sport.hub.calendar.description")} icon="calendar" />
 
       <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5">
         <div className="mb-4 flex items-center justify-between gap-2">
@@ -101,7 +94,7 @@ export default async function SportCalendarPage({
         </div>
       </section>
 
-      <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5">
+      <section id="sport-calendar-activities" className="scroll-mt-6 rounded-2xl border border-border bg-surface p-4 sm:p-5">
         <div className="mb-4 flex items-center gap-2">
           <CalendarIcon className="h-4 w-4 text-sport" />
           <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.hub.calendar.activitiesTitle")}</h2>

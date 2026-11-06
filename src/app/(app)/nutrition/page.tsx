@@ -1,5 +1,6 @@
 import { format, subDays } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/supabase/read-context";
 import { MealForm } from "@/components/meal-form";
 import { NutritionJournal } from "@/components/nutrition-journal";
 import { NutritionGoalsCalculator } from "@/components/nutrition-goals-calculator";
@@ -27,12 +28,8 @@ export default async function NutritionPage({
 }) {
   const { date } = await searchParams;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) return null;
-  const dict = await getDictionary();
-  const t = await getT();
 
   const today = format(new Date(), "yyyy-MM-dd");
   const seventyDaysAgo = format(subDays(new Date(), 70), "yyyy-MM-dd");
@@ -41,6 +38,8 @@ export default async function NutritionPage({
   const selectedDate = isValidIsoDate(date) ? date : today;
 
   const [
+    dict,
+    t,
     profileResult,
     meals,
     selectedDayMeals,
@@ -53,6 +52,8 @@ export default async function NutritionPage({
     templatesRaw,
     templateItems,
   ] = await Promise.all([
+    getDictionary(),
+    getT(),
     supabase.from("profiles").select("*").eq("id", user.id).single(),
     fetchAllRows((from, to) =>
       supabase

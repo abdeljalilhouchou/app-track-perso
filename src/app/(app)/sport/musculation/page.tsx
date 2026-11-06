@@ -1,5 +1,6 @@
 import { format, startOfWeek, subDays } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser, getProfilePreferences } from "@/lib/supabase/read-context";
 import { WeeklyBarChart } from "@/components/charts/weekly-bar-chart";
 import { DayNavigator } from "@/components/journal/day-navigator";
 import { Callout } from "@/components/ui/callout";
@@ -21,21 +22,21 @@ import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
 import { isValidIsoDate } from "@/lib/actions/validation";
 import { isLanguage } from "@/lib/language";
 import { formatSportDate, sportWeeklyDuration } from "@/lib/sport-hub-data";
+import { SportLink, SportPageHeader } from "@/components/sport/ui/sport-primitives";
+import { sportTabFromQuery } from "@/lib/sport-navigation";
 
-export default async function SportPage({ searchParams }: { searchParams: Promise<{ date?: string | string[] }> }) {
-  const { date } = await searchParams;
+export default async function SportPage({ searchParams }: { searchParams: Promise<{ date?: string | string[]; tab?: string | string[] }> }) {
+  const { date, tab } = await searchParams;
   const requestedDate = Array.isArray(date) ? date[0] : date;
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) return null;
-  const dict = await getDictionary();
-  const t = await getT();
 
   const today = format(new Date(), "yyyy-MM-dd");
   const selectedDate = isValidIsoDate(requestedDate) ? requestedDate : today;
-  const [allWorkouts, profileResult, sets, templatesRaw, templateRows, catalogRaw] = await Promise.all([
+  const [dict, t, allWorkouts, profileResult, sets, templatesRaw, templateRows, catalogRaw] = await Promise.all([
+    getDictionary(),
+    getT(),
     fetchAllRows((from, to) =>
       supabase
         .from("workouts")
@@ -46,7 +47,7 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
         .order("id", { ascending: false })
         .range(from, to)
     ),
-    supabase.from("profiles").select("sport_weekly_goal, language").eq("id", user.id).single(),
+    getProfilePreferences(),
     fetchAllRows((from, to) =>
       supabase
         .from("workout_sets")
@@ -270,19 +271,11 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex items-center gap-3">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-[1.5px] border-sport text-xl">
-          🏋️
-        </span>
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{dict.pages.sport.title}</h1>
-          <p className="mt-0.5 text-sm text-foreground-muted">{dict.pages.sport.subtitle}</p>
-        </div>
-      </div>
+      <SportPageHeader title={dict.pages.sport.title} description={dict.pages.sport.subtitle} icon="strength" actions={<SportLink href="/sport/exercises?discipline=musculation" icon="exercise">{t("sport.library.library")}</SportLink>} />
 
       {notes}
 
-      <SportTabs panels={panels} initialTab={date ? "history" : "session"} />
+      <SportTabs panels={panels} initialTab={sportTabFromQuery(tab, date)} />
     </div>
   );
 }

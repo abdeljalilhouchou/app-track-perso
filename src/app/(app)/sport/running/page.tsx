@@ -6,8 +6,8 @@ import { loadRunningData } from "@/lib/running/data";
 import { format } from "date-fns";
 
 export default async function RunningPage({ searchParams }: { searchParams: Promise<{ session?: string | string[] }> }) {
-  const t = await getT();
   if (!isRunningSchemaReady()) {
+    const t = await getT();
     return <div className="space-y-6">
       <header className="rounded-3xl border border-sport/30 bg-surface p-5 sm:p-7">
         <span aria-hidden className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-sport-soft text-sport"><RunIcon className="h-6 w-6" /></span>

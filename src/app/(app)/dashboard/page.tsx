@@ -2,6 +2,7 @@ import { differenceInCalendarDays, format, getISODay, parseISO, startOfWeek, sub
 import { fr } from "date-fns/locale";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/supabase/read-context";
 import { weeklyTotals } from "@/lib/weekly";
 import { buildInsights, computeWeekRecap } from "@/lib/dashboard";
 import { computeProfileStats, summarizeProgress } from "@/lib/profile-stats";
@@ -21,12 +22,8 @@ import { fetchAllRows } from "@/lib/paging";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) return null;
-  const dict = await getDictionary();
-  const t = await getT();
 
   const today = new Date();
   const todayStr = format(today, "yyyy-MM-dd");
@@ -35,6 +32,8 @@ export default async function DashboardPage() {
   const since10w = format(subWeeks(today, 10), "yyyy-MM-dd");
 
   const [
+    dict,
+    t,
     profileResult,
     habits,
     habitLogs,
@@ -45,6 +44,8 @@ export default async function DashboardPage() {
     weightLogs,
     stats,
   ] = await Promise.all([
+    getDictionary(),
+    getT(),
     supabase
       .from("profiles")
       .select("display_name, goal_calories, goal_protein, goal_carbs, goal_fat, water_goal_ml, caffeine_limit_mg, sugar_limit_g, sport_weekly_goal, reminder_time")
