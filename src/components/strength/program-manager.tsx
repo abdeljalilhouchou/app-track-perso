@@ -15,6 +15,7 @@ import {
 import { MUSCLE_GROUPS, exerciseKey, muscleColor, muscleGroupI18nPath } from "@/lib/strength";
 import { ExercisePicker } from "@/components/strength/exercise-picker";
 import { ExerciseGuideButton } from "@/components/sport/exercises/exercise-guide-button";
+import { ExerciseMuscleButton } from "@/components/sport/anatomy/exercise-muscle-button";
 import type { CatalogItem, TemplateView } from "@/components/strength/types";
 
 type Row = { name: string; muscle: string; sets: number; reps: number };
@@ -306,6 +307,7 @@ function TemplateCard({
                           <p className="text-[11px]" style={{ color: muscleColor(e.muscle) }}>
                             {muscleLabel(e.muscle, t)}
                           </p>
+                          <ExerciseMuscleButton name={e.name} muscle={e.muscle} />
                         </div>
                         <span className="shrink-0 text-sm font-semibold" style={{ color: "var(--sport)" }}>
                           {e.sets} × {e.reps}

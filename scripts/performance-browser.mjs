@@ -8,7 +8,8 @@ import path from "node:path";
 // Offline application QA: all auth/data use this local fixture server. Never
 // reads .env files or connects to Supabase. Requires local Microsoft Edge.
 const require = createRequire(import.meta.url);
-const anatomyOnly = process.argv.includes("--anatomy-only");
+const anatomyV3Only = process.argv.includes("--anatomy-v3-only");
+const anatomyOnly = process.argv.includes("--anatomy-only") || anatomyV3Only;
 const anatomy = process.argv.includes("--anatomy") || anatomyOnly;
 const hub = process.argv.includes("--hub") || anatomy;
 const exerciseLibrary = process.argv.includes("--exercise-library") || anatomy;
@@ -334,7 +335,7 @@ try {
   }
   }
   if (anatomy) {
-    const { checkAnatomy } = await import("./anatomy-browser-checks.mjs");
+    const { checkAnatomy } = anatomyV3Only ? await import("./anatomy-v3-browser-checks.mjs") : await import("./anatomy-browser-checks.mjs");
     await checkAnatomy({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, networkRequests, output, appPort });
   }
   results.writes = requests.filter((request) => !["GET", "HEAD"].includes(request.method));

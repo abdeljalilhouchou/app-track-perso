@@ -23,7 +23,7 @@ export function ExerciseDetailContent({ data }: { data: Detail }) {
   const number = (value: number) => value.toLocaleString(language);
   const primary = data.muscles?.primary ?? exercise.primary.map(muscleLabel), secondary = data.muscles?.secondary ?? exercise.secondary.map(muscleLabel);
   return <div className="exercise-detail space-y-5" data-exercise-detail>
-    <ExerciseMuscleButton name={exercise.name} guideId={exercise.guideId} />
+    <ExerciseMuscleButton name={exercise.name} exerciseKey={exercise.key} origin={exercise.origin} discipline={exercise.discipline} showUnavailable />
     <figure className="overflow-hidden rounded-2xl border border-border"><SportMedia image={exercise.image} fallback={<MovementSketch id={exercise.guideId} />} sizes="(max-width: 768px) 100vw, 760px" /><figcaption className="bg-surface-muted px-4 py-2 text-xs text-foreground-muted">{l(exercise.image ? "photoCredit" : "illustration")}</figcaption></figure>
     <dl className="exercise-facts"><div><dt>{l("equipment")}</dt><dd>{exercise.equipment.length ? exercise.equipment.map((item) => l(`materials.${item}`)).join(" · ") : l("unknown")}</dd></div><div><dt>{l("level")}</dt><dd>{exercise.level ? l(`levels.${exercise.level}`) : l("unknown")}</dd></div></dl>
     <nav aria-label={l("guide")} className="exercise-section-links">{["technique", "muscles", "mistakes", "tips"].map((item) => <a key={item} href={`#${id}-${item}`}>{l(item)}</a>)}</nav>

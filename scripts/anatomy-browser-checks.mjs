@@ -277,6 +277,11 @@ export async function checkAnatomy({ send, evaluate, navigatePage, ready, until,
   assert.ok(await evaluate("document.querySelector('[data-muscle-dialog]').innerText.includes('2D') && !document.querySelector('[data-anatomy-command=left]')"));
   await click('[data-anatomy-command="front"]');await click('[data-anatomy-muscle="biceps"]');assert.equal(await evaluate("document.querySelector('[data-anatomy-selection]').dataset.anatomySelection"),"biceps");
   await screenshot("anatomy-fallback");result.noWebGLFallback=true;await close();await send("Page.removeScriptToEvaluateOnNewDocument",{identifier});
-  await go("/sport/exercises/strength-curl-halteres");assert.ok(!await evaluate("!!document.querySelector('[data-anatomy-open]')"));result.pilotOnly=true;
+  await go("/sport/exercises/strength-curl-halteres");await open();
+  assert.equal(await evaluate("document.querySelector('[data-anatomy-selection]').dataset.anatomySelection"),"biceps");
+  assert.ok(Math.abs(await azimuth())<.004);await close();result.sharedViewerForCurl=true;
+  await writeFile(path.join(output, "anatomy-pilot-results.json"), JSON.stringify(result, null, 2));
+  const { checkAnatomyV3 } = await import("./anatomy-v3-browser-checks.mjs");
+  await checkAnatomyV3({ send, evaluate, go, until, pause, click, open, close, stage, sceneState, requests, results, output, profile, screenshot, command });
   console.log(`Anatomy: real meshes, mouse/touch/pinch, timer and draft, fallback and ${result.cases.length} locale/theme/width cases passed.`);
 }

@@ -1,5 +1,7 @@
 export const exerciseLibraryFr = {
   targetMuscles: "Muscles ciblés",
+  anatomyCoverage: "Musculation : {mapped}/{total} exercices avec visualisation, dont {partial} partiels. {unsupported} non pris en charge.",
+  anatomyUnavailable: "La visualisation anatomique n’est pas disponible pour cet exercice. La fiche classique reste accessible.",
   title: "Bibliothèque d’exercices", subtitle: "Trouve ton mouvement. Comprends la technique.", showMore: "Afficher plus d’exercices",
   library: "Exercices", guide: "Fiche technique", openGuide: "Voir la fiche de {name}", closeGuide: "Fermer la fiche", fullPage: "Ouvrir la page complète",
   search: "Rechercher un exercice", searchPlaceholder: "Nom, mouvement…", discipline: "Discipline", muscle: "Groupe musculaire", equipment: "Matériel", level: "Niveau indicatif", all: "Tous", unknown: "Non renseigné", sort: "Tri", ascending: "Nom : A → Z", descending: "Nom : Z → A", reset: "Réinitialiser", count: "{count} exercices", documented: "Technique disponible", basic: "Fiche à compléter", personal: "Exercice personnel",
@@ -17,6 +19,8 @@ export const exerciseLibraryFr = {
 type Labels = { [K in keyof typeof exerciseLibraryFr]: typeof exerciseLibraryFr[K] extends object ? { [P in keyof typeof exerciseLibraryFr[K]]: string } : string };
 export const exerciseLibraryEn: Labels = {
   targetMuscles: "Target muscles",
+  anatomyCoverage: "Strength: {mapped}/{total} exercises with visualization, including {partial} partial. {unsupported} unsupported.",
+  anatomyUnavailable: "Anatomical visualization is unavailable for this exercise. The classic exercise sheet remains accessible.",
   title: "Exercise library", subtitle: "Find your movement. Understand the technique.", showMore: "Show more exercises", library: "Exercises", guide: "Technique guide", openGuide: "View the guide for {name}", closeGuide: "Close guide", fullPage: "Open full page",
   search: "Search exercises", searchPlaceholder: "Name, movement…", discipline: "Discipline", muscle: "Muscle group", equipment: "Equipment", level: "Indicative level", all: "All", unknown: "Not specified", sort: "Sort", ascending: "Name: A → Z", descending: "Name: Z → A", reset: "Reset", count: "{count} exercises", documented: "Technique available", basic: "Guide to complete", personal: "Personal exercise",
   intro: "A reference catalog alongside your personal exercises. Reading a guide does not change your programs.", noResults: "No exercises found", noResultsBody: "Try another name or adjust the filters.", calUnavailable: "The Calisthenics catalog will be available when its module is enabled.", runningEmpty: "There is currently no Running exercise catalog.", runningLink: "View Running",
@@ -30,6 +34,8 @@ export const exerciseLibraryEn: Labels = {
 };
 export const exerciseLibraryAr: Labels = {
   targetMuscles: "العضلات المستهدفة",
+  anatomyCoverage: "القوة: {mapped}/{total} تمارين مع عرض، منها {partial} جزئية. {unsupported} غير مدعومة.",
+  anatomyUnavailable: "العرض التشريحي غير متاح لهذا التمرين. تبقى بطاقة التمرين التقليدية متاحة.",
   title: "مكتبة التمارين", subtitle: "ابحث عن تمرينك وافهم طريقة أدائه.", showMore: "عرض المزيد من التمارين", library: "التمارين", guide: "دليل الأداء", openGuide: "عرض دليل {name}", closeGuide: "إغلاق الدليل", fullPage: "فتح الصفحة الكاملة",
   search: "البحث عن تمرين", searchPlaceholder: "الاسم، الحركة…", discipline: "الرياضة", muscle: "المجموعة العضلية", equipment: "المعدات", level: "المستوى التقريبي", all: "الكل", unknown: "غير محدد", sort: "الترتيب", ascending: "الاسم: تصاعدي", descending: "الاسم: تنازلي", reset: "إعادة الضبط", count: "عدد التمارين: {count}", documented: "دليل الأداء متوفر", basic: "دليل قيد الإكمال", personal: "تمرين شخصي",
   intro: "كتالوج مرجعي إلى جانب تمارينك الشخصية. قراءة الدليل لا تعدّل برامجك.", noResults: "لا توجد تمارين مطابقة", noResultsBody: "جرّب اسماً آخر أو عدّل عوامل التصفية.", calUnavailable: "ستتوفر مكتبة الكاليستينيكس عند تفعيل وحدتها.", runningEmpty: "لا يوجد حالياً كتالوج تمارين خاص بالجري.", runningLink: "عرض الجري",

@@ -1,6 +1,7 @@
 "use client";
 
 import { ExerciseGuideButton } from "@/components/sport/exercises/exercise-guide-button";
+import { ExerciseMuscleButton } from "@/components/sport/anatomy/exercise-muscle-button";
 
 import { useActionToast } from "@/components/toast/use-action-toast";
 import { useState, useTransition } from "react";
@@ -109,6 +110,7 @@ export function SessionList({
                             .map((x) => (x.weight > 0 ? `${formatWeight(x.weight)} kg × ${x.reps}` : t("sport.common.repsValue", { reps: x.reps })))
                             .join("  ·  ")}
                         </p>
+                        <ExerciseMuscleButton name={ex.name} muscle={ex.muscle} />
                       </div>
                     ))}
                     {s.notes && <p className="text-xs text-foreground-muted">📝 {s.notes}</p>}

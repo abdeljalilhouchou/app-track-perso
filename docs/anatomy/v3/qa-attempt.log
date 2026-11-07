@@ -1,0 +1,1019 @@
+Error: {"code":-32000,"message":"Object reference chain is too long"}
+    at socket.onmessage (file:///D:/myproject/app_track_perso/scripts/performance-browser.mjs:114:38)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+    at WebSocket.dispatchEvent (node:internal/event_target:776:26)
+    at fireEvent (node:internal/deps/undici/undici:12111:14)
+    at websocketMessageReceived (node:internal/deps/undici/undici:12133:7)
+    at node:internal/deps/undici/undici:12862:21
+    at node:internal/deps/undici/undici:12621:11
+    at afterWrite (node:internal/streams/writable:710:5)
+    at onwrite (node:internal/streams/writable:688:7)
+    at Zlib.<anonymous> (node:internal/streams/transform:191:7)
+▲ Next.js 16.3.5 (Turbopack)
+- Environments: .env.local
+✓ Running next.config.ts took 41ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 4.1s
+  Running TypeScript ...
+  Finished TypeScript in 8.7s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/23) ...
+  Generating static pages using 7 workers (5/23)
+  Generating static pages using 7 workers (11/23)
+  Generating static pages using 7 workers (17/23)
+✓ Generating static pages using 7 workers (23/23) in 1507ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/cron/reminders
+├ ƒ /api/sport/exercise-guide
+├ ƒ /auth/callback
+├ ƒ /dashboard
+├ ○ /forgot-password
+├ ƒ /habits
+├ ƒ /habits/[id]
+├ ƒ /humeur
+├ ○ /login
+├ ƒ /nutrition
+├ ƒ /profil
+├ ƒ /reset-password
+├ ○ /signup
+├ ƒ /sport
+├ ƒ /sport/calendar
+├ ƒ /sport/calisthenics
+├ ƒ /sport/design-system
+├ ƒ /sport/exercises
+├ ƒ /sport/exercises/[key]
+├ ƒ /sport/musculation
+├ ƒ /sport/running
+└ ƒ /sport/stats
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+▲ Next.js 16.3.5
+- Local:         http://127.0.0.1:64682
+- Network:       http://127.0.0.1:64682
+✓ Ready in 1491ms
+✓ Running next.config.ts took 149ms
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 172 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 11.5
+}
+[track-perso:supabase] {
+  resource: 'workout_templates',
+  method: 'GET',
+  status: 200,
+  durationMs: 14.6
+}
+[track-perso:supabase] { resource: 'workouts', method: 'GET', status: 200, durationMs: 16.6 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 19 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 15.7 }
+[track-perso:supabase] { resource: 'habits', method: 'GET', status: 200, durationMs: 30.2 }
+[track-perso:supabase] {
+  resource: 'habit_logs',
+  method: 'GET',
+  status: 200,
+  durationMs: 30.5
+}
+[track-perso:supabase] { resource: 'workouts', method: 'GET', status: 200, durationMs: 43.8 }
+[track-perso:supabase] {
+  resource: 'mood_entries',
+  method: 'GET',
+  status: 200,
+  durationMs: 44.8
+}
+[track-perso:supabase] {
+  resource: 'meal_entries',
+  method: 'GET',
+  status: 200,
+  durationMs: 45.7
+}
+[track-perso:supabase] { resource: 'weight_logs', method: 'GET', status: 200, durationMs: 46 }
+[track-perso:supabase] {
+  resource: 'habit_logs',
+  method: 'GET',
+  status: 200,
+  durationMs: 46.1
+}
+[track-perso:supabase] {
+  resource: 'meal_entries',
+  method: 'GET',
+  status: 200,
+  durationMs: 46.4
+}
+[track-perso:supabase] {
+  resource: 'habit_logs',
+  method: 'HEAD',
+  status: 200,
+  durationMs: 49.7
+}
+[track-perso:supabase] { resource: 'workouts', method: 'HEAD', status: 200, durationMs: 50.1 }
+[track-perso:supabase] {
+  resource: 'mood_entries',
+  method: 'HEAD',
+  status: 200,
+  durationMs: 51.5
+}
+[track-perso:supabase] { resource: 'habits', method: 'HEAD', status: 200, durationMs: 52 }
+[track-perso:supabase] {
+  resource: 'meal_entries',
+  method: 'HEAD',
+  status: 200,
+  durationMs: 52.4
+}
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 52.5 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 53.2 }
+[track-perso:supabase] {
+  resource: 'water_logs',
+  method: 'GET',
+  status: 200,
+  durationMs: 54.3
+}
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 55.7 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4.9 }
+[track-perso:supabase] {
+  resource: 'meal_entries',
+  method: 'GET',
+  status: 200,
+  durationMs: 5.3
+}
+[track-perso:supabase] {
+  resource: 'meal_entries',
+  method: 'GET',
+  status: 200,
+  durationMs: 4.9
+}
+[track-perso:supabase] { resource: 'meal_entries', method: 'GET', status: 200, durationMs: 6 }
+[track-perso:supabase] { resource: 'foods', method: 'GET', status: 200, durationMs: 6.9 }
+[track-perso:supabase] {
+  resource: 'meal_entries',
+  method: 'GET',
+  status: 200,
+  durationMs: 7.6
+}
+[track-perso:supabase] {
+  resource: 'meal_entries',
+  method: 'GET',
+  status: 200,
+  durationMs: 8.2
+}
+[track-perso:supabase] {
+  resource: 'weight_logs',
+  method: 'GET',
+  status: 200,
+  durationMs: 8.8
+}
+[track-perso:supabase] {
+  resource: 'meal_templates',
+  method: 'GET',
+  status: 200,
+  durationMs: 9.8
+}
+[track-perso:supabase] {
+  resource: 'meal_template_items',
+  method: 'GET',
+  status: 200,
+  durationMs: 10.6
+}
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 11.2 }
+[track-perso:supabase] {
+  resource: 'water_logs',
+  method: 'GET',
+  status: 200,
+  durationMs: 11.7
+}
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 12.1 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 9 }
+[track-perso:supabase] { resource: 'workouts', method: 'GET', status: 200, durationMs: 9 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 10.1
+}
+[track-perso:supabase] {
+  resource: 'workout_templates',
+  method: 'GET',
+  status: 200,
+  durationMs: 11.1
+}
+[track-perso:supabase] {
+  resource: 'workout_template_exercises',
+  method: 'GET',
+  status: 200,
+  durationMs: 12.1
+}
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 10.9 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 11.2 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 12.7 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 2.5 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 6.9 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 6.3
+}
+[track-perso:supabase] { resource: 'workouts', method: 'GET', status: 200, durationMs: 4.8 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 8.1 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.6 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 9.2 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 7.3
+}
+[track-perso:supabase] { resource: 'workouts', method: 'GET', status: 200, durationMs: 5.4 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 10.8 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 5.7 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 9.9 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 5.8
+}
+[track-perso:supabase] { resource: 'workouts', method: 'GET', status: 200, durationMs: 6.1 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 7.4 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.5 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 4.4 }
+[track-perso:supabase] { resource: 'workout_sets', method: 'GET', status: 200, durationMs: 3 }
+[track-perso:supabase] { resource: 'workouts', method: 'GET', status: 200, durationMs: 3.6 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 10 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 2.1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 7.4 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 3.9
+}
+[track-perso:supabase] { resource: 'workouts', method: 'GET', status: 200, durationMs: 4.2 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 8.7 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.2 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 5.5 }
+[track-perso:supabase] { resource: 'workout_sets', method: 'GET', status: 200, durationMs: 3 }
+[track-perso:supabase] { resource: 'workouts', method: 'GET', status: 200, durationMs: 3.1 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 6.9 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 5.1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 8.4 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 7.8
+}
+[track-perso:supabase] { resource: 'workouts', method: 'GET', status: 200, durationMs: 5.1 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 9.2 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.8 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 4.3 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.5
+}
+[track-perso:supabase] { resource: 'workouts', method: 'GET', status: 200, durationMs: 2.8 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 6.1 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.9 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.5 }
+[track-perso:supabase] { resource: 'workout_sets', method: 'GET', status: 200, durationMs: 2 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.7 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.7 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.9 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 3.9
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.1 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3 }
+[track-perso:supabase] { resource: 'workout_sets', method: 'GET', status: 200, durationMs: 2 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.3 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.6 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 3.9
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.5 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.1 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.9
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 5.4 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 3.7 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 4.1 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.7
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4.3 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.9 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.6
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.1 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 3.2 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.5 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.8
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.9 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.9 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.8 }
+[track-perso:supabase] { resource: 'workout_sets', method: 'GET', status: 200, durationMs: 3 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.7 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.8 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.5 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.5
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 5.8 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 2.1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 6.2 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 3.6
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.3 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.4 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 4.8 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 3.5
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 7.1 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.7 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 4.3 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 6.5
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.2 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.2 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.9 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.2
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 7.8 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 2.2 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 5.4 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 3.8
+}
+[track-perso:supabase] { resource: 'workouts', method: 'GET', status: 200, durationMs: 3.6 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.3 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.6 }
+[track-perso:supabase] { resource: 'workout_sets', method: 'GET', status: 200, durationMs: 2 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.7 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.7 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.1
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4.1 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.2 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.2 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 5.2
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.8 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.4 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.2 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.7
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.9 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.8 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.2
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.7 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.8 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.4 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.7
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.8 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.5 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.4 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.6
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4.3 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.8 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.3 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.7
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.5 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.3 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 5.9 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.9
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.4 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.6 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.2
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.6 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.9 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.9 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.7
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.2 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.9 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.3
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.9 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.2 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.2 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.8
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.7 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.9 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 5.4 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.1
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.2 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.9 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.2
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 6.7 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.9 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 4.4 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.5
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.9 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.9 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.2 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.7
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.4 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.4 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.3 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 4.8
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.6 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.5 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.2 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.5
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4.1 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.9 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.7 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.9
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.6 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.9 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.5 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.8
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.5 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.9 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.1 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.5
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4.8 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.2 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.2 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.7
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.5 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.8 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 4.4 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.2
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4.8 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.5 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.1 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.5
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.2 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.3 }
+[track-perso:supabase] { resource: 'workout_sets', method: 'GET', status: 200, durationMs: 2 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.7 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.3 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.7
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.7 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.2 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.5 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.5
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.4 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.4 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.8
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 5 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.5 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 4.6 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.5
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.8 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.9 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.3 }
+[track-perso:supabase] { resource: 'workout_sets', method: 'GET', status: 200, durationMs: 2 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.3 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.9 }
+[track-perso:supabase] { resource: 'workout_sets', method: 'GET', status: 200, durationMs: 2 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4.9 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.7 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 4.6 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.9
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 5.1 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.3 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.8
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.3 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.7 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.7
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.5 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.9 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.9 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.9
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.7 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.3 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.6
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.4 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.3 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.6
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4.9 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.8 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 5.4
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.4 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.4 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.6
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.9 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.8 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.2 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.6
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 6.9 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.7 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.5
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 6.6 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.9 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.2 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.1
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.5 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.2 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.5
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.5 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.3 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.8 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.8
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.8 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.9 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.4 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.7
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.6 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.7 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.5
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.9 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.8 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.3 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 4.6
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4.2 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.5 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 4.1 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.5
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.8 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.5 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.8
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4.7 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.4 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.1 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.2
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4.5 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.8 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.3 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.7
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.3 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.1 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 3.9
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.4 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.8 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.3 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.7
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4.1 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.3 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.6 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.5
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 5.1 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 2.2 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.8 }
+[track-perso:supabase] { resource: 'workout_sets', method: 'GET', status: 200, durationMs: 2 }
+[track-perso:supabase] { resource: 'workouts', method: 'GET', status: 200, durationMs: 2 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 5 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 1.9 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 2.2 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 5.5 }
+[track-perso:supabase] { resource: 'workouts', method: 'GET', status: 200, durationMs: 4.4 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 4.8
+}
+[track-perso:supabase] {
+  resource: 'workout_templates',
+  method: 'GET',
+  status: 200,
+  durationMs: 5.3
+}
+[track-perso:supabase] {
+  resource: 'workout_template_exercises',
+  method: 'GET',
+  status: 200,
+  durationMs: 5.9
+}
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 6.5 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 6.9 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.1 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.8 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.4 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.8
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 21.2 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 4.3 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 12.6 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 29.7
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 5.3 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.6 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.9
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.9 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.4 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.6
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4.9 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.3 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3 }
+[track-perso:supabase] { resource: 'workout_sets', method: 'GET', status: 200, durationMs: 2 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 2.9 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.6 }
+[track-perso:supabase] { resource: 'workout_sets', method: 'GET', status: 200, durationMs: 2 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.9 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.7 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.8
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4.3 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.1 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.6 }
+[track-perso:supabase] { resource: 'workout_sets', method: 'GET', status: 200, durationMs: 2 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 5.3 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.3 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.8 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 2.5
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.2 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.9 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.3 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.9
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.3 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.5 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 3.9
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 4.1 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 0.8 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 2.6 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 1.7
+}
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 3.9 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.2 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.1 }
+[track-perso:supabase] { resource: 'workout_sets', method: 'GET', status: 200, durationMs: 2 }
+[track-perso:supabase] { resource: 'auth', method: 'GET', status: 200, durationMs: 5.1 }
+[track-perso:supabase] { resource: 'profiles', method: 'GET', status: 200, durationMs: 1.7 }
+[track-perso:supabase] { resource: 'exercises', method: 'GET', status: 200, durationMs: 3.9 }
+[track-perso:supabase] {
+  resource: 'workout_sets',
+  method: 'GET',
+  status: 200,
+  durationMs: 3.1
+}

@@ -1,0 +1,47 @@
+{
+  "protectedPaths": [
+    {
+      "file": "src/lib/strength.ts",
+      "before": "91ae76e65ef5d6c1681ba35cb6fbc5e5507f822c6d3cd578f4d5bf7269723809",
+      "after": "91ae76e65ef5d6c1681ba35cb6fbc5e5507f822c6d3cd578f4d5bf7269723809",
+      "unchanged": true
+    },
+    {
+      "file": "src/components/strength/session-logger.tsx",
+      "before": "c74fbc998def51f273ef41e5dc94389625fb4a32ad5b88a6a7e1eed14584c6fe",
+      "after": "c74fbc998def51f273ef41e5dc94389625fb4a32ad5b88a6a7e1eed14584c6fe",
+      "unchanged": true
+    },
+    {
+      "file": "src/proxy.ts",
+      "before": "71865abf37ef89a3e69b7598f636861578d5cfaa39bcb44a0936b791c1572b21",
+      "after": "71865abf37ef89a3e69b7598f636861578d5cfaa39bcb44a0936b791c1572b21",
+      "unchanged": true
+    },
+    {
+      "file": "public/models/anatomy/male-mobile.glb",
+      "before": "d80bebc4045069b660ca8e7afe599d76d15ccc7d96410b3727c600ef01d24e54",
+      "after": "d80bebc4045069b660ca8e7afe599d76d15ccc7d96410b3727c600ef01d24e54",
+      "unchanged": true
+    },
+    {
+      "file": "public/models/anatomy/SOURCE.json",
+      "before": "0780cb8ac1b0a4e1d5e0d5d13751f7141efc6ff1614002f2e8c7bbe3609dddce",
+      "after": "0780cb8ac1b0a4e1d5e0d5d13751f7141efc6ff1614002f2e8c7bbe3609dddce",
+      "unchanged": true
+    },
+    {
+      "file": "public/models/anatomy/LICENSE-CC-BY-SA-4.0.txt",
+      "before": "28a9529c7d0bb4dc51f4bf5c116a3d16ef247a052f7591466768ddf563fd1cf5",
+      "after": "28a9529c7d0bb4dc51f4bf5c116a3d16ef247a052f7591466768ddf563fd1cf5",
+      "unchanged": true
+    },
+    {
+      "file": "editorial guide content extraction",
+      "before": "0086332e6cc936e436f7ce7c1bca6241c80617a976ae92079bec596efd1a4461",
+      "after": "0086332e6cc936e436f7ce7c1bca6241c80617a976ae92079bec596efd1a4461",
+      "unchanged": true
+    }
+  ],
+  "actionsSupabaseAndSchemaUnchanged": true
+}

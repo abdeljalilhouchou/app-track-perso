@@ -1,0 +1,633 @@
+{
+  "mappings": [
+    {
+      "id": "strength-developpe-couche-barre",
+      "meshes": 22,
+      "groupsSelected": 6,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-developpe-couche-halteres",
+      "meshes": 22,
+      "groupsSelected": 6,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-developpe-incline-barre",
+      "meshes": 22,
+      "groupsSelected": 6,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-developpe-incline-halteres",
+      "meshes": 22,
+      "groupsSelected": 6,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-developpe-decline",
+      "meshes": 22,
+      "groupsSelected": 6,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-ecarte-halteres",
+      "meshes": 16,
+      "groupsSelected": 5,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-ecarte-poulie-vis-a-vis",
+      "meshes": 16,
+      "groupsSelected": 5,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-pec-deck-butterfly",
+      "meshes": 16,
+      "groupsSelected": 5,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-pompes",
+      "meshes": 30,
+      "groupsSelected": 8,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-dips-pectoraux",
+      "meshes": 30,
+      "groupsSelected": 7,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-tractions",
+      "meshes": 32,
+      "groupsSelected": 7,
+      "initialView": "back",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-tractions-prise-neutre",
+      "meshes": 32,
+      "groupsSelected": 7,
+      "initialView": "back",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-rowing-barre",
+      "meshes": 34,
+      "groupsSelected": 9,
+      "initialView": "back",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-rowing-haltere-unilateral",
+      "meshes": 24,
+      "groupsSelected": 9,
+      "initialView": "back",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-rowing-machine",
+      "meshes": 34,
+      "groupsSelected": 9,
+      "initialView": "back",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-tirage-vertical-poulie",
+      "meshes": 32,
+      "groupsSelected": 7,
+      "initialView": "back",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-tirage-horizontal-poulie",
+      "meshes": 34,
+      "groupsSelected": 9,
+      "initialView": "back",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-souleve-de-terre",
+      "meshes": 42,
+      "groupsSelected": 8,
+      "initialView": "back",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-pull-over-poulie",
+      "meshes": 28,
+      "groupsSelected": 6,
+      "initialView": "back",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-hyperextensions",
+      "meshes": 22,
+      "groupsSelected": 4,
+      "initialView": "back",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-developpe-militaire-barre",
+      "meshes": 36,
+      "groupsSelected": 8,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-developpe-epaules-halteres",
+      "meshes": 36,
+      "groupsSelected": 8,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-elevations-laterales",
+      "meshes": 14,
+      "groupsSelected": 4,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-elevations-frontales",
+      "meshes": 22,
+      "groupsSelected": 5,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-oiseau-halteres",
+      "meshes": 30,
+      "groupsSelected": 6,
+      "initialView": "back",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-face-pull",
+      "meshes": 24,
+      "groupsSelected": 5,
+      "initialView": "back",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-shrugs-halteres",
+      "meshes": 24,
+      "groupsSelected": 4,
+      "initialView": "back",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-arnold-press",
+      "meshes": 36,
+      "groupsSelected": 8,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-curl-barre",
+      "meshes": 16,
+      "groupsSelected": 3,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-curl-barre-ez",
+      "meshes": 16,
+      "groupsSelected": 3,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-curl-halteres",
+      "meshes": 16,
+      "groupsSelected": 3,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-curl-marteau",
+      "meshes": 16,
+      "groupsSelected": 3,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-curl-incline",
+      "meshes": 16,
+      "groupsSelected": 3,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-curl-pupitre-larry-scott",
+      "meshes": 16,
+      "groupsSelected": 3,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-curl-poulie-basse",
+      "meshes": 16,
+      "groupsSelected": 3,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-barre-au-front",
+      "meshes": 22,
+      "groupsSelected": 3,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-extension-poulie-haute-corde",
+      "meshes": 22,
+      "groupsSelected": 3,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-extension-poulie-haute-barre",
+      "meshes": 22,
+      "groupsSelected": 3,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-extension-nuque-haltere",
+      "meshes": 22,
+      "groupsSelected": 3,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-dips-triceps",
+      "meshes": 22,
+      "groupsSelected": 6,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-kickback-haltere",
+      "meshes": 22,
+      "groupsSelected": 3,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-developpe-couche-prise-serree",
+      "meshes": 22,
+      "groupsSelected": 6,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-squat",
+      "meshes": 32,
+      "groupsSelected": 6,
+      "initialView": "front",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-front-squat",
+      "meshes": 32,
+      "groupsSelected": 6,
+      "initialView": "front",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-presse-a-cuisses",
+      "meshes": 32,
+      "groupsSelected": 6,
+      "initialView": "front",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-leg-extension",
+      "meshes": 8,
+      "groupsSelected": 1,
+      "initialView": "front",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-fentes-marchees",
+      "meshes": 32,
+      "groupsSelected": 6,
+      "initialView": "front",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-squat-bulgare",
+      "meshes": 32,
+      "groupsSelected": 6,
+      "initialView": "front",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-hack-squat",
+      "meshes": 32,
+      "groupsSelected": 6,
+      "initialView": "front",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-leg-curl-allonge",
+      "meshes": 12,
+      "groupsSelected": 2,
+      "initialView": "back",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-leg-curl-assis",
+      "meshes": 12,
+      "groupsSelected": 2,
+      "initialView": "back",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-souleve-de-terre-jambes-tendues",
+      "meshes": 24,
+      "groupsSelected": 5,
+      "initialView": "back",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-good-morning",
+      "meshes": 24,
+      "groupsSelected": 5,
+      "initialView": "back",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-hip-thrust",
+      "meshes": 18,
+      "groupsSelected": 4,
+      "initialView": "back",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-abduction-machine",
+      "meshes": 6,
+      "groupsSelected": 1,
+      "initialView": "back",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-kickback-poulie",
+      "meshes": 28,
+      "groupsSelected": 5,
+      "initialView": "back",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-mollets-debout",
+      "meshes": 6,
+      "groupsSelected": 2,
+      "initialView": "back",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-mollets-assis",
+      "meshes": 6,
+      "groupsSelected": 2,
+      "initialView": "back",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-mollets-a-la-presse",
+      "meshes": 6,
+      "groupsSelected": 2,
+      "initialView": "back",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-crunch",
+      "meshes": 6,
+      "groupsSelected": 2,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-crunch-poulie",
+      "meshes": 6,
+      "groupsSelected": 2,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-releve-de-jambes-suspendu",
+      "meshes": 20,
+      "groupsSelected": 5,
+      "initialView": "front",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-gainage-planche",
+      "meshes": 28,
+      "groupsSelected": 5,
+      "initialView": "front",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-roue-abdominale",
+      "meshes": 22,
+      "groupsSelected": 5,
+      "initialView": "front",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-russian-twist",
+      "meshes": 10,
+      "groupsSelected": 3,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-curl-poignets",
+      "meshes": 16,
+      "groupsSelected": 2,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-curl-inverse",
+      "meshes": 16,
+      "groupsSelected": 3,
+      "initialView": "front",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-marche-du-fermier",
+      "meshes": 30,
+      "groupsSelected": 6,
+      "initialView": "front",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "bodyweight-squat",
+      "meshes": 32,
+      "groupsSelected": 6,
+      "initialView": "front",
+      "framing": "fullBody",
+      "noTableReadOnOpen": true
+    },
+    {
+      "id": "strength-rowing-haltere-unilateral",
+      "meshes": 24,
+      "groupsSelected": 9,
+      "initialView": "back",
+      "framing": "upperBody",
+      "noTableReadOnOpen": true
+    }
+  ],
+  "entryPoints": [
+    "library",
+    "program",
+    "history"
+  ],
+  "locales": [
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 1440
+    }
+  ],
+  "unverifiedVariantRejected": true,
+  "legFallback": true
+}

@@ -6,9 +6,11 @@ import {
 } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { ANATOMY_ASSET, CAMERA_LIMITS, MUSCLE_COLORS, ROWING_MUSCLES, rowingMuscleFromMetadata, type AnatomyViewCommand, type MuscleGroupId, type WorkingSide } from "@/lib/anatomy/rowing";
+import { ANATOMY_ASSET, CAMERA_LIMITS, MUSCLE_COLORS, type AnatomyViewCommand, type WorkingSide } from "@/lib/anatomy/rowing";
+import type { ExerciseAnatomyConfig, MuscleGroupId } from "@/lib/anatomy/types";
+import { muscleFromMetadata } from "@/lib/anatomy/highlights";
 
-export type SceneOptions = { side: WorkingSide; selected: MuscleGroupId | null; colors: boolean; xray: boolean; dark: boolean; reducedMotion: boolean };
+export type SceneOptions = { config: ExerciseAnatomyConfig; side: WorkingSide; selected: MuscleGroupId | null; colors: boolean; xray: boolean; dark: boolean; reducedMotion: boolean };
 export type AnatomySceneController = { command: (command: AnatomyViewCommand) => void; update: (options: SceneOptions) => void; dispose: () => void };
 export class AnatomySceneError extends Error { constructor(public kind: "webgl" | "model") { super(kind); } }
 
@@ -55,7 +57,7 @@ export async function createAnatomyScene(container: HTMLDivElement, initial: Sce
   let options = initial;
   let disposed = false, visible = true, frame = 0, transition = 0, highlight = 0, frames = 0;
   let zoomDestination: number | null = null;
-  let framing: "upperBody" | "fullBody" = "upperBody";
+  let framing = initial.config.framing;
   let fitDistance: number = CAMERA_LIMITS.initialDistance;
   let modelBounds: Box3 | null = null;
   let focusBounds: Box3 | null = null;
@@ -174,8 +176,8 @@ export async function createAnatomyScene(container: HTMLDivElement, initial: Sce
     raycaster.setFromCamera(pointer, camera);
     const hit = raycaster.intersectObjects(meshes, false).find((hit) => (hit.object as Mesh<Mesh["geometry"], MeshStandardMaterial>).material.opacity >= .8);
     if (!hit) return;
-    const group = rowingMuscleFromMetadata(hit.object.userData, options.side);
-    if (group) onSelect(group.id);
+    const group = muscleFromMetadata(options.config, hit.object.userData, options.side);
+    if (group) { container.dataset.selectedMesh = String(hit.object.userData.muscleId); onSelect(group.id); }
   }
   function cancel(event: PointerEvent) { pointers.delete(event.pointerId); start = null; }
   canvas.addEventListener("pointerdown", down);
@@ -193,26 +195,30 @@ export async function createAnatomyScene(container: HTMLDivElement, initial: Sce
   controls.target.copy(focusTarget);
   setCamera(Math.PI, CAMERA_LIMITS.initialDistance);
   function update(next: SceneOptions) {
-    const animateSelection = options.selected !== next.selected || options.side !== next.side;
+    const changedExercise = options.config.id !== next.config.id;
+    const animateSelection = !changedExercise && (options.selected !== next.selected || options.side !== next.side);
     options = next;
     stopHighlight();
     if (next.reducedMotion) stopTransition();
     const palette = MUSCLE_COLORS[next.dark ? "dark" : "light"];
     scene.background = new Color(palette.background);
     ambient.intensity = next.dark ? 1.2 : 1.05;
-    const selectedGroup = ROWING_MUSCLES.find((group) => group.id === next.selected);
-    const reveal = next.xray || !!selectedGroup?.deep;
+    const selectedGroup = next.config.muscles.find((group) => group.id === next.selected);
+    // Mixed superficial/deep groups (quadriceps, hamstrings…) stay readable as
+    // a whole. Auto-reveal only a fully deep group; xray is always available.
+    const selectedMeshes = meshes.filter((mesh) => selectedGroup?.keys.includes(mesh.userData.key));
+    const reveal = next.xray || !!selectedGroup?.deep && selectedMeshes.length > 0 && selectedMeshes.every((mesh) => mesh.userData.layer === "deep");
     for (const mesh of meshes) {
       const material = mesh.material as MeshStandardMaterial;
-      const group = rowingMuscleFromMetadata(mesh.userData, next.side);
+      const group = muscleFromMetadata(next.config, mesh.userData, next.side);
       const chosen = group?.id === next.selected;
       material.color.set(next.colors && group ? palette[group.role] : palette.neutral);
-      if (chosen) material.emissive.set(next.colors ? palette[group!.role] : palette.neutral);
+      material.emissive.set(chosen ? next.colors ? palette[group!.role] : palette.neutral : 0x000000);
       const intensity = chosen ? .13 : 0;
       if (animateSelection && !next.reducedMotion && visible && !document.hidden && material.emissiveIntensity !== intensity) highlights.push({ material, from: material.emissiveIntensity, to: intensity });
       else material.emissiveIntensity = intensity;
       material.roughness = chosen ? .44 : .58;
-      const faded = reveal && !chosen && (next.selected !== null || mesh.userData.layer !== "deep");
+      const faded = reveal && !chosen && !selectedGroup?.unavailable && (next.selected !== null || mesh.userData.layer !== "deep");
       const transparent = faded;
       if (material.transparent !== transparent) { material.transparent = transparent; material.needsUpdate = true; }
       material.opacity = faded ? .12 : 1;
@@ -231,6 +237,14 @@ export async function createAnatomyScene(container: HTMLDivElement, initial: Sce
       }
       highlight = requestAnimationFrame(emphasize);
     }
+    if (changedExercise) {
+      stopTransition(); framing = next.config.framing; measureFraming();
+      controls.target.copy(focusTarget); setCamera(next.config.initialView === "back" ? Math.PI : 0, fitDistance);
+      delete container.dataset.selectedMesh;
+    }
+    container.dataset.exercise = next.config.id;
+    container.dataset.neutralColorErrors = String(meshes.filter((mesh) => !muscleFromMetadata(next.config, mesh.userData, next.side) && (mesh.material as MeshStandardMaterial).color.getHexString() !== palette.neutral.slice(1)).length);
+    container.dataset.highlightedMeshes = JSON.stringify(meshes.filter((mesh) => muscleFromMetadata(next.config, mesh.userData, next.side)).map((mesh) => ({ id: mesh.userData.muscleId, role: muscleFromMetadata(next.config, mesh.userData, next.side)!.role, color: (mesh.material as MeshStandardMaterial).color.getHexString() })));
     invalidate();
   }
   function disposeObject(root: Object3D) {
@@ -286,7 +300,7 @@ export async function createAnatomyScene(container: HTMLDivElement, initial: Sce
     update(initial); resize();
     // Apply a fresh fit after the initial canvas measurement, without retaining
     // the pre-load placeholder zoom ratio.
-    controls.target.copy(focusTarget); setCamera(Math.PI, fitDistance);
+    controls.target.copy(focusTarget); setCamera(options.config.initialView === "back" ? Math.PI : 0, fitDistance);
     invalidate();
   } catch (error) { dispose(); if (signal.aborted) throw error; throw error instanceof AnatomySceneError ? error : new AnatomySceneError("model"); }
   return {
@@ -302,10 +316,10 @@ export async function createAnatomyScene(container: HTMLDivElement, initial: Sce
       const distance = camera.position.distanceTo(controls.target);
       const oldTarget = controls.target.clone();
       if (command === "reset" || command === "fullBody") {
-        framing = command === "fullBody" ? "fullBody" : "upperBody";
+        framing = command === "fullBody" ? "fullBody" : options.config.framing;
         measureFraming();
       }
-      const target = command === "front" ? 0 : command === "back" || command === "reset" ? Math.PI : current + (command === "left" ? Math.PI / 8 : -Math.PI / 8);
+      const target = command === "front" ? 0 : command === "back" ? Math.PI : command === "reset" ? options.config.initialView === "back" ? Math.PI : 0 : current + (command === "left" ? Math.PI / 8 : -Math.PI / 8);
       const rotates = ["front", "back", "left", "right", "reset"].includes(command);
       const delta = rotates ? Math.atan2(Math.sin(target - current), Math.cos(target - current)) : 0;
       const fits = command === "reset" || command === "fullBody";

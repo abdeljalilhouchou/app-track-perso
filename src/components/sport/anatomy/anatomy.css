@@ -2,6 +2,10 @@
 :root[data-theme="dark"] .sport-ui { --anatomy-primary: #ed405b; --anatomy-secondary: #20b877; --anatomy-stabilizer: #ed922f; --anatomy-neutral: #a0abba; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]):not([data-theme="dark"]) .sport-ui { --anatomy-primary: #ed405b; --anatomy-secondary: #20b877; --anatomy-stabilizer: #ed922f; --anatomy-neutral: #a0abba; } }
 .sport-ui .anatomy-open-button { font-size: 12px; margin-block: 10px 14px; }
+.sport-ui [data-exercise-results] > article { flex-wrap: wrap; }
+.sport-ui [data-exercise-results] > article > a { flex-basis: 100%; }
+.sport-ui [data-exercise-results] > article > .pe-3 { width: 100%; padding-inline: 16px; }
+.sport-ui .anatomy-tabs:has(> button:only-child) { grid-template-columns: minmax(0,1fr); }
 .sport-ui.anatomy-dialog { box-sizing: border-box; position: fixed; inset: 0; margin: auto; padding: 0; width: min(1120px,calc(100vw - 32px)); max-width: 1280px; max-height: min(94dvh,1120px); overflow-y: auto; overscroll-behavior: contain; color: var(--foreground); background: var(--background); border: 1px solid var(--border); border-radius: 28px; box-shadow: 0 28px 100px #0005; scrollbar-gutter: stable; }
 .sport-ui.anatomy-dialog[open] { animation: anatomy-enter 180ms ease-out; }
 .sport-ui.anatomy-dialog::backdrop { background: #080b18b8; }
