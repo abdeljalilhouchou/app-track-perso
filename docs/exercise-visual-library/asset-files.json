@@ -1,0 +1,151 @@
+{
+  "tool": "Built-in image_gen, followed by local Sharp resizing/encoding",
+  "generationDate": "2026-11-07",
+  "license": "AI outputs created for this project; no third-party stock/Creative Commons license or exclusivity asserted.",
+  "assets": [
+    {
+      "file": "public/images/exercises/pilot/incline-dumbbell-press-start.webp",
+      "type": "generated-photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-47e9e317-eca7-4e66-b40f-5acb5199005b.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 65608,
+      "sha256": "8b204cde5d8c76fb3b027c47988fadb72b121f1b1ac6cafeef1866b957cc6a75"
+    },
+    {
+      "file": "public/images/exercises/pilot/incline-dumbbell-press-end.webp",
+      "type": "generated-photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-b03cadbd-adcd-4d33-890a-cab793464e66.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 61810,
+      "sha256": "f0bacfe92816723c05fc27cc48dd21e18aced8e8c8bfeed410baba628c3943df"
+    },
+    {
+      "file": "public/images/exercises/pilot/one-arm-dumbbell-row-start.webp",
+      "type": "generated-photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-3ebf0eb0-6086-43f4-9d89-c8d2695a21d5.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 48824,
+      "sha256": "694dacd12a95a5cc74e0f6b55bb123de74e8863364825c89ee0fae1d5802667a"
+    },
+    {
+      "file": "public/images/exercises/pilot/barbell-back-squat-start.webp",
+      "type": "generated-photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-17a57a67-d075-4eb4-834b-2af6b70b79e1.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 41600,
+      "sha256": "b1e7894388ca9b611b082577c3fd953d27bdf0e1702a74e1faa71ea77433b2ea"
+    },
+    {
+      "file": "public/images/exercises/pilot/barbell-back-squat-bottom.webp",
+      "type": "generated-photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-15b80147-9654-4333-9154-828982196a94.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 38258,
+      "sha256": "75a2f0493b9a943b2f592a5dda36caef080528be754dd3d855f40adf1f31b448"
+    },
+    {
+      "file": "public/images/exercises/pilot/incline-dumbbell-curl-start.webp",
+      "type": "generated-photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-b2888b29-66b0-4ece-a726-bc52c1adc4f3.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 55746,
+      "sha256": "4bbb378b65f70133410df6da941af0093eace72f560fde33dcb53bb323022b52"
+    },
+    {
+      "file": "public/images/exercises/pilot/incline-dumbbell-curl-end.webp",
+      "type": "generated-photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-e1b9b4da-6694-447a-8126-99271283784b.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 49488,
+      "sha256": "3791c31037de9244e4448f556f6089fa53a8c04f5ae98c7c32f28ede9e865eff"
+    },
+    {
+      "file": "public/images/exercises/pilot/seated-cable-row-start.webp",
+      "type": "generated-photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-9c630a65-8f64-46ea-b3b9-235991317634.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 50546,
+      "sha256": "58014e9e8c4707f6e3689c33771235ba9568f4f08747dc87a9362bf708e7287b"
+    },
+    {
+      "file": "public/images/exercises/pilot/seated-cable-row-end.webp",
+      "type": "generated-photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-3609e9f5-c9fa-46c0-bad2-9ea25441f329.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 42640,
+      "sha256": "8814297aaeea9a9b8ebf8d4a027b206c23ab11ad187eaf3177f702a57fbee03a"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-developpe-incline-halteres.webp",
+      "type": "thumbnail-derivative",
+      "original": "public/images/exercises/pilot/incline-dumbbell-press-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 7166,
+      "sha256": "31e67c3765d7a7f019ab3dcdb5c3ec81175437f0fe4ec435a61d54491be25f16"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-rowing-haltere-unilateral.webp",
+      "type": "thumbnail-derivative",
+      "original": "public/images/exercises/one-arm-dumbbell-row.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 7912,
+      "sha256": "bb6822bcb0f0b9d18c663a8625ab1e3ecff4379ebd723b743e68b7e0c28789ec"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-squat.webp",
+      "type": "thumbnail-derivative",
+      "original": "public/images/exercises/pilot/barbell-back-squat-bottom.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 5910,
+      "sha256": "0a4ff9a16cb89988b485a8adf34b5b21c3a0e48747a9fe681a66e3e559c3fd60"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-curl-incline.webp",
+      "type": "thumbnail-derivative",
+      "original": "public/images/exercises/pilot/incline-dumbbell-curl-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 7108,
+      "sha256": "59b7800918bbc3bfeb980e941cee2230e3b1183cd46011228f90d2d215b15442"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-tirage-horizontal-poulie.webp",
+      "type": "thumbnail-derivative",
+      "original": "public/images/exercises/pilot/seated-cable-row-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 6794,
+      "sha256": "1a2b4f7d94ca94c56c022acc20a5995cdb590246cd80e03efddbad9e29a957b6"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-curl-halteres.webp",
+      "type": "thumbnail-derivative",
+      "original": "public/images/exercises/dumbbell-curl.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 4576,
+      "sha256": "3bc4316b4c98e55173c4f91d9729ee8b1832c1775814a9bd8bb89e9dd0de6fc1"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-pompes.webp",
+      "type": "thumbnail-derivative",
+      "original": "public/images/exercises/push-up.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 5656,
+      "sha256": "796c5992aefecc968510d8a906cccff8cb31c50df172cc157df5b9bc8dced40f"
+    }
+  ]
+}

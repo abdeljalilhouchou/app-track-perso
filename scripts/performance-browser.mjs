@@ -8,11 +8,12 @@ import path from "node:path";
 // Offline application QA: all auth/data use this local fixture server. Never
 // reads .env files or connects to Supabase. Requires local Microsoft Edge.
 const require = createRequire(import.meta.url);
+const exerciseMedia = process.argv.includes("--exercise-media");
 const anatomyV3Only = process.argv.includes("--anatomy-v3-only");
 const anatomyOnly = process.argv.includes("--anatomy-only") || anatomyV3Only;
 const anatomy = process.argv.includes("--anatomy") || anatomyOnly;
-const hub = process.argv.includes("--hub") || anatomy;
-const exerciseLibrary = process.argv.includes("--exercise-library") || anatomy;
+const hub = process.argv.includes("--hub") || anatomy || exerciseMedia;
+const exerciseLibrary = process.argv.includes("--exercise-library") || anatomy || exerciseMedia;
 const edge = process.env.QA_EDGE_PATH || "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe";
 const uid = "11111111-1111-4111-8111-111111111111";
 const today = new Date().toLocaleDateString("sv-SE");
@@ -28,6 +29,7 @@ if (exerciseLibrary) {
   tables.exercises.push({ id: "55555555-5555-4555-8555-555555555555", user_id: uid, name: sets[0].exercise_name, muscle_group: "Dos" });
   if (templates.length) tables.workout_template_exercises.push({ id: "66666666-6666-4666-8666-666666666666", template_id: templates[0].id, user_id: uid, exercise_name: sets[0].exercise_name, muscle_group: "Dos", position: 0, target_sets: 3, target_reps: 12 });
 }
+if (exerciseMedia) for (let index = 0; index < 10; index++) tables.exercises.push({ id: `77777777-7777-4777-8777-${String(index).padStart(12, "0")}`, user_id: uid, name: `QA personal ${index + 1}`, muscle_group: "Biceps" });
 let fixtureState = "normal";
 const mock = http.createServer((request, response) => {
   const url = new URL(request.url, "http://localhost");
@@ -79,7 +81,7 @@ if (production) {
 }
 const app = spawn(process.execPath, [require.resolve("next/dist/bin/next"), production ? "start" : "dev", "--hostname", "127.0.0.1", "--port", String(appPort)], { env, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
 app.stdout.on("data", log); app.stderr.on("data", log);
-const browser = spawn(edge, ["--headless=new", "--disable-gpu", ...(anatomy ? ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : []), "--disable-extensions", "--disable-background-networking", "--no-first-run", "--no-default-browser-check", `--remote-debugging-port=${debugPort}`, `--user-data-dir=${browserProfile}`, "about:blank"], { windowsHide: true, stdio: "ignore" });
+const browser = spawn(edge, ["--headless=new", "--disable-gpu", ...(anatomy || exerciseMedia ? ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : []), "--disable-extensions", "--disable-background-networking", "--no-first-run", "--no-default-browser-check", `--remote-debugging-port=${debugPort}`, `--user-data-dir=${browserProfile}`, "about:blank"], { windowsHide: true, stdio: "ignore" });
 let socket;
 let inspectPage;
 let capturePage;
@@ -147,7 +149,7 @@ try {
   await navigatePage(`http://127.0.0.1:${appPort}/sport`);
   await ready("/sport");
   console.log("Sport Hub loaded with local fixtures.");
-  if (!anatomyOnly) {
+  if (!anatomyOnly && !exerciseMedia) {
   assert.ok(await evaluate("document.body.innerText.includes('QA Dos & Biceps')"));
   for (const width of [320, 360, 375, 390, 430, 768, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: width < 768 });
@@ -337,6 +339,10 @@ try {
   if (anatomy) {
     const { checkAnatomy } = anatomyV3Only ? await import("./anatomy-v3-browser-checks.mjs") : await import("./anatomy-browser-checks.mjs");
     await checkAnatomy({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, networkRequests, output, appPort });
+  }
+  if (exerciseMedia) {
+    const { checkExerciseMedia } = await import("./exercise-media-browser-checks.mjs");
+    await checkExerciseMedia({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, networkRequests, output, appPort });
   }
   results.writes = requests.filter((request) => !["GET", "HEAD"].includes(request.method));
   assert.deepEqual(results.writes, []);

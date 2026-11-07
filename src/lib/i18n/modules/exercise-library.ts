@@ -1,5 +1,11 @@
 export const exerciseLibraryFr = {
   targetMuscles: "Muscles ciblés",
+  movementPositions: "Voir les positions du mouvement",
+  illustratedEquipment: "Matériel de la variante illustrée",
+  visualScope: "Repères pour la variante illustrée. Deux positions fixes ne montrent pas toutes les phases d’une répétition.",
+  catalogComposition: "Comprendre le total du catalogue",
+  catalogCompositionBody: "{total} entrées : {builtin} références Musculation, {personal} exercices personnels et {calisthenics} exercices Calisthenics. Les filtres réduisent le nombre affiché.",
+  photoCoverage: "Photographies vérifiées : {photos}/{strength} références Musculation. Les autres fiches conservent leur schéma ou leur état sans photographie.",
   anatomyCoverage: "Musculation : {mapped}/{total} exercices avec visualisation, dont {partial} partiels. {unsupported} non pris en charge.",
   anatomyUnavailable: "La visualisation anatomique n’est pas disponible pour cet exercice. La fiche classique reste accessible.",
   title: "Bibliothèque d’exercices", subtitle: "Trouve ton mouvement. Comprends la technique.", showMore: "Afficher plus d’exercices",
@@ -19,6 +25,12 @@ export const exerciseLibraryFr = {
 type Labels = { [K in keyof typeof exerciseLibraryFr]: typeof exerciseLibraryFr[K] extends object ? { [P in keyof typeof exerciseLibraryFr[K]]: string } : string };
 export const exerciseLibraryEn: Labels = {
   targetMuscles: "Target muscles",
+  movementPositions: "View movement positions",
+  illustratedEquipment: "Equipment in the illustrated variation",
+  visualScope: "Reference points for the illustrated variation. Two still positions do not show every phase of a repetition.",
+  catalogComposition: "Understand the catalog total",
+  catalogCompositionBody: "{total} entries: {builtin} reference strength exercises, {personal} personal exercises and {calisthenics} Calisthenics exercises. Filters reduce the displayed count.",
+  photoCoverage: "Reviewed photographs: {photos}/{strength} strength entries. Other sheets retain their sketch or no-photo state.",
   anatomyCoverage: "Strength: {mapped}/{total} exercises with visualization, including {partial} partial. {unsupported} unsupported.",
   anatomyUnavailable: "Anatomical visualization is unavailable for this exercise. The classic exercise sheet remains accessible.",
   title: "Exercise library", subtitle: "Find your movement. Understand the technique.", showMore: "Show more exercises", library: "Exercises", guide: "Technique guide", openGuide: "View the guide for {name}", closeGuide: "Close guide", fullPage: "Open full page",
@@ -34,6 +46,12 @@ export const exerciseLibraryEn: Labels = {
 };
 export const exerciseLibraryAr: Labels = {
   targetMuscles: "العضلات المستهدفة",
+  movementPositions: "عرض وضعيات الحركة",
+  illustratedEquipment: "معدات الطريقة المصورة",
+  visualScope: "معالم للطريقة المصورة. لا تعرض وضعيتان ثابتتان كل مراحل التكرار.",
+  catalogComposition: "فهم العدد الإجمالي للفهرس",
+  catalogCompositionBody: "{total} مدخلاً: {builtin} تمارين قوة مرجعية و{personal} تمارين شخصية و{calisthenics} تمارين كاليستنكس. تقلل المرشحات العدد المعروض.",
+  photoCoverage: "صور خضعت للفحص: {photos}/{strength} تمارين قوة. تحتفظ البطاقات الأخرى برسمها أو بحالة عدم توفر صورة.",
   anatomyCoverage: "القوة: {mapped}/{total} تمارين مع عرض، منها {partial} جزئية. {unsupported} غير مدعومة.",
   anatomyUnavailable: "العرض التشريحي غير متاح لهذا التمرين. تبقى بطاقة التمرين التقليدية متاحة.",
   title: "مكتبة التمارين", subtitle: "ابحث عن تمرينك وافهم طريقة أدائه.", showMore: "عرض المزيد من التمارين", library: "التمارين", guide: "دليل الأداء", openGuide: "عرض دليل {name}", closeGuide: "إغلاق الدليل", fullPage: "فتح الصفحة الكاملة",

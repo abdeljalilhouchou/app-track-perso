@@ -12,12 +12,14 @@ import { MovementSketch } from "./movement-sketch";
 import { MuscleMap } from "./muscle-map";
 import { ExerciseDemonstration } from "./exercise-demonstration";
 import { ExerciseMuscleButton } from "../anatomy/exercise-muscle-button";
+import { ExerciseVisualSequence, ExerciseVisualTechnique } from "./exercise-visual-sequence";
 
 export function ExerciseDetailContent({ data }: { data: Detail }) {
   const { t, language } = useLanguage();
   const id = useId();
   const l = (key: string) => t(`sport.library.${key}`);
-  const { exercise, text, performance } = data;
+  const { exercise, text, performance, media } = data;
+  const equipment = media?.illustratedEquipment ?? exercise.equipment;
   const muscleLabel = (value: string) => { const key = muscleGroupI18nPath(value); return key ? t(key) : value; };
   const date = (value: string) => formatLocalizedDate(value, language, { day: "numeric", month: "short", year: "numeric" });
   const number = (value: number) => value.toLocaleString(language);
@@ -25,11 +27,12 @@ export function ExerciseDetailContent({ data }: { data: Detail }) {
   return <div className="exercise-detail space-y-5" data-exercise-detail>
     <ExerciseMuscleButton name={exercise.name} exerciseKey={exercise.key} origin={exercise.origin} discipline={exercise.discipline} showUnavailable />
     <figure className="overflow-hidden rounded-2xl border border-border"><SportMedia image={exercise.image} fallback={<MovementSketch id={exercise.guideId} />} sizes="(max-width: 768px) 100vw, 760px" /><figcaption className="bg-surface-muted px-4 py-2 text-xs text-foreground-muted">{l(exercise.image ? "photoCredit" : "illustration")}</figcaption></figure>
-    <dl className="exercise-facts"><div><dt>{l("equipment")}</dt><dd>{exercise.equipment.length ? exercise.equipment.map((item) => l(`materials.${item}`)).join(" · ") : l("unknown")}</dd></div><div><dt>{l("level")}</dt><dd>{exercise.level ? l(`levels.${exercise.level}`) : l("unknown")}</dd></div></dl>
+    {media?.startPositionImage && <ExerciseVisualSequence key={media.exerciseId} media={media} />}
+    <dl className="exercise-facts"><div><dt>{l(media ? "illustratedEquipment" : "equipment")}</dt><dd>{equipment.length ? equipment.map((item) => l(`materials.${item}`)).join(" · ") : l("unknown")}</dd></div><div><dt>{l("level")}</dt><dd>{exercise.level ? l(`levels.${exercise.level}`) : l("unknown")}</dd></div></dl>
     <nav aria-label={l("guide")} className="exercise-section-links">{["technique", "muscles", "mistakes", "tips"].map((item) => <a key={item} href={`#${id}-${item}`}>{l(item)}</a>)}</nav>
     <section id={`${id}-technique`} className="scroll-mt-6"><SportSectionHeading title={l("technique")} />
       {text ? <SportCard><p className="sport-description">{text.description}</p><h3 className="mt-4 font-semibold">{l("objective")}</h3><p className="sport-description mt-1">{text.objective}</p><ol className="exercise-steps mt-5">{(["preparation", "position", "execution", "return"] as const).map((item, index) => <li key={item}><span aria-hidden="true">{index + 1}</span><div><h3 className="font-semibold">{l(item)}</h3><p className="sport-description mt-1">{text[item]}</p></div></li>)}</ol></SportCard>
-        : <SportEmptyState title={l("missingGuide")} description={l("missingGuideBody")} icon="info" />}
+        : media?.technicalChecks.length ? <ExerciseVisualTechnique media={media} /> : <SportEmptyState title={l("missingGuide")} description={l("missingGuideBody")} icon="info" />}
       {!text && (exercise.description || exercise.instructions) && <SportCard className="mt-3"><h3 className="font-semibold">{l("savedInstructions")}</h3><p className="sport-description mt-2 whitespace-pre-wrap">{exercise.description}</p><p className="sport-description mt-2 whitespace-pre-wrap">{exercise.instructions}</p></SportCard>}
     </section>
     <section><SportCard><h2 className="mb-3 font-semibold">{l("demonstration")}</h2><ExerciseDemonstration /></SportCard></section>

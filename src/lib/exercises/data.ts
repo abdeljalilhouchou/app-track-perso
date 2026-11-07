@@ -13,6 +13,7 @@ import { baseCatalog } from "./catalog";
 import { guides } from "./guides";
 import { exerciseNamePattern } from "./identity";
 import { exerciseMuscles } from "./muscles";
+import { visualMediaFor } from "./media-registry";
 import type { Discipline, ExerciseDetail, Guide, GuidePerformance, LibraryExercise } from "./types";
 
 const calMuscles: Record<string, string> = { chest: "Pectoraux", back: "Dos", shoulders: "Épaules", triceps: "Triceps", forearms: "Avant-bras", quadriceps: "Quadriceps", calves: "Mollets", core: "Abdominaux", hips: "Fessiers" };
@@ -59,7 +60,14 @@ export const loadExerciseCatalog = cache(async () => {
       searchNames: [row.name_fr, row.name_en, row.name_ar, row.exercise_key],
       description: row[`description_${language}`], instructions: row[`instructions_${language}`] }, guide, language));
   }
-  return { exercises, language, calisthenicsReady };
+  const illustrated = exercises.map((exercise) => {
+    const media = visualMediaFor(exercise);
+    return media ? { ...exercise,
+      image: { src: media.heroImage.src, alt: media.heroImage.alt[language], fit: "contain" as const },
+      thumbnail: { src: media.thumbnail.src, alt: media.thumbnail.alt[language], fit: "contain" as const },
+    } : exercise;
+  });
+  return { exercises: illustrated, language, calisthenicsReady };
 });
 
 export type ExerciseRequest = { key?: string; name?: string; discipline?: Discipline; exerciseId?: string };
@@ -116,7 +124,9 @@ export async function loadExerciseDetail(request: ExerciseRequest): Promise<Exer
   }
   if (!exercise) return null;
   const guide = guides.find((item) => item.id === exercise.guideId);
-  return { exercise, language: catalog.language, text: guide?.text[catalog.language] ?? null,
+  const media = visualMediaFor(exercise);
+  const sources = [...new Map([...(guide?.sources ?? []), ...(media?.technicalSources ?? [])].map((source) => [source.url, source])).values()];
+  return { exercise, language: catalog.language, text: guide?.text[catalog.language] ?? null, media,
     muscles: exerciseMuscles(exercise.guideId, catalog.language),
-    sources: guide?.sources ?? [], performance: await readPerformance(exercise) };
+    sources, performance: await readPerformance(exercise) };
 }

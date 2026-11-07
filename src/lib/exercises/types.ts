@@ -1,5 +1,6 @@
 import type { Language } from "@/lib/language";
 import type { SportImageSource } from "@/components/sport/ui/sport-media";
+import type { ExerciseVisualMedia } from "./visual-media-types";
 
 export type Discipline = "musculation" | "calisthenics" | "running";
 export type Equipment = "barbell" | "dumbbell" | "cable" | "machine" | "bodyweight" | "pullupBar" | "bench" | "wheel";
@@ -19,7 +20,7 @@ export type Guide = {
 export type LibraryExercise = {
   key: string; name: string; storedName: string; discipline: Discipline;
   primary: string[]; secondary: string[]; equipment: Equipment[]; level: Level | null;
-  guideId: string | null; image?: SportImageSource; databaseId?: string;
+  guideId: string | null; image?: SportImageSource; thumbnail?: SportImageSource; databaseId?: string;
   origin: "builtin" | "personal" | "calisthenics"; searchNames: string[];
   description?: string; instructions?: string;
 };
@@ -31,6 +32,7 @@ export type GuidePerformance = {
 };
 export type ExerciseDetail = {
   exercise: LibraryExercise; text: GuideText | null;
+  media?: ExerciseVisualMedia | null;
   muscles: { primary: string[]; secondary: string[] } | null;
   sources: Guide["sources"]; performance: GuidePerformance; language: Language;
 };

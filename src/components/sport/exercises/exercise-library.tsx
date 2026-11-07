@@ -5,6 +5,7 @@ import { useLanguage } from "@/components/language-provider";
 import { muscleGroupI18nPath } from "@/lib/strength";
 import { filterExercises } from "@/lib/exercises/search";
 import { anatomyCoverage } from "@/lib/anatomy/identity";
+import { exerciseCatalogComposition } from "@/lib/exercises/composition";
 import type { LibraryExercise } from "@/lib/exercises/types";
 import { ExerciseCard } from "../ui/sport-content-cards";
 import { SportBadge, SportButton, SportCard, SportEmptyState, SportLink } from "../ui/sport-primitives";
@@ -26,6 +27,7 @@ export function ExerciseLibrary({ exercises, calisthenicsReady, initialDisciplin
   const materials = [...new Set(exercises.flatMap((item) => item.equipment))];
   const filtered = useMemo(() => filterExercises(exercises, { search, discipline, muscle, equipment, level, sort }, language), [exercises, search, discipline, muscle, equipment, level, sort, language]);
   const anatomy = useMemo(() => anatomyCoverage(exercises), [exercises]);
+  const composition = useMemo(() => exerciseCatalogComposition(exercises), [exercises]);
   function reset() { setSearch(""); setDiscipline("all"); setMuscle("all"); setEquipment("all"); setLevel("all"); setSort("asc"); setLimit(24); }
   return <div className="space-y-5" data-exercise-library>
     <SportCard><p className="sport-description mb-4">{l("intro")}</p>
@@ -42,8 +44,9 @@ export function ExerciseLibrary({ exercises, calisthenicsReady, initialDisciplin
     </SportCard>
     {!calisthenicsReady && <p className="sport-description">{l("calUnavailable")}</p>}
     <p className="sport-description" data-anatomy-coverage>{t("sport.library.anatomyCoverage", anatomy)}</p>
+    <details className="exercise-catalog-composition"><summary>{l("catalogComposition")}</summary><p className="sport-description mt-2" data-catalog-composition>{t("sport.library.catalogCompositionBody", composition)}</p><p className="sport-description mt-2" data-photo-coverage>{t("sport.library.photoCoverage", composition)}</p></details>
     <div className="flex flex-wrap items-center justify-between gap-3"><p role="status" aria-live="polite" aria-atomic="true" className="text-sm font-semibold">{t("sport.library.count", { count: filtered.length })}</p><SportBadge>{l("documented")}: {filtered.filter((item) => item.guideId).length}</SportBadge></div>
-    {filtered.length ? <div className="grid gap-3 lg:grid-cols-2" data-exercise-results>{filtered.slice(0, limit).map((item) => <ExerciseCard key={item.key} title={item.name} href={`/sport/exercises/${encodeURIComponent(item.key)}`} prefetch={false} image={item.image} fallback={<MovementSketch id={item.guideId} />}
+    {filtered.length ? <div className="grid gap-3 lg:grid-cols-2" data-exercise-results>{filtered.slice(0, limit).map((item) => <ExerciseCard key={item.key} title={item.name} href={`/sport/exercises/${encodeURIComponent(item.key)}`} prefetch={false} image={item.thumbnail ?? item.image} fallback={<MovementSketch id={item.guideId} />}
       muscleGroups={item.primary.map(muscleLabel)} equipment={`${item.equipment.length ? item.equipment.map((value) => l(`materials.${value}`)).join(" · ") : l("unknown")}${item.level ? ` · ${l(`levels.${item.level}`)}` : ""}`}
       detail={item.origin === "personal" ? l("personal") : item.guideId ? l("documented") : l("basic")}
       action={<ExerciseMuscleButton name={item.name} exerciseKey={item.key} origin={item.origin} discipline={item.discipline} />} />)}</div>

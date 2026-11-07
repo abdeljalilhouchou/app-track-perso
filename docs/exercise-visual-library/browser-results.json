@@ -1,0 +1,579 @@
+{
+  "mode": "Edge headless + next start + local auth/REST fixtures; not real-device or deployed-environment measurements",
+  "viewports": [],
+  "navigation": [],
+  "consoleErrors": [],
+  "writes": [],
+  "exerciseMedia": {
+    "cases": [
+      {
+        "id": "strength-developpe-incline-halteres",
+        "language": "fr",
+        "theme": "light",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-rowing-haltere-unilateral",
+        "language": "fr",
+        "theme": "light",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-squat",
+        "language": "fr",
+        "theme": "light",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-curl-incline",
+        "language": "fr",
+        "theme": "light",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-tirage-horizontal-poulie",
+        "language": "fr",
+        "theme": "light",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-developpe-incline-halteres",
+        "language": "fr",
+        "theme": "light",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-rowing-haltere-unilateral",
+        "language": "fr",
+        "theme": "light",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-squat",
+        "language": "fr",
+        "theme": "light",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-curl-incline",
+        "language": "fr",
+        "theme": "light",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-tirage-horizontal-poulie",
+        "language": "fr",
+        "theme": "light",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-developpe-incline-halteres",
+        "language": "fr",
+        "theme": "dark",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-rowing-haltere-unilateral",
+        "language": "fr",
+        "theme": "dark",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-squat",
+        "language": "fr",
+        "theme": "dark",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-curl-incline",
+        "language": "fr",
+        "theme": "dark",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-tirage-horizontal-poulie",
+        "language": "fr",
+        "theme": "dark",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-developpe-incline-halteres",
+        "language": "fr",
+        "theme": "dark",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-rowing-haltere-unilateral",
+        "language": "fr",
+        "theme": "dark",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-squat",
+        "language": "fr",
+        "theme": "dark",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-curl-incline",
+        "language": "fr",
+        "theme": "dark",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-tirage-horizontal-poulie",
+        "language": "fr",
+        "theme": "dark",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-developpe-incline-halteres",
+        "language": "en",
+        "theme": "light",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-rowing-haltere-unilateral",
+        "language": "en",
+        "theme": "light",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-squat",
+        "language": "en",
+        "theme": "light",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-curl-incline",
+        "language": "en",
+        "theme": "light",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-tirage-horizontal-poulie",
+        "language": "en",
+        "theme": "light",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-developpe-incline-halteres",
+        "language": "en",
+        "theme": "light",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-rowing-haltere-unilateral",
+        "language": "en",
+        "theme": "light",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-squat",
+        "language": "en",
+        "theme": "light",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-curl-incline",
+        "language": "en",
+        "theme": "light",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-tirage-horizontal-poulie",
+        "language": "en",
+        "theme": "light",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-developpe-incline-halteres",
+        "language": "en",
+        "theme": "dark",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-rowing-haltere-unilateral",
+        "language": "en",
+        "theme": "dark",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-squat",
+        "language": "en",
+        "theme": "dark",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-curl-incline",
+        "language": "en",
+        "theme": "dark",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-tirage-horizontal-poulie",
+        "language": "en",
+        "theme": "dark",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-developpe-incline-halteres",
+        "language": "en",
+        "theme": "dark",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-rowing-haltere-unilateral",
+        "language": "en",
+        "theme": "dark",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-squat",
+        "language": "en",
+        "theme": "dark",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-curl-incline",
+        "language": "en",
+        "theme": "dark",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-tirage-horizontal-poulie",
+        "language": "en",
+        "theme": "dark",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-developpe-incline-halteres",
+        "language": "ar",
+        "theme": "light",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-rowing-haltere-unilateral",
+        "language": "ar",
+        "theme": "light",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-squat",
+        "language": "ar",
+        "theme": "light",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-curl-incline",
+        "language": "ar",
+        "theme": "light",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-tirage-horizontal-poulie",
+        "language": "ar",
+        "theme": "light",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-developpe-incline-halteres",
+        "language": "ar",
+        "theme": "light",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-rowing-haltere-unilateral",
+        "language": "ar",
+        "theme": "light",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-squat",
+        "language": "ar",
+        "theme": "light",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-curl-incline",
+        "language": "ar",
+        "theme": "light",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-tirage-horizontal-poulie",
+        "language": "ar",
+        "theme": "light",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-developpe-incline-halteres",
+        "language": "ar",
+        "theme": "dark",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-rowing-haltere-unilateral",
+        "language": "ar",
+        "theme": "dark",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-squat",
+        "language": "ar",
+        "theme": "dark",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-curl-incline",
+        "language": "ar",
+        "theme": "dark",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-tirage-horizontal-poulie",
+        "language": "ar",
+        "theme": "dark",
+        "width": 320,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-developpe-incline-halteres",
+        "language": "ar",
+        "theme": "dark",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-rowing-haltere-unilateral",
+        "language": "ar",
+        "theme": "dark",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-squat",
+        "language": "ar",
+        "theme": "dark",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-curl-incline",
+        "language": "ar",
+        "theme": "dark",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      },
+      {
+        "id": "strength-tirage-horizontal-poulie",
+        "language": "ar",
+        "theme": "dark",
+        "width": 1440,
+        "distinctPositions": true,
+        "lazyPositions": true,
+        "noOverflow": true
+      }
+    ],
+    "mode": "Edge headless, local fixtures; screenshots of actual generated media, no physical phone",
+    "initialLibraryImages": [
+      "/images/exercises/thumbnails/strength-curl-halteres.webp",
+      "/images/exercises/thumbnails/strength-curl-incline.webp"
+    ],
+    "compositionFixture": {
+      "total": 80,
+      "builtin": 70,
+      "personal": 10,
+      "calisthenics": 0,
+      "actualProductionCompositionRead": false
+    },
+    "noAnatomyDownloadDuringPhotoBrowsing": true,
+    "missingMediaFallback": true,
+    "programThumbnail": true,
+    "sessionDraftAndSetsPreserved": true,
+    "existing3DOperational": true,
+    "timer": {
+      "before": "1:31",
+      "after": "1:29",
+      "elapsedSeconds": 1.75,
+      "pausedOrReset": false
+    },
+    "requests": {
+      "total": 2454,
+      "tableWrites": 0
+    }
+  },
+  "requestCount": 1207
+}

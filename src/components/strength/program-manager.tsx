@@ -16,6 +16,7 @@ import { MUSCLE_GROUPS, exerciseKey, muscleColor, muscleGroupI18nPath } from "@/
 import { ExercisePicker } from "@/components/strength/exercise-picker";
 import { ExerciseGuideButton } from "@/components/sport/exercises/exercise-guide-button";
 import { ExerciseMuscleButton } from "@/components/sport/anatomy/exercise-muscle-button";
+import { ExerciseThumbnail } from "@/components/sport/exercises/exercise-thumbnail";
 import type { CatalogItem, TemplateView } from "@/components/strength/types";
 
 type Row = { name: string; muscle: string; sets: number; reps: number };
@@ -301,6 +302,7 @@ function TemplateCard({
                   <ul className="space-y-1.5">
                     {template.exercises.map((e) => (
                       <li key={e.name} className="flex items-center gap-3 rounded-xl bg-surface-muted px-3 py-2.5">
+                        <ExerciseThumbnail name={e.name} muscle={e.muscle} />
                         <span className="h-6 w-1 shrink-0 rounded-full" style={{ background: muscleColor(e.muscle) }} />
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2"><p className="min-w-0 truncate text-sm font-medium">{e.name}</p><ExerciseGuideButton name={e.name} /></div>

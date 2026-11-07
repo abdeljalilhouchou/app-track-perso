@@ -11,6 +11,7 @@ import { exerciseKey, formatWeight, muscleColor, muscleGroupI18nPath, setsVolume
 import { ExercisePicker } from "@/components/strength/exercise-picker";
 import { ExerciseGuideButton } from "@/components/sport/exercises/exercise-guide-button";
 import { ExerciseMuscleButton } from "@/components/sport/anatomy/exercise-muscle-button";
+import { ExerciseThumbnail } from "@/components/sport/exercises/exercise-thumbnail";
 import { detectRecords, type ExerciseSummary } from "@/lib/strength-stats";
 import { formatLocalizedDate } from "@/lib/format-date";
 
@@ -360,7 +361,7 @@ export function SessionLogger({
           >
             <div className="mb-3 flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <div className="flex items-center gap-2"><p className="min-w-0 truncate font-medium">{exercise.name}</p><ExerciseGuideButton name={exercise.name} /></div>
+                <div className="flex items-center gap-2"><ExerciseThumbnail name={exercise.name} muscle={exercise.muscle} /><p className="min-w-0 truncate font-medium">{exercise.name}</p><ExerciseGuideButton name={exercise.name} /></div>
                 <p className="text-xs" style={{ color: muscleColor(exercise.muscle) }}>
                   {muscleLabel(exercise.muscle)}
                   {exercise.targetReps ? (
