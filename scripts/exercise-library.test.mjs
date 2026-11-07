@@ -87,9 +87,25 @@ test("detail records reuse strength calculations, isolate owner/discipline/date 
   assert.equal(detail.performance.maxWeight.weight, 25);
   assert.equal(detail.performance.bestVolume.value, 300);
   for (const table of ["exercises", "workout_sets", "workouts"]) assert.ok(calls.some((entry) => entry[0] === table && entry[1] === "eq" && entry[2] === "user_id" && entry[3] === "owner"));
-  const unknown = await data.loadExerciseDetail({ name: "Squat" });
+  const unknown = await data.loadExerciseDetail({ name: "Good morning" });
   assert.equal(unknown.text, null);
   assert.equal(unknown.performance.latest, null);
+});
+
+test("pilot details reuse exact anatomy roles and now supply complete technique without changing records", async () => {
+  const { data } = reader();
+  const load = sourceLoader();
+  const { getExerciseAnatomy } = load("src/lib/anatomy/configs.ts");
+  const { ATLAS_MUSCLES } = load("src/lib/anatomy/atlas.ts");
+  for (const key of ["strength-squat", "strength-curl-incline", "strength-developpe-incline-halteres", "strength-rowing-haltere-unilateral", "strength-tirage-horizontal-poulie"]) {
+    const detail = await data.loadExerciseDetail({ key });
+    assert.ok(detail.text?.position && detail.text?.breathing && detail.text?.mistakes.length);
+    const anatomy = getExerciseAnatomy(key);
+    for (const role of ["primary", "secondary", "stabilizer"]) assert.deepEqual(detail.anatomySummary[role], anatomy.muscles.filter((group) => group.role === role).map((group) => ATLAS_MUSCLES[group.id].name.fr));
+    assert.deepEqual(detail.anatomySummary.limitations, anatomy.limitations.map((note) => note.fr));
+  }
+  const legacy = await data.loadExerciseDetail({ key: "strength-curl-halteres" });
+  assert.equal(legacy.anatomySummary, null);
 });
 
 test("approved Calisthenics branch resolves original IDs and global keys without enabling the real gate", async () => {

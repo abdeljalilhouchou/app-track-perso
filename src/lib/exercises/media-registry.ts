@@ -1,7 +1,7 @@
 import "server-only";
-import { EXERCISE_THUMBNAILS, type ExerciseMediaId } from "./media-thumbnails";
+import { EXERCISE_THUMBNAILS, EXERCISE_MEDIA_EQUIPMENT, type ExerciseMediaId } from "./media-thumbnails";
 import type { ExerciseImageAsset, ExercisePositionImage, ExerciseVisualMedia } from "./visual-media-types";
-import type { Equipment, LibraryExercise, Localized } from "./types";
+import type { LibraryExercise, Localized } from "./types";
 
 const l = (fr: string, en: string, ar: string): Localized<string> => ({ fr, en, ar });
 const image = (src: string, alt: Localized<string>): ExerciseImageAsset => ({ src: `/images/exercises/${src}`, width: 960, height: 640, alt });
@@ -9,18 +9,12 @@ const position = (src: string, label: Localized<string>, caption: Localized<stri
 const start = l("Position de départ", "Starting position", "وضعية البداية");
 const end = l("Position d’arrivée", "End position", "وضعية الوصول");
 const records: Record<string, ExerciseVisualMedia> = {};
-const equipment: Record<ExerciseMediaId, Equipment[]> = {
-  "strength-developpe-incline-halteres": ["dumbbell", "bench"],
-  "strength-rowing-haltere-unilateral": ["dumbbell", "bench"],
-  "strength-squat": ["barbell"], "strength-curl-incline": ["dumbbell", "bench"],
-  "strength-tirage-horizontal-poulie": ["cable"], "strength-curl-halteres": ["dumbbell"], "strength-pompes": ["bodyweight"],
-};
 function add(id: ExerciseMediaId, hero: string, variant: Localized<string>, checks: Localized<string>[], sources: ExerciseVisualMedia["technicalSources"], positions?: [ExercisePositionImage, ExercisePositionImage]) {
   records[id] = {
     exerciseId: id, heroImage: image(hero, EXERCISE_THUMBNAILS[id]),
     thumbnail: { src: `/images/exercises/thumbnails/${id}.webp`, width: 320, height: 213, alt: EXERCISE_THUMBNAILS[id] },
     startPositionImage: positions?.[0], endPositionImage: positions?.[1], variant, technicalChecks: checks,
-    illustratedEquipment: equipment[id],
+    illustratedEquipment: EXERCISE_MEDIA_EQUIPMENT[id],
     source: "image_gen", license: "generated-for-project-no-third-party-license-asserted",
     reviewStatus: "technical-reviewed", userApproval: positions ? "pending-pilot-validation" : "existing-media", technicalSources: sources,
   };

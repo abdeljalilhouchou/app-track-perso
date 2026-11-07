@@ -1,0 +1,37 @@
+{
+  "referenceCommit": "2bdc46dc20d71bc8ddc46340327e8017c364e69d",
+  "branch": "exercise-media-experience-v2",
+  "sessionStateTimersPersistenceAndCalculationsUnchanged": true,
+  "sessionEventHandlersUnchanged": true,
+  "performanceReaderUnchanged": true,
+  "protectedPathsUnchanged": [
+    "src/lib/anatomy",
+    "src/components/sport/anatomy",
+    "public",
+    "src/lib/actions",
+    "src/lib/supabase",
+    "src/proxy.ts",
+    "supabase",
+    "package.json",
+    "package-lock.json",
+    "AGENTS.md"
+  ],
+  "originalPhotos": [
+    {
+      "file": "public/images/exercises/one-arm-dumbbell-row.webp",
+      "sha256": "8be1fb60363239f44efe02278b020822d5bfbc415d22978edb62caea9a43e569",
+      "unchanged": true
+    },
+    {
+      "file": "public/images/exercises/push-up.webp",
+      "sha256": "d20b4ae1dfb9ea02c2520c6cfec73d42bf12ea41cc209b51324a5a1e5cedd706",
+      "unchanged": true
+    },
+    {
+      "file": "public/images/exercises/dumbbell-curl.webp",
+      "sha256": "c585b9aca7c81395a5663741717a411d0efdea67bc03739f7a371631c48484ce",
+      "unchanged": true
+    }
+  ],
+  "noDependenciesAdded": true
+}

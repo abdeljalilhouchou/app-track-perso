@@ -1,5 +1,8 @@
 export const exerciseLibraryFr = {
   targetMuscles: "Muscles ciblés",
+  photos: "Photos", mistakesAndTips: "Erreurs et conseils", stabilizers: "Stabilisateurs",
+  expandGuide: "Agrandir la fiche", collapseGuide: "Réduire la fiche",
+  photoGallery: "Photographies de {name}", previousPhoto: "Photographie précédente", nextPhoto: "Photographie suivante", photoCount: "{current} / {total}",
   movementPositions: "Voir les positions du mouvement",
   illustratedEquipment: "Matériel de la variante illustrée",
   visualScope: "Repères pour la variante illustrée. Deux positions fixes ne montrent pas toutes les phases d’une répétition.",
@@ -25,6 +28,9 @@ export const exerciseLibraryFr = {
 type Labels = { [K in keyof typeof exerciseLibraryFr]: typeof exerciseLibraryFr[K] extends object ? { [P in keyof typeof exerciseLibraryFr[K]]: string } : string };
 export const exerciseLibraryEn: Labels = {
   targetMuscles: "Target muscles",
+  photos: "Photos", mistakesAndTips: "Mistakes and tips", stabilizers: "Stabilizers",
+  expandGuide: "Expand exercise sheet", collapseGuide: "Collapse exercise sheet",
+  photoGallery: "Photographs of {name}", previousPhoto: "Previous photograph", nextPhoto: "Next photograph", photoCount: "{current} / {total}",
   movementPositions: "View movement positions",
   illustratedEquipment: "Equipment in the illustrated variation",
   visualScope: "Reference points for the illustrated variation. Two still positions do not show every phase of a repetition.",
@@ -46,6 +52,9 @@ export const exerciseLibraryEn: Labels = {
 };
 export const exerciseLibraryAr: Labels = {
   targetMuscles: "العضلات المستهدفة",
+  photos: "الصور", mistakesAndTips: "الأخطاء والنصائح", stabilizers: "العضلات المثبتة",
+  expandGuide: "تكبير بطاقة التمرين", collapseGuide: "تصغير بطاقة التمرين",
+  photoGallery: "صور {name}", previousPhoto: "الصورة السابقة", nextPhoto: "الصورة التالية", photoCount: "{current} / {total}",
   movementPositions: "عرض وضعيات الحركة",
   illustratedEquipment: "معدات الطريقة المصورة",
   visualScope: "معالم للطريقة المصورة. لا تعرض وضعيتان ثابتتان كل مراحل التكرار.",

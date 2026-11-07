@@ -12,6 +12,8 @@ import { ExercisePicker } from "@/components/strength/exercise-picker";
 import { ExerciseGuideButton } from "@/components/sport/exercises/exercise-guide-button";
 import { ExerciseMuscleButton } from "@/components/sport/anatomy/exercise-muscle-button";
 import { ExerciseThumbnail } from "@/components/sport/exercises/exercise-thumbnail";
+import { mediaExperienceId } from "@/lib/exercises/media-experience";
+import { EXERCISE_MEDIA_EQUIPMENT } from "@/lib/exercises/media-thumbnails";
 import { detectRecords, type ExerciseSummary } from "@/lib/strength-stats";
 import { formatLocalizedDate } from "@/lib/format-date";
 
@@ -352,6 +354,7 @@ export function SessionLogger({
       {draft.exercises.map((exercise, exIndex) => {
         const last = lastByKey.get(exerciseKey(exercise.name));
         const hasData = exercise.sets.some((s) => s.reps !== "" || s.weight !== "");
+        const mediaId = mediaExperienceId(exercise.name, exercise.muscle);
         return (
           <motion.div
             key={exercise.id}
@@ -359,9 +362,10 @@ export function SessionLogger({
             className="rounded-2xl border-[1.5px] bg-surface p-4"
             style={{ borderColor: `color-mix(in srgb, ${muscleColor(exercise.muscle)} 50%, var(--border))` }}
           >
-            <div className="mb-3 flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2"><ExerciseThumbnail name={exercise.name} muscle={exercise.muscle} /><p className="min-w-0 truncate font-medium">{exercise.name}</p><ExerciseGuideButton name={exercise.name} /></div>
+            <div className={mediaId ? "exercise-session-overview" : undefined}>
+            <div className={`mb-3 flex items-start justify-between gap-2${mediaId ? " exercise-session-heading" : ""}`}>
+              <div className={`min-w-0${mediaId ? " exercise-session-identity" : ""}`}>
+                <div className={mediaId ? "exercise-session-name-row" : "flex items-center gap-2"}><ExerciseThumbnail name={exercise.name} muscle={exercise.muscle} /><p className={mediaId ? "min-w-0 break-words font-medium leading-snug" : "min-w-0 truncate font-medium"}>{exercise.name}</p><ExerciseGuideButton name={exercise.name} exerciseKey={mediaId ?? undefined} /></div>
                 <p className="text-xs" style={{ color: muscleColor(exercise.muscle) }}>
                   {muscleLabel(exercise.muscle)}
                   {exercise.targetReps ? (
@@ -371,11 +375,12 @@ export function SessionLogger({
                     </span>
                   ) : null}
                 </p>
+                {mediaId && <p className="exercise-session-equipment">{EXERCISE_MEDIA_EQUIPMENT[mediaId].map((item) => t(`sport.library.materials.${item}`)).join(" · ")}</p>}
                 <p className="mt-0.5 text-[11px] text-foreground-muted">
                   {last ? t("sport.sessionLogger.lastTime", { sets: compactSets(last.sets, t) }) : t("sport.sessionLogger.firstTime")}
                 </p>
               </div>
-              <div className="flex shrink-0 items-center gap-1 text-foreground-muted">
+              <div className={`flex shrink-0 items-center gap-1 text-foreground-muted${mediaId ? " exercise-session-actions" : ""}`}>
                 <button
                   type="button"
                   disabled={exIndex === 0}
@@ -410,6 +415,7 @@ export function SessionLogger({
             </div>
 
             <ExerciseMuscleButton name={exercise.name} muscle={exercise.muscle} />
+            </div>
             <div className="mb-1 grid grid-cols-[2rem_1fr_1fr_2.5rem_1.5rem] items-center gap-2 text-center text-[10px] uppercase tracking-wide text-foreground-muted">
               <span>{t("sport.sessionLogger.colSet")}</span>
               <span>kg</span>

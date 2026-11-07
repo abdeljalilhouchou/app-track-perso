@@ -33,6 +33,7 @@ export type GuidePerformance = {
 export type ExerciseDetail = {
   exercise: LibraryExercise; text: GuideText | null;
   media?: ExerciseVisualMedia | null;
+  anatomySummary?: { primary: string[]; secondary: string[]; stabilizer: string[]; limitations: string[] } | null;
   muscles: { primary: string[]; secondary: string[] } | null;
   sources: Guide["sources"]; performance: GuidePerformance; language: Language;
 };

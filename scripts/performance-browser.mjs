@@ -8,7 +8,8 @@ import path from "node:path";
 // Offline application QA: all auth/data use this local fixture server. Never
 // reads .env files or connects to Supabase. Requires local Microsoft Edge.
 const require = createRequire(import.meta.url);
-const exerciseMedia = process.argv.includes("--exercise-media");
+const exerciseMediaV2 = process.argv.includes("--exercise-media-v2");
+const exerciseMedia = process.argv.includes("--exercise-media") || exerciseMediaV2;
 const anatomyV3Only = process.argv.includes("--anatomy-v3-only");
 const anatomyOnly = process.argv.includes("--anatomy-only") || anatomyV3Only;
 const anatomy = process.argv.includes("--anatomy") || anatomyOnly;
@@ -30,6 +31,7 @@ if (exerciseLibrary) {
   if (templates.length) tables.workout_template_exercises.push({ id: "66666666-6666-4666-8666-666666666666", template_id: templates[0].id, user_id: uid, exercise_name: sets[0].exercise_name, muscle_group: "Dos", position: 0, target_sets: 3, target_reps: 12 });
 }
 if (exerciseMedia) for (let index = 0; index < 10; index++) tables.exercises.push({ id: `77777777-7777-4777-8777-${String(index).padStart(12, "0")}`, user_id: uid, name: `QA personal ${index + 1}`, muscle_group: "Biceps" });
+if (exerciseMediaV2) for (const [index, name, muscle_group] of [[1,"Développé incliné haltères","Pectoraux"],[2,"Squat","Quadriceps"],[3,"Curl incliné","Biceps"],[4,"Tirage horizontal poulie","Dos"]]) tables.exercises.push({ id: `88888888-8888-4888-8888-${String(index).padStart(12,"0")}`, user_id: uid, name, muscle_group });
 let fixtureState = "normal";
 const mock = http.createServer((request, response) => {
   const url = new URL(request.url, "http://localhost");
@@ -341,7 +343,7 @@ try {
     await checkAnatomy({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, networkRequests, output, appPort });
   }
   if (exerciseMedia) {
-    const { checkExerciseMedia } = await import("./exercise-media-browser-checks.mjs");
+    const { checkExerciseMedia } = await import(exerciseMediaV2 ? "./exercise-media-v2-browser-checks.mjs" : "./exercise-media-browser-checks.mjs");
     await checkExerciseMedia({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, networkRequests, output, appPort });
   }
   results.writes = requests.filter((request) => !["GET", "HEAD"].includes(request.method));
@@ -352,7 +354,7 @@ try {
   await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false }).then(({ data }) => writeFile(path.join(output, "sport-ar-system.png"), Buffer.from(data, "base64")));
   results.requestCount = requests.length;
   await writeFile(path.join(output, "browser-results.json"), `${JSON.stringify(results, null, 2)}\n`);
-  console.log(JSON.stringify({ ...results, designSystem: undefined, hubCases: undefined, exerciseLibraryCases: undefined, anatomy: results.anatomy ? { ...results.anatomy, cases: results.anatomy.cases.length } : undefined, ...(designSystem ? { designSystemCases: results.designSystem?.length ?? 0 } : {}), ...(hub ? { hubCases: results.hubCases?.length ?? 0 } : {}), ...(exerciseLibrary ? { exerciseLibraryCases: results.exerciseLibraryCases?.length ?? 0 } : {}) }, null, 2));
+  console.log(JSON.stringify({ ...results, designSystem: undefined, hubCases: undefined, exerciseLibraryCases: undefined, exerciseMediaV2: results.exerciseMediaV2 ? { ...results.exerciseMediaV2, cases: results.exerciseMediaV2.cases.length, sheetCases: results.exerciseMediaV2.sheetCases.length } : undefined, anatomy: results.anatomy ? { ...results.anatomy, cases: results.anatomy.cases.length } : undefined, ...(designSystem ? { designSystemCases: results.designSystem?.length ?? 0 } : {}), ...(hub ? { hubCases: results.hubCases?.length ?? 0 } : {}), ...(exerciseLibrary ? { exerciseLibraryCases: results.exerciseLibraryCases?.length ?? 0 } : {}) }, null, 2));
 } catch (error) {
   if (inspectPage) console.error(JSON.stringify(await inspectPage().catch(() => null)));
   if (capturePage) await capturePage().catch(() => {});

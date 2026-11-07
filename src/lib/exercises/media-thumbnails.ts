@@ -1,5 +1,6 @@
 import type { Language } from "@/lib/language";
 import { resolveExerciseAnatomy, type AnatomyIdentity } from "@/lib/anatomy/identity";
+import type { Equipment } from "./types";
 
 // Lightweight image index only; full media records and positions stay server-side.
 export const EXERCISE_THUMBNAILS = {
@@ -12,6 +13,12 @@ export const EXERCISE_THUMBNAILS = {
   "strength-pompes": { fr: "Homme réalisant une pompe au sol, corps aligné.", en: "Adult man performing a floor push-up with aligned body.", ar: "رجل بالغ يؤدي تمرين الضغط الأرضي مع استقامة الجسم." },
 } as const;
 export type ExerciseMediaId = keyof typeof EXERCISE_THUMBNAILS;
+export const EXERCISE_MEDIA_EQUIPMENT: Record<ExerciseMediaId, Equipment[]> = {
+  "strength-developpe-incline-halteres": ["dumbbell", "bench"],
+  "strength-rowing-haltere-unilateral": ["dumbbell", "bench"],
+  "strength-squat": ["barbell"], "strength-curl-incline": ["dumbbell", "bench"],
+  "strength-tirage-horizontal-poulie": ["cable"], "strength-curl-halteres": ["dumbbell"], "strength-pompes": ["bodyweight"],
+};
 export function exerciseThumbnail(input: AnatomyIdentity, language: Language) {
   const id = resolveExerciseAnatomy(input);
   if (!id || !Object.hasOwn(EXERCISE_THUMBNAILS, id)) return undefined;
