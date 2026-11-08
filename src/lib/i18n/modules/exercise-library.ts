@@ -1,5 +1,9 @@
 export const exerciseLibraryFr = {
   targetMuscles: "Muscles ciblés",
+  exerciseActions: "Actions de l’exercice",
+  viewMuscles3D: "Voir les muscles en 3D", muscles3D: "Muscles 3D",
+  enlargePhoto: "Agrandir la photographie", closePhoto: "Fermer la photographie",
+  mistakeNumber: "Erreur {number}", tipNumber: "Conseil {number}",
   photos: "Photos", mistakesAndTips: "Erreurs et conseils", stabilizers: "Stabilisateurs",
   expandGuide: "Agrandir la fiche", collapseGuide: "Réduire la fiche",
   photoGallery: "Photographies de {name}", previousPhoto: "Photographie précédente", nextPhoto: "Photographie suivante", photoCount: "{current} / {total}",
@@ -28,6 +32,10 @@ export const exerciseLibraryFr = {
 type Labels = { [K in keyof typeof exerciseLibraryFr]: typeof exerciseLibraryFr[K] extends object ? { [P in keyof typeof exerciseLibraryFr[K]]: string } : string };
 export const exerciseLibraryEn: Labels = {
   targetMuscles: "Target muscles",
+  exerciseActions: "Exercise actions",
+  viewMuscles3D: "View muscles in 3D", muscles3D: "3D muscles",
+  enlargePhoto: "Enlarge photograph", closePhoto: "Close photograph",
+  mistakeNumber: "Mistake {number}", tipNumber: "Tip {number}",
   photos: "Photos", mistakesAndTips: "Mistakes and tips", stabilizers: "Stabilizers",
   expandGuide: "Expand exercise sheet", collapseGuide: "Collapse exercise sheet",
   photoGallery: "Photographs of {name}", previousPhoto: "Previous photograph", nextPhoto: "Next photograph", photoCount: "{current} / {total}",
@@ -52,6 +60,10 @@ export const exerciseLibraryEn: Labels = {
 };
 export const exerciseLibraryAr: Labels = {
   targetMuscles: "العضلات المستهدفة",
+  exerciseActions: "خيارات التمرين",
+  viewMuscles3D: "عرض العضلات ثلاثية الأبعاد", muscles3D: "العضلات ثلاثية الأبعاد",
+  enlargePhoto: "تكبير الصورة", closePhoto: "إغلاق الصورة",
+  mistakeNumber: "الخطأ {number}", tipNumber: "النصيحة {number}",
   photos: "الصور", mistakesAndTips: "الأخطاء والنصائح", stabilizers: "العضلات المثبتة",
   expandGuide: "تكبير بطاقة التمرين", collapseGuide: "تصغير بطاقة التمرين",
   photoGallery: "صور {name}", previousPhoto: "الصورة السابقة", nextPhoto: "الصورة التالية", photoCount: "{current} / {total}",

@@ -49,7 +49,7 @@ function ConfiguredMuscleDialog({ config, onClose, language, dir, t }: { config:
     if (next < 0) return;
     event.preventDefault(); setTab(visibleTabs[next]); document.getElementById(`${id}-tab-${visibleTabs[next]}`)?.focus();
   }
-  return <dialog ref={dialog} dir={dir} className={`sport-ui anatomy-dialog${expanded ? " is-expanded" : ""}`} aria-labelledby={`${id}-title`} onCancel={(event) => { event.stopPropagation(); onClose(); }} onClose={(event) => { event.stopPropagation(); onClose(); }} onClick={(event) => {
+  return <dialog ref={dialog} dir={dir} className={`sport-ui anatomy-dialog${expanded ? " is-expanded" : ""}`} aria-labelledby={`${id}-title`} onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); onClose(); } }} onCancel={(event) => { event.preventDefault(); event.stopPropagation(); dialog.current?.close(); onClose(); }} onClose={(event) => { event.stopPropagation(); onClose(); }} onClick={(event) => {
     if (event.target !== dialog.current) return;
     const rect = dialog.current.getBoundingClientRect();
     if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) onClose();

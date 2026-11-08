@@ -15,7 +15,8 @@ import { exerciseNamePattern } from "./identity";
 import { exerciseMuscles } from "./muscles";
 import { visualMediaFor } from "./media-registry";
 import { pilotTechnique } from "./pilot-technique";
-import { isMediaExperiencePilot } from "./media-experience";
+import { hasExerciseMediaExperience } from "./media-experience";
+import { v3Technique } from "./media-v3-content";
 import { getExerciseAnatomy } from "@/lib/anatomy/configs";
 import { ATLAS_MUSCLES } from "@/lib/anatomy/atlas";
 import type { Discipline, ExerciseDetail, Guide, GuidePerformance, LibraryExercise } from "./types";
@@ -129,16 +130,17 @@ export async function loadExerciseDetail(request: ExerciseRequest): Promise<Exer
   if (!exercise) return null;
   const guide = guides.find((item) => item.id === exercise.guideId);
   const media = visualMediaFor(exercise);
-  const pilot = !!media && isMediaExperiencePilot(exercise.key);
-  const anatomy = pilot ? getExerciseAnatomy(exercise.key) : undefined;
+  const illustrated = !!media && hasExerciseMediaExperience(exercise.key);
+  const anatomy = illustrated ? getExerciseAnatomy(exercise.key) : undefined;
   const anatomySummary = anatomy ? {
     primary: anatomy.muscles.filter((group) => group.role === "primary").map((group) => ATLAS_MUSCLES[group.id].name[catalog.language]),
     secondary: anatomy.muscles.filter((group) => group.role === "secondary").map((group) => ATLAS_MUSCLES[group.id].name[catalog.language]),
     stabilizer: anatomy.muscles.filter((group) => group.role === "stabilizer").map((group) => ATLAS_MUSCLES[group.id].name[catalog.language]),
     limitations: anatomy.limitations.map((note) => note[catalog.language]),
+    details: anatomy.muscles.map((group) => ({ name: ATLAS_MUSCLES[group.id].name[catalog.language], role: group.role, action: anatomy.actions[group.id]?.[catalog.language] ?? null })),
   } : null;
   const sources = [...new Map([...(guide?.sources ?? []), ...(media?.technicalSources ?? [])].map((source) => [source.url, source])).values()];
-  return { exercise, language: catalog.language, text: guide?.text[catalog.language] ?? (pilot ? pilotTechnique(exercise.key, catalog.language) : null), media, anatomySummary,
+  return { exercise, language: catalog.language, text: guide?.text[catalog.language] ?? (illustrated ? pilotTechnique(exercise.key, catalog.language) ?? v3Technique(exercise.key, catalog.language) : null), media, anatomySummary,
     muscles: exerciseMuscles(exercise.guideId, catalog.language),
     sources, performance: await readPerformance(exercise) };
 }

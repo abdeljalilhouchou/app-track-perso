@@ -1,0 +1,407 @@
+{
+  "method": "Built-in image_gen originals, visually inspected, then Sharp resize/WebP encoding. No image content altered during optimization.",
+  "generated": 34,
+  "rejected": 5,
+  "accepted": 29,
+  "photographs": 29,
+  "thumbnails": 15,
+  "bytes": 1742036,
+  "assets": [
+    {
+      "file": "public/images/exercises/v3/strength-developpe-couche-barre-start.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-23e71418-ca47-4a5b-bbce-153823b6d229.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 69532,
+      "sha256": "1215d6bb867d6df3c13fcb9a808f6484f59231ddc4e2a81323a4e45bf0a7824e"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-developpe-couche-barre-end.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-320440b2-47b9-482b-93eb-d7c23620a838.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 55368,
+      "sha256": "ce9c3ea89e58a7c934255a48488b624ff0b65bb10057ce3e95ca33b903c00937"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-developpe-couche-barre.webp",
+      "kind": "thumbnail",
+      "original": "public/images/exercises/v3/strength-developpe-couche-barre-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 7650,
+      "sha256": "5d9812324f7389971208ebaec853bd7e93ada6704940e84586f24f8cb1ff4666"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-ecarte-poulie-vis-a-vis-start.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-224f5e5f-ba4f-4f5f-879d-d5e5d285e458.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 61562,
+      "sha256": "8303214b08cc87c62a38c221d3166b3cfdb9e165839d41966bea20d4652ed4e7"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-ecarte-poulie-vis-a-vis-end.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-5b46bc02-8d8c-41e4-9f02-16b8eb27ee85.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 52486,
+      "sha256": "c87519253dcc34ace01a9beb9ffda33019c71dddfc464e398243c32a2a20ebb3"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-ecarte-poulie-vis-a-vis.webp",
+      "kind": "thumbnail",
+      "original": "public/images/exercises/v3/strength-ecarte-poulie-vis-a-vis-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 8512,
+      "sha256": "1cfa8e3646876722bdf32c4e93b8b74b5ef6757c8ee7d1beaf0c89e489f8939b"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-tractions-start.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-720a0ee2-97dc-48fd-8938-dd676a2d6bea.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 61222,
+      "sha256": "c76fa156a235a6523ce78f7495575092cfdfc01e6b3f4416fbfa472d91389e24"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-tractions-end.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-891b9976-3b9b-4714-b63e-c914958f2597.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 58012,
+      "sha256": "cc28b1b07fc890d9c84dbbffe594b4d98936420fba48679ec62d142bcdcab908"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-tractions.webp",
+      "kind": "thumbnail",
+      "original": "public/images/exercises/v3/strength-tractions-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 8964,
+      "sha256": "c629b45602472e2dfb14f22490b9f242d65e1a89cdec281f713c52cc094421f8"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-rowing-barre-start.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-ec4259b0-a848-417b-8b0a-3770533cf3c5.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 50464,
+      "sha256": "5f3613f212e7062412b32b4ead3558c8b79b0dec547bd555d371ea64b110971c"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-rowing-barre-end.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-227eff2b-beb4-4f62-9afa-73233a883592.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 48142,
+      "sha256": "0471184db5d9dfbcb9e966a23eaf7327134de6c0824bc41c96d86fb2a144df7f"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-rowing-barre.webp",
+      "kind": "thumbnail",
+      "original": "public/images/exercises/v3/strength-rowing-barre-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 7192,
+      "sha256": "67a237ae8e86709d5018f8b535831ca5aed11c8f2ce6a29778b80bca6b710c32"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-developpe-militaire-barre-start.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-dac9b168-a6da-4b49-a6de-51aed5c3bfb2.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 61986,
+      "sha256": "69afd24e47bf98a626618f4b01d306542937931ae76385d6f444e381a00f288d"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-developpe-militaire-barre-end.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-98700ffb-466c-452b-9949-a40720cb494c.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 59852,
+      "sha256": "bed3c5e7a31b6573f0e814137c4e5e2fbf290eab974d39085c8e35ea47ecb406"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-developpe-militaire-barre.webp",
+      "kind": "thumbnail",
+      "original": "public/images/exercises/v3/strength-developpe-militaire-barre-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 7580,
+      "sha256": "8f1cae7a8bfd7c8e4d9d88909beeeb86a0deb86aff943567041eaf4ab0029b19"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-elevations-laterales-start.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-d61acfe4-9410-43ef-bada-8cd189176409.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 55784,
+      "sha256": "207b7f8cfab4d149270c033f89d5d812a0b6e3aed663566e21a11c8703117452"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-elevations-laterales-end.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-78dc20bf-fc15-40dd-93ae-5eae23cf8cdc.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 55056,
+      "sha256": "bfc4c21aefe82a9adf8b7406ed2a34ba1ee4a14da473bf3acc9b80a6970feadf"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-elevations-laterales.webp",
+      "kind": "thumbnail",
+      "original": "public/images/exercises/v3/strength-elevations-laterales-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 7302,
+      "sha256": "3a6e303567bddc8a2742069330ef441e1cfcce1d08155252f55a8235029fd4ce"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-curl-marteau-start.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-31a0525f-1a85-4249-aa52-f200949795c9.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 64720,
+      "sha256": "f7ea3447efee2f1544565c4b9d2e3b12256bebf4fc91802b5acb8c6b548038db"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-curl-marteau-end.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-99687162-0c38-44d7-b7bf-e8aa699027b3.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 49468,
+      "sha256": "ced2c414b8fe44860ade297012aabae9a5fc468a0d3b6a2167d38052bdcb5a25"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-curl-marteau.webp",
+      "kind": "thumbnail",
+      "original": "public/images/exercises/v3/strength-curl-marteau-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 7432,
+      "sha256": "ae7302296c0c263760b11d67e286ea3786e6e8dd0fd4d6f3fbd896e363018e0b"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-extension-poulie-haute-corde-start.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-cf86127a-fabd-403c-8afa-ba088524ac32.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 52738,
+      "sha256": "7338756dd41bca9369f80b92eb65a2058fbeff71d0863c7a4bfc63428796159d"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-extension-poulie-haute-corde-end.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-7c629c29-22c7-481d-99ac-24317e8d4e93.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 45928,
+      "sha256": "d9f2372978b076f3da1d76f2fe2fb4f089fcb3378fe956ddc5c30149c9d817d6"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-extension-poulie-haute-corde.webp",
+      "kind": "thumbnail",
+      "original": "public/images/exercises/v3/strength-extension-poulie-haute-corde-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 7650,
+      "sha256": "5e76b1461a761555bb06535b65e2d15533ab11c290dca5701f9249dea1ee140f"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-presse-a-cuisses-start.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-ca2bba3f-fb99-4898-8a6b-d164ce75e39b.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 56028,
+      "sha256": "a93054afbb2632d71a11bdbb6796010814e2c092ca074458a6568302aad84933"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-presse-a-cuisses-end.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-21283ae6-5bcb-4bab-9e1c-056ecc595ddc.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 56210,
+      "sha256": "b5790fa8372f8e3bb7035f37b52a1b8bd39560ad0167beb3518b4185b3af30b0"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-presse-a-cuisses.webp",
+      "kind": "thumbnail",
+      "original": "public/images/exercises/v3/strength-presse-a-cuisses-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 8040,
+      "sha256": "9d9423f23a2256ae60ba465f24435d88efa3931de3bf2a38e89ad6c7048c13ad"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-leg-extension-start.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-e6ae78db-17d3-431f-8d6a-6043fe6f0dfc.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 61684,
+      "sha256": "7697bdcf1768389d498e2f86eb6e391edc013d12d367471e13a0e858107864f0"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-leg-extension-end.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-0ff3c613-c283-47c6-b5a3-c7dd1e1e9420.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 53598,
+      "sha256": "0213ea7cd5e11c54c563a53bdc9370e0d56dafd8baa369b8dfd76fc54a945163"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-leg-extension.webp",
+      "kind": "thumbnail",
+      "original": "public/images/exercises/v3/strength-leg-extension-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 7384,
+      "sha256": "e47b106f6284be7a708104bb3483a2a5863939eb18b2291b5c021e0df6fcff4b"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-fentes-marchees-start.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-9f05173d-1d05-4434-af5c-3b9d2cc343ff.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 58668,
+      "sha256": "a36b1660e66d8716fac5634d2fe9c4a4420a5012047336528321db968caaa85f"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-fentes-marchees-end.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-e1467e6b-3ec6-45f6-9daa-32addf0ff541.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 56770,
+      "sha256": "0a579350a6bf1b41b9eb3e75027e34718a3dc64c1981bb77675e89e96c9f0aea"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-fentes-marchees.webp",
+      "kind": "thumbnail",
+      "original": "public/images/exercises/v3/strength-fentes-marchees-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 7344,
+      "sha256": "cd234e6b9f964af4845d260b6df93e2823d72606e21b31ab9bda5c6d4172e1a3"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-leg-curl-allonge-start.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-d4bfa507-aa66-4f4b-b09c-498100009f21.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 62600,
+      "sha256": "fdb5afc2c6d123511c5ea5d54b2c363b4e0c36c4c65ea6ee3ee1af68166f74ad"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-leg-curl-allonge-end.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-fc214ab0-6cc6-49ee-888f-b58cfe761fce.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 52280,
+      "sha256": "54f53e5aa028639dded53ff7d4dd88f8095620815911fcf4d6c2bd86b0dbd091"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-leg-curl-allonge.webp",
+      "kind": "thumbnail",
+      "original": "public/images/exercises/v3/strength-leg-curl-allonge-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 7972,
+      "sha256": "78e8210ff980dcf68dde6a6c9ef2efe9d9814ec801919893337525fbc67cdcff"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-mollets-debout-start.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-816d2e28-5188-4a3f-b9a7-bf530174d523.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 58696,
+      "sha256": "70f1cd27bff2607096a83f205968e0bdd9a4cd279a90953a1d3d9ee7e89c876d"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-mollets-debout-end.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-8c81531e-7797-4992-af23-b728bcdd4963.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 55556,
+      "sha256": "a6891ef73bece5f898f94f82e2e36c696c2421a8bc1221eaefe5e95e9870a810"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-mollets-debout.webp",
+      "kind": "thumbnail",
+      "original": "public/images/exercises/v3/strength-mollets-debout-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 7500,
+      "sha256": "bba54d1f06428113e6d0817713fa19e44ef6c1eb1f135d3baf11c7253a2008a4"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-crunch-poulie-start.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-29bc7a92-eaeb-4d9c-b24c-d23042b36268.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 52856,
+      "sha256": "d7311e5a55a22e354936a1c26f56a983cd33196c800178bd5b521f475bebc37c"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-crunch-poulie-end.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-a1d653fd-f6f3-43a0-8f0d-d4e621b55419.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 46112,
+      "sha256": "0a6c0b162f3d32a2c2e153de9e74abff8c3666bc93037295e3ed4a51ad31311f"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-crunch-poulie.webp",
+      "kind": "thumbnail",
+      "original": "public/images/exercises/v3/strength-crunch-poulie-end.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 7448,
+      "sha256": "24ef2f7987565efcdaba790b053e7569a5430a8bbafae4fc273b4e0e13fa7cda"
+    },
+    {
+      "file": "public/images/exercises/v3/strength-gainage-planche-hold.webp",
+      "kind": "photograph",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-f87be4dd-0e69-4966-863c-cc02e6aec5aa.png",
+      "width": 960,
+      "height": 640,
+      "bytes": 53948,
+      "sha256": "3e3e67fe5503d501bf9cdc7c92750dd43d4b855f45419b5a96d90d76c7d26697"
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-gainage-planche.webp",
+      "kind": "thumbnail",
+      "original": "public/images/exercises/v3/strength-gainage-planche-hold.webp",
+      "width": 320,
+      "height": 213,
+      "bytes": 6740,
+      "sha256": "52e67899cd9d12e83528146ae25fc5ba543d6d3de590581a89f9179d1d91b328"
+    }
+  ]
+}

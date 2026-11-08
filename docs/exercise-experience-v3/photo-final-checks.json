@@ -1,0 +1,35 @@
+{
+  "cases": [],
+  "screenshots": [
+    "experience-session-dark-before.webp",
+    "experience-photo-enlarged-dark.webp",
+    "experience-3d-dark.webp",
+    "experience-return-from-3d-dark.webp",
+    "experience-session-dark-return.webp",
+    "experience-ar-system-light-430.webp",
+    "experience-ar-system-dark-430.webp"
+  ],
+  "mode": "Actual application, Edge headless, local fixtures only",
+  "compactCardActions": true,
+  "photoWidths": {
+    "inlinePhotoWidth": 360,
+    "enlargedPhotoWidth": 390
+  },
+  "photoEnlargementAndFocus": true,
+  "handleDrag": true,
+  "shared3DAndReturn": true,
+  "exactSessionPreserved": true,
+  "staticHold": true,
+  "systemAndReducedMotion": true,
+  "writes": [],
+  "loadedPhotoUrls": [
+    "http://127.0.0.1:63122/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-curl-incline.webp&w=64&q=75",
+    "http://127.0.0.1:63122/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-gainage-planche.webp&w=64&q=75",
+    "http://127.0.0.1:63122/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fincline-dumbbell-curl-start.webp&w=640&q=75",
+    "http://127.0.0.1:63122/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fincline-dumbbell-curl-start.webp&w=128&q=75",
+    "http://127.0.0.1:63122/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fincline-dumbbell-curl-end.webp&w=128&q=75",
+    "http://127.0.0.1:63122/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fincline-dumbbell-curl-end.webp&w=640&q=75",
+    "http://127.0.0.1:63122/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-gainage-planche-hold.webp&w=640&q=75"
+  ],
+  "completed": true
+}

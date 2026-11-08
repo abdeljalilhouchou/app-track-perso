@@ -1,0 +1,25 @@
+{
+  "branch": "exercise-visual-library-v3",
+  "typescript": 0,
+  "eslint": 0,
+  "normalBuild": 0,
+  "normalBuildFixtureKeyAbsent": true,
+  "gitDiffCheck": 0,
+  "nodeTests": {
+    "passed": 167,
+    "failed": 0
+  },
+  "edge": {
+    "completeCases": 419,
+    "javascriptErrors": 0,
+    "writes": 0,
+    "finalPhotoFollowup": true,
+    "photoWidths": {
+      "inlinePhotoWidth": 360,
+      "enlargedPhotoWidth": 390
+    }
+  },
+  "screenshots": 17,
+  "physicalPhone": false,
+  "safariIOS": false
+}

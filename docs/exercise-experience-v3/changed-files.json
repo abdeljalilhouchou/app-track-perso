@@ -1,0 +1,21 @@
+[
+  "scripts/exercise-experience-v3-audit.mjs",
+  "scripts/exercise-experience-v3-browser-checks.mjs",
+  "scripts/exercise-media-v3-browser-checks.mjs",
+  "src/components/sport/exercises/exercise-photo-dialog.tsx",
+  "scripts/exercise-library.test.mjs",
+  "scripts/exercise-media-v2-browser-checks.mjs",
+  "scripts/performance-browser.mjs",
+  "src/components/sport/anatomy/exercise-muscle-button.tsx",
+  "src/components/sport/anatomy/exercise-muscle-dialog.tsx",
+  "src/components/sport/exercises/exercise-guide-button.tsx",
+  "src/components/sport/exercises/exercise-guide-dialog.tsx",
+  "src/components/sport/exercises/exercise-library.css",
+  "src/components/sport/exercises/exercise-photo-gallery.tsx",
+  "src/components/sport/exercises/exercise-premium-detail.tsx",
+  "src/components/sport/ui/sport-icons.tsx",
+  "src/components/strength/session-logger.tsx",
+  "src/lib/exercises/data.ts",
+  "src/lib/exercises/types.ts",
+  "src/lib/i18n/modules/exercise-library.ts"
+]

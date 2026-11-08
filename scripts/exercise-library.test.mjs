@@ -34,7 +34,7 @@ test("combined filters, unknown metadata, empty Running and locale sorting use a
   assert.deepEqual(filterExercises(catalog, { ...defaults, sort: "desc" }, "fr").map((item) => item.key), filterExercises(catalog, defaults, "fr").reverse().map((item) => item.key));
 });
 
-function reader({ ready = false, authenticated = true, broken = false } = {}) {
+function reader({ ready = false, authenticated = true, broken = false, language = "fr" } = {}) {
   const today = new Date().toLocaleDateString("sv-SE");
   const calls = [];
   const rows = {
@@ -64,7 +64,7 @@ function reader({ ready = false, authenticated = true, broken = false } = {}) {
   } };
   return { calls, data: sourceLoader({
     "@/lib/supabase/server": { createClient: async () => api },
-    "@/lib/supabase/read-context": { getCurrentUser: async () => authenticated ? { id: "owner" } : null, getProfilePreferences: async () => ({ data: { language: "fr" }, error: null }) },
+    "@/lib/supabase/read-context": { getCurrentUser: async () => authenticated ? { id: "owner" } : null, getProfilePreferences: async () => ({ data: { language }, error: null }) },
     "@/lib/calisthenics/config": { isCalisthenicsSchemaReady: () => ready },
   })("src/lib/exercises/data.ts") };
 }
@@ -106,6 +106,26 @@ test("pilot details reuse exact anatomy roles and now supply complete technique 
   }
   const legacy = await data.loadExerciseDetail({ key: "strength-curl-halteres" });
   assert.equal(legacy.anatomySummary, null);
+});
+
+test("V3 server details preserve existing guides and supply complete localized technique with the exact existing anatomy", async () => {
+  const loadV3=sourceLoader();
+  const {EXERCISE_V3_IDS:ids}=loadV3("src/lib/exercises/media-v3-index.ts");
+  const {getExerciseAnatomy}=loadV3("src/lib/anatomy/configs.ts");
+  const {ATLAS_MUSCLES}=loadV3("src/lib/anatomy/atlas.ts");
+  const {v3Technique}=loadV3("src/lib/exercises/media-v3-content.ts");
+  for(const language of ["fr","en","ar"]){
+    const {data}=reader({language});
+    for(const key of ids){
+      const detail=await data.loadExerciseDetail({key});
+      assert.equal(detail.language,language);assert.equal(detail.media.exerciseId,key);
+      const existing=guides.find(item=>item.id===detail.exercise.guideId);
+      assert.deepEqual(detail.text,existing?existing.text[language]:v3Technique(key,language));
+      for(const role of ["primary","secondary","stabilizer"])assert.deepEqual(detail.anatomySummary[role],getExerciseAnatomy(key).muscles.filter(item=>item.role===role).map(item=>ATLAS_MUSCLES[item.id].name[language]));
+      assert.deepEqual(detail.anatomySummary.details,getExerciseAnatomy(key).muscles.map(item=>({name:ATLAS_MUSCLES[item.id].name[language],role:item.role,action:getExerciseAnatomy(key).actions[item.id]?.[language]??null})),"Muscle descriptions reuse documented anatomy actions without new claims");
+      assert.equal(detail.performance.latest,null,"Photographs never fabricate session history");
+    }
+  }
 });
 
 test("approved Calisthenics branch resolves original IDs and global keys without enabling the real gate", async () => {

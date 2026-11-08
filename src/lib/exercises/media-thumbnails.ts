@@ -1,9 +1,11 @@
 import type { Language } from "@/lib/language";
 import { resolveExerciseAnatomy, type AnatomyIdentity } from "@/lib/anatomy/identity";
 import type { Equipment } from "./types";
+import { EXERCISE_V3_THUMBNAILS, EXERCISE_V3_EQUIPMENT } from "./media-v3-index";
 
 // Lightweight image index only; full media records and positions stay server-side.
 export const EXERCISE_THUMBNAILS = {
+  ...EXERCISE_V3_THUMBNAILS,
   "strength-developpe-incline-halteres": { fr: "Homme réalisant un développé incliné avec deux haltères.", en: "Adult man performing an incline dumbbell bench press.", ar: "رجل بالغ يؤدي ضغط الصدر بالدمبل على مقعد مائل." },
   "strength-rowing-haltere-unilateral": { fr: "Homme réalisant un rowing haltère unilatéral avec appui sur banc.", en: "Adult man performing a bench-supported one-arm dumbbell row.", ar: "رجل بالغ يؤدي تجديف الدمبل بذراع واحدة مع الارتكاز على مقعد." },
   "strength-squat": { fr: "Homme en position basse d’un squat barre haute sur le dos.", en: "Adult man at the bottom of a high-bar back squat.", ar: "رجل بالغ في الوضع السفلي للقرفصاء مع البار أعلى الظهر." },
@@ -14,6 +16,7 @@ export const EXERCISE_THUMBNAILS = {
 } as const;
 export type ExerciseMediaId = keyof typeof EXERCISE_THUMBNAILS;
 export const EXERCISE_MEDIA_EQUIPMENT: Record<ExerciseMediaId, Equipment[]> = {
+  ...EXERCISE_V3_EQUIPMENT,
   "strength-developpe-incline-halteres": ["dumbbell", "bench"],
   "strength-rowing-haltere-unilateral": ["dumbbell", "bench"],
   "strength-squat": ["barbell"], "strength-curl-incline": ["dumbbell", "bench"],

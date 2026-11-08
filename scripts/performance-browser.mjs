@@ -4,11 +4,14 @@ import { spawn } from "node:child_process";
 import { createRequire } from "node:module";
 import { mkdir, writeFile, mkdtemp } from "node:fs/promises";
 import path from "node:path";
+import { sourceLoader } from "./test-source-loader.mjs";
 
 // Offline application QA: all auth/data use this local fixture server. Never
 // reads .env files or connects to Supabase. Requires local Microsoft Edge.
 const require = createRequire(import.meta.url);
-const exerciseMediaV2 = process.argv.includes("--exercise-media-v2");
+const exerciseExperienceV3 = process.argv.includes("--exercise-experience-v3");
+const exerciseMediaV3 = process.argv.includes("--exercise-media-v3") || exerciseExperienceV3;
+const exerciseMediaV2 = process.argv.includes("--exercise-media-v2") || exerciseMediaV3;
 const exerciseMedia = process.argv.includes("--exercise-media") || exerciseMediaV2;
 const anatomyV3Only = process.argv.includes("--anatomy-v3-only");
 const anatomyOnly = process.argv.includes("--anatomy-only") || anatomyV3Only;
@@ -32,6 +35,15 @@ if (exerciseLibrary) {
 }
 if (exerciseMedia) for (let index = 0; index < 10; index++) tables.exercises.push({ id: `77777777-7777-4777-8777-${String(index).padStart(12, "0")}`, user_id: uid, name: `QA personal ${index + 1}`, muscle_group: "Biceps" });
 if (exerciseMediaV2) for (const [index, name, muscle_group] of [[1,"Développé incliné haltères","Pectoraux"],[2,"Squat","Quadriceps"],[3,"Curl incliné","Biceps"],[4,"Tirage horizontal poulie","Dos"]]) tables.exercises.push({ id: `88888888-8888-4888-8888-${String(index).padStart(12,"0")}`, user_id: uid, name, muscle_group });
+if (exerciseMediaV3) {
+  const load=sourceLoader();
+  const {DEFAULT_PROGRAM}=load("src/lib/strength.ts");
+  const {baseCatalog}=load("src/lib/exercises/catalog.ts");
+  const {EXERCISE_V3_IDS}=load("src/lib/exercises/media-v3-index.ts");
+  templates.splice(0,templates.length,...DEFAULT_PROGRAM.map((program,index)=>({id:`44444444-4444-4444-8444-${String(index).padStart(12,"0")}`,user_id:uid,name:program.name,muscle_groups:program.muscleGroups,position:index,created_at:user.created_at})));
+  tables.workout_template_exercises=DEFAULT_PROGRAM.flatMap((program,index)=>program.exercises.map((item,position)=>({id:`66666666-6666-4666-8666-${String(index*100+position).padStart(12,"0")}`,template_id:templates[index].id,user_id:uid,exercise_name:item.name,muscle_group:item.muscle,position,target_sets:item.sets,target_reps:item.reps})));
+  for(const [index,item] of baseCatalog("fr").filter(item=>EXERCISE_V3_IDS.includes(item.key)).entries())tables.exercises.push({id:`99999999-9999-4999-8999-${String(index).padStart(12,"0")}`,user_id:uid,name:item.storedName,muscle_group:item.primary[0]});
+}
 let fixtureState = "normal";
 const mock = http.createServer((request, response) => {
   const url = new URL(request.url, "http://localhost");
@@ -127,7 +139,7 @@ try {
     if (result.exceptionDetails) throw new Error(result.exceptionDetails.text);
     return result.result.value;
   };
-  inspectPage = () => evaluate("({url:location.href, heading:document.querySelector('main h1')?.textContent, loading:!!document.querySelector('[data-route-loading]'), anatomy:document.querySelector('.anatomy-stage:has(canvas)')?{...document.querySelector('.anatomy-stage:has(canvas)').dataset}:null, text:document.body.innerText.slice(0,2500)})");
+  inspectPage = () => evaluate("({url:location.href, heading:document.querySelector('main h1')?.textContent, loading:!!document.querySelector('[data-route-loading]'), anatomy:document.querySelector('.anatomy-stage:has(canvas)')?{...document.querySelector('.anatomy-stage:has(canvas)').dataset}:null, active:document.activeElement?.outerHTML.slice(0,700),focusLog:window.__experienceFocusLog??null, text:document.body.innerText.slice(0,2500)})");
   capturePage = () => send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false }).then(({ data }) => writeFile(path.join(output, "failure.png"), Buffer.from(data, "base64")));
   const tokenPart = (value) => Buffer.from(JSON.stringify(value)).toString("base64url");
   const expires = Math.floor(Date.now() / 1000) + 3600;
@@ -342,9 +354,13 @@ try {
     const { checkAnatomy } = anatomyV3Only ? await import("./anatomy-v3-browser-checks.mjs") : await import("./anatomy-browser-checks.mjs");
     await checkAnatomy({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, networkRequests, output, appPort });
   }
-  if (exerciseMedia) {
-    const { checkExerciseMedia } = await import(exerciseMediaV2 ? "./exercise-media-v2-browser-checks.mjs" : "./exercise-media-browser-checks.mjs");
+  if (exerciseMedia && !process.argv.includes("--experience-only")) {
+    const { checkExerciseMedia } = await import(exerciseMediaV3 ? "./exercise-media-v3-browser-checks.mjs" : exerciseMediaV2 ? "./exercise-media-v2-browser-checks.mjs" : "./exercise-media-browser-checks.mjs");
     await checkExerciseMedia({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, networkRequests, output, appPort });
+  }
+  if (exerciseExperienceV3) {
+    const { checkExerciseExperience } = await import("./exercise-experience-v3-browser-checks.mjs");
+    await checkExerciseExperience({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, networkRequests, output, appPort });
   }
   results.writes = requests.filter((request) => !["GET", "HEAD"].includes(request.method));
   assert.deepEqual(results.writes, []);

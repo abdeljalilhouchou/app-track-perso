@@ -18,7 +18,7 @@ export async function checkExerciseMedia({ send, evaluate, navigatePage, ready, 
   const viewport = (width) => send("Emulation.setDeviceMetricsOverride", { width, height: width <= 430 ? 844 : 1000, deviceScaleFactor: 1, mobile: width <= 430 });
   const imagePath = (url) => { const parsed = new URL(url); return parsed.pathname === "/_next/image" ? parsed.searchParams.get("url") : parsed.pathname; };
   const key = async (value, code = value) => { const windowsVirtualKeyCode = ({Escape:27,ArrowLeft:37,ArrowRight:39,Home:36,End:35,Tab:9})[value];await send("Input.dispatchKeyEvent", { type: "keyDown", key: value, code, windowsVirtualKeyCode }); await send("Input.dispatchKeyEvent", { type: "keyUp", key: value, code, windowsVirtualKeyCode }); };
-  const galleryReady = () => until(() => evaluate("Array.from(document.querySelectorAll('[data-photo-gallery] img')).some(image=>image.complete&&image.naturalWidth>0)"), "selected photo decoded", 20000);
+  const galleryReady = async () => { await until(() => evaluate("Array.from(document.querySelectorAll('[data-gallery-main] img')).some(image=>image.complete&&image.naturalWidth>0)"), "selected photo decoded", 20000); await pause(200); };
   async function swipe() {
     await evaluate("document.querySelector('.exercise-gallery-image').scrollIntoView({block:'center'})");
     const point = await evaluate("(() => {const r=document.querySelector('.exercise-gallery-image').getBoundingClientRect();return {x:r.x+r.width*.75,y:Math.max(r.y+30,Math.min(innerHeight-60,r.y+r.height*.5))}})()");
@@ -67,7 +67,7 @@ export async function checkExerciseMedia({ send, evaluate, navigatePage, ready, 
   const startSrc = await evaluate("document.querySelector('[data-photo-gallery]').dataset.gallerySrc");
   await click("[data-gallery-next]"); await galleryReady();
   assert.notEqual(await evaluate("document.querySelector('[data-photo-gallery]').dataset.gallerySrc"), startSrc);
-  assert.equal(await evaluate("document.querySelectorAll('[data-photo-gallery] img').length"), 1);
+  assert.equal(await evaluate("document.querySelectorAll('[data-gallery-main] img').length"), 1);
   await swipe();
   await until(() => evaluate("document.querySelector('[data-photo-gallery]').dataset.galleryIndex==='0'"), "real touch swipe changes photograph", 3000);
   result.touchSwipe = true;
@@ -117,10 +117,11 @@ export async function checkExerciseMedia({ send, evaluate, navigatePage, ready, 
   await until(()=>evaluate("JSON.parse(localStorage.getItem('strength-draft-v1')).exercises[0].sets.length===3"),"add set");
   await evaluate(`${firstCard}.querySelector('button[aria-label="Supprimer la série 3"]').click()`);
   await until(()=>evaluate("JSON.parse(localStorage.getItem('strength-draft-v1')).exercises[0].sets.length===2"),"remove empty set");
-  await evaluate(`${firstCard}.querySelectorAll('.exercise-session-actions button')[1].click()`);
+  await evaluate(`${firstCard}.querySelector('.exercise-session-actions summary').click();${firstCard}.querySelectorAll('.exercise-session-actions button')[1].click()`);
   await until(()=>evaluate("JSON.parse(localStorage.getItem('strength-draft-v1')).exercises[1].id==='qa-0'"),"move exercise down");
   await evaluate("document.querySelector('[data-exercise-thumbnail-trigger=\""+ids[0]+"\"]').closest('.rounded-2xl').querySelector('.exercise-session-actions button').click()");
   await until(()=>evaluate("JSON.parse(localStorage.getItem('strength-draft-v1')).exercises[0].id==='qa-0'"),"move exercise back");
+  await evaluate(`${firstCard}.querySelector('.exercise-session-actions summary').click()`);
   assert.equal(await evaluate("localStorage.getItem('strength-draft-v1')"),draftBefore);
   result.existingSetAndReorderControls=true;
   console.log("Media V2: session, gallery, nested 3D, timers and draft passed.");
@@ -150,7 +151,7 @@ export async function checkExerciseMedia({ send, evaluate, navigatePage, ready, 
     profile.language=language;profile.theme=theme;await viewport(width);await go("/sport/musculation?tab=session");
     await until(()=>evaluate("!!document.querySelector('#sport-panel-session .bg-mood-soft button')"),"resume draft for sheet layout");await click("#sport-panel-session .bg-mood-soft button");
     await until(()=>evaluate("!!document.querySelector('#sport-panel-session [data-exercise-thumbnail-trigger]')"),"session header");
-    assert.ok(await evaluate("!document.querySelector('.exercise-session-name-row > p').classList.contains('truncate')"));
+    assert.ok(await evaluate("!document.querySelector('.exercise-session-name-row p').classList.contains('truncate')"));
     await click("#sport-panel-session [data-exercise-thumbnail-trigger]");await until(()=>evaluate("!!document.querySelector('[data-exercise-guide-dialog] [data-premium-exercise]')"),"sheet layout");await galleryReady();
     const layout=await evaluate("(() => {const d=document.querySelector('[data-exercise-guide-dialog]'),r=d.getBoundingClientRect(),c=d.querySelector('[data-guide-close]').getBoundingClientRect();return {width:innerWidth,dialogWidth:r.width,content:d.scrollWidth,client:d.clientWidth,close:{x:c.x,y:c.y,right:c.right,bottom:c.bottom,width:c.width,height:c.height},dir:d.dir}})()");
     assert.ok(layout.content<=layout.client+1,JSON.stringify(layout));assert.equal(layout.dir,language==="ar"?"rtl":"ltr");
@@ -187,6 +188,7 @@ export async function checkExerciseMedia({ send, evaluate, navigatePage, ready, 
   await send("Network.setCacheDisabled",{cacheDisabled:true});
   await send("Network.setBlockedURLs",{urls:["https://*","*incline-dumbbell-press-end.webp*"]});
   await go(`/sport/exercises/${ids[0]}`);
+  await click('[data-gallery-position="1"]');
   await until(()=>evaluate("!!document.querySelector('[data-photo-gallery] .sport-media[role=img]')"),"missing photograph fallback");
   assert.ok(await evaluate("document.querySelector('[data-photo-gallery] .sport-media').getBoundingClientRect().height>150"));
   await evaluate("document.querySelector('[data-photo-gallery]').scrollIntoView({block:'center'})");await shot("missing-photo-dark-mobile");

@@ -1,0 +1,4921 @@
+{
+  "referenceCommit": "4f7d9152160d0c501828d153941d0fccbd4e12b2",
+  "scope": "Versioned catalog and DEFAULT_PROGRAM only; no production account queried",
+  "references": 70,
+  "photos": 22,
+  "withoutPhoto": 48,
+  "remainingWithoutPhoto": [
+    {
+      "key": "strength-developpe-couche-halteres",
+      "name": "Développé couché haltères",
+      "storedName": "Développé couché haltères",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Développé couché haltères",
+        "Dumbbell bench press",
+        "ضغط الصدر بالدمبل"
+      ]
+    },
+    {
+      "key": "strength-developpe-incline-barre",
+      "name": "Développé incliné barre",
+      "storedName": "Développé incliné barre",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "barbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Développé incliné barre",
+        "Incline barbell press",
+        "ضغط مائل بالبار"
+      ]
+    },
+    {
+      "key": "strength-developpe-decline",
+      "name": "Développé décliné",
+      "storedName": "Développé décliné",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Développé décliné",
+        "Decline press",
+        "ضغط الصدر على مقعد منحدر"
+      ]
+    },
+    {
+      "key": "strength-ecarte-halteres",
+      "name": "Écarté haltères",
+      "storedName": "Écarté haltères",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Écarté haltères",
+        "Dumbbell fly",
+        "تفتيح الصدر بالدمبل"
+      ]
+    },
+    {
+      "key": "strength-pec-deck-butterfly",
+      "name": "Pec deck (butterfly)",
+      "storedName": "Pec deck (butterfly)",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "machine"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Pec deck (butterfly)",
+        "Pec deck fly",
+        "تفتيح الصدر بالجهاز"
+      ]
+    },
+    {
+      "key": "strength-dips-pectoraux",
+      "name": "Dips (pectoraux)",
+      "storedName": "Dips (pectoraux)",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "bodyweight"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Dips (pectoraux)",
+        "Chest dip",
+        "متوازي للصدر"
+      ]
+    },
+    {
+      "key": "strength-pull-over-haltere",
+      "name": "Pull-over haltère",
+      "storedName": "Pull-over haltère",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Pull-over haltère",
+        "Dumbbell pullover",
+        "سحب الدمبل خلف الرأس"
+      ]
+    },
+    {
+      "key": "strength-tractions-prise-neutre",
+      "name": "Tractions prise neutre",
+      "storedName": "Tractions prise neutre",
+      "discipline": "musculation",
+      "primary": [
+        "Dos"
+      ],
+      "secondary": [],
+      "equipment": [
+        "pullupBar"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Tractions prise neutre",
+        "Neutral-grip pull-up",
+        "العقلة بقبضة محايدة"
+      ]
+    },
+    {
+      "key": "strength-rowing-machine",
+      "name": "Rowing machine",
+      "storedName": "Rowing machine",
+      "discipline": "musculation",
+      "primary": [
+        "Dos"
+      ],
+      "secondary": [],
+      "equipment": [
+        "machine"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Rowing machine",
+        "Machine row",
+        "تجديف بالجهاز"
+      ]
+    },
+    {
+      "key": "strength-tirage-vertical-poulie",
+      "name": "Tirage vertical poulie",
+      "storedName": "Tirage vertical poulie",
+      "discipline": "musculation",
+      "primary": [
+        "Dos"
+      ],
+      "secondary": [],
+      "equipment": [
+        "cable"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Tirage vertical poulie",
+        "Lat pulldown",
+        "سحب علوي بالكابل"
+      ]
+    },
+    {
+      "key": "strength-souleve-de-terre",
+      "name": "Soulevé de terre",
+      "storedName": "Soulevé de terre",
+      "discipline": "musculation",
+      "primary": [
+        "Dos"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Soulevé de terre",
+        "Deadlift",
+        "الرفعة الميتة"
+      ]
+    },
+    {
+      "key": "strength-pull-over-poulie",
+      "name": "Pull-over poulie",
+      "storedName": "Pull-over poulie",
+      "discipline": "musculation",
+      "primary": [
+        "Dos"
+      ],
+      "secondary": [],
+      "equipment": [
+        "cable"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Pull-over poulie",
+        "Cable pullover",
+        "سحب بذراعين مستقيمتين بالكابل"
+      ]
+    },
+    {
+      "key": "strength-hyperextensions",
+      "name": "Hyperextensions",
+      "storedName": "Hyperextensions",
+      "discipline": "musculation",
+      "primary": [
+        "Dos"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Hyperextensions",
+        "Back extension",
+        "تمديد الظهر"
+      ]
+    },
+    {
+      "key": "strength-developpe-epaules-halteres",
+      "name": "Développé épaules haltères",
+      "storedName": "Développé épaules haltères",
+      "discipline": "musculation",
+      "primary": [
+        "Épaules"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Développé épaules haltères",
+        "Dumbbell shoulder press",
+        "ضغط الكتفين بالدمبل"
+      ]
+    },
+    {
+      "key": "strength-elevations-frontales",
+      "name": "Élévations frontales",
+      "storedName": "Élévations frontales",
+      "discipline": "musculation",
+      "primary": [
+        "Épaules"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Élévations frontales",
+        "Front raise",
+        "رفع أمامي للكتفين"
+      ]
+    },
+    {
+      "key": "strength-oiseau-halteres",
+      "name": "Oiseau haltères",
+      "storedName": "Oiseau haltères",
+      "discipline": "musculation",
+      "primary": [
+        "Épaules"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Oiseau haltères",
+        "Dumbbell reverse fly",
+        "تفتيح خلفي بالدمبل"
+      ]
+    },
+    {
+      "key": "strength-face-pull",
+      "name": "Face pull",
+      "storedName": "Face pull",
+      "discipline": "musculation",
+      "primary": [
+        "Épaules"
+      ],
+      "secondary": [],
+      "equipment": [
+        "cable"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Face pull",
+        "Face pull",
+        "سحب نحو الوجه"
+      ]
+    },
+    {
+      "key": "strength-shrugs-halteres",
+      "name": "Shrugs haltères",
+      "storedName": "Shrugs haltères",
+      "discipline": "musculation",
+      "primary": [
+        "Épaules"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Shrugs haltères",
+        "Dumbbell shrug",
+        "هز الكتفين بالدمبل"
+      ]
+    },
+    {
+      "key": "strength-arnold-press",
+      "name": "Arnold press",
+      "storedName": "Arnold press",
+      "discipline": "musculation",
+      "primary": [
+        "Épaules"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Arnold press",
+        "Arnold press",
+        "ضغط أرنولد"
+      ]
+    },
+    {
+      "key": "strength-curl-barre",
+      "name": "Curl barre",
+      "storedName": "Curl barre",
+      "discipline": "musculation",
+      "primary": [
+        "Biceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "barbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Curl barre",
+        "Barbell curl",
+        "ثني المرفقين بالبار"
+      ]
+    },
+    {
+      "key": "strength-curl-barre-ez",
+      "name": "Curl barre EZ",
+      "storedName": "Curl barre EZ",
+      "discipline": "musculation",
+      "primary": [
+        "Biceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "barbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Curl barre EZ",
+        "EZ-bar curl",
+        "ثني المرفقين ببار EZ"
+      ]
+    },
+    {
+      "key": "strength-curl-pupitre-larry-scott",
+      "name": "Curl pupitre (Larry Scott)",
+      "storedName": "Curl pupitre (Larry Scott)",
+      "discipline": "musculation",
+      "primary": [
+        "Biceps"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Curl pupitre (Larry Scott)",
+        "Preacher curl",
+        "ثني المرفقين على مسند سكوت"
+      ]
+    },
+    {
+      "key": "strength-curl-poulie-basse",
+      "name": "Curl poulie basse",
+      "storedName": "Curl poulie basse",
+      "discipline": "musculation",
+      "primary": [
+        "Biceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "cable"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Curl poulie basse",
+        "Low cable curl",
+        "ثني المرفقين بالكابل السفلي"
+      ]
+    },
+    {
+      "key": "strength-barre-au-front",
+      "name": "Barre au front",
+      "storedName": "Barre au front",
+      "discipline": "musculation",
+      "primary": [
+        "Triceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "barbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Barre au front",
+        "Lying triceps extension",
+        "تمديد العضلة ثلاثية الرؤوس مستلقياً"
+      ]
+    },
+    {
+      "key": "strength-extension-poulie-haute-barre",
+      "name": "Extension poulie haute (barre)",
+      "storedName": "Extension poulie haute (barre)",
+      "discipline": "musculation",
+      "primary": [
+        "Triceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "cable"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Extension poulie haute (barre)",
+        "Bar triceps pushdown",
+        "تمديد المرفقين بقضيب الكابل"
+      ]
+    },
+    {
+      "key": "strength-extension-nuque-haltere",
+      "name": "Extension nuque haltère",
+      "storedName": "Extension nuque haltère",
+      "discipline": "musculation",
+      "primary": [
+        "Triceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Extension nuque haltère",
+        "Overhead dumbbell triceps extension",
+        "تمديد المرفقين بالدمبل فوق الرأس"
+      ]
+    },
+    {
+      "key": "strength-dips-triceps",
+      "name": "Dips (triceps)",
+      "storedName": "Dips (triceps)",
+      "discipline": "musculation",
+      "primary": [
+        "Triceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "bodyweight"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Dips (triceps)",
+        "Triceps dip",
+        "متوازي للعضلة ثلاثية الرؤوس"
+      ]
+    },
+    {
+      "key": "strength-kickback-haltere",
+      "name": "Kickback haltère",
+      "storedName": "Kickback haltère",
+      "discipline": "musculation",
+      "primary": [
+        "Triceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Kickback haltère",
+        "Dumbbell triceps kickback",
+        "تمديد المرفق خلفاً بالدمبل"
+      ]
+    },
+    {
+      "key": "strength-developpe-couche-prise-serree",
+      "name": "Développé couché prise serrée",
+      "storedName": "Développé couché prise serrée",
+      "discipline": "musculation",
+      "primary": [
+        "Triceps"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Développé couché prise serrée",
+        "Close-grip bench press",
+        "ضغط الصدر بقبضة ضيقة"
+      ]
+    },
+    {
+      "key": "strength-front-squat",
+      "name": "Front squat",
+      "storedName": "Front squat",
+      "discipline": "musculation",
+      "primary": [
+        "Quadriceps"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Front squat",
+        "Front squat",
+        "القرفصاء الأمامية"
+      ]
+    },
+    {
+      "key": "strength-squat-bulgare",
+      "name": "Squat bulgare",
+      "storedName": "Squat bulgare",
+      "discipline": "musculation",
+      "primary": [
+        "Quadriceps"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Squat bulgare",
+        "Bulgarian split squat",
+        "القرفصاء البلغارية"
+      ]
+    },
+    {
+      "key": "strength-hack-squat",
+      "name": "Hack squat",
+      "storedName": "Hack squat",
+      "discipline": "musculation",
+      "primary": [
+        "Quadriceps"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Hack squat",
+        "Hack squat",
+        "قرفصاء هاك"
+      ]
+    },
+    {
+      "key": "strength-leg-curl-assis",
+      "name": "Leg curl assis",
+      "storedName": "Leg curl assis",
+      "discipline": "musculation",
+      "primary": [
+        "Ischio-jambiers"
+      ],
+      "secondary": [],
+      "equipment": [
+        "machine"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Leg curl assis",
+        "Seated leg curl",
+        "ثني الركبتين جالساً"
+      ]
+    },
+    {
+      "key": "strength-souleve-de-terre-jambes-tendues",
+      "name": "Soulevé de terre jambes tendues",
+      "storedName": "Soulevé de terre jambes tendues",
+      "discipline": "musculation",
+      "primary": [
+        "Ischio-jambiers"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Soulevé de terre jambes tendues",
+        "Stiff-leg deadlift",
+        "رفعة ميتة بساقين شبه مستقيمتين"
+      ]
+    },
+    {
+      "key": "strength-good-morning",
+      "name": "Good morning",
+      "storedName": "Good morning",
+      "discipline": "musculation",
+      "primary": [
+        "Ischio-jambiers"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Good morning",
+        "Good morning",
+        "انحناء الجذع صباح الخير"
+      ]
+    },
+    {
+      "key": "strength-hip-thrust",
+      "name": "Hip thrust",
+      "storedName": "Hip thrust",
+      "discipline": "musculation",
+      "primary": [
+        "Fessiers"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Hip thrust",
+        "Hip thrust",
+        "دفع الوركين"
+      ]
+    },
+    {
+      "key": "strength-abduction-machine",
+      "name": "Abduction machine",
+      "storedName": "Abduction machine",
+      "discipline": "musculation",
+      "primary": [
+        "Fessiers"
+      ],
+      "secondary": [],
+      "equipment": [
+        "machine"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Abduction machine",
+        "Hip abduction machine",
+        "إبعاد الوركين بالجهاز"
+      ]
+    },
+    {
+      "key": "strength-kickback-poulie",
+      "name": "Kickback poulie",
+      "storedName": "Kickback poulie",
+      "discipline": "musculation",
+      "primary": [
+        "Fessiers"
+      ],
+      "secondary": [],
+      "equipment": [
+        "cable"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Kickback poulie",
+        "Cable glute kickback",
+        "دفع الساق خلفاً بالكابل"
+      ]
+    },
+    {
+      "key": "strength-mollets-assis",
+      "name": "Mollets assis",
+      "storedName": "Mollets assis",
+      "discipline": "musculation",
+      "primary": [
+        "Mollets"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Mollets assis",
+        "Seated calf raise",
+        "رفع الكعبين جالساً"
+      ]
+    },
+    {
+      "key": "strength-mollets-a-la-presse",
+      "name": "Mollets à la presse",
+      "storedName": "Mollets à la presse",
+      "discipline": "musculation",
+      "primary": [
+        "Mollets"
+      ],
+      "secondary": [],
+      "equipment": [
+        "machine"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Mollets à la presse",
+        "Leg press calf raise",
+        "رفع الكعبين بجهاز ضغط الساقين"
+      ]
+    },
+    {
+      "key": "strength-crunch",
+      "name": "Crunch",
+      "storedName": "Crunch",
+      "discipline": "musculation",
+      "primary": [
+        "Abdominaux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "bodyweight"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Crunch",
+        "Crunch",
+        "كرنش البطن"
+      ]
+    },
+    {
+      "key": "strength-releve-de-jambes-suspendu",
+      "name": "Relevé de jambes suspendu",
+      "storedName": "Relevé de jambes suspendu",
+      "discipline": "musculation",
+      "primary": [
+        "Abdominaux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "pullupBar"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Relevé de jambes suspendu",
+        "Hanging leg raise",
+        "رفع الساقين مع التعلق"
+      ]
+    },
+    {
+      "key": "strength-roue-abdominale",
+      "name": "Roue abdominale",
+      "storedName": "Roue abdominale",
+      "discipline": "musculation",
+      "primary": [
+        "Abdominaux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "wheel"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Roue abdominale",
+        "Ab wheel rollout",
+        "تمديد بعجلة البطن"
+      ]
+    },
+    {
+      "key": "strength-russian-twist",
+      "name": "Russian twist",
+      "storedName": "Russian twist",
+      "discipline": "musculation",
+      "primary": [
+        "Abdominaux"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Russian twist",
+        "Russian twist",
+        "لف الجذع الروسي"
+      ]
+    },
+    {
+      "key": "strength-curl-poignets",
+      "name": "Curl poignets",
+      "storedName": "Curl poignets",
+      "discipline": "musculation",
+      "primary": [
+        "Avant-bras"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Curl poignets",
+        "Wrist curl",
+        "ثني المعصمين"
+      ]
+    },
+    {
+      "key": "strength-curl-inverse",
+      "name": "Curl inversé",
+      "storedName": "Curl inversé",
+      "discipline": "musculation",
+      "primary": [
+        "Avant-bras"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Curl inversé",
+        "Reverse curl",
+        "ثني المرفقين بقبضة معكوسة"
+      ]
+    },
+    {
+      "key": "strength-marche-du-fermier",
+      "name": "Marche du fermier",
+      "storedName": "Marche du fermier",
+      "discipline": "musculation",
+      "primary": [
+        "Avant-bras"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Marche du fermier",
+        "Farmer carry",
+        "مشي المزارع بالأثقال"
+      ]
+    },
+    {
+      "key": "bodyweight-squat",
+      "storedName": "Squat au poids du corps",
+      "primary": [
+        "Quadriceps",
+        "Fessiers"
+      ]
+    }
+  ],
+  "selected": [
+    {
+      "id": "strength-developpe-couche-barre",
+      "start": "bench-start-v2",
+      "end": "bench-end-v2",
+      "static": false,
+      "name": "Développé couché barre",
+      "category": "Pectoraux",
+      "programs": [
+        "Pectoraux & Triceps"
+      ],
+      "existingGuide": "barbell-bench-press"
+    },
+    {
+      "id": "strength-ecarte-poulie-vis-a-vis",
+      "start": "fly-start",
+      "end": "fly-end-v2",
+      "static": false,
+      "name": "Écarté poulie vis-à-vis",
+      "category": "Pectoraux",
+      "programs": [
+        "Pectoraux & Triceps"
+      ],
+      "existingGuide": null
+    },
+    {
+      "id": "strength-tractions",
+      "start": "pullup-start",
+      "end": "pullup-end",
+      "static": false,
+      "name": "Tractions",
+      "category": "Dos",
+      "programs": [
+        "Dos & Biceps"
+      ],
+      "existingGuide": "pull-up"
+    },
+    {
+      "id": "strength-rowing-barre",
+      "start": "row-start-v2",
+      "end": "row-end",
+      "static": false,
+      "name": "Rowing barre",
+      "category": "Dos",
+      "programs": [
+        "Dos & Biceps"
+      ],
+      "existingGuide": null
+    },
+    {
+      "id": "strength-developpe-militaire-barre",
+      "start": "overhead-start",
+      "end": "overhead-end",
+      "static": false,
+      "name": "Développé militaire barre",
+      "category": "Épaules",
+      "programs": [
+        "Épaules & Abdos"
+      ],
+      "existingGuide": null
+    },
+    {
+      "id": "strength-elevations-laterales",
+      "start": "lateral-start",
+      "end": "lateral-end",
+      "static": false,
+      "name": "Élévations latérales",
+      "category": "Épaules",
+      "programs": [
+        "Épaules & Abdos"
+      ],
+      "existingGuide": null
+    },
+    {
+      "id": "strength-curl-marteau",
+      "start": "hammer-start",
+      "end": "hammer-end",
+      "static": false,
+      "name": "Curl marteau",
+      "category": "Biceps",
+      "programs": [
+        "Dos & Biceps"
+      ],
+      "existingGuide": null
+    },
+    {
+      "id": "strength-extension-poulie-haute-corde",
+      "start": "pushdown-start",
+      "end": "pushdown-end",
+      "static": false,
+      "name": "Extension poulie haute (corde)",
+      "category": "Triceps",
+      "programs": [
+        "Pectoraux & Triceps"
+      ],
+      "existingGuide": null
+    },
+    {
+      "id": "strength-presse-a-cuisses",
+      "start": "legpress-start-v2",
+      "end": "legpress-end",
+      "static": false,
+      "name": "Presse à cuisses",
+      "category": "Quadriceps",
+      "programs": [
+        "Jambes"
+      ],
+      "existingGuide": null
+    },
+    {
+      "id": "strength-leg-extension",
+      "start": "legextension-start",
+      "end": "legextension-end",
+      "static": false,
+      "name": "Leg extension",
+      "category": "Quadriceps",
+      "programs": [
+        "Jambes"
+      ],
+      "existingGuide": null
+    },
+    {
+      "id": "strength-fentes-marchees",
+      "start": "lunge-start",
+      "end": "lunge-end",
+      "static": false,
+      "name": "Fentes marchées",
+      "category": "Quadriceps",
+      "programs": [
+        "Jambes"
+      ],
+      "existingGuide": null
+    },
+    {
+      "id": "strength-leg-curl-allonge",
+      "start": "legcurl-start",
+      "end": "legcurl-end",
+      "static": false,
+      "name": "Leg curl allongé",
+      "category": "Ischio-jambiers",
+      "programs": [
+        "Jambes"
+      ],
+      "existingGuide": null
+    },
+    {
+      "id": "strength-mollets-debout",
+      "start": "calf-start",
+      "end": "calf-end",
+      "static": false,
+      "name": "Mollets debout",
+      "category": "Mollets",
+      "programs": [
+        "Jambes"
+      ],
+      "existingGuide": null
+    },
+    {
+      "id": "strength-crunch-poulie",
+      "start": "crunch-start",
+      "end": "crunch-end",
+      "static": false,
+      "name": "Crunch poulie",
+      "category": "Abdominaux",
+      "programs": [
+        "Épaules & Abdos"
+      ],
+      "existingGuide": null
+    },
+    {
+      "id": "strength-gainage-planche",
+      "start": "plank",
+      "end": null,
+      "static": true,
+      "name": "Gainage (planche)",
+      "category": "Abdominaux",
+      "programs": [],
+      "existingGuide": "forearm-plank"
+    }
+  ],
+  "catalog": [
+    {
+      "key": "strength-developpe-couche-barre",
+      "name": "Développé couché barre",
+      "storedName": "Développé couché barre",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "barbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Développé couché barre",
+        "Barbell bench press",
+        "ضغط الصدر بالبار"
+      ]
+    },
+    {
+      "key": "strength-developpe-couche-halteres",
+      "name": "Développé couché haltères",
+      "storedName": "Développé couché haltères",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Développé couché haltères",
+        "Dumbbell bench press",
+        "ضغط الصدر بالدمبل"
+      ]
+    },
+    {
+      "key": "strength-developpe-incline-barre",
+      "name": "Développé incliné barre",
+      "storedName": "Développé incliné barre",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "barbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Développé incliné barre",
+        "Incline barbell press",
+        "ضغط مائل بالبار"
+      ]
+    },
+    {
+      "key": "strength-developpe-incline-halteres",
+      "name": "Développé incliné haltères",
+      "storedName": "Développé incliné haltères",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Développé incliné haltères",
+        "Incline dumbbell press",
+        "ضغط مائل بالدمبل"
+      ]
+    },
+    {
+      "key": "strength-developpe-decline",
+      "name": "Développé décliné",
+      "storedName": "Développé décliné",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Développé décliné",
+        "Decline press",
+        "ضغط الصدر على مقعد منحدر"
+      ]
+    },
+    {
+      "key": "strength-ecarte-halteres",
+      "name": "Écarté haltères",
+      "storedName": "Écarté haltères",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Écarté haltères",
+        "Dumbbell fly",
+        "تفتيح الصدر بالدمبل"
+      ]
+    },
+    {
+      "key": "strength-ecarte-poulie-vis-a-vis",
+      "name": "Écarté poulie vis-à-vis",
+      "storedName": "Écarté poulie vis-à-vis",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "cable"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Écarté poulie vis-à-vis",
+        "Cable fly",
+        "تفتيح الصدر بالكابل"
+      ]
+    },
+    {
+      "key": "strength-pec-deck-butterfly",
+      "name": "Pec deck (butterfly)",
+      "storedName": "Pec deck (butterfly)",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "machine"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Pec deck (butterfly)",
+        "Pec deck fly",
+        "تفتيح الصدر بالجهاز"
+      ]
+    },
+    {
+      "key": "strength-pompes",
+      "name": "Pompes",
+      "storedName": "Pompes",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "bodyweight"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Pompes",
+        "Push-up",
+        "تمرين الضغط"
+      ]
+    },
+    {
+      "key": "strength-dips-pectoraux",
+      "name": "Dips (pectoraux)",
+      "storedName": "Dips (pectoraux)",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "bodyweight"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Dips (pectoraux)",
+        "Chest dip",
+        "متوازي للصدر"
+      ]
+    },
+    {
+      "key": "strength-pull-over-haltere",
+      "name": "Pull-over haltère",
+      "storedName": "Pull-over haltère",
+      "discipline": "musculation",
+      "primary": [
+        "Pectoraux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Pull-over haltère",
+        "Dumbbell pullover",
+        "سحب الدمبل خلف الرأس"
+      ]
+    },
+    {
+      "key": "strength-tractions",
+      "name": "Tractions",
+      "storedName": "Tractions",
+      "discipline": "musculation",
+      "primary": [
+        "Dos"
+      ],
+      "secondary": [],
+      "equipment": [
+        "pullupBar"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Tractions",
+        "Pull-up",
+        "العقلة بقبضة علوية"
+      ]
+    },
+    {
+      "key": "strength-tractions-prise-neutre",
+      "name": "Tractions prise neutre",
+      "storedName": "Tractions prise neutre",
+      "discipline": "musculation",
+      "primary": [
+        "Dos"
+      ],
+      "secondary": [],
+      "equipment": [
+        "pullupBar"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Tractions prise neutre",
+        "Neutral-grip pull-up",
+        "العقلة بقبضة محايدة"
+      ]
+    },
+    {
+      "key": "strength-rowing-barre",
+      "name": "Rowing barre",
+      "storedName": "Rowing barre",
+      "discipline": "musculation",
+      "primary": [
+        "Dos"
+      ],
+      "secondary": [],
+      "equipment": [
+        "barbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Rowing barre",
+        "Barbell row",
+        "تجديف بالبار"
+      ]
+    },
+    {
+      "key": "strength-rowing-haltere-unilateral",
+      "name": "Rowing haltère unilatéral",
+      "storedName": "Rowing haltère unilatéral",
+      "discipline": "musculation",
+      "primary": [
+        "Dos"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Rowing haltère unilatéral",
+        "One-arm dumbbell row",
+        "تجديف دمبل بذراع واحدة"
+      ]
+    },
+    {
+      "key": "strength-rowing-machine",
+      "name": "Rowing machine",
+      "storedName": "Rowing machine",
+      "discipline": "musculation",
+      "primary": [
+        "Dos"
+      ],
+      "secondary": [],
+      "equipment": [
+        "machine"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Rowing machine",
+        "Machine row",
+        "تجديف بالجهاز"
+      ]
+    },
+    {
+      "key": "strength-tirage-vertical-poulie",
+      "name": "Tirage vertical poulie",
+      "storedName": "Tirage vertical poulie",
+      "discipline": "musculation",
+      "primary": [
+        "Dos"
+      ],
+      "secondary": [],
+      "equipment": [
+        "cable"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Tirage vertical poulie",
+        "Lat pulldown",
+        "سحب علوي بالكابل"
+      ]
+    },
+    {
+      "key": "strength-tirage-horizontal-poulie",
+      "name": "Tirage horizontal poulie",
+      "storedName": "Tirage horizontal poulie",
+      "discipline": "musculation",
+      "primary": [
+        "Dos"
+      ],
+      "secondary": [],
+      "equipment": [
+        "cable"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Tirage horizontal poulie",
+        "Seated cable row",
+        "سحب أفقي بالكابل"
+      ]
+    },
+    {
+      "key": "strength-souleve-de-terre",
+      "name": "Soulevé de terre",
+      "storedName": "Soulevé de terre",
+      "discipline": "musculation",
+      "primary": [
+        "Dos"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Soulevé de terre",
+        "Deadlift",
+        "الرفعة الميتة"
+      ]
+    },
+    {
+      "key": "strength-pull-over-poulie",
+      "name": "Pull-over poulie",
+      "storedName": "Pull-over poulie",
+      "discipline": "musculation",
+      "primary": [
+        "Dos"
+      ],
+      "secondary": [],
+      "equipment": [
+        "cable"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Pull-over poulie",
+        "Cable pullover",
+        "سحب بذراعين مستقيمتين بالكابل"
+      ]
+    },
+    {
+      "key": "strength-hyperextensions",
+      "name": "Hyperextensions",
+      "storedName": "Hyperextensions",
+      "discipline": "musculation",
+      "primary": [
+        "Dos"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Hyperextensions",
+        "Back extension",
+        "تمديد الظهر"
+      ]
+    },
+    {
+      "key": "strength-developpe-militaire-barre",
+      "name": "Développé militaire barre",
+      "storedName": "Développé militaire barre",
+      "discipline": "musculation",
+      "primary": [
+        "Épaules"
+      ],
+      "secondary": [],
+      "equipment": [
+        "barbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Développé militaire barre",
+        "Barbell overhead press",
+        "ضغط الكتفين بالبار"
+      ]
+    },
+    {
+      "key": "strength-developpe-epaules-halteres",
+      "name": "Développé épaules haltères",
+      "storedName": "Développé épaules haltères",
+      "discipline": "musculation",
+      "primary": [
+        "Épaules"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Développé épaules haltères",
+        "Dumbbell shoulder press",
+        "ضغط الكتفين بالدمبل"
+      ]
+    },
+    {
+      "key": "strength-elevations-laterales",
+      "name": "Élévations latérales",
+      "storedName": "Élévations latérales",
+      "discipline": "musculation",
+      "primary": [
+        "Épaules"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Élévations latérales",
+        "Lateral raise",
+        "رفع جانبي للكتفين"
+      ]
+    },
+    {
+      "key": "strength-elevations-frontales",
+      "name": "Élévations frontales",
+      "storedName": "Élévations frontales",
+      "discipline": "musculation",
+      "primary": [
+        "Épaules"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Élévations frontales",
+        "Front raise",
+        "رفع أمامي للكتفين"
+      ]
+    },
+    {
+      "key": "strength-oiseau-halteres",
+      "name": "Oiseau haltères",
+      "storedName": "Oiseau haltères",
+      "discipline": "musculation",
+      "primary": [
+        "Épaules"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Oiseau haltères",
+        "Dumbbell reverse fly",
+        "تفتيح خلفي بالدمبل"
+      ]
+    },
+    {
+      "key": "strength-face-pull",
+      "name": "Face pull",
+      "storedName": "Face pull",
+      "discipline": "musculation",
+      "primary": [
+        "Épaules"
+      ],
+      "secondary": [],
+      "equipment": [
+        "cable"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Face pull",
+        "Face pull",
+        "سحب نحو الوجه"
+      ]
+    },
+    {
+      "key": "strength-shrugs-halteres",
+      "name": "Shrugs haltères",
+      "storedName": "Shrugs haltères",
+      "discipline": "musculation",
+      "primary": [
+        "Épaules"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Shrugs haltères",
+        "Dumbbell shrug",
+        "هز الكتفين بالدمبل"
+      ]
+    },
+    {
+      "key": "strength-arnold-press",
+      "name": "Arnold press",
+      "storedName": "Arnold press",
+      "discipline": "musculation",
+      "primary": [
+        "Épaules"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Arnold press",
+        "Arnold press",
+        "ضغط أرنولد"
+      ]
+    },
+    {
+      "key": "strength-curl-barre",
+      "name": "Curl barre",
+      "storedName": "Curl barre",
+      "discipline": "musculation",
+      "primary": [
+        "Biceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "barbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Curl barre",
+        "Barbell curl",
+        "ثني المرفقين بالبار"
+      ]
+    },
+    {
+      "key": "strength-curl-barre-ez",
+      "name": "Curl barre EZ",
+      "storedName": "Curl barre EZ",
+      "discipline": "musculation",
+      "primary": [
+        "Biceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "barbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Curl barre EZ",
+        "EZ-bar curl",
+        "ثني المرفقين ببار EZ"
+      ]
+    },
+    {
+      "key": "strength-curl-halteres",
+      "name": "Curl haltères",
+      "storedName": "Curl haltères",
+      "discipline": "musculation",
+      "primary": [
+        "Biceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Curl haltères",
+        "Dumbbell biceps curl",
+        "ثني العضلة ذات الرأسين بالدمبل"
+      ]
+    },
+    {
+      "key": "strength-curl-marteau",
+      "name": "Curl marteau",
+      "storedName": "Curl marteau",
+      "discipline": "musculation",
+      "primary": [
+        "Biceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Curl marteau",
+        "Hammer curl",
+        "ثني المرفقين بقبضة المطرقة"
+      ]
+    },
+    {
+      "key": "strength-curl-incline",
+      "name": "Curl incliné",
+      "storedName": "Curl incliné",
+      "discipline": "musculation",
+      "primary": [
+        "Biceps"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Curl incliné",
+        "Incline curl",
+        "ثني المرفقين على مقعد مائل"
+      ]
+    },
+    {
+      "key": "strength-curl-pupitre-larry-scott",
+      "name": "Curl pupitre (Larry Scott)",
+      "storedName": "Curl pupitre (Larry Scott)",
+      "discipline": "musculation",
+      "primary": [
+        "Biceps"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Curl pupitre (Larry Scott)",
+        "Preacher curl",
+        "ثني المرفقين على مسند سكوت"
+      ]
+    },
+    {
+      "key": "strength-curl-poulie-basse",
+      "name": "Curl poulie basse",
+      "storedName": "Curl poulie basse",
+      "discipline": "musculation",
+      "primary": [
+        "Biceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "cable"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Curl poulie basse",
+        "Low cable curl",
+        "ثني المرفقين بالكابل السفلي"
+      ]
+    },
+    {
+      "key": "strength-barre-au-front",
+      "name": "Barre au front",
+      "storedName": "Barre au front",
+      "discipline": "musculation",
+      "primary": [
+        "Triceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "barbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Barre au front",
+        "Lying triceps extension",
+        "تمديد العضلة ثلاثية الرؤوس مستلقياً"
+      ]
+    },
+    {
+      "key": "strength-extension-poulie-haute-corde",
+      "name": "Extension poulie haute (corde)",
+      "storedName": "Extension poulie haute (corde)",
+      "discipline": "musculation",
+      "primary": [
+        "Triceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "cable"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Extension poulie haute (corde)",
+        "Rope triceps pushdown",
+        "تمديد المرفقين بالحبل"
+      ]
+    },
+    {
+      "key": "strength-extension-poulie-haute-barre",
+      "name": "Extension poulie haute (barre)",
+      "storedName": "Extension poulie haute (barre)",
+      "discipline": "musculation",
+      "primary": [
+        "Triceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "cable"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Extension poulie haute (barre)",
+        "Bar triceps pushdown",
+        "تمديد المرفقين بقضيب الكابل"
+      ]
+    },
+    {
+      "key": "strength-extension-nuque-haltere",
+      "name": "Extension nuque haltère",
+      "storedName": "Extension nuque haltère",
+      "discipline": "musculation",
+      "primary": [
+        "Triceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Extension nuque haltère",
+        "Overhead dumbbell triceps extension",
+        "تمديد المرفقين بالدمبل فوق الرأس"
+      ]
+    },
+    {
+      "key": "strength-dips-triceps",
+      "name": "Dips (triceps)",
+      "storedName": "Dips (triceps)",
+      "discipline": "musculation",
+      "primary": [
+        "Triceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "bodyweight"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Dips (triceps)",
+        "Triceps dip",
+        "متوازي للعضلة ثلاثية الرؤوس"
+      ]
+    },
+    {
+      "key": "strength-kickback-haltere",
+      "name": "Kickback haltère",
+      "storedName": "Kickback haltère",
+      "discipline": "musculation",
+      "primary": [
+        "Triceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "dumbbell"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Kickback haltère",
+        "Dumbbell triceps kickback",
+        "تمديد المرفق خلفاً بالدمبل"
+      ]
+    },
+    {
+      "key": "strength-developpe-couche-prise-serree",
+      "name": "Développé couché prise serrée",
+      "storedName": "Développé couché prise serrée",
+      "discipline": "musculation",
+      "primary": [
+        "Triceps"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Développé couché prise serrée",
+        "Close-grip bench press",
+        "ضغط الصدر بقبضة ضيقة"
+      ]
+    },
+    {
+      "key": "strength-squat",
+      "name": "Squat",
+      "storedName": "Squat",
+      "discipline": "musculation",
+      "primary": [
+        "Quadriceps"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Squat",
+        "Squat",
+        "القرفصاء"
+      ]
+    },
+    {
+      "key": "strength-front-squat",
+      "name": "Front squat",
+      "storedName": "Front squat",
+      "discipline": "musculation",
+      "primary": [
+        "Quadriceps"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Front squat",
+        "Front squat",
+        "القرفصاء الأمامية"
+      ]
+    },
+    {
+      "key": "strength-presse-a-cuisses",
+      "name": "Presse à cuisses",
+      "storedName": "Presse à cuisses",
+      "discipline": "musculation",
+      "primary": [
+        "Quadriceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "machine"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Presse à cuisses",
+        "Leg press",
+        "ضغط الساقين بالجهاز"
+      ]
+    },
+    {
+      "key": "strength-leg-extension",
+      "name": "Leg extension",
+      "storedName": "Leg extension",
+      "discipline": "musculation",
+      "primary": [
+        "Quadriceps"
+      ],
+      "secondary": [],
+      "equipment": [
+        "machine"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Leg extension",
+        "Leg extension",
+        "تمديد الركبتين بالجهاز"
+      ]
+    },
+    {
+      "key": "strength-fentes-marchees",
+      "name": "Fentes marchées",
+      "storedName": "Fentes marchées",
+      "discipline": "musculation",
+      "primary": [
+        "Quadriceps"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Fentes marchées",
+        "Walking lunge",
+        "اندفاع بالمشي"
+      ]
+    },
+    {
+      "key": "strength-squat-bulgare",
+      "name": "Squat bulgare",
+      "storedName": "Squat bulgare",
+      "discipline": "musculation",
+      "primary": [
+        "Quadriceps"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Squat bulgare",
+        "Bulgarian split squat",
+        "القرفصاء البلغارية"
+      ]
+    },
+    {
+      "key": "strength-hack-squat",
+      "name": "Hack squat",
+      "storedName": "Hack squat",
+      "discipline": "musculation",
+      "primary": [
+        "Quadriceps"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Hack squat",
+        "Hack squat",
+        "قرفصاء هاك"
+      ]
+    },
+    {
+      "key": "strength-leg-curl-allonge",
+      "name": "Leg curl allongé",
+      "storedName": "Leg curl allongé",
+      "discipline": "musculation",
+      "primary": [
+        "Ischio-jambiers"
+      ],
+      "secondary": [],
+      "equipment": [
+        "machine"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Leg curl allongé",
+        "Lying leg curl",
+        "ثني الركبتين مستلقياً"
+      ]
+    },
+    {
+      "key": "strength-leg-curl-assis",
+      "name": "Leg curl assis",
+      "storedName": "Leg curl assis",
+      "discipline": "musculation",
+      "primary": [
+        "Ischio-jambiers"
+      ],
+      "secondary": [],
+      "equipment": [
+        "machine"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Leg curl assis",
+        "Seated leg curl",
+        "ثني الركبتين جالساً"
+      ]
+    },
+    {
+      "key": "strength-souleve-de-terre-jambes-tendues",
+      "name": "Soulevé de terre jambes tendues",
+      "storedName": "Soulevé de terre jambes tendues",
+      "discipline": "musculation",
+      "primary": [
+        "Ischio-jambiers"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Soulevé de terre jambes tendues",
+        "Stiff-leg deadlift",
+        "رفعة ميتة بساقين شبه مستقيمتين"
+      ]
+    },
+    {
+      "key": "strength-good-morning",
+      "name": "Good morning",
+      "storedName": "Good morning",
+      "discipline": "musculation",
+      "primary": [
+        "Ischio-jambiers"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Good morning",
+        "Good morning",
+        "انحناء الجذع صباح الخير"
+      ]
+    },
+    {
+      "key": "strength-hip-thrust",
+      "name": "Hip thrust",
+      "storedName": "Hip thrust",
+      "discipline": "musculation",
+      "primary": [
+        "Fessiers"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Hip thrust",
+        "Hip thrust",
+        "دفع الوركين"
+      ]
+    },
+    {
+      "key": "strength-abduction-machine",
+      "name": "Abduction machine",
+      "storedName": "Abduction machine",
+      "discipline": "musculation",
+      "primary": [
+        "Fessiers"
+      ],
+      "secondary": [],
+      "equipment": [
+        "machine"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Abduction machine",
+        "Hip abduction machine",
+        "إبعاد الوركين بالجهاز"
+      ]
+    },
+    {
+      "key": "strength-kickback-poulie",
+      "name": "Kickback poulie",
+      "storedName": "Kickback poulie",
+      "discipline": "musculation",
+      "primary": [
+        "Fessiers"
+      ],
+      "secondary": [],
+      "equipment": [
+        "cable"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Kickback poulie",
+        "Cable glute kickback",
+        "دفع الساق خلفاً بالكابل"
+      ]
+    },
+    {
+      "key": "strength-mollets-debout",
+      "name": "Mollets debout",
+      "storedName": "Mollets debout",
+      "discipline": "musculation",
+      "primary": [
+        "Mollets"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Mollets debout",
+        "Standing calf raise",
+        "رفع الكعبين واقفاً"
+      ]
+    },
+    {
+      "key": "strength-mollets-assis",
+      "name": "Mollets assis",
+      "storedName": "Mollets assis",
+      "discipline": "musculation",
+      "primary": [
+        "Mollets"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Mollets assis",
+        "Seated calf raise",
+        "رفع الكعبين جالساً"
+      ]
+    },
+    {
+      "key": "strength-mollets-a-la-presse",
+      "name": "Mollets à la presse",
+      "storedName": "Mollets à la presse",
+      "discipline": "musculation",
+      "primary": [
+        "Mollets"
+      ],
+      "secondary": [],
+      "equipment": [
+        "machine"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Mollets à la presse",
+        "Leg press calf raise",
+        "رفع الكعبين بجهاز ضغط الساقين"
+      ]
+    },
+    {
+      "key": "strength-crunch",
+      "name": "Crunch",
+      "storedName": "Crunch",
+      "discipline": "musculation",
+      "primary": [
+        "Abdominaux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "bodyweight"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Crunch",
+        "Crunch",
+        "كرنش البطن"
+      ]
+    },
+    {
+      "key": "strength-crunch-poulie",
+      "name": "Crunch poulie",
+      "storedName": "Crunch poulie",
+      "discipline": "musculation",
+      "primary": [
+        "Abdominaux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "cable"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Crunch poulie",
+        "Cable crunch",
+        "كرنش بالكابل"
+      ]
+    },
+    {
+      "key": "strength-releve-de-jambes-suspendu",
+      "name": "Relevé de jambes suspendu",
+      "storedName": "Relevé de jambes suspendu",
+      "discipline": "musculation",
+      "primary": [
+        "Abdominaux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "pullupBar"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Relevé de jambes suspendu",
+        "Hanging leg raise",
+        "رفع الساقين مع التعلق"
+      ]
+    },
+    {
+      "key": "strength-gainage-planche",
+      "name": "Gainage (planche)",
+      "storedName": "Gainage (planche)",
+      "discipline": "musculation",
+      "primary": [
+        "Abdominaux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "bodyweight"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Gainage (planche)",
+        "Forearm plank",
+        "بلانك على الساعدين"
+      ]
+    },
+    {
+      "key": "strength-roue-abdominale",
+      "name": "Roue abdominale",
+      "storedName": "Roue abdominale",
+      "discipline": "musculation",
+      "primary": [
+        "Abdominaux"
+      ],
+      "secondary": [],
+      "equipment": [
+        "wheel"
+      ],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Roue abdominale",
+        "Ab wheel rollout",
+        "تمديد بعجلة البطن"
+      ]
+    },
+    {
+      "key": "strength-russian-twist",
+      "name": "Russian twist",
+      "storedName": "Russian twist",
+      "discipline": "musculation",
+      "primary": [
+        "Abdominaux"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Russian twist",
+        "Russian twist",
+        "لف الجذع الروسي"
+      ]
+    },
+    {
+      "key": "strength-curl-poignets",
+      "name": "Curl poignets",
+      "storedName": "Curl poignets",
+      "discipline": "musculation",
+      "primary": [
+        "Avant-bras"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Curl poignets",
+        "Wrist curl",
+        "ثني المعصمين"
+      ]
+    },
+    {
+      "key": "strength-curl-inverse",
+      "name": "Curl inversé",
+      "storedName": "Curl inversé",
+      "discipline": "musculation",
+      "primary": [
+        "Avant-bras"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Curl inversé",
+        "Reverse curl",
+        "ثني المرفقين بقبضة معكوسة"
+      ]
+    },
+    {
+      "key": "strength-marche-du-fermier",
+      "name": "Marche du fermier",
+      "storedName": "Marche du fermier",
+      "discipline": "musculation",
+      "primary": [
+        "Avant-bras"
+      ],
+      "secondary": [],
+      "equipment": [],
+      "level": null,
+      "guideId": null,
+      "origin": "builtin",
+      "searchNames": [
+        "Marche du fermier",
+        "Farmer carry",
+        "مشي المزارع بالأثقال"
+      ]
+    },
+    {
+      "key": "bodyweight-squat",
+      "storedName": "Squat au poids du corps",
+      "primary": [
+        "Quadriceps",
+        "Fessiers"
+      ]
+    }
+  ],
+  "registry": {
+    "strength-developpe-couche-barre": {
+      "exerciseId": "strength-developpe-couche-barre",
+      "heroImage": {
+        "src": "/images/exercises/v3/strength-developpe-couche-barre-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant un développé couché barre sur banc plat.",
+          "en": "Adult man performing a flat barbell bench press.",
+          "ar": "رجل بالغ يؤدي ضغط الصدر بالبار على مقعد مستوٍ."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-developpe-couche-barre.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant un développé couché barre sur banc plat.",
+          "en": "Adult man performing a flat barbell bench press.",
+          "ar": "رجل بالغ يؤدي ضغط الصدر بالبار على مقعد مستوٍ."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/v3/strength-developpe-couche-barre-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Tête, omoplates et bassin sur le banc plat, pieds au sol ; barre au-dessus du thorax, coudes fléchis et poignets alignés.",
+          "en": "Head, shoulder blades and pelvis on the flat bench, feet grounded; bar above chest with bent elbows and aligned wrists.",
+          "ar": "الرأس ولوحا الكتف والحوض على المقعد المستوي والقدمان ثابتتان؛ البار فوق الصدر والمرفقان مثنيان والرسغان مستقيمان."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Tête, omoplates et bassin sur le banc plat, pieds au sol ; barre au-dessus du thorax, coudes fléchis et poignets alignés.",
+          "en": "Head, shoulder blades and pelvis on the flat bench, feet grounded; bar above chest with bent elbows and aligned wrists.",
+          "ar": "الرأس ولوحا الكتف والحوض على المقعد المستوي والقدمان ثابتتان؛ البار فوق الصدر والمرفقان مثنيان والرسغان مستقيمان."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/v3/strength-developpe-couche-barre-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Pousse la barre au-dessus du thorax jusqu’à des bras presque tendus, en gardant tous les appuis.",
+          "en": "Press the bar above the chest until arms are almost straight, maintaining every support point.",
+          "ar": "ادفع البار فوق الصدر حتى تصبح الذراعان شبه ممدودتين مع الحفاظ على جميع نقاط الارتكاز."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Pousse la barre au-dessus du thorax jusqu’à des bras presque tendus, en gardant tous les appuis.",
+          "en": "Press the bar above the chest until arms are almost straight, maintaining every support point.",
+          "ar": "ادفع البار فوق الصدر حتى تصبح الذراعان شبه ممدودتين مع الحفاظ على جميع نقاط الارتكاز."
+        }
+      },
+      "variant": {
+        "fr": "Développé couché barre sur banc plat, prise en pronation.",
+        "en": "Flat barbell bench press with an overhand grip.",
+        "ar": "ضغط الصدر بالبار على مقعد مستوٍ بقبضة علوية."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Tête, omoplates et bassin sur le banc plat, pieds au sol ; barre au-dessus du thorax, coudes fléchis et poignets alignés.",
+          "en": "Head, shoulder blades and pelvis on the flat bench, feet grounded; bar above chest with bent elbows and aligned wrists.",
+          "ar": "الرأس ولوحا الكتف والحوض على المقعد المستوي والقدمان ثابتتان؛ البار فوق الصدر والمرفقان مثنيان والرسغان مستقيمان."
+        },
+        {
+          "fr": "Pousse la barre au-dessus du thorax jusqu’à des bras presque tendus, en gardant tous les appuis.",
+          "en": "Press the bar above the chest until arms are almost straight, maintaining every support point.",
+          "ar": "ادفع البار فوق الصدر حتى تصبح الذراعان شبه ممدودتين مع الحفاظ على جميع نقاط الارتكاز."
+        },
+        {
+          "fr": "Fléchis les coudes lentement pour ramener la barre vers le thorax, sans rebond.",
+          "en": "Bend elbows slowly to lower the bar toward the chest, without bouncing.",
+          "ar": "اثن المرفقين ببطء لإعادة البار نحو الصدر دون ارتداد."
+        }
+      ],
+      "illustratedEquipment": [
+        "barbell",
+        "bench"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-batch-validation",
+      "technicalSources": [
+        {
+          "title": "PureGym — Barbell bench press",
+          "url": "https://www.puregym.com/exercises/chest/bench-press/barbell-bench-press/"
+        }
+      ]
+    },
+    "strength-ecarte-poulie-vis-a-vis": {
+      "exerciseId": "strength-ecarte-poulie-vis-a-vis",
+      "heroImage": {
+        "src": "/images/exercises/v3/strength-ecarte-poulie-vis-a-vis-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant un écarté debout entre deux poulies.",
+          "en": "Adult man performing a standing two-cable chest fly.",
+          "ar": "رجل بالغ يؤدي تفتيح الصدر واقفاً بين بكرتين."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-ecarte-poulie-vis-a-vis.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant un écarté debout entre deux poulies.",
+          "en": "Adult man performing a standing two-cable chest fly.",
+          "ar": "رجل بالغ يؤدي تفتيح الصدر واقفاً بين بكرتين."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/v3/strength-ecarte-poulie-vis-a-vis-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Appuis décalés, buste stable ; tiens une poignée de chaque côté, bras ouverts et coudes légèrement fléchis.",
+          "en": "Staggered stance, steady torso; hold one handle on each side, arms open and elbows softly bent.",
+          "ar": "وقفة متباعدة للأمام والخلف وجذع ثابت؛ أمسك مقبضاً في كل جانب والذراعان مفتوحتان والمرفقان مثنيان قليلاً."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Appuis décalés, buste stable ; tiens une poignée de chaque côté, bras ouverts et coudes légèrement fléchis.",
+          "en": "Staggered stance, steady torso; hold one handle on each side, arms open and elbows softly bent.",
+          "ar": "وقفة متباعدة للأمام والخلف وجذع ثابت؛ أمسك مقبضاً في كل جانب والذراعان مفتوحتان والمرفقان مثنيان قليلاً."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/v3/strength-ecarte-poulie-vis-a-vis-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Rapproche les poignées devant le thorax en décrivant un arc, sans transformer le geste en développé.",
+          "en": "Bring handles together in front of the chest along an arc, without turning the movement into a press.",
+          "ar": "قرب المقبضين أمام الصدر بمسار قوسي دون تحويل الحركة إلى دفع بالمرفقين."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Rapproche les poignées devant le thorax en décrivant un arc, sans transformer le geste en développé.",
+          "en": "Bring handles together in front of the chest along an arc, without turning the movement into a press.",
+          "ar": "قرب المقبضين أمام الصدر بمسار قوسي دون تحويل الحركة إلى دفع بالمرفقين."
+        }
+      },
+      "variant": {
+        "fr": "Écarté debout, deux poulies proches de la hauteur des épaules.",
+        "en": "Standing chest fly with two pulleys near shoulder height.",
+        "ar": "تفتيح الصدر واقفاً ببكرتين قرب مستوى الكتفين."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Appuis décalés, buste stable ; tiens une poignée de chaque côté, bras ouverts et coudes légèrement fléchis.",
+          "en": "Staggered stance, steady torso; hold one handle on each side, arms open and elbows softly bent.",
+          "ar": "وقفة متباعدة للأمام والخلف وجذع ثابت؛ أمسك مقبضاً في كل جانب والذراعان مفتوحتان والمرفقان مثنيان قليلاً."
+        },
+        {
+          "fr": "Rapproche les poignées devant le thorax en décrivant un arc, sans transformer le geste en développé.",
+          "en": "Bring handles together in front of the chest along an arc, without turning the movement into a press.",
+          "ar": "قرب المقبضين أمام الصدر بمسار قوسي دون تحويل الحركة إلى دفع بالمرفقين."
+        },
+        {
+          "fr": "Rouvre les bras sous contrôle, en conservant la légère flexion des coudes et la tension des câbles.",
+          "en": "Reopen arms under control, keeping a soft elbow bend and cable tension.",
+          "ar": "افتح الذراعين بتحكم مع بقاء ثني خفيف للمرفقين وشد الكابلين."
+        }
+      ],
+      "illustratedEquipment": [
+        "cable"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-batch-validation",
+      "technicalSources": [
+        {
+          "title": "PureGym — Cable flyes",
+          "url": "https://www.puregym.com/exercises/chest/chest-fly/cable-flyes/"
+        }
+      ]
+    },
+    "strength-tractions": {
+      "exerciseId": "strength-tractions",
+      "heroImage": {
+        "src": "/images/exercises/v3/strength-tractions-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant une traction à la barre en pronation.",
+          "en": "Adult man performing an overhand-grip pull-up.",
+          "ar": "رجل بالغ يؤدي العقلة بقبضة علوية وراحتي اليدين بعيداً عنه."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-tractions.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant une traction à la barre en pronation.",
+          "en": "Adult man performing an overhand-grip pull-up.",
+          "ar": "رجل بالغ يؤدي العقلة بقبضة علوية وراحتي اليدين بعيداً عنه."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/v3/strength-tractions-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Suspends-toi à la barre avec une prise fermée, bras presque tendus, épaules contrôlées et pieds hors du sol.",
+          "en": "Hang with a closed grip, arms almost straight, shoulders controlled and feet clear of the floor.",
+          "ar": "تعلق بقبضة مغلقة والذراعان شبه ممدودتين والكتفان متحكم بهما والقدمان بعيدتان عن الأرض."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Suspends-toi à la barre avec une prise fermée, bras presque tendus, épaules contrôlées et pieds hors du sol.",
+          "en": "Hang with a closed grip, arms almost straight, shoulders controlled and feet clear of the floor.",
+          "ar": "تعلق بقبضة مغلقة والذراعان شبه ممدودتين والكتفان متحكم بهما والقدمان بعيدتان عن الأرض."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/v3/strength-tractions-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Tire les coudes vers le bas pour amener le menton au-dessus de la barre, sans élan ni cou projeté.",
+          "en": "Draw elbows downward to bring the chin above the bar, without swinging or craning the neck.",
+          "ar": "اسحب المرفقين للأسفل حتى يتجاوز الذقن البار دون تأرجح أو دفع الرقبة للأمام."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Tire les coudes vers le bas pour amener le menton au-dessus de la barre, sans élan ni cou projeté.",
+          "en": "Draw elbows downward to bring the chin above the bar, without swinging or craning the neck.",
+          "ar": "اسحب المرفقين للأسفل حتى يتجاوز الذقن البار دون تأرجح أو دفع الرقبة للأمام."
+        }
+      },
+      "variant": {
+        "fr": "Traction stricte à la barre, prise en pronation.",
+        "en": "Strict bar pull-up with an overhand grip.",
+        "ar": "عقلة ثابتة على البار بقبضة علوية."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Suspends-toi à la barre avec une prise fermée, bras presque tendus, épaules contrôlées et pieds hors du sol.",
+          "en": "Hang with a closed grip, arms almost straight, shoulders controlled and feet clear of the floor.",
+          "ar": "تعلق بقبضة مغلقة والذراعان شبه ممدودتين والكتفان متحكم بهما والقدمان بعيدتان عن الأرض."
+        },
+        {
+          "fr": "Tire les coudes vers le bas pour amener le menton au-dessus de la barre, sans élan ni cou projeté.",
+          "en": "Draw elbows downward to bring the chin above the bar, without swinging or craning the neck.",
+          "ar": "اسحب المرفقين للأسفل حتى يتجاوز الذقن البار دون تأرجح أو دفع الرقبة للأمام."
+        },
+        {
+          "fr": "Redescends en dépliant lentement les coudes, sans chute ni relâchement brutal des épaules.",
+          "en": "Lower by slowly extending elbows, without dropping or abruptly relaxing shoulders.",
+          "ar": "انزل بمد المرفقين ببطء دون سقوط أو إرخاء مفاجئ للكتفين."
+        }
+      ],
+      "illustratedEquipment": [
+        "pullupBar"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-batch-validation",
+      "technicalSources": [
+        {
+          "title": "PureGym — Pull-up",
+          "url": "https://www.puregym.com/exercises/back/pull-up/"
+        }
+      ]
+    },
+    "strength-rowing-barre": {
+      "exerciseId": "strength-rowing-barre",
+      "heroImage": {
+        "src": "/images/exercises/v3/strength-rowing-barre-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant un rowing barre penché en pronation.",
+          "en": "Adult man performing a bent-over overhand barbell row.",
+          "ar": "رجل بالغ يؤدي تجديف البار مع انحناء الوركين وقبضة علوية."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-rowing-barre.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant un rowing barre penché en pronation.",
+          "en": "Adult man performing a bent-over overhand barbell row.",
+          "ar": "رجل بالغ يؤدي تجديف البار مع انحناء الوركين وقبضة علوية."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/v3/strength-rowing-barre-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Pieds au sol, genoux souples, hanches reculées ; dos stable, regard vers le sol et barre suspendue sous les épaules.",
+          "en": "Feet grounded, soft knees and hips hinged back; steady back, downward gaze and bar hanging below shoulders.",
+          "ar": "القدمان ثابتتان والركبتان مرنتان والوركان للخلف؛ ظهر ثابت ونظر نحو الأرض والبار معلق أسفل الكتفين."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Pieds au sol, genoux souples, hanches reculées ; dos stable, regard vers le sol et barre suspendue sous les épaules.",
+          "en": "Feet grounded, soft knees and hips hinged back; steady back, downward gaze and bar hanging below shoulders.",
+          "ar": "القدمان ثابتتان والركبتان مرنتان والوركان للخلف؛ ظهر ثابت ونظر نحو الأرض والبار معلق أسفل الكتفين."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/v3/strength-rowing-barre-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Tire la barre vers le haut de l’abdomen en ramenant les coudes en arrière, sans redresser le buste.",
+          "en": "Row the bar toward the upper abdomen, drawing elbows back without raising the torso.",
+          "ar": "اسحب البار نحو أعلى البطن مع إرجاع المرفقين دون رفع الجذع."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Tire la barre vers le haut de l’abdomen en ramenant les coudes en arrière, sans redresser le buste.",
+          "en": "Row the bar toward the upper abdomen, drawing elbows back without raising the torso.",
+          "ar": "اسحب البار نحو أعلى البطن مع إرجاع المرفقين دون رفع الجذع."
+        }
+      },
+      "variant": {
+        "fr": "Rowing barre penché, prise en pronation et buste maintenu.",
+        "en": "Bent-over barbell row with an overhand grip and fixed torso.",
+        "ar": "تجديف البار بانحناء الوركين وقبضة علوية مع ثبات الجذع."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Pieds au sol, genoux souples, hanches reculées ; dos stable, regard vers le sol et barre suspendue sous les épaules.",
+          "en": "Feet grounded, soft knees and hips hinged back; steady back, downward gaze and bar hanging below shoulders.",
+          "ar": "القدمان ثابتتان والركبتان مرنتان والوركان للخلف؛ ظهر ثابت ونظر نحو الأرض والبار معلق أسفل الكتفين."
+        },
+        {
+          "fr": "Tire la barre vers le haut de l’abdomen en ramenant les coudes en arrière, sans redresser le buste.",
+          "en": "Row the bar toward the upper abdomen, drawing elbows back without raising the torso.",
+          "ar": "اسحب البار نحو أعلى البطن مع إرجاع المرفقين دون رفع الجذع."
+        },
+        {
+          "fr": "Allonge les bras lentement en conservant l’angle du buste et les genoux souples.",
+          "en": "Extend arms slowly while keeping torso angle and soft knees.",
+          "ar": "مد الذراعين ببطء مع الحفاظ على زاوية الجذع ومرونة الركبتين."
+        }
+      ],
+      "illustratedEquipment": [
+        "barbell"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-batch-validation",
+      "technicalSources": [
+        {
+          "title": "ACE — Barbell bent-over row",
+          "url": "https://www.acefitness.org/resources/pros/expert-articles/6215/one-weight-workout-series-the-barbell/"
+        }
+      ]
+    },
+    "strength-developpe-militaire-barre": {
+      "exerciseId": "strength-developpe-militaire-barre",
+      "heroImage": {
+        "src": "/images/exercises/v3/strength-developpe-militaire-barre-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant un développé militaire barre debout.",
+          "en": "Adult man performing a strict standing barbell overhead press.",
+          "ar": "رجل بالغ يدفع البار فوق الرأس واقفاً دون اندفاع الساقين."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-developpe-militaire-barre.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant un développé militaire barre debout.",
+          "en": "Adult man performing a strict standing barbell overhead press.",
+          "ar": "رجل بالغ يدفع البار فوق الرأس واقفاً دون اندفاع الساقين."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/v3/strength-developpe-militaire-barre-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Pieds stables, tronc gainé ; barre devant le haut du thorax, prise en pronation et avant-bras sous la barre.",
+          "en": "Stable feet and braced trunk; bar in front of upper chest, overhand grip and forearms below the bar.",
+          "ar": "قدمان ثابتتان وجذع مشدود؛ البار أمام أعلى الصدر بقبضة علوية والساعدان أسفله."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Pieds stables, tronc gainé ; barre devant le haut du thorax, prise en pronation et avant-bras sous la barre.",
+          "en": "Stable feet and braced trunk; bar in front of upper chest, overhand grip and forearms below the bar.",
+          "ar": "قدمان ثابتتان وجذع مشدود؛ البار أمام أعلى الصدر بقبضة علوية والساعدان أسفله."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/v3/strength-developpe-militaire-barre-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Pousse au-dessus de la tête jusqu’à des bras presque tendus, sans impulsion des jambes ni cambrure exagérée.",
+          "en": "Press overhead until arms are almost straight, without leg drive or excessive back arch.",
+          "ar": "ادفع فوق الرأس حتى تصبح الذراعان شبه ممدودتين دون دفع الساقين أو تقوس زائد للظهر."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Pousse au-dessus de la tête jusqu’à des bras presque tendus, sans impulsion des jambes ni cambrure exagérée.",
+          "en": "Press overhead until arms are almost straight, without leg drive or excessive back arch.",
+          "ar": "ادفع فوق الرأس حتى تصبح الذراعان شبه ممدودتين دون دفع الساقين أو تقوس زائد للظهر."
+        }
+      },
+      "variant": {
+        "fr": "Développé militaire strict debout, barre devant les épaules.",
+        "en": "Strict standing overhead press with the bar in front of shoulders.",
+        "ar": "دفع صارم للبار فوق الرأس واقفاً والبار أمام الكتفين."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Pieds stables, tronc gainé ; barre devant le haut du thorax, prise en pronation et avant-bras sous la barre.",
+          "en": "Stable feet and braced trunk; bar in front of upper chest, overhand grip and forearms below the bar.",
+          "ar": "قدمان ثابتتان وجذع مشدود؛ البار أمام أعلى الصدر بقبضة علوية والساعدان أسفله."
+        },
+        {
+          "fr": "Pousse au-dessus de la tête jusqu’à des bras presque tendus, sans impulsion des jambes ni cambrure exagérée.",
+          "en": "Press overhead until arms are almost straight, without leg drive or excessive back arch.",
+          "ar": "ادفع فوق الرأس حتى تصبح الذراعان شبه ممدودتين دون دفع الساقين أو تقوس زائد للظهر."
+        },
+        {
+          "fr": "Ramène la barre devant les épaules lentement en gardant les poignets alignés et les appuis stables.",
+          "en": "Lower the bar in front of shoulders slowly, keeping wrists aligned and feet stable.",
+          "ar": "أعد البار أمام الكتفين ببطء مع استقامة الرسغين وثبات القدمين."
+        }
+      ],
+      "illustratedEquipment": [
+        "barbell"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-batch-validation",
+      "technicalSources": [
+        {
+          "title": "USMC — Force Fitness Exercise Guidebook, barbell overhead press",
+          "url": "https://www.tbs.marines.mil/Portals/230/Force%20Fitness%20Exercise%20Guidebook.pdf?ver=eGNb828lVw2cF1Ji_XVUsg%3D%3D"
+        }
+      ]
+    },
+    "strength-elevations-laterales": {
+      "exerciseId": "strength-elevations-laterales",
+      "heroImage": {
+        "src": "/images/exercises/v3/strength-elevations-laterales-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant des élévations latérales avec deux haltères.",
+          "en": "Adult man performing standing dumbbell lateral raises.",
+          "ar": "رجل بالغ يؤدي الرفع الجانبي بدمبلين مع ثبات الجذع."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-elevations-laterales.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant des élévations latérales avec deux haltères.",
+          "en": "Adult man performing standing dumbbell lateral raises.",
+          "ar": "رجل بالغ يؤدي الرفع الجانبي بدمبلين مع ثبات الجذع."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/v3/strength-elevations-laterales-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Debout, pieds stables et haltères près des cuisses ; coudes souples, poignets droits et épaules relâchées.",
+          "en": "Stand with stable feet and dumbbells beside thighs; soft elbows, straight wrists and relaxed shoulders.",
+          "ar": "قف بقدمين ثابتتين والدمبلان قرب الفخذين مع مرفقين مرنين ورسغين مستقيمين وكتفين مرتخيين."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Debout, pieds stables et haltères près des cuisses ; coudes souples, poignets droits et épaules relâchées.",
+          "en": "Stand with stable feet and dumbbells beside thighs; soft elbows, straight wrists and relaxed shoulders.",
+          "ar": "قف بقدمين ثابتتين والدمبلان قرب الفخذين مع مرفقين مرنين ورسغين مستقيمين وكتفين مرتخيين."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/v3/strength-elevations-laterales-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Écarte les bras légèrement vers l’avant jusqu’aux environs de la hauteur des épaules, sans hausser le buste.",
+          "en": "Raise arms outward and slightly forward to around shoulder height, without lifting or swinging the torso.",
+          "ar": "ارفع الذراعين جانبياً وإلى الأمام قليلاً قرب مستوى الكتفين دون رفع الجذع أو تأرجحه."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Écarte les bras légèrement vers l’avant jusqu’aux environs de la hauteur des épaules, sans hausser le buste.",
+          "en": "Raise arms outward and slightly forward to around shoulder height, without lifting or swinging the torso.",
+          "ar": "ارفع الذراعين جانبياً وإلى الأمام قليلاً قرب مستوى الكتفين دون رفع الجذع أو تأرجحه."
+        }
+      },
+      "variant": {
+        "fr": "Élévations latérales debout avec haltères, sans élan.",
+        "en": "Standing dumbbell lateral raises without momentum.",
+        "ar": "رفع جانبي بالدمبل واقفاً دون اندفاع."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Debout, pieds stables et haltères près des cuisses ; coudes souples, poignets droits et épaules relâchées.",
+          "en": "Stand with stable feet and dumbbells beside thighs; soft elbows, straight wrists and relaxed shoulders.",
+          "ar": "قف بقدمين ثابتتين والدمبلان قرب الفخذين مع مرفقين مرنين ورسغين مستقيمين وكتفين مرتخيين."
+        },
+        {
+          "fr": "Écarte les bras légèrement vers l’avant jusqu’aux environs de la hauteur des épaules, sans hausser le buste.",
+          "en": "Raise arms outward and slightly forward to around shoulder height, without lifting or swinging the torso.",
+          "ar": "ارفع الذراعين جانبياً وإلى الأمام قليلاً قرب مستوى الكتفين دون رفع الجذع أو تأرجحه."
+        },
+        {
+          "fr": "Redescends les bras lentement près des cuisses, sans laisser tomber les haltères.",
+          "en": "Lower arms slowly beside thighs without dropping the dumbbells.",
+          "ar": "اخفض الذراعين ببطء قرب الفخذين دون إسقاط الدمبلين."
+        }
+      ],
+      "illustratedEquipment": [
+        "dumbbell"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-batch-validation",
+      "technicalSources": [
+        {
+          "title": "ACE — Dumbbell lateral raises",
+          "url": "https://www.acefitness.org/resources/pros/expert-articles/5277/train-this-not-that-the-upper-body-edition/"
+        }
+      ]
+    },
+    "strength-curl-marteau": {
+      "exerciseId": "strength-curl-marteau",
+      "heroImage": {
+        "src": "/images/exercises/v3/strength-curl-marteau-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant un curl marteau avec une prise neutre.",
+          "en": "Adult man performing a neutral-grip dumbbell hammer curl.",
+          "ar": "رجل بالغ يؤدي ثني المرفقين بالدمبل بقبضة محايدة كالمطرقة."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-curl-marteau.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant un curl marteau avec une prise neutre.",
+          "en": "Adult man performing a neutral-grip dumbbell hammer curl.",
+          "ar": "رجل بالغ يؤدي ثني المرفقين بالدمبل بقبضة محايدة كالمطرقة."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/v3/strength-curl-marteau-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Pieds stables, bras près du buste et haltères au niveau des cuisses ; paumes tournées l’une vers l’autre.",
+          "en": "Feet stable, upper arms beside torso and dumbbells at thighs; palms face each other.",
+          "ar": "قدمان ثابتتان وذراعان قرب الجذع والدمبلان عند الفخذين وراحتا اليدين متقابلتان."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Pieds stables, bras près du buste et haltères au niveau des cuisses ; paumes tournées l’une vers l’autre.",
+          "en": "Feet stable, upper arms beside torso and dumbbells at thighs; palms face each other.",
+          "ar": "قدمان ثابتتان وذراعان قرب الجذع والدمبلان عند الفخذين وراحتا اليدين متقابلتان."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/v3/strength-curl-marteau-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Fléchis les coudes pour monter les haltères près des épaules, pouces vers le haut et poignets neutres.",
+          "en": "Bend elbows to lift dumbbells near shoulders, thumbs up and wrists neutral.",
+          "ar": "اثن المرفقين لرفع الدمبلين قرب الكتفين والإبهامان للأعلى والرسغان محايدان."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Fléchis les coudes pour monter les haltères près des épaules, pouces vers le haut et poignets neutres.",
+          "en": "Bend elbows to lift dumbbells near shoulders, thumbs up and wrists neutral.",
+          "ar": "اثن المرفقين لرفع الدمبلين قرب الكتفين والإبهامان للأعلى والرسغان محايدان."
+        }
+      },
+      "variant": {
+        "fr": "Curl marteau debout à deux haltères, prise neutre maintenue.",
+        "en": "Standing two-dumbbell hammer curl with a maintained neutral grip.",
+        "ar": "ثني المرفقين واقفاً بدمبلين مع الحفاظ على القبضة المحايدة."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Pieds stables, bras près du buste et haltères au niveau des cuisses ; paumes tournées l’une vers l’autre.",
+          "en": "Feet stable, upper arms beside torso and dumbbells at thighs; palms face each other.",
+          "ar": "قدمان ثابتتان وذراعان قرب الجذع والدمبلان عند الفخذين وراحتا اليدين متقابلتان."
+        },
+        {
+          "fr": "Fléchis les coudes pour monter les haltères près des épaules, pouces vers le haut et poignets neutres.",
+          "en": "Bend elbows to lift dumbbells near shoulders, thumbs up and wrists neutral.",
+          "ar": "اثن المرفقين لرفع الدمبلين قرب الكتفين والإبهامان للأعلى والرسغان محايدان."
+        },
+        {
+          "fr": "Déplie les coudes lentement sans tourner les paumes vers le haut.",
+          "en": "Extend elbows slowly without turning palms upward.",
+          "ar": "مد المرفقين ببطء دون تدوير راحتي اليدين للأعلى."
+        }
+      ],
+      "illustratedEquipment": [
+        "dumbbell"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-batch-validation",
+      "technicalSources": [
+        {
+          "title": "Muscle & Strength — Standing hammer curl",
+          "url": "https://www.muscleandstrength.com/exercises/standing-hammer-curl.html"
+        }
+      ]
+    },
+    "strength-extension-poulie-haute-corde": {
+      "exerciseId": "strength-extension-poulie-haute-corde",
+      "heroImage": {
+        "src": "/images/exercises/v3/strength-extension-poulie-haute-corde-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant une extension des coudes à la corde sur poulie haute.",
+          "en": "Adult man performing a high-cable rope triceps pushdown.",
+          "ar": "رجل بالغ يمد المرفقين بالحبل المتصل بالبكرة العلوية."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-extension-poulie-haute-corde.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant une extension des coudes à la corde sur poulie haute.",
+          "en": "Adult man performing a high-cable rope triceps pushdown.",
+          "ar": "رجل بالغ يمد المرفقين بالحبل المتصل بالبكرة العلوية."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/v3/strength-extension-poulie-haute-corde-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Face à la poulie haute, tiens chaque extrémité de la corde en prise neutre ; coudes fléchis près du buste.",
+          "en": "Face the high pulley, gripping each rope end neutrally; elbows bent beside the torso.",
+          "ar": "واجه البكرة العلوية وأمسك كل طرف للحبل بقبضة محايدة والمرفقان مثنيان قرب الجذع."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Face à la poulie haute, tiens chaque extrémité de la corde en prise neutre ; coudes fléchis près du buste.",
+          "en": "Face the high pulley, gripping each rope end neutrally; elbows bent beside the torso.",
+          "ar": "واجه البكرة العلوية وأمسك كل طرف للحبل بقبضة محايدة والمرفقان مثنيان قرب الجذع."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/v3/strength-extension-poulie-haute-corde-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Étends les coudes pour amener les mains près des cuisses, sans déplacer les épaules ni balancer le tronc.",
+          "en": "Extend elbows to bring hands beside thighs without shifting shoulders or swinging the torso.",
+          "ar": "مد المرفقين لتقريب اليدين من الفخذين دون تحريك الكتفين أو تأرجح الجذع."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Étends les coudes pour amener les mains près des cuisses, sans déplacer les épaules ni balancer le tronc.",
+          "en": "Extend elbows to bring hands beside thighs without shifting shoulders or swinging the torso.",
+          "ar": "مد المرفقين لتقريب اليدين من الفخذين دون تحريك الكتفين أو تأرجح الجذع."
+        }
+      },
+      "variant": {
+        "fr": "Extension des coudes à la poulie haute avec corde, debout.",
+        "en": "Standing high-cable rope triceps pushdown.",
+        "ar": "مد المرفقين بالحبل على البكرة العلوية واقفاً."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Face à la poulie haute, tiens chaque extrémité de la corde en prise neutre ; coudes fléchis près du buste.",
+          "en": "Face the high pulley, gripping each rope end neutrally; elbows bent beside the torso.",
+          "ar": "واجه البكرة العلوية وأمسك كل طرف للحبل بقبضة محايدة والمرفقان مثنيان قرب الجذع."
+        },
+        {
+          "fr": "Étends les coudes pour amener les mains près des cuisses, sans déplacer les épaules ni balancer le tronc.",
+          "en": "Extend elbows to bring hands beside thighs without shifting shoulders or swinging the torso.",
+          "ar": "مد المرفقين لتقريب اليدين من الفخذين دون تحريك الكتفين أو تأرجح الجذع."
+        },
+        {
+          "fr": "Laisse les coudes se fléchir lentement, bras toujours près des côtes et câble tendu.",
+          "en": "Let elbows bend slowly, upper arms still beside ribs and cable taut.",
+          "ar": "دع المرفقين ينثنيان ببطء مع بقاء أعلى الذراعين قرب الأضلاع وشد الكابل."
+        }
+      ],
+      "illustratedEquipment": [
+        "cable"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-batch-validation",
+      "technicalSources": [
+        {
+          "title": "PureGym — Tricep pushdowns",
+          "url": "https://www.puregym.com/exercises/arms-and-shoulders/tricep-extension/tricep-pushdowns/"
+        }
+      ]
+    },
+    "strength-presse-a-cuisses": {
+      "exerciseId": "strength-presse-a-cuisses",
+      "heroImage": {
+        "src": "/images/exercises/v3/strength-presse-a-cuisses-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme utilisant une presse à cuisses inclinée avec appuis conservés.",
+          "en": "Adult man using an inclined leg press with supported back and pelvis.",
+          "ar": "رجل بالغ يستخدم جهاز ضغط الساقين المائل مع دعم الظهر والحوض."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-presse-a-cuisses.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme utilisant une presse à cuisses inclinée avec appuis conservés.",
+          "en": "Adult man using an inclined leg press with supported back and pelvis.",
+          "ar": "رجل بالغ يستخدم جهاز ضغط الساقين المائل مع دعم الظهر والحوض."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/v3/strength-presse-a-cuisses-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Tête, dos et bassin soutenus, mains aux poignées ; pieds à plat sur la plateforme et genoux fléchis dans l’axe des pieds.",
+          "en": "Head, back and pelvis supported, hands on handles; feet flat on the plate and bent knees following toes.",
+          "ar": "الرأس والظهر والحوض مدعومة واليدان على المقابض؛ القدمان مسطحتان على المنصة والركبتان مثنيتان باتجاه القدمين."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Tête, dos et bassin soutenus, mains aux poignées ; pieds à plat sur la plateforme et genoux fléchis dans l’axe des pieds.",
+          "en": "Head, back and pelvis supported, hands on handles; feet flat on the plate and bent knees following toes.",
+          "ar": "الرأس والظهر والحوض مدعومة واليدان على المقابض؛ القدمان مسطحتان على المنصة والركبتان مثنيتان باتجاه القدمين."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/v3/strength-presse-a-cuisses-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Pousse la plateforme en étendant les jambes presque complètement, sans verrouiller les genoux ni décoller les talons.",
+          "en": "Press the platform away until legs are almost straight, without locking knees or lifting heels.",
+          "ar": "ادفع المنصة حتى تصبح الساقان شبه مستقيمتين دون قفل الركبتين أو رفع الكعبين."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Pousse la plateforme en étendant les jambes presque complètement, sans verrouiller les genoux ni décoller les talons.",
+          "en": "Press the platform away until legs are almost straight, without locking knees or lifting heels.",
+          "ar": "ادفع المنصة حتى تصبح الساقان شبه مستقيمتين دون قفل الركبتين أو رفع الكعبين."
+        }
+      },
+      "variant": {
+        "fr": "Exemple illustré : presse à cuisses inclinée avec chariot.",
+        "en": "Illustrated variation: inclined sled leg press.",
+        "ar": "الطريقة المصورة: ضغط الساقين على جهاز مائل بعربة."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Tête, dos et bassin soutenus, mains aux poignées ; pieds à plat sur la plateforme et genoux fléchis dans l’axe des pieds.",
+          "en": "Head, back and pelvis supported, hands on handles; feet flat on the plate and bent knees following toes.",
+          "ar": "الرأس والظهر والحوض مدعومة واليدان على المقابض؛ القدمان مسطحتان على المنصة والركبتان مثنيتان باتجاه القدمين."
+        },
+        {
+          "fr": "Pousse la plateforme en étendant les jambes presque complètement, sans verrouiller les genoux ni décoller les talons.",
+          "en": "Press the platform away until legs are almost straight, without locking knees or lifting heels.",
+          "ar": "ادفع المنصة حتى تصبح الساقان شبه مستقيمتين دون قفل الركبتين أو رفع الكعبين."
+        },
+        {
+          "fr": "Fléchis les genoux lentement pour rapprocher le chariot, en gardant le bassin sur le dossier.",
+          "en": "Bend knees slowly to bring the sled closer while keeping the pelvis supported.",
+          "ar": "اثن الركبتين ببطء لتقريب العربة مع بقاء الحوض مدعوماً."
+        }
+      ],
+      "illustratedEquipment": [
+        "machine"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-batch-validation",
+      "technicalSources": [
+        {
+          "title": "Muscle & Strength — Leg press",
+          "url": "https://www.muscleandstrength.com/exercises/45-degree-leg-press.html"
+        }
+      ]
+    },
+    "strength-leg-extension": {
+      "exerciseId": "strength-leg-extension",
+      "heroImage": {
+        "src": "/images/exercises/v3/strength-leg-extension-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant une extension des genoux assis à la machine.",
+          "en": "Adult man performing a seated machine leg extension.",
+          "ar": "رجل بالغ يؤدي مد الركبتين جالساً على جهاز تمديد الساقين."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-leg-extension.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant une extension des genoux assis à la machine.",
+          "en": "Adult man performing a seated machine leg extension.",
+          "ar": "رجل بالغ يؤدي مد الركبتين جالساً على جهاز تمديد الساقين."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/v3/strength-leg-extension-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Dos et bassin contre les supports, genoux fléchis près de l’axe ; rouleau à l’avant du bas des jambes, au-dessus des chevilles.",
+          "en": "Back and pelvis supported, bent knees near the pivot; roller in front of lower shins above ankles.",
+          "ar": "الظهر والحوض مدعومان والركبتان مثنيتان قرب محور الجهاز؛ الأسطوانة أمام أسفل الساقين فوق الكاحلين."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Dos et bassin contre les supports, genoux fléchis près de l’axe ; rouleau à l’avant du bas des jambes, au-dessus des chevilles.",
+          "en": "Back and pelvis supported, bent knees near the pivot; roller in front of lower shins above ankles.",
+          "ar": "الظهر والحوض مدعومان والركبتان مثنيتان قرب محور الجهاز؛ الأسطوانة أمام أسفل الساقين فوق الكاحلين."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/v3/strength-leg-extension-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Étends les genoux pour lever le rouleau, cuisses soutenues et mains aux poignées, sans à-coup.",
+          "en": "Extend knees to lift the roller, keeping thighs supported and hands on handles without jerking.",
+          "ar": "مد الركبتين لرفع الأسطوانة مع دعم الفخذين واليدين على المقابض دون حركة مفاجئة."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Étends les genoux pour lever le rouleau, cuisses soutenues et mains aux poignées, sans à-coup.",
+          "en": "Extend knees to lift the roller, keeping thighs supported and hands on handles without jerking.",
+          "ar": "مد الركبتين لرفع الأسطوانة مع دعم الفخذين واليدين على المقابض دون حركة مفاجئة."
+        }
+      },
+      "variant": {
+        "fr": "Extension des genoux assis à la machine, deux jambes.",
+        "en": "Seated machine leg extension with both legs.",
+        "ar": "مد الركبتين جالساً على الجهاز بالساقين معاً."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Dos et bassin contre les supports, genoux fléchis près de l’axe ; rouleau à l’avant du bas des jambes, au-dessus des chevilles.",
+          "en": "Back and pelvis supported, bent knees near the pivot; roller in front of lower shins above ankles.",
+          "ar": "الظهر والحوض مدعومان والركبتان مثنيتان قرب محور الجهاز؛ الأسطوانة أمام أسفل الساقين فوق الكاحلين."
+        },
+        {
+          "fr": "Étends les genoux pour lever le rouleau, cuisses soutenues et mains aux poignées, sans à-coup.",
+          "en": "Extend knees to lift the roller, keeping thighs supported and hands on handles without jerking.",
+          "ar": "مد الركبتين لرفع الأسطوانة مع دعم الفخذين واليدين على المقابض دون حركة مفاجئة."
+        },
+        {
+          "fr": "Redescends les pieds lentement en fléchissant les genoux, sans laisser retomber la pile.",
+          "en": "Lower feet slowly by bending knees, without dropping the weight stack.",
+          "ar": "اخفض القدمين ببطء بثني الركبتين دون إسقاط الأوزان."
+        }
+      ],
+      "illustratedEquipment": [
+        "machine"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-batch-validation",
+      "technicalSources": [
+        {
+          "title": "PureGym — Leg extensions",
+          "url": "https://www.puregym.com/exercises/legs/quad-exercises/leg-extensions/"
+        }
+      ]
+    },
+    "strength-fentes-marchees": {
+      "exerciseId": "strength-fentes-marchees",
+      "heroImage": {
+        "src": "/images/exercises/v3/strength-fentes-marchees-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant une fente marchée avec deux haltères.",
+          "en": "Adult man performing a forward walking dumbbell lunge.",
+          "ar": "رجل بالغ يؤدي اندفاعاً أمامياً بالمشي مع دمبل في كل يد."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-fentes-marchees.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant une fente marchée avec deux haltères.",
+          "en": "Adult man performing a forward walking dumbbell lunge.",
+          "ar": "رجل بالغ يؤدي اندفاعاً أمامياً بالمشي مع دمبل في كل يد."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/v3/strength-fentes-marchees-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Debout, pieds écartés à largeur de hanches et un haltère de chaque côté, bras allongés et buste stable.",
+          "en": "Stand with feet hip-width apart, a dumbbell at each side, arms extended and torso steady.",
+          "ar": "قف والقدمان بعرض الوركين ودمبل في كل جانب والذراعان ممدودتان والجذع ثابت."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Debout, pieds écartés à largeur de hanches et un haltère de chaque côté, bras allongés et buste stable.",
+          "en": "Stand with feet hip-width apart, a dumbbell at each side, arms extended and torso steady.",
+          "ar": "قف والقدمان بعرض الوركين ودمبل في كل جانب والذراعان ممدودتان والجذع ثابت."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/v3/strength-fentes-marchees-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Avance un pied puis abaisse-toi en pliant les deux genoux, pied avant à plat et talon arrière levé.",
+          "en": "Step forward and lower by bending both knees, front foot flat and rear heel raised.",
+          "ar": "اخط للأمام ثم انزل بثني الركبتين والقدم الأمامية مسطحة والكعب الخلفي مرفوع."
+        },
+        "label": {
+          "fr": "Point bas du pas",
+          "en": "Bottom of the step",
+          "ar": "أسفل الخطوة"
+        },
+        "caption": {
+          "fr": "Avance un pied puis abaisse-toi en pliant les deux genoux, pied avant à plat et talon arrière levé.",
+          "en": "Step forward and lower by bending both knees, front foot flat and rear heel raised.",
+          "ar": "اخط للأمام ثم انزل بثني الركبتين والقدم الأمامية مسطحة والكعب الخلفي مرفوع."
+        }
+      },
+      "variant": {
+        "fr": "Fentes marchées avec deux haltères ; la seconde vue montre le point bas d’un pas.",
+        "en": "Walking dumbbell lunges; the second view shows the bottom of one step.",
+        "ar": "اندفاع بالمشي بدمبلين؛ تعرض الصورة الثانية أسفل خطوة واحدة."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Debout, pieds écartés à largeur de hanches et un haltère de chaque côté, bras allongés et buste stable.",
+          "en": "Stand with feet hip-width apart, a dumbbell at each side, arms extended and torso steady.",
+          "ar": "قف والقدمان بعرض الوركين ودمبل في كل جانب والذراعان ممدودتان والجذع ثابت."
+        },
+        {
+          "fr": "Avance un pied puis abaisse-toi en pliant les deux genoux, pied avant à plat et talon arrière levé.",
+          "en": "Step forward and lower by bending both knees, front foot flat and rear heel raised.",
+          "ar": "اخط للأمام ثم انزل بثني الركبتين والقدم الأمامية مسطحة والكعب الخلفي مرفوع."
+        },
+        {
+          "fr": "Pousse dans le pied avant pour te relever, puis avance la jambe arrière pour le pas suivant.",
+          "en": "Push through the front foot to rise, then bring the rear leg forward for the next step.",
+          "ar": "ادفع بالقدم الأمامية للوقوف ثم قدم الساق الخلفية للخطوة التالية."
+        }
+      ],
+      "illustratedEquipment": [
+        "dumbbell"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-batch-validation",
+      "technicalSources": [
+        {
+          "title": "PureGym — Walking lunges",
+          "url": "https://www.puregym.com/exercises/legs/quad-exercises/lunges/walking-lunges/"
+        }
+      ]
+    },
+    "strength-leg-curl-allonge": {
+      "exerciseId": "strength-leg-curl-allonge",
+      "heroImage": {
+        "src": "/images/exercises/v3/strength-leg-curl-allonge-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant un leg curl allongé sur le ventre à la machine.",
+          "en": "Adult man performing a prone lying machine leg curl.",
+          "ar": "رجل بالغ يثني الركبتين مستلقياً على البطن بجهاز ثني الساقين."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-leg-curl-allonge.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant un leg curl allongé sur le ventre à la machine.",
+          "en": "Adult man performing a prone lying machine leg curl.",
+          "ar": "رجل بالغ يثني الركبتين مستلقياً على البطن بجهاز ثني الساقين."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/v3/strength-leg-curl-allonge-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Allongé face au sol, mains aux poignées, genoux près de l’axe ; rouleau derrière le bas des jambes, au-dessus des talons.",
+          "en": "Lie face down holding handles, knees near the pivot; roller behind lower legs above heels.",
+          "ar": "استلق ووجهك للأسفل واليدان على المقابض والركبتان قرب المحور؛ الأسطوانة خلف أسفل الساقين فوق الكعبين."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Allongé face au sol, mains aux poignées, genoux près de l’axe ; rouleau derrière le bas des jambes, au-dessus des talons.",
+          "en": "Lie face down holding handles, knees near the pivot; roller behind lower legs above heels.",
+          "ar": "استلق ووجهك للأسفل واليدان على المقابض والركبتان قرب المحور؛ الأسطوانة خلف أسفل الساقين فوق الكعبين."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/v3/strength-leg-curl-allonge-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Fléchis les genoux pour rapprocher les talons des fessiers, sans décoller le bassin ni les cuisses.",
+          "en": "Bend knees to bring heels toward the buttocks without lifting pelvis or thighs.",
+          "ar": "اثن الركبتين لتقريب الكعبين من الأرداف دون رفع الحوض أو الفخذين."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Fléchis les genoux pour rapprocher les talons des fessiers, sans décoller le bassin ni les cuisses.",
+          "en": "Bend knees to bring heels toward the buttocks without lifting pelvis or thighs.",
+          "ar": "اثن الركبتين لتقريب الكعبين من الأرداف دون رفع الحوض أو الفخذين."
+        }
+      },
+      "variant": {
+        "fr": "Leg curl allongé sur le ventre, bassin et cuisses soutenus.",
+        "en": "Prone lying leg curl with supported pelvis and thighs.",
+        "ar": "ثني الركبتين مستلقياً على البطن مع دعم الحوض والفخذين."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Allongé face au sol, mains aux poignées, genoux près de l’axe ; rouleau derrière le bas des jambes, au-dessus des talons.",
+          "en": "Lie face down holding handles, knees near the pivot; roller behind lower legs above heels.",
+          "ar": "استلق ووجهك للأسفل واليدان على المقابض والركبتان قرب المحور؛ الأسطوانة خلف أسفل الساقين فوق الكعبين."
+        },
+        {
+          "fr": "Fléchis les genoux pour rapprocher les talons des fessiers, sans décoller le bassin ni les cuisses.",
+          "en": "Bend knees to bring heels toward the buttocks without lifting pelvis or thighs.",
+          "ar": "اثن الركبتين لتقريب الكعبين من الأرداف دون رفع الحوض أو الفخذين."
+        },
+        {
+          "fr": "Allonge les jambes lentement, en gardant le rouleau au contact et le tronc soutenu.",
+          "en": "Extend legs slowly, keeping roller contact and torso support.",
+          "ar": "مد الساقين ببطء مع بقاء تلامس الأسطوانة ودعم الجذع."
+        }
+      ],
+      "illustratedEquipment": [
+        "machine"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-batch-validation",
+      "technicalSources": [
+        {
+          "title": "PureGym — Prone leg curl setup",
+          "url": "https://www.puregym.com/amp/blog/how-to-use-gym-equipment/"
+        }
+      ]
+    },
+    "strength-mollets-debout": {
+      "exerciseId": "strength-mollets-debout",
+      "heroImage": {
+        "src": "/images/exercises/v3/strength-mollets-debout-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant une élévation des talons debout.",
+          "en": "Adult man performing a controlled standing calf raise.",
+          "ar": "رجل بالغ يرفع الكعبين واقفاً بحركة متحكم بها."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-mollets-debout.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant une élévation des talons debout.",
+          "en": "Adult man performing a controlled standing calf raise.",
+          "ar": "رجل بالغ يرفع الكعبين واقفاً بحركة متحكم بها."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/v3/strength-mollets-debout-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Pieds parallèles au sol, talons posés et genoux souples ; une main touche légèrement un support fixe.",
+          "en": "Feet parallel and flat, heels down and knees soft; one hand lightly touches a fixed support.",
+          "ar": "القدمان متوازيتان ومسطحتان والكعبان على الأرض والركبتان مرنتان؛ يد تلامس دعامة ثابتة بخفة."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Pieds parallèles au sol, talons posés et genoux souples ; une main touche légèrement un support fixe.",
+          "en": "Feet parallel and flat, heels down and knees soft; one hand lightly touches a fixed support.",
+          "ar": "القدمان متوازيتان ومسطحتان والكعبان على الأرض والركبتان مرنتان؛ يد تلامس دعامة ثابتة بخفة."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/v3/strength-mollets-debout-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Soulève les deux talons pour monter sur l’avant des pieds, sans plier les genoux ni te suspendre au support.",
+          "en": "Lift both heels onto the forefeet without bending knees or hanging from the support.",
+          "ar": "ارفع الكعبين للارتكاز على مقدمة القدمين دون ثني الركبتين أو التعلق بالدعامة."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Soulève les deux talons pour monter sur l’avant des pieds, sans plier les genoux ni te suspendre au support.",
+          "en": "Lift both heels onto the forefeet without bending knees or hanging from the support.",
+          "ar": "ارفع الكعبين للارتكاز على مقدمة القدمين دون ثني الركبتين أو التعلق بالدعامة."
+        }
+      },
+      "variant": {
+        "fr": "Exemple illustré : élévation des talons au poids du corps, au sol avec appui léger.",
+        "en": "Illustrated variation: floor bodyweight calf raise with light balance support.",
+        "ar": "الطريقة المصورة: رفع الكعبين بوزن الجسم على الأرض مع ارتكاز خفيف للتوازن."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Pieds parallèles au sol, talons posés et genoux souples ; une main touche légèrement un support fixe.",
+          "en": "Feet parallel and flat, heels down and knees soft; one hand lightly touches a fixed support.",
+          "ar": "القدمان متوازيتان ومسطحتان والكعبان على الأرض والركبتان مرنتان؛ يد تلامس دعامة ثابتة بخفة."
+        },
+        {
+          "fr": "Soulève les deux talons pour monter sur l’avant des pieds, sans plier les genoux ni te suspendre au support.",
+          "en": "Lift both heels onto the forefeet without bending knees or hanging from the support.",
+          "ar": "ارفع الكعبين للارتكاز على مقدمة القدمين دون ثني الركبتين أو التعلق بالدعامة."
+        },
+        {
+          "fr": "Redescends les talons lentement jusqu’au sol sans rebond.",
+          "en": "Lower heels slowly back to the floor without bouncing.",
+          "ar": "اخفض الكعبين ببطء نحو الأرض دون ارتداد."
+        }
+      ],
+      "illustratedEquipment": [
+        "bodyweight"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-batch-validation",
+      "technicalSources": [
+        {
+          "title": "NHS — Strength exercises, calf raises",
+          "url": "https://www.nhs.uk/live-well/exercise/strength-exercises/"
+        }
+      ]
+    },
+    "strength-crunch-poulie": {
+      "exerciseId": "strength-crunch-poulie",
+      "heroImage": {
+        "src": "/images/exercises/v3/strength-crunch-poulie-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant un crunch à genoux avec une corde de poulie haute.",
+          "en": "Adult man performing a kneeling high-cable rope crunch.",
+          "ar": "رجل بالغ يؤدي كرنش راكعاً بحبل متصل بالبكرة العلوية."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-crunch-poulie.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant un crunch à genoux avec une corde de poulie haute.",
+          "en": "Adult man performing a kneeling high-cable rope crunch.",
+          "ar": "رجل بالغ يؤدي كرنش راكعاً بحبل متصل بالبكرة العلوية."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/v3/strength-crunch-poulie-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "À genoux sur un tapis, bassin stable ; tiens les extrémités de corde près du visage, coudes fléchis et câble tendu.",
+          "en": "Kneel on a mat with stable hips; hold rope ends near the face, elbows bent and cable taut.",
+          "ar": "اركع على بساط بحوض ثابت وأمسك طرفي الحبل قرب الوجه والمرفقان مثنيان والكابل مشدود."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "À genoux sur un tapis, bassin stable ; tiens les extrémités de corde près du visage, coudes fléchis et câble tendu.",
+          "en": "Kneel on a mat with stable hips; hold rope ends near the face, elbows bent and cable taut.",
+          "ar": "اركع على بساط بحوض ثابت وأمسك طرفي الحبل قرب الوجه والمرفقان مثنيان والكابل مشدود."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/v3/strength-crunch-poulie-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Rapproche les côtes du bassin en enroulant le tronc ; les bras guident la corde sans tirer sur la nuque.",
+          "en": "Bring ribs toward pelvis by curling the trunk; arms guide the rope without pulling the neck.",
+          "ar": "قرب الأضلاع من الحوض بثني الجذع؛ توجه الذراعان الحبل دون سحب الرقبة."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Rapproche les côtes du bassin en enroulant le tronc ; les bras guident la corde sans tirer sur la nuque.",
+          "en": "Bring ribs toward pelvis by curling the trunk; arms guide the rope without pulling the neck.",
+          "ar": "قرب الأضلاع من الحوض بثني الجذع؛ توجه الذراعان الحبل دون سحب الرقبة."
+        }
+      },
+      "variant": {
+        "fr": "Crunch à genoux avec corde de poulie haute, flexion contrôlée du tronc.",
+        "en": "Kneeling high-cable rope crunch with controlled trunk flexion.",
+        "ar": "كرنش راكع بحبل البكرة العلوية مع ثني متحكم به للجذع."
+      },
+      "technicalChecks": [
+        {
+          "fr": "À genoux sur un tapis, bassin stable ; tiens les extrémités de corde près du visage, coudes fléchis et câble tendu.",
+          "en": "Kneel on a mat with stable hips; hold rope ends near the face, elbows bent and cable taut.",
+          "ar": "اركع على بساط بحوض ثابت وأمسك طرفي الحبل قرب الوجه والمرفقان مثنيان والكابل مشدود."
+        },
+        {
+          "fr": "Rapproche les côtes du bassin en enroulant le tronc ; les bras guident la corde sans tirer sur la nuque.",
+          "en": "Bring ribs toward pelvis by curling the trunk; arms guide the rope without pulling the neck.",
+          "ar": "قرب الأضلاع من الحوض بثني الجذع؛ توجه الذراعان الحبل دون سحب الرقبة."
+        },
+        {
+          "fr": "Déroule le tronc lentement vers la position de départ, sans cambrure forcée ni déplacement du bassin.",
+          "en": "Uncurl slowly toward the start without forced back arch or hip movement.",
+          "ar": "عد بالجذع ببطء نحو البداية دون تقوس قسري للظهر أو تحريك الحوض."
+        }
+      ],
+      "illustratedEquipment": [
+        "cable"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-batch-validation",
+      "technicalSources": [
+        {
+          "title": "Muscle & Strength — Cable crunch",
+          "url": "https://www.muscleandstrength.com/exercises/cable-crunch.html"
+        }
+      ]
+    },
+    "strength-gainage-planche": {
+      "exerciseId": "strength-gainage-planche",
+      "heroImage": {
+        "src": "/images/exercises/v3/strength-gainage-planche-hold.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme maintenant une planche sur les avant-bras et les pointes des pieds.",
+          "en": "Adult man holding a static forearm plank on toes and forearms.",
+          "ar": "رجل بالغ يحافظ على بلانك ثابت بالارتكاز على الساعدين وأصابع القدمين."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-gainage-planche.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme maintenant une planche sur les avant-bras et les pointes des pieds.",
+          "en": "Adult man holding a static forearm plank on toes and forearms.",
+          "ar": "رجل بالغ يحافظ على بلانك ثابت بالارتكاز على الساعدين وأصابع القدمين."
+        }
+      },
+      "staticPositionImage": {
+        "src": "/images/exercises/v3/strength-gainage-planche-hold.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Avant-bras et pointes des pieds sur le tapis, coudes sous les épaules ; tête, tronc et bassin alignés.",
+          "en": "Forearms and toes on the mat, elbows under shoulders; head, trunk and pelvis aligned.",
+          "ar": "الساعدان وأصابع القدمين على البساط والمرفقان تحت الكتفين والرأس والجذع والحوض بمحاذاة واحدة."
+        },
+        "label": {
+          "fr": "Maintien statique",
+          "en": "Static hold",
+          "ar": "ثبات ثابت"
+        },
+        "caption": {
+          "fr": "Avant-bras et pointes des pieds sur le tapis, coudes sous les épaules ; tête, tronc et bassin alignés.",
+          "en": "Forearms and toes on the mat, elbows under shoulders; head, trunk and pelvis aligned.",
+          "ar": "الساعدان وأصابع القدمين على البساط والمرفقان تحت الكتفين والرأس والجذع والحوض بمحاذاة واحدة."
+        }
+      },
+      "variant": {
+        "fr": "Gainage sur les avant-bras, maintien statique avec respiration régulière.",
+        "en": "Forearm plank, a static hold with steady breathing.",
+        "ar": "بلانك على الساعدين مع ثبات وتنفس منتظم."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Avant-bras et pointes des pieds sur le tapis, coudes sous les épaules ; tête, tronc et bassin alignés.",
+          "en": "Forearms and toes on the mat, elbows under shoulders; head, trunk and pelvis aligned.",
+          "ar": "الساعدان وأصابع القدمين على البساط والمرفقان تحت الكتفين والرأس والجذع والحوض بمحاذاة واحدة."
+        },
+        {
+          "fr": "Pose les genoux au sol pour sortir du maintien sous contrôle.",
+          "en": "Lower knees to leave the hold under control.",
+          "ar": "ضع الركبتين على الأرض للخروج من الثبات بتحكم."
+        }
+      ],
+      "illustratedEquipment": [
+        "bodyweight"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-batch-validation",
+      "technicalSources": [
+        {
+          "title": "ACE — Front plank",
+          "url": "https://www.acefitness.org/resources/everyone/exercise-library/32/front-plank/"
+        }
+      ]
+    },
+    "strength-developpe-incline-halteres": {
+      "exerciseId": "strength-developpe-incline-halteres",
+      "heroImage": {
+        "src": "/images/exercises/pilot/incline-dumbbell-press-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant un développé incliné avec deux haltères.",
+          "en": "Adult man performing an incline dumbbell bench press.",
+          "ar": "رجل بالغ يؤدي ضغط الصدر بالدمبل على مقعد مائل."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-developpe-incline-halteres.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant un développé incliné avec deux haltères.",
+          "en": "Adult man performing an incline dumbbell bench press.",
+          "ar": "رجل بالغ يؤدي ضغط الصدر بالدمبل على مقعد مائل."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/pilot/incline-dumbbell-press-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Haltères près du haut du thorax, coudes fléchis et banc incliné visible.",
+          "en": "Dumbbells beside the upper chest, elbows bent and inclined bench visible.",
+          "ar": "الدمبلان قرب أعلى الصدر والمرفقان مثنيان والمقعد المائل ظاهر."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Haltères près du haut du thorax, coudes fléchis et banc incliné visible.",
+          "en": "Dumbbells beside the upper chest, elbows bent and inclined bench visible.",
+          "ar": "الدمبلان قرب أعلى الصدر والمرفقان مثنيان والمقعد المائل ظاهر."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/pilot/incline-dumbbell-press-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Haltères séparés au-dessus du haut du thorax, bras presque tendus et appuis conservés.",
+          "en": "Separate dumbbells above the upper chest, arms almost straight and supports maintained.",
+          "ar": "الدمبلان منفصلان فوق أعلى الصدر والذراعان شبه ممدودتين مع ثبات الارتكاز."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Haltères séparés au-dessus du haut du thorax, bras presque tendus et appuis conservés.",
+          "en": "Separate dumbbells above the upper chest, arms almost straight and supports maintained.",
+          "ar": "الدمبلان منفصلان فوق أعلى الصدر والذراعان شبه ممدودتين مع ثبات الارتكاز."
+        }
+      },
+      "variant": {
+        "fr": "Développé incliné à deux haltères, banc modérément incliné.",
+        "en": "Two-dumbbell incline press on a moderately inclined bench.",
+        "ar": "ضغط مائل بدمبلين على مقعد بميل معتدل."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Garde la tête, le dos et le bassin soutenus, avec les pieds au sol.",
+          "en": "Keep the head, back and pelvis supported, with feet grounded.",
+          "ar": "أبق الرأس والظهر والحوض مدعومة والقدمين على الأرض."
+        },
+        {
+          "fr": "Contrôle les poignets au-dessus des coudes et pousse les deux haltères ensemble.",
+          "en": "Control wrists over elbows and press both dumbbells together.",
+          "ar": "حافظ على الرسغين فوق المرفقين وادفع الدمبلين معاً."
+        },
+        {
+          "fr": "Les deux vues montrent le bas puis le haut de la poussée ; redescends ensuite sous contrôle.",
+          "en": "The views show the bottom and top of the press; then lower under control.",
+          "ar": "تعرض الصورتان أسفل الدفع وأعلاه؛ اخفض الدمبلين بعد ذلك بتحكم."
+        }
+      ],
+      "illustratedEquipment": [
+        "dumbbell",
+        "bench"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-pilot-validation",
+      "technicalSources": [
+        {
+          "title": "ACE — Incline chest press",
+          "url": "https://www.acefitness.org/resources/everyone/exercise-library/25/incline-chest-press/"
+        }
+      ]
+    },
+    "strength-rowing-haltere-unilateral": {
+      "exerciseId": "strength-rowing-haltere-unilateral",
+      "heroImage": {
+        "src": "/images/exercises/one-arm-dumbbell-row.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant un rowing haltère unilatéral avec appui sur banc.",
+          "en": "Adult man performing a bench-supported one-arm dumbbell row.",
+          "ar": "رجل بالغ يؤدي تجديف الدمبل بذراع واحدة مع الارتكاز على مقعد."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-rowing-haltere-unilateral.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant un rowing haltère unilatéral avec appui sur banc.",
+          "en": "Adult man performing a bench-supported one-arm dumbbell row.",
+          "ar": "رجل بالغ يؤدي تجديف الدمبل بذراع واحدة مع الارتكاز على مقعد."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/pilot/one-arm-dumbbell-row-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Haltère suspendu sous l’épaule, bras presque tendu et dos stable avec appui sur banc.",
+          "en": "Dumbbell hanging below the shoulder, arm almost straight and back stable with bench support.",
+          "ar": "الدمبل معلق أسفل الكتف والذراع شبه ممدودة والظهر ثابت مع دعم المقعد."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Haltère suspendu sous l’épaule, bras presque tendu et dos stable avec appui sur banc.",
+          "en": "Dumbbell hanging below the shoulder, arm almost straight and back stable with bench support.",
+          "ar": "الدمبل معلق أسفل الكتف والذراع شبه ممدودة والظهر ثابت مع دعم المقعد."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/one-arm-dumbbell-row.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Coude fléchi près du buste et haltère près de la hanche, sans rotation du tronc.",
+          "en": "Elbow bent beside the torso and dumbbell near the hip, without trunk rotation.",
+          "ar": "المرفق مثني قرب الجذع والدمبل قرب الورك دون دوران الجذع."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Coude fléchi près du buste et haltère près de la hanche, sans rotation du tronc.",
+          "en": "Elbow bent beside the torso and dumbbell near the hip, without trunk rotation.",
+          "ar": "المرفق مثني قرب الجذع والدمبل قرب الورك دون دوران الجذع."
+        }
+      },
+      "variant": {
+        "fr": "Rowing unilatéral, main et genou du même côté sur le banc.",
+        "en": "One-arm row with the same-side hand and knee on the bench.",
+        "ar": "تجديف بذراع واحدة مع ارتكاز يد وركبة الجهة نفسها على المقعد."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Conserve les appuis sur le banc et au sol pendant le tirage.",
+          "en": "Maintain the bench and floor support points throughout the row.",
+          "ar": "حافظ على نقاط الارتكاز على المقعد والأرض أثناء السحب."
+        },
+        {
+          "fr": "Ramène le coude vers la hanche sans tourner le buste.",
+          "en": "Draw the elbow toward the hip without rotating the torso.",
+          "ar": "اسحب المرفق نحو الورك دون تدوير الجذع."
+        },
+        {
+          "fr": "Le bras s’allonge au retour, sans laisser le dos s’arrondir.",
+          "en": "Straighten the arm on the return without rounding the back.",
+          "ar": "مد الذراع في العودة دون تقويس الظهر."
+        }
+      ],
+      "illustratedEquipment": [
+        "dumbbell",
+        "bench"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-pilot-validation",
+      "technicalSources": [
+        {
+          "title": "ACE — Single-arm row",
+          "url": "https://www.acefitness.org/resources/everyone/exercise-library/126/single-arm-row/"
+        }
+      ]
+    },
+    "strength-squat": {
+      "exerciseId": "strength-squat",
+      "heroImage": {
+        "src": "/images/exercises/pilot/barbell-back-squat-bottom.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme en position basse d’un squat barre haute sur le dos.",
+          "en": "Adult man at the bottom of a high-bar back squat.",
+          "ar": "رجل بالغ في الوضع السفلي للقرفصاء مع البار أعلى الظهر."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-squat.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme en position basse d’un squat barre haute sur le dos.",
+          "en": "Adult man at the bottom of a high-bar back squat.",
+          "ar": "رجل بالغ في الوضع السفلي للقرفصاء مع البار أعلى الظهر."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/pilot/barbell-back-squat-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Debout, barre sur le haut du dos, genoux et hanches déployés, pieds au sol.",
+          "en": "Standing with the bar on the upper back, knees and hips extended, feet grounded.",
+          "ar": "وقوف والبار أعلى الظهر مع مد الركبتين والوركين وارتكاز القدمين."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Debout, barre sur le haut du dos, genoux et hanches déployés, pieds au sol.",
+          "en": "Standing with the bar on the upper back, knees and hips extended, feet grounded.",
+          "ar": "وقوف والبار أعلى الظهر مع مد الركبتين والوركين وارتكاز القدمين."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/pilot/barbell-back-squat-bottom.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Hanches abaissées, genoux fléchis, talons au sol et barre toujours soutenue par le haut du dos.",
+          "en": "Hips lowered, knees bent, heels grounded and bar still supported on the upper back.",
+          "ar": "الوركان منخفضان والركبتان مثنيتان والكعبان على الأرض والبار مدعوم أعلى الظهر."
+        },
+        "label": {
+          "fr": "Point bas de la descente",
+          "en": "Bottom of the descent",
+          "ar": "أسفل النزول"
+        },
+        "caption": {
+          "fr": "Hanches abaissées, genoux fléchis, talons au sol et barre toujours soutenue par le haut du dos.",
+          "en": "Hips lowered, knees bent, heels grounded and bar still supported on the upper back.",
+          "ar": "الوركان منخفضان والركبتان مثنيتان والكعبان على الأرض والبار مدعوم أعلى الظهر."
+        }
+      },
+      "variant": {
+        "fr": "Exemple illustré : squat avec barre haute sur le dos. Les autres variantes de squat ne sont pas représentées ici.",
+        "en": "Illustrated example: high-bar back squat. Other squat variations are not depicted here.",
+        "ar": "المثال المصور: قرفصاء مع البار أعلى الظهر. لا تمثل الصور أنواع القرفصاء الأخرى."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Place la barre sur le haut du dos, avec une prise stable et les pieds entièrement au sol.",
+          "en": "Rest the bar on the upper back, with a stable grip and whole feet grounded.",
+          "ar": "ضع البار أعلى الظهر بقبضة ثابتة مع ارتكاز كامل القدمين على الأرض."
+        },
+        {
+          "fr": "Fléchis les hanches et les genoux en gardant les genoux dans la direction des pieds.",
+          "en": "Bend hips and knees while keeping knees aligned with the feet.",
+          "ar": "اثن الوركين والركبتين مع توجيه الركبتين باتجاه القدمين."
+        },
+        {
+          "fr": "La seconde photo est le point bas, pas la fin de la répétition. Remonte ensuite en conservant tes appuis ; la profondeur dépend de ton contrôle.",
+          "en": "The second photo is the bottom, not the end of the repetition. Stand back up with stable support; depth depends on control.",
+          "ar": "الصورة الثانية هي الوضع السفلي وليست نهاية التكرار. عد للوقوف مع ثبات الارتكاز حسب مدى التحكم."
+        }
+      ],
+      "illustratedEquipment": [
+        "barbell"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-pilot-validation",
+      "technicalSources": [
+        {
+          "title": "ACE — Back squat",
+          "url": "https://www.acefitness.org/resources/everyone/exercise-library/11/back-squat/"
+        }
+      ]
+    },
+    "strength-curl-incline": {
+      "exerciseId": "strength-curl-incline",
+      "heroImage": {
+        "src": "/images/exercises/pilot/incline-dumbbell-curl-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant un curl haltères assis sur un banc incliné.",
+          "en": "Adult man performing a seated incline dumbbell curl.",
+          "ar": "رجل بالغ يؤدي ثني المرفقين بالدمبل جالساً على مقعد مائل."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-curl-incline.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant un curl haltères assis sur un banc incliné.",
+          "en": "Adult man performing a seated incline dumbbell curl.",
+          "ar": "رجل بالغ يؤدي ثني المرفقين بالدمبل جالساً على مقعد مائل."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/pilot/incline-dumbbell-curl-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Bras allongés près du buste sur le banc incliné, un haltère dans chaque main.",
+          "en": "Arms hanging beside the torso on the inclined bench, one dumbbell in each hand.",
+          "ar": "الذراعان ممدودتان قرب الجذع على المقعد المائل ودمبل في كل يد."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Bras allongés près du buste sur le banc incliné, un haltère dans chaque main.",
+          "en": "Arms hanging beside the torso on the inclined bench, one dumbbell in each hand.",
+          "ar": "الذراعان ممدودتان قرب الجذع على المقعد المائل ودمبل في كل يد."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/pilot/incline-dumbbell-curl-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Coudes fléchis, haltères rapprochés des épaules, dos toujours soutenu sur le même banc incliné.",
+          "en": "Elbows bent, dumbbells near the shoulders, back still supported on the same inclined bench.",
+          "ar": "المرفقان مثنيان والدمبلان قرب الكتفين والظهر مدعوم على المقعد المائل نفسه."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Coudes fléchis, haltères rapprochés des épaules, dos toujours soutenu sur le même banc incliné.",
+          "en": "Elbows bent, dumbbells near the shoulders, back still supported on the same inclined bench.",
+          "ar": "المرفقان مثنيان والدمبلان قرب الكتفين والظهر مدعوم على المقعد المائل نفسه."
+        }
+      },
+      "variant": {
+        "fr": "Curl à deux haltères, assis sur un banc incliné et prise en supination.",
+        "en": "Two-dumbbell curl, seated on an inclined bench with a supinated grip.",
+        "ar": "ثني المرفقين بدمبلين جالساً على مقعد مائل وراحتي اليدين للأعلى."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Garde le dos soutenu et les pieds au sol.",
+          "en": "Keep the back supported and feet grounded.",
+          "ar": "أبق الظهر مدعوماً والقدمين على الأرض."
+        },
+        {
+          "fr": "Laisse les bras près du buste, légèrement en arrière, et fléchis les coudes sans les projeter en avant.",
+          "en": "Keep upper arms beside and slightly behind the torso; bend elbows without driving them forward.",
+          "ar": "أبق أعلى الذراعين قرب الجذع وخلفه قليلاً واثن المرفقين دون دفعهما للأمام."
+        },
+        {
+          "fr": "Les épaules restent stables et les poignets neutres ; redescends les haltères lentement.",
+          "en": "Keep shoulders stable and wrists neutral; lower the dumbbells slowly.",
+          "ar": "حافظ على ثبات الكتفين وحياد الرسغين واخفض الدمبلين ببطء."
+        }
+      ],
+      "illustratedEquipment": [
+        "dumbbell",
+        "bench"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-pilot-validation",
+      "technicalSources": [
+        {
+          "title": "Catalyst Athletics — Incline dumbbell curl",
+          "url": "https://www.catalystathletics.com/exercise/850/Incline-Dumbbell-Curl/"
+        }
+      ]
+    },
+    "strength-tirage-horizontal-poulie": {
+      "exerciseId": "strength-tirage-horizontal-poulie",
+      "heroImage": {
+        "src": "/images/exercises/pilot/seated-cable-row-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant un tirage horizontal assis à la poulie basse.",
+          "en": "Adult man performing a seated low cable row.",
+          "ar": "رجل بالغ يؤدي سحباً أفقياً جالساً بالكابل السفلي."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-tirage-horizontal-poulie.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant un tirage horizontal assis à la poulie basse.",
+          "en": "Adult man performing a seated low cable row.",
+          "ar": "رجل بالغ يؤدي سحباً أفقياً جالساً بالكابل السفلي."
+        }
+      },
+      "startPositionImage": {
+        "src": "/images/exercises/pilot/seated-cable-row-start.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Bras presque tendus vers la poulie basse, pieds calés et poignée tenue à deux mains.",
+          "en": "Arms almost straight toward the low pulley, feet braced and both hands gripping the handle.",
+          "ar": "الذراعان شبه ممدودتين نحو البكرة السفلية والقدمان ثابتتان واليدان تمسكان بالمقبض."
+        },
+        "label": {
+          "fr": "Position de départ",
+          "en": "Starting position",
+          "ar": "وضعية البداية"
+        },
+        "caption": {
+          "fr": "Bras presque tendus vers la poulie basse, pieds calés et poignée tenue à deux mains.",
+          "en": "Arms almost straight toward the low pulley, feet braced and both hands gripping the handle.",
+          "ar": "الذراعان شبه ممدودتين نحو البكرة السفلية والقدمان ثابتتان واليدان تمسكان بالمقبض."
+        }
+      },
+      "endPositionImage": {
+        "src": "/images/exercises/pilot/seated-cable-row-end.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Poignée rapprochée du haut de l’abdomen, coudes en arrière et buste stable.",
+          "en": "Handle close to the upper abdomen, elbows back and torso stable.",
+          "ar": "المقبض قريب من أعلى البطن والمرفقان للخلف والجذع ثابت."
+        },
+        "label": {
+          "fr": "Position d’arrivée",
+          "en": "End position",
+          "ar": "وضعية الوصول"
+        },
+        "caption": {
+          "fr": "Poignée rapprochée du haut de l’abdomen, coudes en arrière et buste stable.",
+          "en": "Handle close to the upper abdomen, elbows back and torso stable.",
+          "ar": "المقبض قريب من أعلى البطن والمرفقان للخلف والجذع ثابت."
+        }
+      },
+      "variant": {
+        "fr": "Tirage horizontal assis à la poulie basse, poignée rapprochée en prise neutre.",
+        "en": "Seated low cable row with a close neutral-grip handle.",
+        "ar": "سحب أفقي جالس بالكابل السفلي مع مقبض ضيق وقبضة محايدة."
+      },
+      "technicalChecks": [
+        {
+          "fr": "Garde les pieds calés, les genoux légèrement fléchis et le buste stable.",
+          "en": "Keep feet braced, knees softly bent and torso stable.",
+          "ar": "ثبت القدمين مع ثني مريح للركبتين وثبات الجذع."
+        },
+        {
+          "fr": "Tire la poignée vers le haut de l’abdomen avec les coudes près du buste.",
+          "en": "Draw the handle toward the upper abdomen with elbows near the torso.",
+          "ar": "اسحب المقبض نحو أعلى البطن مع بقاء المرفقين قرب الجذع."
+        },
+        {
+          "fr": "Le câble reste relié à la poignée et tendu ; reviens bras allongés sans balancer le dos.",
+          "en": "Keep the cable connected and taut; return to extended arms without swinging the back.",
+          "ar": "أبق الكابل متصلاً ومشدوداً وعد لمد الذراعين دون تأرجح الظهر."
+        }
+      ],
+      "illustratedEquipment": [
+        "cable"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "pending-pilot-validation",
+      "technicalSources": [
+        {
+          "title": "PureGym — Seated cable row",
+          "url": "https://www.puregym.com/exercises/back/rows/seated-cable-row/"
+        }
+      ]
+    },
+    "strength-curl-halteres": {
+      "exerciseId": "strength-curl-halteres",
+      "heroImage": {
+        "src": "/images/exercises/dumbbell-curl.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant un curl haltères debout en supination.",
+          "en": "Adult man performing a standing supinated dumbbell curl.",
+          "ar": "رجل بالغ يثني المرفقين واقفاً بالدمبل وراحتي اليدين للأعلى."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-curl-halteres.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant un curl haltères debout en supination.",
+          "en": "Adult man performing a standing supinated dumbbell curl.",
+          "ar": "رجل بالغ يثني المرفقين واقفاً بالدمبل وراحتي اليدين للأعلى."
+        }
+      },
+      "variant": {
+        "fr": "Curl debout en supination — photographie existante conservée.",
+        "en": "Standing supinated curl — existing photograph retained.",
+        "ar": "ثني المرفقين واقفاً بقبضة مستلقية، مع الاحتفاظ بالصورة الحالية."
+      },
+      "technicalChecks": [],
+      "illustratedEquipment": [
+        "dumbbell"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "existing-media",
+      "technicalSources": []
+    },
+    "strength-pompes": {
+      "exerciseId": "strength-pompes",
+      "heroImage": {
+        "src": "/images/exercises/push-up.webp",
+        "width": 960,
+        "height": 640,
+        "alt": {
+          "fr": "Homme réalisant une pompe au sol, corps aligné.",
+          "en": "Adult man performing a floor push-up with aligned body.",
+          "ar": "رجل بالغ يؤدي تمرين الضغط الأرضي مع استقامة الجسم."
+        }
+      },
+      "thumbnail": {
+        "src": "/images/exercises/thumbnails/strength-pompes.webp",
+        "width": 320,
+        "height": 213,
+        "alt": {
+          "fr": "Homme réalisant une pompe au sol, corps aligné.",
+          "en": "Adult man performing a floor push-up with aligned body.",
+          "ar": "رجل بالغ يؤدي تمرين الضغط الأرضي مع استقامة الجسم."
+        }
+      },
+      "variant": {
+        "fr": "Pompe au sol — photographie existante conservée.",
+        "en": "Floor push-up — existing photograph retained.",
+        "ar": "ضغط أرضي مع الاحتفاظ بالصورة الحالية."
+      },
+      "technicalChecks": [],
+      "illustratedEquipment": [
+        "bodyweight"
+      ],
+      "source": "image_gen",
+      "license": "generated-for-project-no-third-party-license-asserted",
+      "reviewStatus": "technical-reviewed",
+      "userApproval": "existing-media",
+      "technicalSources": []
+    }
+  },
+  "files": [
+    {
+      "file": "public/images/exercises/dumbbell-curl.webp",
+      "sha256": "c585b9aca7c81395a5663741717a411d0efdea67bc03739f7a371631c48484ce",
+      "bytes": 27420
+    },
+    {
+      "file": "public/images/exercises/one-arm-dumbbell-row.webp",
+      "sha256": "8be1fb60363239f44efe02278b020822d5bfbc415d22978edb62caea9a43e569",
+      "bytes": 50120
+    },
+    {
+      "file": "public/images/exercises/pilot/barbell-back-squat-bottom.webp",
+      "sha256": "75a2f0493b9a943b2f592a5dda36caef080528be754dd3d855f40adf1f31b448",
+      "bytes": 38258
+    },
+    {
+      "file": "public/images/exercises/pilot/barbell-back-squat-start.webp",
+      "sha256": "b1e7894388ca9b611b082577c3fd953d27bdf0e1702a74e1faa71ea77433b2ea",
+      "bytes": 41600
+    },
+    {
+      "file": "public/images/exercises/pilot/incline-dumbbell-curl-end.webp",
+      "sha256": "3791c31037de9244e4448f556f6089fa53a8c04f5ae98c7c32f28ede9e865eff",
+      "bytes": 49488
+    },
+    {
+      "file": "public/images/exercises/pilot/incline-dumbbell-curl-start.webp",
+      "sha256": "4bbb378b65f70133410df6da941af0093eace72f560fde33dcb53bb323022b52",
+      "bytes": 55746
+    },
+    {
+      "file": "public/images/exercises/pilot/incline-dumbbell-press-end.webp",
+      "sha256": "f0bacfe92816723c05fc27cc48dd21e18aced8e8c8bfeed410baba628c3943df",
+      "bytes": 61810
+    },
+    {
+      "file": "public/images/exercises/pilot/incline-dumbbell-press-start.webp",
+      "sha256": "8b204cde5d8c76fb3b027c47988fadb72b121f1b1ac6cafeef1866b957cc6a75",
+      "bytes": 65608
+    },
+    {
+      "file": "public/images/exercises/pilot/one-arm-dumbbell-row-start.webp",
+      "sha256": "694dacd12a95a5cc74e0f6b55bb123de74e8863364825c89ee0fae1d5802667a",
+      "bytes": 48824
+    },
+    {
+      "file": "public/images/exercises/pilot/seated-cable-row-end.webp",
+      "sha256": "8814297aaeea9a9b8ebf8d4a027b206c23ab11ad187eaf3177f702a57fbee03a",
+      "bytes": 42640
+    },
+    {
+      "file": "public/images/exercises/pilot/seated-cable-row-start.webp",
+      "sha256": "58014e9e8c4707f6e3689c33771235ba9568f4f08747dc87a9362bf708e7287b",
+      "bytes": 50546
+    },
+    {
+      "file": "public/images/exercises/push-up.webp",
+      "sha256": "d20b4ae1dfb9ea02c2520c6cfec73d42bf12ea41cc209b51324a5a1e5cedd706",
+      "bytes": 41694
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-crunch-poulie.webp",
+      "sha256": "24ef2f7987565efcdaba790b053e7569a5430a8bbafae4fc273b4e0e13fa7cda",
+      "bytes": 7448
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-curl-halteres.webp",
+      "sha256": "3bc4316b4c98e55173c4f91d9729ee8b1832c1775814a9bd8bb89e9dd0de6fc1",
+      "bytes": 4576
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-curl-incline.webp",
+      "sha256": "59b7800918bbc3bfeb980e941cee2230e3b1183cd46011228f90d2d215b15442",
+      "bytes": 7108
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-curl-marteau.webp",
+      "sha256": "ae7302296c0c263760b11d67e286ea3786e6e8dd0fd4d6f3fbd896e363018e0b",
+      "bytes": 7432
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-developpe-couche-barre.webp",
+      "sha256": "5d9812324f7389971208ebaec853bd7e93ada6704940e84586f24f8cb1ff4666",
+      "bytes": 7650
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-developpe-incline-halteres.webp",
+      "sha256": "31e67c3765d7a7f019ab3dcdb5c3ec81175437f0fe4ec435a61d54491be25f16",
+      "bytes": 7166
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-developpe-militaire-barre.webp",
+      "sha256": "8f1cae7a8bfd7c8e4d9d88909beeeb86a0deb86aff943567041eaf4ab0029b19",
+      "bytes": 7580
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-ecarte-poulie-vis-a-vis.webp",
+      "sha256": "1cfa8e3646876722bdf32c4e93b8b74b5ef6757c8ee7d1beaf0c89e489f8939b",
+      "bytes": 8512
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-elevations-laterales.webp",
+      "sha256": "3a6e303567bddc8a2742069330ef441e1cfcce1d08155252f55a8235029fd4ce",
+      "bytes": 7302
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-extension-poulie-haute-corde.webp",
+      "sha256": "5e76b1461a761555bb06535b65e2d15533ab11c290dca5701f9249dea1ee140f",
+      "bytes": 7650
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-fentes-marchees.webp",
+      "sha256": "cd234e6b9f964af4845d260b6df93e2823d72606e21b31ab9bda5c6d4172e1a3",
+      "bytes": 7344
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-gainage-planche.webp",
+      "sha256": "52e67899cd9d12e83528146ae25fc5ba543d6d3de590581a89f9179d1d91b328",
+      "bytes": 6740
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-leg-curl-allonge.webp",
+      "sha256": "78e8210ff980dcf68dde6a6c9ef2efe9d9814ec801919893337525fbc67cdcff",
+      "bytes": 7972
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-leg-extension.webp",
+      "sha256": "e47b106f6284be7a708104bb3483a2a5863939eb18b2291b5c021e0df6fcff4b",
+      "bytes": 7384
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-mollets-debout.webp",
+      "sha256": "bba54d1f06428113e6d0817713fa19e44ef6c1eb1f135d3baf11c7253a2008a4",
+      "bytes": 7500
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-pompes.webp",
+      "sha256": "796c5992aefecc968510d8a906cccff8cb31c50df172cc157df5b9bc8dced40f",
+      "bytes": 5656
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-presse-a-cuisses.webp",
+      "sha256": "9d9423f23a2256ae60ba465f24435d88efa3931de3bf2a38e89ad6c7048c13ad",
+      "bytes": 8040
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-rowing-barre.webp",
+      "sha256": "67a237ae8e86709d5018f8b535831ca5aed11c8f2ce6a29778b80bca6b710c32",
+      "bytes": 7192
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-rowing-haltere-unilateral.webp",
+      "sha256": "bb6822bcb0f0b9d18c663a8625ab1e3ecff4379ebd723b743e68b7e0c28789ec",
+      "bytes": 7912
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-squat.webp",
+      "sha256": "0a4ff9a16cb89988b485a8adf34b5b21c3a0e48747a9fe681a66e3e559c3fd60",
+      "bytes": 5910
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-tirage-horizontal-poulie.webp",
+      "sha256": "1a2b4f7d94ca94c56c022acc20a5995cdb590246cd80e03efddbad9e29a957b6",
+      "bytes": 6794
+    },
+    {
+      "file": "public/images/exercises/thumbnails/strength-tractions.webp",
+      "sha256": "c629b45602472e2dfb14f22490b9f242d65e1a89cdec281f713c52cc094421f8",
+      "bytes": 8964
+    },
+    {
+      "file": "public/images/exercises/v3/strength-crunch-poulie-end.webp",
+      "sha256": "0a6c0b162f3d32a2c2e153de9e74abff8c3666bc93037295e3ed4a51ad31311f",
+      "bytes": 46112
+    },
+    {
+      "file": "public/images/exercises/v3/strength-crunch-poulie-start.webp",
+      "sha256": "d7311e5a55a22e354936a1c26f56a983cd33196c800178bd5b521f475bebc37c",
+      "bytes": 52856
+    },
+    {
+      "file": "public/images/exercises/v3/strength-curl-marteau-end.webp",
+      "sha256": "ced2c414b8fe44860ade297012aabae9a5fc468a0d3b6a2167d38052bdcb5a25",
+      "bytes": 49468
+    },
+    {
+      "file": "public/images/exercises/v3/strength-curl-marteau-start.webp",
+      "sha256": "f7ea3447efee2f1544565c4b9d2e3b12256bebf4fc91802b5acb8c6b548038db",
+      "bytes": 64720
+    },
+    {
+      "file": "public/images/exercises/v3/strength-developpe-couche-barre-end.webp",
+      "sha256": "ce9c3ea89e58a7c934255a48488b624ff0b65bb10057ce3e95ca33b903c00937",
+      "bytes": 55368
+    },
+    {
+      "file": "public/images/exercises/v3/strength-developpe-couche-barre-start.webp",
+      "sha256": "1215d6bb867d6df3c13fcb9a808f6484f59231ddc4e2a81323a4e45bf0a7824e",
+      "bytes": 69532
+    },
+    {
+      "file": "public/images/exercises/v3/strength-developpe-militaire-barre-end.webp",
+      "sha256": "bed3c5e7a31b6573f0e814137c4e5e2fbf290eab974d39085c8e35ea47ecb406",
+      "bytes": 59852
+    },
+    {
+      "file": "public/images/exercises/v3/strength-developpe-militaire-barre-start.webp",
+      "sha256": "69afd24e47bf98a626618f4b01d306542937931ae76385d6f444e381a00f288d",
+      "bytes": 61986
+    },
+    {
+      "file": "public/images/exercises/v3/strength-ecarte-poulie-vis-a-vis-end.webp",
+      "sha256": "c87519253dcc34ace01a9beb9ffda33019c71dddfc464e398243c32a2a20ebb3",
+      "bytes": 52486
+    },
+    {
+      "file": "public/images/exercises/v3/strength-ecarte-poulie-vis-a-vis-start.webp",
+      "sha256": "8303214b08cc87c62a38c221d3166b3cfdb9e165839d41966bea20d4652ed4e7",
+      "bytes": 61562
+    },
+    {
+      "file": "public/images/exercises/v3/strength-elevations-laterales-end.webp",
+      "sha256": "bfc4c21aefe82a9adf8b7406ed2a34ba1ee4a14da473bf3acc9b80a6970feadf",
+      "bytes": 55056
+    },
+    {
+      "file": "public/images/exercises/v3/strength-elevations-laterales-start.webp",
+      "sha256": "207b7f8cfab4d149270c033f89d5d812a0b6e3aed663566e21a11c8703117452",
+      "bytes": 55784
+    },
+    {
+      "file": "public/images/exercises/v3/strength-extension-poulie-haute-corde-end.webp",
+      "sha256": "d9f2372978b076f3da1d76f2fe2fb4f089fcb3378fe956ddc5c30149c9d817d6",
+      "bytes": 45928
+    },
+    {
+      "file": "public/images/exercises/v3/strength-extension-poulie-haute-corde-start.webp",
+      "sha256": "7338756dd41bca9369f80b92eb65a2058fbeff71d0863c7a4bfc63428796159d",
+      "bytes": 52738
+    },
+    {
+      "file": "public/images/exercises/v3/strength-fentes-marchees-end.webp",
+      "sha256": "0a579350a6bf1b41b9eb3e75027e34718a3dc64c1981bb77675e89e96c9f0aea",
+      "bytes": 56770
+    },
+    {
+      "file": "public/images/exercises/v3/strength-fentes-marchees-start.webp",
+      "sha256": "a36b1660e66d8716fac5634d2fe9c4a4420a5012047336528321db968caaa85f",
+      "bytes": 58668
+    },
+    {
+      "file": "public/images/exercises/v3/strength-gainage-planche-hold.webp",
+      "sha256": "3e3e67fe5503d501bf9cdc7c92750dd43d4b855f45419b5a96d90d76c7d26697",
+      "bytes": 53948
+    },
+    {
+      "file": "public/images/exercises/v3/strength-leg-curl-allonge-end.webp",
+      "sha256": "54f53e5aa028639dded53ff7d4dd88f8095620815911fcf4d6c2bd86b0dbd091",
+      "bytes": 52280
+    },
+    {
+      "file": "public/images/exercises/v3/strength-leg-curl-allonge-start.webp",
+      "sha256": "fdb5afc2c6d123511c5ea5d54b2c363b4e0c36c4c65ea6ee3ee1af68166f74ad",
+      "bytes": 62600
+    },
+    {
+      "file": "public/images/exercises/v3/strength-leg-extension-end.webp",
+      "sha256": "0213ea7cd5e11c54c563a53bdc9370e0d56dafd8baa369b8dfd76fc54a945163",
+      "bytes": 53598
+    },
+    {
+      "file": "public/images/exercises/v3/strength-leg-extension-start.webp",
+      "sha256": "7697bdcf1768389d498e2f86eb6e391edc013d12d367471e13a0e858107864f0",
+      "bytes": 61684
+    },
+    {
+      "file": "public/images/exercises/v3/strength-mollets-debout-end.webp",
+      "sha256": "a6891ef73bece5f898f94f82e2e36c696c2421a8bc1221eaefe5e95e9870a810",
+      "bytes": 55556
+    },
+    {
+      "file": "public/images/exercises/v3/strength-mollets-debout-start.webp",
+      "sha256": "70f1cd27bff2607096a83f205968e0bdd9a4cd279a90953a1d3d9ee7e89c876d",
+      "bytes": 58696
+    },
+    {
+      "file": "public/images/exercises/v3/strength-presse-a-cuisses-end.webp",
+      "sha256": "b5790fa8372f8e3bb7035f37b52a1b8bd39560ad0167beb3518b4185b3af30b0",
+      "bytes": 56210
+    },
+    {
+      "file": "public/images/exercises/v3/strength-presse-a-cuisses-start.webp",
+      "sha256": "a93054afbb2632d71a11bdbb6796010814e2c092ca074458a6568302aad84933",
+      "bytes": 56028
+    },
+    {
+      "file": "public/images/exercises/v3/strength-rowing-barre-end.webp",
+      "sha256": "0471184db5d9dfbcb9e966a23eaf7327134de6c0824bc41c96d86fb2a144df7f",
+      "bytes": 48142
+    },
+    {
+      "file": "public/images/exercises/v3/strength-rowing-barre-start.webp",
+      "sha256": "5f3613f212e7062412b32b4ead3558c8b79b0dec547bd555d371ea64b110971c",
+      "bytes": 50464
+    },
+    {
+      "file": "public/images/exercises/v3/strength-tractions-end.webp",
+      "sha256": "cc28b1b07fc890d9c84dbbffe594b4d98936420fba48679ec62d142bcdcab908",
+      "bytes": 58012
+    },
+    {
+      "file": "public/images/exercises/v3/strength-tractions-start.webp",
+      "sha256": "c76fa156a235a6523ce78f7495575092cfdfc01e6b3f4416fbfa472d91389e24",
+      "bytes": 61222
+    }
+  ],
+  "preservation": {
+    "catalogUnchanged": true,
+    "existingMediaRecordsAndFilesUnchanged": true,
+    "performanceReaderAndCatalogQueriesUnchanged": true,
+    "protectedPathsUnchanged": [
+      "src/lib/anatomy",
+      "src/components/sport/anatomy",
+      "public/models/anatomy",
+      "src/components/strength",
+      "src/lib/strength.ts",
+      "src/lib/strength-stats.ts",
+      "src/lib/exercises/catalog.ts",
+      "src/lib/exercises/composition.ts",
+      "src/lib/exercises/identity.ts",
+      "src/lib/exercises/guide-content.ts",
+      "src/lib/exercises/pilot-technique.ts",
+      "src/lib/actions",
+      "src/lib/supabase",
+      "supabase",
+      "src/proxy.ts",
+      "package.json",
+      "package-lock.json"
+    ]
+  }
+}

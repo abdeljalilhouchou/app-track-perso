@@ -1,0 +1,391 @@
+{
+  "branch": "exercise-visual-library-v3",
+  "head": "4f7d9152160d0c501828d153941d0fccbd4e12b2",
+  "previousLotCheckpoint": "Local temporary checkpoint, completed photo library V3",
+  "protectedFiles": [
+    {
+      "file": "public/images/exercises\\v3\\strength-crunch-poulie-end.webp",
+      "sha256": "0a6c0b162f3d32a2c2e153de9e74abff8c3666bc93037295e3ed4a51ad31311f"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-curl-marteau-start.webp",
+      "sha256": "f7ea3447efee2f1544565c4b9d2e3b12256bebf4fc91802b5acb8c6b548038db"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-curl-marteau-end.webp",
+      "sha256": "ced2c414b8fe44860ade297012aabae9a5fc468a0d3b6a2167d38052bdcb5a25"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-crunch-poulie-start.webp",
+      "sha256": "d7311e5a55a22e354936a1c26f56a983cd33196c800178bd5b521f475bebc37c"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-developpe-couche-barre-start.webp",
+      "sha256": "1215d6bb867d6df3c13fcb9a808f6484f59231ddc4e2a81323a4e45bf0a7824e"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-developpe-couche-barre-end.webp",
+      "sha256": "ce9c3ea89e58a7c934255a48488b624ff0b65bb10057ce3e95ca33b903c00937"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-developpe-militaire-barre-end.webp",
+      "sha256": "bed3c5e7a31b6573f0e814137c4e5e2fbf290eab974d39085c8e35ea47ecb406"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-tractions-start.webp",
+      "sha256": "c76fa156a235a6523ce78f7495575092cfdfc01e6b3f4416fbfa472d91389e24"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-tractions-end.webp",
+      "sha256": "cc28b1b07fc890d9c84dbbffe594b4d98936420fba48679ec62d142bcdcab908"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-rowing-barre-start.webp",
+      "sha256": "5f3613f212e7062412b32b4ead3558c8b79b0dec547bd555d371ea64b110971c"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-rowing-barre-end.webp",
+      "sha256": "0471184db5d9dfbcb9e966a23eaf7327134de6c0824bc41c96d86fb2a144df7f"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-presse-a-cuisses-start.webp",
+      "sha256": "a93054afbb2632d71a11bdbb6796010814e2c092ca074458a6568302aad84933"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-presse-a-cuisses-end.webp",
+      "sha256": "b5790fa8372f8e3bb7035f37b52a1b8bd39560ad0167beb3518b4185b3af30b0"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-mollets-debout-start.webp",
+      "sha256": "70f1cd27bff2607096a83f205968e0bdd9a4cd279a90953a1d3d9ee7e89c876d"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-mollets-debout-end.webp",
+      "sha256": "a6891ef73bece5f898f94f82e2e36c696c2421a8bc1221eaefe5e95e9870a810"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-leg-extension-start.webp",
+      "sha256": "7697bdcf1768389d498e2f86eb6e391edc013d12d367471e13a0e858107864f0"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-leg-extension-end.webp",
+      "sha256": "0213ea7cd5e11c54c563a53bdc9370e0d56dafd8baa369b8dfd76fc54a945163"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-leg-curl-allonge-start.webp",
+      "sha256": "fdb5afc2c6d123511c5ea5d54b2c363b4e0c36c4c65ea6ee3ee1af68166f74ad"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-leg-curl-allonge-end.webp",
+      "sha256": "54f53e5aa028639dded53ff7d4dd88f8095620815911fcf4d6c2bd86b0dbd091"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-gainage-planche-hold.webp",
+      "sha256": "3e3e67fe5503d501bf9cdc7c92750dd43d4b855f45419b5a96d90d76c7d26697"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-fentes-marchees-start.webp",
+      "sha256": "a36b1660e66d8716fac5634d2fe9c4a4420a5012047336528321db968caaa85f"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-fentes-marchees-end.webp",
+      "sha256": "0a579350a6bf1b41b9eb3e75027e34718a3dc64c1981bb77675e89e96c9f0aea"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-extension-poulie-haute-corde-start.webp",
+      "sha256": "7338756dd41bca9369f80b92eb65a2058fbeff71d0863c7a4bfc63428796159d"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-extension-poulie-haute-corde-end.webp",
+      "sha256": "d9f2372978b076f3da1d76f2fe2fb4f089fcb3378fe956ddc5c30149c9d817d6"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-elevations-laterales-start.webp",
+      "sha256": "207b7f8cfab4d149270c033f89d5d812a0b6e3aed663566e21a11c8703117452"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-elevations-laterales-end.webp",
+      "sha256": "bfc4c21aefe82a9adf8b7406ed2a34ba1ee4a14da473bf3acc9b80a6970feadf"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-ecarte-poulie-vis-a-vis-start.webp",
+      "sha256": "8303214b08cc87c62a38c221d3166b3cfdb9e165839d41966bea20d4652ed4e7"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-ecarte-poulie-vis-a-vis-end.webp",
+      "sha256": "c87519253dcc34ace01a9beb9ffda33019c71dddfc464e398243c32a2a20ebb3"
+    },
+    {
+      "file": "public/images/exercises\\v3\\strength-developpe-militaire-barre-start.webp",
+      "sha256": "69afd24e47bf98a626618f4b01d306542937931ae76385d6f444e381a00f288d"
+    },
+    {
+      "file": "public/images/exercises\\one-arm-dumbbell-row.webp",
+      "sha256": "8be1fb60363239f44efe02278b020822d5bfbc415d22978edb62caea9a43e569"
+    },
+    {
+      "file": "public/images/exercises\\dumbbell-curl.webp",
+      "sha256": "c585b9aca7c81395a5663741717a411d0efdea67bc03739f7a371631c48484ce"
+    },
+    {
+      "file": "public/images/exercises\\pilot\\incline-dumbbell-press-end.webp",
+      "sha256": "f0bacfe92816723c05fc27cc48dd21e18aced8e8c8bfeed410baba628c3943df"
+    },
+    {
+      "file": "public/images/exercises\\pilot\\seated-cable-row-start.webp",
+      "sha256": "58014e9e8c4707f6e3689c33771235ba9568f4f08747dc87a9362bf708e7287b"
+    },
+    {
+      "file": "public/images/exercises\\pilot\\seated-cable-row-end.webp",
+      "sha256": "8814297aaeea9a9b8ebf8d4a027b206c23ab11ad187eaf3177f702a57fbee03a"
+    },
+    {
+      "file": "public/images/exercises\\pilot\\incline-dumbbell-curl-start.webp",
+      "sha256": "4bbb378b65f70133410df6da941af0093eace72f560fde33dcb53bb323022b52"
+    },
+    {
+      "file": "public/images/exercises\\pilot\\one-arm-dumbbell-row-start.webp",
+      "sha256": "694dacd12a95a5cc74e0f6b55bb123de74e8863364825c89ee0fae1d5802667a"
+    },
+    {
+      "file": "public/images/exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "sha256": "3791c31037de9244e4448f556f6089fa53a8c04f5ae98c7c32f28ede9e865eff"
+    },
+    {
+      "file": "public/images/exercises\\pilot\\incline-dumbbell-press-start.webp",
+      "sha256": "8b204cde5d8c76fb3b027c47988fadb72b121f1b1ac6cafeef1866b957cc6a75"
+    },
+    {
+      "file": "public/images/exercises\\pilot\\barbell-back-squat-start.webp",
+      "sha256": "b1e7894388ca9b611b082577c3fd953d27bdf0e1702a74e1faa71ea77433b2ea"
+    },
+    {
+      "file": "public/images/exercises\\pilot\\barbell-back-squat-bottom.webp",
+      "sha256": "75a2f0493b9a943b2f592a5dda36caef080528be754dd3d855f40adf1f31b448"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-tractions.webp",
+      "sha256": "c629b45602472e2dfb14f22490b9f242d65e1a89cdec281f713c52cc094421f8"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-tirage-horizontal-poulie.webp",
+      "sha256": "1a2b4f7d94ca94c56c022acc20a5995cdb590246cd80e03efddbad9e29a957b6"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-squat.webp",
+      "sha256": "0a4ff9a16cb89988b485a8adf34b5b21c3a0e48747a9fe681a66e3e559c3fd60"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-rowing-haltere-unilateral.webp",
+      "sha256": "bb6822bcb0f0b9d18c663a8625ab1e3ecff4379ebd723b743e68b7e0c28789ec"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-rowing-barre.webp",
+      "sha256": "67a237ae8e86709d5018f8b535831ca5aed11c8f2ce6a29778b80bca6b710c32"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-presse-a-cuisses.webp",
+      "sha256": "9d9423f23a2256ae60ba465f24435d88efa3931de3bf2a38e89ad6c7048c13ad"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-pompes.webp",
+      "sha256": "796c5992aefecc968510d8a906cccff8cb31c50df172cc157df5b9bc8dced40f"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-mollets-debout.webp",
+      "sha256": "bba54d1f06428113e6d0817713fa19e44ef6c1eb1f135d3baf11c7253a2008a4"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-leg-extension.webp",
+      "sha256": "e47b106f6284be7a708104bb3483a2a5863939eb18b2291b5c021e0df6fcff4b"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-leg-curl-allonge.webp",
+      "sha256": "78e8210ff980dcf68dde6a6c9ef2efe9d9814ec801919893337525fbc67cdcff"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-gainage-planche.webp",
+      "sha256": "52e67899cd9d12e83528146ae25fc5ba543d6d3de590581a89f9179d1d91b328"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-fentes-marchees.webp",
+      "sha256": "cd234e6b9f964af4845d260b6df93e2823d72606e21b31ab9bda5c6d4172e1a3"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-extension-poulie-haute-corde.webp",
+      "sha256": "5e76b1461a761555bb06535b65e2d15533ab11c290dca5701f9249dea1ee140f"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-elevations-laterales.webp",
+      "sha256": "3a6e303567bddc8a2742069330ef441e1cfcce1d08155252f55a8235029fd4ce"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-ecarte-poulie-vis-a-vis.webp",
+      "sha256": "1cfa8e3646876722bdf32c4e93b8b74b5ef6757c8ee7d1beaf0c89e489f8939b"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-developpe-militaire-barre.webp",
+      "sha256": "8f1cae7a8bfd7c8e4d9d88909beeeb86a0deb86aff943567041eaf4ab0029b19"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-developpe-incline-halteres.webp",
+      "sha256": "31e67c3765d7a7f019ab3dcdb5c3ec81175437f0fe4ec435a61d54491be25f16"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-developpe-couche-barre.webp",
+      "sha256": "5d9812324f7389971208ebaec853bd7e93ada6704940e84586f24f8cb1ff4666"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-curl-marteau.webp",
+      "sha256": "ae7302296c0c263760b11d67e286ea3786e6e8dd0fd4d6f3fbd896e363018e0b"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-curl-incline.webp",
+      "sha256": "59b7800918bbc3bfeb980e941cee2230e3b1183cd46011228f90d2d215b15442"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-curl-halteres.webp",
+      "sha256": "3bc4316b4c98e55173c4f91d9729ee8b1832c1775814a9bd8bb89e9dd0de6fc1"
+    },
+    {
+      "file": "public/images/exercises\\thumbnails\\strength-crunch-poulie.webp",
+      "sha256": "24ef2f7987565efcdaba790b053e7569a5430a8bbafae4fc273b4e0e13fa7cda"
+    },
+    {
+      "file": "public/images/exercises\\push-up.webp",
+      "sha256": "d20b4ae1dfb9ea02c2520c6cfec73d42bf12ea41cc209b51324a5a1e5cedd706"
+    },
+    {
+      "file": "src\\lib\\strength.ts",
+      "sha256": "91ae76e65ef5d6c1681ba35cb6fbc5e5507f822c6d3cd578f4d5bf7269723809"
+    },
+    {
+      "file": "src\\lib\\strength-stats.ts",
+      "sha256": "49aa70ea1bdea350e383d98c39af7c65b60a02cdf8eca2642fb3a3928113602f"
+    },
+    {
+      "file": "src\\components\\sport\\anatomy\\muscle-viewer-3d.tsx",
+      "sha256": "19c9fc227ab05f604bc0520b19046a17b37f4396835d491e0473eb105f708efc"
+    },
+    {
+      "file": "src\\components\\sport\\anatomy\\muscle-information-panel.tsx",
+      "sha256": "795da206b866fe52ae04fc8ff5d92a8c396d3c8a22a49d3a293ee8b043f3df72"
+    },
+    {
+      "file": "src\\components\\sport\\anatomy\\exercise-muscle-dialog.tsx",
+      "sha256": "259712c2f062b2d524c95ba8394e5fa0a3238ca0323563ee7da5df540ddc694b"
+    },
+    {
+      "file": "src\\components\\sport\\anatomy\\anatomy.css",
+      "sha256": "d4a6980143bd8f81badc2dc2b5745d0ccbbb42cfb77f3b7f42d8714b2aa07403"
+    },
+    {
+      "file": "src\\components\\sport\\anatomy\\anatomy-fallback.tsx",
+      "sha256": "2a123f06b8ea5e65cb8fe44ec20c12cfdde953f1aac47baeba6ec40c992229d8"
+    },
+    {
+      "file": "src\\components\\sport\\anatomy\\anatomy-engine.ts",
+      "sha256": "e0826c32849cdb3c7c9167bc78b2b1ce2dee6e7242dccf58ac1400eecf28d333"
+    },
+    {
+      "file": "src\\lib\\anatomy\\types.ts",
+      "sha256": "818bd3260b63414968fb62f4bd95cfd6241b83e10aa4d9673561e369450790df"
+    },
+    {
+      "file": "src\\lib\\anatomy\\rowing.ts",
+      "sha256": "60213cc56ccd7a56b16272b810410568b83621ca3de29890992f9583e6a939c0"
+    },
+    {
+      "file": "src\\lib\\anatomy\\pilots.ts",
+      "sha256": "bcecda05716466e294d053403ae9ac3bc0148793a3759fd10ebd0aabe08591f4"
+    },
+    {
+      "file": "src\\lib\\anatomy\\identity.ts",
+      "sha256": "55af5604ad8812792545f1292c588536b3e1047528e92e3ba6632cfd83b0063a"
+    },
+    {
+      "file": "src\\lib\\anatomy\\highlights.ts",
+      "sha256": "89660d1d14784e98c199b9690eae25e06bb4874fa3846ebafbb83670b694932e"
+    },
+    {
+      "file": "src\\lib\\anatomy\\general-copy.ts",
+      "sha256": "d3da71829bf9ebf25b126a2971ea78fe37694497bcc31a55c419a36eee69ec94"
+    },
+    {
+      "file": "src\\lib\\anatomy\\copy.ts",
+      "sha256": "f50ccad60c46a6502cd05c6f933a4982e94877a14bc37f3d0bccb79f467f40e1"
+    },
+    {
+      "file": "src\\lib\\anatomy\\configs.ts",
+      "sha256": "3257e7e4aaac2c1aa63ecc5d2e37bea860e4492e82a1c9e4d5239ebb2e561397"
+    },
+    {
+      "file": "src\\lib\\anatomy\\atlas.ts",
+      "sha256": "dcf5f2ea5b769ab3549d14c4024acb101970c7c11476498407a7e8fff87e4608"
+    },
+    {
+      "file": "src\\lib\\exercises\\media-registry.ts",
+      "sha256": "86caa9a4082ac74ae7e14c79dc2aec8db6e34e8d424516db44c01e07822b3a96"
+    },
+    {
+      "file": "src\\lib\\exercises\\media-experience.ts",
+      "sha256": "cfb9a9ab4116c2a8b05a75103b13eaccc492f038116ff6b71727478b093381dd"
+    },
+    {
+      "file": "src\\lib\\exercises\\identity.ts",
+      "sha256": "4c8c79d257f7f05729531600791356245fe8b9e9edf5a271e686d89a53cb60ff"
+    },
+    {
+      "file": "src\\lib\\exercises\\guides.ts",
+      "sha256": "c660cac417aaff5d772af9fedbd4b6a1ba86e2c033beda3767dffa852153aa55"
+    },
+    {
+      "file": "src\\lib\\exercises\\visual-media-types.ts",
+      "sha256": "0fb7444a1065259ba90b2597df60f3c79bbbdb0c6b4f48476c07f9b52bb51d87"
+    },
+    {
+      "file": "src\\lib\\exercises\\guide-content.ts",
+      "sha256": "191791f52d6941dc2cfedaa2beb2be239e5cd690397e86e6bddb5f676d9e0d7c"
+    },
+    {
+      "file": "src\\lib\\exercises\\search.ts",
+      "sha256": "b52c32d36e4030de7c670ae155bda70c35cc5ec03e49763c50ace7e25a2f2ca8"
+    },
+    {
+      "file": "src\\lib\\exercises\\composition.ts",
+      "sha256": "09629bdff66a10a77d9bdb3df71146bc106ffeaa84290c82fc65ead86a5ec704"
+    },
+    {
+      "file": "src\\lib\\exercises\\rowing-guide.ts",
+      "sha256": "5a1270fa36930673bda124399d9a221ff67381f82cb09f83ea47d7a28be5d31b"
+    },
+    {
+      "file": "src\\lib\\exercises\\request.ts",
+      "sha256": "7104b8ecec9d9e788f643af1d0b34ba7af929a086ba38213314324d82219bb6b"
+    },
+    {
+      "file": "src\\lib\\exercises\\pilot-technique.ts",
+      "sha256": "d01a08462ce680c4a25c784e54857c0a64863499d494e0936c67d034ea251714"
+    },
+    {
+      "file": "src\\lib\\exercises\\muscles.ts",
+      "sha256": "0ee0e35f65104330b4b8a20bb3654b145393ff467474fec79506bd6c703b21c9"
+    },
+    {
+      "file": "src\\lib\\exercises\\media-v3-index.ts",
+      "sha256": "cf9e74fab070fd02acfb8d77541cb681446dc3ad91362279f71888e9c64fd3f9"
+    },
+    {
+      "file": "src\\lib\\exercises\\media-v3-content.ts",
+      "sha256": "700bf0c20e9ae5e8a609d53ee8d8dabfd61ecbb32c37c0ab2d0522a56dbbaf19"
+    },
+    {
+      "file": "src\\lib\\exercises\\media-thumbnails.ts",
+      "sha256": "eb7e6295914699fc13e3321b6d6889c87bc0454c0f33f50db195ff77cc2b8574"
+    },
+    {
+      "file": "src\\lib\\exercises\\catalog.ts",
+      "sha256": "a1f1cd63bb38b3acc3a2dfab22f1b3242be976f89290d76b504009af6b7e2629"
+    }
+  ]
+}

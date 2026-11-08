@@ -1,0 +1,1012 @@
+TAP version 13
+# Subtest: registry and configurations cover only the actual 69 seeds plus existing editorial squat
+ok 1 - registry and configurations cover only the actual 69 seeds plus existing editorial squat
+  ---
+  duration_ms: 60.4922
+  type: 'test'
+  ...
+# Subtest: runtime coverage includes personal rows without assigning anatomy from their title
+ok 2 - runtime coverage includes personal rows without assigning anatomy from their title
+  ---
+  duration_ms: 1.1929
+  type: 'test'
+  ...
+# Subtest: Barbell bench press: roles, real bilateral GLB identities and FR/EN/AR
+ok 3 - Barbell bench press: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 1.9582
+  type: 'test'
+  ...
+# Subtest: Dumbbell bench press: roles, real bilateral GLB identities and FR/EN/AR
+ok 4 - Dumbbell bench press: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.49
+  type: 'test'
+  ...
+# Subtest: Incline barbell press: roles, real bilateral GLB identities and FR/EN/AR
+ok 5 - Incline barbell press: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.5299
+  type: 'test'
+  ...
+# Subtest: Incline dumbbell press: roles, real bilateral GLB identities and FR/EN/AR
+ok 6 - Incline dumbbell press: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.4082
+  type: 'test'
+  ...
+# Subtest: Decline press: roles, real bilateral GLB identities and FR/EN/AR
+ok 7 - Decline press: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.6969
+  type: 'test'
+  ...
+# Subtest: Dumbbell fly: roles, real bilateral GLB identities and FR/EN/AR
+ok 8 - Dumbbell fly: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.3609
+  type: 'test'
+  ...
+# Subtest: Cable fly: roles, real bilateral GLB identities and FR/EN/AR
+ok 9 - Cable fly: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.8288
+  type: 'test'
+  ...
+# Subtest: Pec deck fly: roles, real bilateral GLB identities and FR/EN/AR
+ok 10 - Pec deck fly: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.9179
+  type: 'test'
+  ...
+# Subtest: Push-up: roles, real bilateral GLB identities and FR/EN/AR
+ok 11 - Push-up: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.5175
+  type: 'test'
+  ...
+# Subtest: Chest dip: roles, real bilateral GLB identities and FR/EN/AR
+ok 12 - Chest dip: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 3.0698
+  type: 'test'
+  ...
+# Subtest: Pull-up: roles, real bilateral GLB identities and FR/EN/AR
+ok 13 - Pull-up: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 6.3778
+  type: 'test'
+  ...
+# Subtest: Neutral-grip pull-up: roles, real bilateral GLB identities and FR/EN/AR
+ok 14 - Neutral-grip pull-up: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 1.6922
+  type: 'test'
+  ...
+# Subtest: Barbell row: roles, real bilateral GLB identities and FR/EN/AR
+ok 15 - Barbell row: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 5.7644
+  type: 'test'
+  ...
+# Subtest: One-arm dumbbell row: roles, real bilateral GLB identities and FR/EN/AR
+ok 16 - One-arm dumbbell row: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.4397
+  type: 'test'
+  ...
+# Subtest: Machine row: roles, real bilateral GLB identities and FR/EN/AR
+ok 17 - Machine row: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.302
+  type: 'test'
+  ...
+# Subtest: Lat pulldown: roles, real bilateral GLB identities and FR/EN/AR
+ok 18 - Lat pulldown: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2555
+  type: 'test'
+  ...
+# Subtest: Seated cable row: roles, real bilateral GLB identities and FR/EN/AR
+ok 19 - Seated cable row: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 1.6914
+  type: 'test'
+  ...
+# Subtest: Deadlift: roles, real bilateral GLB identities and FR/EN/AR
+ok 20 - Deadlift: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.4489
+  type: 'test'
+  ...
+# Subtest: Cable pullover: roles, real bilateral GLB identities and FR/EN/AR
+ok 21 - Cable pullover: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2796
+  type: 'test'
+  ...
+# Subtest: Back extension: roles, real bilateral GLB identities and FR/EN/AR
+ok 22 - Back extension: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2644
+  type: 'test'
+  ...
+# Subtest: Barbell overhead press: roles, real bilateral GLB identities and FR/EN/AR
+ok 23 - Barbell overhead press: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2949
+  type: 'test'
+  ...
+# Subtest: Dumbbell shoulder press: roles, real bilateral GLB identities and FR/EN/AR
+ok 24 - Dumbbell shoulder press: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.3475
+  type: 'test'
+  ...
+# Subtest: Lateral raise: roles, real bilateral GLB identities and FR/EN/AR
+ok 25 - Lateral raise: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.1792
+  type: 'test'
+  ...
+# Subtest: Front raise: roles, real bilateral GLB identities and FR/EN/AR
+ok 26 - Front raise: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2081
+  type: 'test'
+  ...
+# Subtest: Dumbbell reverse fly: roles, real bilateral GLB identities and FR/EN/AR
+ok 27 - Dumbbell reverse fly: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 1.4986
+  type: 'test'
+  ...
+# Subtest: Face pull: roles, real bilateral GLB identities and FR/EN/AR
+ok 28 - Face pull: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2371
+  type: 'test'
+  ...
+# Subtest: Dumbbell shrug: roles, real bilateral GLB identities and FR/EN/AR
+ok 29 - Dumbbell shrug: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2296
+  type: 'test'
+  ...
+# Subtest: Arnold press: roles, real bilateral GLB identities and FR/EN/AR
+ok 30 - Arnold press: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 1.9208
+  type: 'test'
+  ...
+# Subtest: Barbell curl: roles, real bilateral GLB identities and FR/EN/AR
+ok 31 - Barbell curl: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.5341
+  type: 'test'
+  ...
+# Subtest: EZ-bar curl: roles, real bilateral GLB identities and FR/EN/AR
+ok 32 - EZ-bar curl: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2775
+  type: 'test'
+  ...
+# Subtest: Dumbbell biceps curl: roles, real bilateral GLB identities and FR/EN/AR
+ok 33 - Dumbbell biceps curl: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.1941
+  type: 'test'
+  ...
+# Subtest: Hammer curl: roles, real bilateral GLB identities and FR/EN/AR
+ok 34 - Hammer curl: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.217
+  type: 'test'
+  ...
+# Subtest: Incline curl: roles, real bilateral GLB identities and FR/EN/AR
+ok 35 - Incline curl: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2263
+  type: 'test'
+  ...
+# Subtest: Preacher curl: roles, real bilateral GLB identities and FR/EN/AR
+ok 36 - Preacher curl: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.217
+  type: 'test'
+  ...
+# Subtest: Low cable curl: roles, real bilateral GLB identities and FR/EN/AR
+ok 37 - Low cable curl: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.1799
+  type: 'test'
+  ...
+# Subtest: Lying triceps extension: roles, real bilateral GLB identities and FR/EN/AR
+ok 38 - Lying triceps extension: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.1914
+  type: 'test'
+  ...
+# Subtest: Rope triceps pushdown: roles, real bilateral GLB identities and FR/EN/AR
+ok 39 - Rope triceps pushdown: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2554
+  type: 'test'
+  ...
+# Subtest: Bar triceps pushdown: roles, real bilateral GLB identities and FR/EN/AR
+ok 40 - Bar triceps pushdown: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2013
+  type: 'test'
+  ...
+# Subtest: Overhead dumbbell triceps extension: roles, real bilateral GLB identities and FR/EN/AR
+ok 41 - Overhead dumbbell triceps extension: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.1942
+  type: 'test'
+  ...
+# Subtest: Triceps dip: roles, real bilateral GLB identities and FR/EN/AR
+ok 42 - Triceps dip: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2465
+  type: 'test'
+  ...
+# Subtest: Dumbbell triceps kickback: roles, real bilateral GLB identities and FR/EN/AR
+ok 43 - Dumbbell triceps kickback: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.1848
+  type: 'test'
+  ...
+# Subtest: Close-grip bench press: roles, real bilateral GLB identities and FR/EN/AR
+ok 44 - Close-grip bench press: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2195
+  type: 'test'
+  ...
+# Subtest: Squat: roles, real bilateral GLB identities and FR/EN/AR
+ok 45 - Squat: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2654
+  type: 'test'
+  ...
+# Subtest: Front squat: roles, real bilateral GLB identities and FR/EN/AR
+ok 46 - Front squat: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2396
+  type: 'test'
+  ...
+# Subtest: Leg press: roles, real bilateral GLB identities and FR/EN/AR
+ok 47 - Leg press: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2414
+  type: 'test'
+  ...
+# Subtest: Leg extension: roles, real bilateral GLB identities and FR/EN/AR
+ok 48 - Leg extension: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.1361
+  type: 'test'
+  ...
+# Subtest: Walking lunge: roles, real bilateral GLB identities and FR/EN/AR
+ok 49 - Walking lunge: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.264
+  type: 'test'
+  ...
+# Subtest: Bulgarian split squat: roles, real bilateral GLB identities and FR/EN/AR
+ok 50 - Bulgarian split squat: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2431
+  type: 'test'
+  ...
+# Subtest: Hack squat: roles, real bilateral GLB identities and FR/EN/AR
+ok 51 - Hack squat: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2729
+  type: 'test'
+  ...
+# Subtest: Lying leg curl: roles, real bilateral GLB identities and FR/EN/AR
+ok 52 - Lying leg curl: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.1752
+  type: 'test'
+  ...
+# Subtest: Seated leg curl: roles, real bilateral GLB identities and FR/EN/AR
+ok 53 - Seated leg curl: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2003
+  type: 'test'
+  ...
+# Subtest: Stiff-leg deadlift: roles, real bilateral GLB identities and FR/EN/AR
+ok 54 - Stiff-leg deadlift: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2075
+  type: 'test'
+  ...
+# Subtest: Good morning: roles, real bilateral GLB identities and FR/EN/AR
+ok 55 - Good morning: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2179
+  type: 'test'
+  ...
+# Subtest: Hip thrust: roles, real bilateral GLB identities and FR/EN/AR
+ok 56 - Hip thrust: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.1989
+  type: 'test'
+  ...
+# Subtest: Hip abduction machine: roles, real bilateral GLB identities and FR/EN/AR
+ok 57 - Hip abduction machine: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.1523
+  type: 'test'
+  ...
+# Subtest: Cable glute kickback: roles, real bilateral GLB identities and FR/EN/AR
+ok 58 - Cable glute kickback: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2597
+  type: 'test'
+  ...
+# Subtest: Standing calf raise: roles, real bilateral GLB identities and FR/EN/AR
+ok 59 - Standing calf raise: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2404
+  type: 'test'
+  ...
+# Subtest: Seated calf raise: roles, real bilateral GLB identities and FR/EN/AR
+ok 60 - Seated calf raise: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.1718
+  type: 'test'
+  ...
+# Subtest: Leg press calf raise: roles, real bilateral GLB identities and FR/EN/AR
+ok 61 - Leg press calf raise: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.1947
+  type: 'test'
+  ...
+# Subtest: Crunch: roles, real bilateral GLB identities and FR/EN/AR
+ok 62 - Crunch: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.1673
+  type: 'test'
+  ...
+# Subtest: Cable crunch: roles, real bilateral GLB identities and FR/EN/AR
+ok 63 - Cable crunch: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.1767
+  type: 'test'
+  ...
+# Subtest: Hanging leg raise: roles, real bilateral GLB identities and FR/EN/AR
+ok 64 - Hanging leg raise: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2783
+  type: 'test'
+  ...
+# Subtest: Forearm plank: roles, real bilateral GLB identities and FR/EN/AR
+ok 65 - Forearm plank: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2257
+  type: 'test'
+  ...
+# Subtest: Ab wheel rollout: roles, real bilateral GLB identities and FR/EN/AR
+ok 66 - Ab wheel rollout: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2349
+  type: 'test'
+  ...
+# Subtest: Russian twist: roles, real bilateral GLB identities and FR/EN/AR
+ok 67 - Russian twist: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2087
+  type: 'test'
+  ...
+# Subtest: Wrist curl: roles, real bilateral GLB identities and FR/EN/AR
+ok 68 - Wrist curl: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2417
+  type: 'test'
+  ...
+# Subtest: Reverse curl: roles, real bilateral GLB identities and FR/EN/AR
+ok 69 - Reverse curl: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.2143
+  type: 'test'
+  ...
+# Subtest: Farmer carry: roles, real bilateral GLB identities and FR/EN/AR
+ok 70 - Farmer carry: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.3549
+  type: 'test'
+  ...
+# Subtest: Bodyweight squat: roles, real bilateral GLB identities and FR/EN/AR
+ok 71 - Bodyweight squat: roles, real bilateral GLB identities and FR/EN/AR
+  ---
+  duration_ms: 0.3221
+  type: 'test'
+  ...
+# Subtest: stable identities distinguish variants and reject personal/fuzzy/conflicting records
+ok 72 - stable identities distinguish variants and reject personal/fuzzy/conflicting records
+  ---
+  duration_ms: 53.4216
+  type: 'test'
+  ...
+# Subtest: changing exercise cannot retain any role from the previous configuration
+ok 73 - changing exercise cannot retain any role from the previous configuration
+  ---
+  duration_ms: 3.8983
+  type: 'test'
+  ...
+# Subtest: movement-dependent roles and actions do not conflate incline, hammer, knee or hip work
+ok 74 - movement-dependent roles and actions do not conflate incline, hammer, knee or hip work
+  ---
+  duration_ms: 0.5031
+  type: 'test'
+  ...
+# Subtest: general UI and unavailable states have identical nonempty translation keys
+ok 75 - general UI and unavailable states have identical nonempty translation keys
+  ---
+  duration_ms: 28.3015
+  type: 'test'
+  ...
+# Subtest: pilot uses the stable guide identity and only explicit precise multilingual aliases
+ok 76 - pilot uses the stable guide identity and only explicit precise multilingual aliases
+  ---
+  duration_ms: 2.0526
+  type: 'test'
+  ...
+# Subtest: every highlighted structure has an actual named mesh in the pinned male GLB
+ok 77 - every highlighted structure has an actual named mesh in the pinned male GLB
+  ---
+  duration_ms: 81.293
+  type: 'test'
+  ...
+# Subtest: side mapping colors working-side movers, bilateral stabilizers and no undocumented anatomy
+ok 78 - side mapping colors working-side movers, bilateral stabilizers and no undocumented anatomy
+  ---
+  duration_ms: 0.6339
+  type: 'test'
+  ...
+# Subtest: lazy anatomy UI and muscle descriptions are complete in FR EN AR
+ok 79 - lazy anatomy UI and muscle descriptions are complete in FR EN AR
+  ---
+  duration_ms: 97.0914
+  type: 'test'
+  ...
+# Subtest: model redistribution includes actual upstream licenses, attribution and a pinned source
+ok 80 - model redistribution includes actual upstream licenses, attribution and a pinned source
+  ---
+  duration_ms: 3.289
+  type: 'test'
+  ...
+# Subtest: the real Next matcher excludes public atlas files while keeping app authentication in place
+ok 81 - the real Next matcher excludes public atlas files while keeping app authentication in place
+  ---
+  duration_ms: 1584.7168
+  type: 'test'
+  ...
+# Subtest: unknown or invalid progress is not presented as a fabricated zero percent
+ok 82 - unknown or invalid progress is not presented as a fabricated zero percent
+  ---
+  duration_ms: 37.7771
+  type: 'test'
+  ...
+# Subtest: visual progress handles completed and over-completed goals without modifying inputs
+ok 83 - visual progress handles completed and over-completed goals without modifying inputs
+  ---
+  duration_ms: 10.03
+  type: 'test'
+  ...
+# Subtest: each new UI label has explicit FR, EN and AR text
+ok 84 - each new UI label has explicit FR, EN and AR text
+  ---
+  duration_ms: 752.9737
+  type: 'test'
+  ...
+# Subtest: registered media exists locally as WebP and stays below the 150 KiB combined budget
+ok 85 - registered media exists locally as WebP and stays below the 150 KiB combined budget
+  ---
+  duration_ms: 11.6638
+  type: 'test'
+  ...
+# Subtest: preview is closed by default and performs no sport reads when disabled
+ok 86 - preview is closed by default and performs no sport reads when disabled
+  ---
+  duration_ms: 17.3121
+  type: 'test'
+  ...
+# Subtest: search accepts accents, Arabic marks and translated names without changing canonical identities
+ok 87 - search accepts accents, Arabic marks and translated names without changing canonical identities
+  ---
+  duration_ms: 70.4415
+  type: 'test'
+  ...
+# Subtest: combined filters, unknown metadata, empty Running and locale sorting use actual catalog entries
+ok 88 - combined filters, unknown metadata, empty Running and locale sorting use actual catalog entries
+  ---
+  duration_ms: 1.749
+  type: 'test'
+  ...
+# Subtest: catalog reads are owner-scoped and closed gates never touch Calisthenics or Running tables
+ok 89 - catalog reads are owner-scoped and closed gates never touch Calisthenics or Running tables
+  ---
+  duration_ms: 1645.5593
+  type: 'test'
+  ...
+# Subtest: detail records reuse strength calculations, isolate owner/discipline/date and retain case-space identity
+ok 90 - detail records reuse strength calculations, isolate owner/discipline/date and retain case-space identity
+  ---
+  duration_ms: 360.5441
+  type: 'test'
+  ...
+# Subtest: pilot details reuse exact anatomy roles and now supply complete technique without changing records
+ok 91 - pilot details reuse exact anatomy roles and now supply complete technique without changing records
+  ---
+  duration_ms: 438.9578
+  type: 'test'
+  ...
+# Subtest: V3 server details preserve existing guides and supply complete localized technique with the exact existing anatomy
+ok 92 - V3 server details preserve existing guides and supply complete localized technique with the exact existing anatomy
+  ---
+  duration_ms: 1674.2341
+  type: 'test'
+  ...
+# Subtest: approved Calisthenics branch resolves original IDs and global keys without enabling the real gate
+ok 93 - approved Calisthenics branch resolves original IDs and global keys without enabling the real gate
+  ---
+  duration_ms: 264.6388
+  type: 'test'
+  ...
+# Subtest: unauthenticated readers do not query the database and query failures never masquerade as empty data
+ok 94 - unauthenticated readers do not query the database and query failures never masquerade as empty data
+  ---
+  duration_ms: 543.8046
+  type: 'test'
+  ...
+# Subtest: eight variant-specific guides have complete independent FR/EN/AR content and real local media
+ok 95 - eight variant-specific guides have complete independent FR/EN/AR content and real local media
+  ---
+  duration_ms: 9.6296
+  type: 'test'
+  ...
+# Subtest: missing videos show no play button or media resource and local video loading is opt-in
+ok 96 - missing videos show no play button or media resource and local video loading is opt-in
+  ---
+  duration_ms: 473.9343
+  type: 'test'
+  ...
+# Subtest: new labels and request validation cover all locales and reject invalid selectors
+ok 97 - new labels and request validation cover all locales and reject invalid selectors
+  ---
+  duration_ms: 263.7483
+  type: 'test'
+  ...
+# Subtest: guide endpoint authenticates first, disables caching and hides database failures
+ok 98 - guide endpoint authenticates first, disables caching and hides database failures
+  ---
+  duration_ms: 95.1939
+  type: 'test'
+  ...
+# Subtest: name narrowing escapes SQL wildcard characters without changing exercise identity
+ok 99 - name narrowing escapes SQL wildcard characters without changing exercise identity
+  ---
+  duration_ms: 11.9928
+  type: 'test'
+  ...
+# Subtest: V2 is restricted to five stable identities and rejects similar or incomplete session identities
+ok 100 - V2 is restricted to five stable identities and rejects similar or incomplete session identities
+  ---
+  duration_ms: 2.4565
+  type: 'test'
+  ...
+# Subtest: gallery uses actual registered positions; null, one image and duplicate paths never create a false carousel
+ok 101 - gallery uses actual registered positions; null, one image and duplicate paths never create a false carousel
+  ---
+  duration_ms: 2.4987
+  type: 'test'
+  ...
+# Subtest: strength-developpe-incline-halteres: independent FR/EN/AR technique and corrections
+ok 102 - strength-developpe-incline-halteres: independent FR/EN/AR technique and corrections
+  ---
+  duration_ms: 1.6272
+  type: 'test'
+  ...
+# Subtest: strength-squat: independent FR/EN/AR technique and corrections
+ok 103 - strength-squat: independent FR/EN/AR technique and corrections
+  ---
+  duration_ms: 0.3982
+  type: 'test'
+  ...
+# Subtest: strength-curl-incline: independent FR/EN/AR technique and corrections
+ok 104 - strength-curl-incline: independent FR/EN/AR technique and corrections
+  ---
+  duration_ms: 0.4007
+  type: 'test'
+  ...
+# Subtest: single-frame component has no navigation
+ok 105 - single-frame component has no navigation
+  ---
+  duration_ms: 585.5394
+  type: 'test'
+  ...
+# Subtest: V3 adds exactly 15 unphotographed catalog identities, 14 from the versioned program, without changing catalog composition
+ok 106 - V3 adds exactly 15 unphotographed catalog identities, 14 from the versioned program, without changing catalog composition
+  ---
+  duration_ms: 11.0218
+  type: 'test'
+  ...
+# Subtest: original photographs and all five pilot position files retain exact bytes
+ok 107 - original photographs and all five pilot position files retain exact bytes
+  ---
+  duration_ms: 61.9579
+  type: 'test'
+  ...
+# Subtest: reviewed originals are traceable, rejected proposals cannot enter the active registry
+ok 108 - reviewed originals are traceable, rejected proposals cannot enter the active registry
+  ---
+  duration_ms: 0.7129
+  type: 'test'
+  ...
+# Subtest: strength-developpe-couche-barre: real phase count, exact identity, translations and technical copy
+ok 109 - strength-developpe-couche-barre: real phase count, exact identity, translations and technical copy
+  ---
+  duration_ms: 2.0658
+  type: 'test'
+  ...
+# Subtest: strength-ecarte-poulie-vis-a-vis: real phase count, exact identity, translations and technical copy
+ok 110 - strength-ecarte-poulie-vis-a-vis: real phase count, exact identity, translations and technical copy
+  ---
+  duration_ms: 0.8958
+  type: 'test'
+  ...
+# Subtest: strength-tractions: real phase count, exact identity, translations and technical copy
+ok 111 - strength-tractions: real phase count, exact identity, translations and technical copy
+  ---
+  duration_ms: 0.8787
+  type: 'test'
+  ...
+# Subtest: strength-rowing-barre: real phase count, exact identity, translations and technical copy
+ok 112 - strength-rowing-barre: real phase count, exact identity, translations and technical copy
+  ---
+  duration_ms: 1.0779
+  type: 'test'
+  ...
+# Subtest: strength-developpe-militaire-barre: real phase count, exact identity, translations and technical copy
+ok 113 - strength-developpe-militaire-barre: real phase count, exact identity, translations and technical copy
+  ---
+  duration_ms: 1.25
+  type: 'test'
+  ...
+# Subtest: strength-elevations-laterales: real phase count, exact identity, translations and technical copy
+ok 114 - strength-elevations-laterales: real phase count, exact identity, translations and technical copy
+  ---
+  duration_ms: 1.6773
+  type: 'test'
+  ...
+# Subtest: strength-curl-marteau: real phase count, exact identity, translations and technical copy
+ok 115 - strength-curl-marteau: real phase count, exact identity, translations and technical copy
+  ---
+  duration_ms: 1.5191
+  type: 'test'
+  ...
+# Subtest: strength-extension-poulie-haute-corde: real phase count, exact identity, translations and technical copy
+ok 116 - strength-extension-poulie-haute-corde: real phase count, exact identity, translations and technical copy
+  ---
+  duration_ms: 1.1856
+  type: 'test'
+  ...
+# Subtest: strength-presse-a-cuisses: real phase count, exact identity, translations and technical copy
+ok 117 - strength-presse-a-cuisses: real phase count, exact identity, translations and technical copy
+  ---
+  duration_ms: 0.9553
+  type: 'test'
+  ...
+# Subtest: strength-leg-extension: real phase count, exact identity, translations and technical copy
+ok 118 - strength-leg-extension: real phase count, exact identity, translations and technical copy
+  ---
+  duration_ms: 0.9782
+  type: 'test'
+  ...
+# Subtest: strength-fentes-marchees: real phase count, exact identity, translations and technical copy
+ok 119 - strength-fentes-marchees: real phase count, exact identity, translations and technical copy
+  ---
+  duration_ms: 0.9067
+  type: 'test'
+  ...
+# Subtest: strength-leg-curl-allonge: real phase count, exact identity, translations and technical copy
+ok 120 - strength-leg-curl-allonge: real phase count, exact identity, translations and technical copy
+  ---
+  duration_ms: 0.877
+  type: 'test'
+  ...
+# Subtest: strength-mollets-debout: real phase count, exact identity, translations and technical copy
+ok 121 - strength-mollets-debout: real phase count, exact identity, translations and technical copy
+  ---
+  duration_ms: 0.8275
+  type: 'test'
+  ...
+# Subtest: strength-crunch-poulie: real phase count, exact identity, translations and technical copy
+ok 122 - strength-crunch-poulie: real phase count, exact identity, translations and technical copy
+  ---
+  duration_ms: 0.8129
+  type: 'test'
+  ...
+# Subtest: strength-gainage-planche: real phase count, exact identity, translations and technical copy
+ok 123 - strength-gainage-planche: real phase count, exact identity, translations and technical copy
+  ---
+  duration_ms: 0.8134
+  type: 'test'
+  ...
+# Subtest: the static plank has no fabricated start/end pair and movement fallbacks stay explicit
+ok 124 - the static plank has no fabricated start/end pair and movement fallbacks stay explicit
+  ---
+  duration_ms: 0.7328
+  type: 'test'
+  ...
+# Subtest: the five original pilot position pairs remain intact after later batches
+ok 125 - the five original pilot position pairs remain intact after later batches
+  ---
+  duration_ms: 12.9447
+  type: 'test'
+  ...
+# Subtest: strength-developpe-couche-barre: real optimized assets, review and translations
+ok 126 - strength-developpe-couche-barre: real optimized assets, review and translations
+  ---
+  duration_ms: 175.6949
+  type: 'test'
+  ...
+# Subtest: strength-ecarte-poulie-vis-a-vis: real optimized assets, review and translations
+ok 127 - strength-ecarte-poulie-vis-a-vis: real optimized assets, review and translations
+  ---
+  duration_ms: 107.6818
+  type: 'test'
+  ...
+# Subtest: strength-tractions: real optimized assets, review and translations
+ok 128 - strength-tractions: real optimized assets, review and translations
+  ---
+  duration_ms: 104.3433
+  type: 'test'
+  ...
+# Subtest: strength-rowing-barre: real optimized assets, review and translations
+ok 129 - strength-rowing-barre: real optimized assets, review and translations
+  ---
+  duration_ms: 101.2982
+  type: 'test'
+  ...
+# Subtest: strength-developpe-militaire-barre: real optimized assets, review and translations
+ok 130 - strength-developpe-militaire-barre: real optimized assets, review and translations
+  ---
+  duration_ms: 48.194
+  type: 'test'
+  ...
+# Subtest: strength-elevations-laterales: real optimized assets, review and translations
+ok 131 - strength-elevations-laterales: real optimized assets, review and translations
+  ---
+  duration_ms: 48.8904
+  type: 'test'
+  ...
+# Subtest: strength-curl-marteau: real optimized assets, review and translations
+ok 132 - strength-curl-marteau: real optimized assets, review and translations
+  ---
+  duration_ms: 80.8065
+  type: 'test'
+  ...
+# Subtest: strength-extension-poulie-haute-corde: real optimized assets, review and translations
+ok 133 - strength-extension-poulie-haute-corde: real optimized assets, review and translations
+  ---
+  duration_ms: 8.3068
+  type: 'test'
+  ...
+# Subtest: strength-presse-a-cuisses: real optimized assets, review and translations
+ok 134 - strength-presse-a-cuisses: real optimized assets, review and translations
+  ---
+  duration_ms: 7.9336
+  type: 'test'
+  ...
+# Subtest: strength-leg-extension: real optimized assets, review and translations
+ok 135 - strength-leg-extension: real optimized assets, review and translations
+  ---
+  duration_ms: 6.5906
+  type: 'test'
+  ...
+# Subtest: strength-fentes-marchees: real optimized assets, review and translations
+ok 136 - strength-fentes-marchees: real optimized assets, review and translations
+  ---
+  duration_ms: 7.2251
+  type: 'test'
+  ...
+# Subtest: strength-leg-curl-allonge: real optimized assets, review and translations
+ok 137 - strength-leg-curl-allonge: real optimized assets, review and translations
+  ---
+  duration_ms: 9.0132
+  type: 'test'
+  ...
+# Subtest: strength-mollets-debout: real optimized assets, review and translations
+ok 138 - strength-mollets-debout: real optimized assets, review and translations
+  ---
+  duration_ms: 103.9936
+  type: 'test'
+  ...
+# Subtest: strength-crunch-poulie: real optimized assets, review and translations
+ok 139 - strength-crunch-poulie: real optimized assets, review and translations
+  ---
+  duration_ms: 11.5242
+  type: 'test'
+  ...
+# Subtest: strength-gainage-planche: real optimized assets, review and translations
+ok 140 - strength-gainage-planche: real optimized assets, review and translations
+  ---
+  duration_ms: 4.3315
+  type: 'test'
+  ...
+# Subtest: strength-developpe-incline-halteres: real optimized assets, review and translations
+ok 141 - strength-developpe-incline-halteres: real optimized assets, review and translations
+  ---
+  duration_ms: 27.0606
+  type: 'test'
+  ...
+# Subtest: strength-rowing-haltere-unilateral: real optimized assets, review and translations
+ok 142 - strength-rowing-haltere-unilateral: real optimized assets, review and translations
+  ---
+  duration_ms: 7.1024
+  type: 'test'
+  ...
+# Subtest: strength-squat: real optimized assets, review and translations
+ok 143 - strength-squat: real optimized assets, review and translations
+  ---
+  duration_ms: 4.6214
+  type: 'test'
+  ...
+# Subtest: strength-curl-incline: real optimized assets, review and translations
+ok 144 - strength-curl-incline: real optimized assets, review and translations
+  ---
+  duration_ms: 4.7144
+  type: 'test'
+  ...
+# Subtest: strength-tirage-horizontal-poulie: real optimized assets, review and translations
+ok 145 - strength-tirage-horizontal-poulie: real optimized assets, review and translations
+  ---
+  duration_ms: 53.1878
+  type: 'test'
+  ...
+# Subtest: strength-curl-halteres: real optimized assets, review and translations
+ok 146 - strength-curl-halteres: real optimized assets, review and translations
+  ---
+  duration_ms: 9.0045
+  type: 'test'
+  ...
+# Subtest: strength-pompes: real optimized assets, review and translations
+ok 147 - strength-pompes: real optimized assets, review and translations
+  ---
+  duration_ms: 17.9966
+  type: 'test'
+  ...
+# Subtest: existing correct photographs retain their original hashes
+ok 148 - existing correct photographs retain their original hashes
+  ---
+  duration_ms: 3.0903
+  type: 'test'
+  ...
+# Subtest: stable variants and personal rows never acquire a similar movement's photo
+ok 149 - stable variants and personal rows never acquire a similar movement's photo
+  ---
+  duration_ms: 0.7339
+  type: 'test'
+  ...
+# Subtest: 70 vs 80 is explained by actual composition, never a hard-coded displayed count
+ok 150 - 70 vs 80 is explained by actual composition, never a hard-coded displayed count
+  ---
+  duration_ms: 1.2973
+  type: 'test'
+  ...
+# Subtest: calendar keeps old months accessible, handles leap years, excludes future days
+ok 151 - calendar keeps old months accessible, handles leap years, excludes future days
+  ---
+  duration_ms: 10.5068
+  type: 'test'
+  ...
+# Subtest: pagination preserves every row beyond PostgREST's 1000-row limit
+ok 152 - pagination preserves every row beyond PostgREST's 1000-row limit
+  ---
+  duration_ms: 2.2286
+  type: 'test'
+  ...
+# Subtest: pagination fails explicitly on errors and the safety limit instead of truncating
+ok 153 - pagination fails explicitly on errors and the safety limit instead of truncating
+  ---
+  duration_ms: 1.4914
+  type: 'test'
+  ...
+# Subtest: calendar query is owner-scoped, month-bounded, paginated, and read-only
+ok 154 - calendar query is owner-scoped, month-bounded, paginated, and read-only
+  ---
+  duration_ms: 84.4196
+  type: 'test'
+  ...
+# Subtest: unauthenticated calendar never reads database tables
+ok 155 - unauthenticated calendar never reads database tables
+  ---
+  duration_ms: 78.0584
+  type: 'test'
+  ...
+# Subtest: real React server cache deduplicates reads and isolates concurrent request scopes
+ok 156 - real React server cache deduplicates reads and isolates concurrent request scopes
+  ---
+  duration_ms: 32.0448
+  type: 'test'
+  ...
+# Subtest: disabled Calisthenics loader does not create a database client
+ok 157 - disabled Calisthenics loader does not create a database client
+  ---
+  duration_ms: 82.249
+  type: 'test'
+  ...
+# Subtest: Supabase diagnostic preserves responses and redacts credentials and query parameters
+ok 158 - Supabase diagnostic preserves responses and redacts credentials and query parameters
+  ---
+  duration_ms: 71.5835
+  type: 'test'
+  ...
+# Subtest: navigation instrumentation stays inert when disabled
+ok 159 - navigation instrumentation stays inert when disabled
+  ---
+  duration_ms: 18.5473
+  type: 'test'
+  ...
+# Subtest: classification keeps legacy strength identification without double-counting disciplines
+ok 160 - classification keeps legacy strength identification without double-counting disciplines
+  ---
+  duration_ms: 3.9649
+  type: 'test'
+  ...
+# Subtest: weekly volume uses recorded strength sets, excluding older, future and other-discipline rows
+ok 161 - weekly volume uses recorded strength sets, excluding older, future and other-discipline rows
+  ---
+  duration_ms: 4.4437
+  type: 'test'
+  ...
+# Subtest: missing volume stays unknown while recorded zero-load sets legitimately show zero
+ok 162 - missing volume stays unknown while recorded zero-load sets legitimately show zero
+  ---
+  duration_ms: 1.2239
+  type: 'test'
+  ...
+# Subtest: next-session suggestions reference existing templates and do not fabricate a planned date
+ok 163 - next-session suggestions reference existing templates and do not fabricate a planned date
+  ---
+  duration_ms: 52.9903
+  type: 'test'
+  ...
+# Subtest: query shortcuts select real workspace panels and preserve legacy date behavior
+ok 164 - query shortcuts select real workspace panels and preserve legacy date behavior
+  ---
+  duration_ms: 0.5672
+  type: 'test'
+  ...
+# Subtest: recent activity links keep discipline-specific details and encode user identifiers
+ok 165 - recent activity links keep discipline-specific details and encode user identifiers
+  ---
+  duration_ms: 0.387
+  type: 'test'
+  ...
+# Subtest: dashboard reads are owner-scoped and never query gated discipline tables
+ok 166 - dashboard reads are owner-scoped and never query gated discipline tables
+  ---
+  duration_ms: 280.7756
+  type: 'test'
+  ...
+# Subtest: new dashboard labels have explicit translations in all three languages
+ok 167 - new dashboard labels have explicit translations in all three languages
+  ---
+  duration_ms: 392.3632
+  type: 'test'
+  ...
+1..167
+# tests 167
+# suites 0
+# pass 167
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8001.4054

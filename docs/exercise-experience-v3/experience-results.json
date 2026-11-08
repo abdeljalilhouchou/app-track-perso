@@ -1,0 +1,1247 @@
+{
+  "cases": [
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 320,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 320,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 320,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 320,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 390,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 390,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 390,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 390,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 430,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 430,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 430,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 430,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 768,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 768,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 768,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 768,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 1440,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 1440,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 1440,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "light",
+      "width": 1440,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 320,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 320,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 320,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 320,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 390,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 390,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 390,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 390,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 430,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 430,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 430,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 430,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 768,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 768,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 768,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 768,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 1440,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 1440,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 1440,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "fr",
+      "theme": "dark",
+      "width": 1440,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 320,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 320,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 320,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 320,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 390,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 390,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 390,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 390,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 430,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 430,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 430,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 430,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 768,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 768,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 768,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 768,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 1440,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 1440,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 1440,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "light",
+      "width": 1440,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 320,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 320,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 320,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 320,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 390,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 390,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 390,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 390,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 430,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 430,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 430,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 430,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 768,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 768,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 768,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 768,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 1440,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 1440,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 1440,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "en",
+      "theme": "dark",
+      "width": 1440,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 320,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 320,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 320,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 320,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 390,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 390,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 390,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 390,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 430,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 430,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 430,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 430,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 768,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 768,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 768,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 768,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 1440,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 1440,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 1440,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "light",
+      "width": 1440,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 320,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 320,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 320,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 320,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 390,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 390,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 390,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 390,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 430,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 430,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 430,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 430,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 768,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 768,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 768,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 768,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 1440,
+      "tab": "demonstration",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 1440,
+      "tab": "technique",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 1440,
+      "tab": "muscles",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    },
+    {
+      "language": "ar",
+      "theme": "dark",
+      "width": 1440,
+      "tab": "advice",
+      "overflow": false,
+      "closeVisible": true,
+      "targets44": true
+    }
+  ],
+  "screenshots": [
+    "experience-light-demonstration-390.webp",
+    "experience-light-technique-390.webp",
+    "experience-light-muscles-390.webp",
+    "experience-light-advice-390.webp",
+    "experience-dark-demonstration-390.webp",
+    "experience-dark-technique-390.webp",
+    "experience-dark-muscles-390.webp",
+    "experience-dark-advice-390.webp",
+    "experience-desktop-dark-photos.webp",
+    "experience-ar-dark-photos-320.webp",
+    "experience-session-dark-before.webp",
+    "experience-photo-enlarged-dark.webp",
+    "experience-3d-dark.webp",
+    "experience-return-from-3d-dark.webp",
+    "experience-session-dark-return.webp",
+    "experience-ar-system-light-430.webp",
+    "experience-ar-system-dark-430.webp"
+  ],
+  "mode": "Actual application, Edge headless, local fixtures only",
+  "compactCardActions": true,
+  "photoEnlargementAndFocus": true,
+  "handleDrag": true,
+  "shared3DAndReturn": true,
+  "exactSessionPreserved": true,
+  "staticHold": true,
+  "systemAndReducedMotion": true,
+  "writes": [],
+  "loadedPhotoUrls": [
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-developpe-incline-halteres.webp&w=64&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-rowing-haltere-unilateral.webp&w=64&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-squat.webp&w=64&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-curl-incline.webp&w=64&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-tirage-horizontal-poulie.webp&w=64&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fincline-dumbbell-press-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fincline-dumbbell-press-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fincline-dumbbell-press-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fincline-dumbbell-press-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fone-arm-dumbbell-row-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fone-arm-dumbbell-row-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fone-arm-dumbbell-row.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fone-arm-dumbbell-row.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fbarbell-back-squat-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fbarbell-back-squat-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fbarbell-back-squat-bottom.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fbarbell-back-squat-bottom.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fincline-dumbbell-curl-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fincline-dumbbell-curl-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fincline-dumbbell-curl-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fincline-dumbbell-curl-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fseated-cable-row-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fseated-cable-row-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fseated-cable-row-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fseated-cable-row-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fseated-cable-row-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fincline-dumbbell-press-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fincline-dumbbell-press-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fone-arm-dumbbell-row-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fone-arm-dumbbell-row.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fbarbell-back-squat-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fbarbell-back-squat-bottom.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fincline-dumbbell-curl-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fincline-dumbbell-curl-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fpilot%2Fseated-cable-row-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fdumbbell-curl.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-crunch-poulie.webp&w=96&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-developpe-couche-barre.webp&w=64&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-ecarte-poulie-vis-a-vis.webp&w=64&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-extension-poulie-haute-corde.webp&w=64&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-developpe-couche-barre-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-developpe-couche-barre-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-developpe-couche-barre-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-tractions.webp&w=64&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-rowing-barre.webp&w=64&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-developpe-militaire-barre.webp&w=64&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-developpe-couche-barre-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-elevations-laterales.webp&w=64&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-curl-marteau.webp&w=64&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-developpe-couche-barre-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-ecarte-poulie-vis-a-vis-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-ecarte-poulie-vis-a-vis-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-ecarte-poulie-vis-a-vis-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-ecarte-poulie-vis-a-vis-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-tractions-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-tractions-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-tractions-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-tractions-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-rowing-barre-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-rowing-barre-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-rowing-barre-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-rowing-barre-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-developpe-militaire-barre-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-developpe-militaire-barre-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-developpe-militaire-barre-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-developpe-militaire-barre-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-elevations-laterales-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-elevations-laterales-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-elevations-laterales-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-elevations-laterales-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-curl-marteau-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-curl-marteau-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-curl-marteau-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-curl-marteau-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-extension-poulie-haute-corde-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-extension-poulie-haute-corde-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-extension-poulie-haute-corde-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-extension-poulie-haute-corde-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-presse-a-cuisses-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-presse-a-cuisses-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-presse-a-cuisses-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-presse-a-cuisses-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-leg-extension-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-leg-extension-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-leg-extension-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-leg-extension-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-fentes-marchees-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-fentes-marchees-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-fentes-marchees-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-fentes-marchees-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-leg-curl-allonge-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-leg-curl-allonge-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-leg-curl-allonge-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-leg-curl-allonge-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-mollets-debout-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-mollets-debout-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-mollets-debout-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-mollets-debout-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-crunch-poulie-start.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-crunch-poulie-start.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-crunch-poulie-end.webp&w=128&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-crunch-poulie-end.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-gainage-planche-hold.webp&w=640&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-gainage-planche-hold.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-developpe-couche-barre-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-ecarte-poulie-vis-a-vis-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-ecarte-poulie-vis-a-vis-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-tractions-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-tractions-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-rowing-barre-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-rowing-barre-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-developpe-militaire-barre-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-developpe-militaire-barre-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-elevations-laterales-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-elevations-laterales-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-curl-marteau-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-curl-marteau-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-extension-poulie-haute-corde-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-extension-poulie-haute-corde-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-presse-a-cuisses-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-presse-a-cuisses-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-leg-extension-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-leg-extension-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-fentes-marchees-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-fentes-marchees-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-leg-curl-allonge-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-leg-curl-allonge-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-mollets-debout-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-mollets-debout-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-crunch-poulie-start.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fv3%2Fstrength-crunch-poulie-end.webp&w=828&q=75",
+    "http://127.0.0.1:49238/_next/image?url=%2Fimages%2Fexercises%2Fthumbnails%2Fstrength-gainage-planche.webp&w=64&q=75"
+  ],
+  "completed": true
+}

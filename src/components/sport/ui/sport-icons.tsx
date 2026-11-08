@@ -13,6 +13,8 @@ const paths = {
   check: <path d="m5 12 4 4L19 6" />,
   plus: <path d="M12 5v14M5 12h14" />,
   minus: <path d="M5 12h14" />,
+  close: <path d="m6 6 12 12M6 18 18 6" />,
+  expand: <path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" />,
   chevron: <path d="m9 5 7 7-7 7" />,
   bookmark: <path d="M6 3h12v18l-6-4-6 4V3Z" />,
   image: <><rect x="3" y="3" width="18" height="18" rx="3" /><circle cx="8" cy="8" r="1" /><path d="m3 17 6-6 4 4 3-3 5 5" /></>,

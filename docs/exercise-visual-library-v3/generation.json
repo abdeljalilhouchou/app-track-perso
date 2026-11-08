@@ -1,0 +1,408 @@
+{
+  "tool": "Built-in image_gen; no third-party photographs copied",
+  "date": "2026-11-08",
+  "styleReference": "public/images/exercises/pilot/incline-dumbbell-curl-end.webp",
+  "generated": 34,
+  "accepted": 29,
+  "rejected": 5,
+  "mapping": [
+    {
+      "id": "strength-developpe-couche-barre",
+      "start": "bench-start-v2",
+      "end": "bench-end-v2",
+      "static": false
+    },
+    {
+      "id": "strength-ecarte-poulie-vis-a-vis",
+      "start": "fly-start",
+      "end": "fly-end-v2",
+      "static": false
+    },
+    {
+      "id": "strength-tractions",
+      "start": "pullup-start",
+      "end": "pullup-end",
+      "static": false
+    },
+    {
+      "id": "strength-rowing-barre",
+      "start": "row-start-v2",
+      "end": "row-end",
+      "static": false
+    },
+    {
+      "id": "strength-developpe-militaire-barre",
+      "start": "overhead-start",
+      "end": "overhead-end",
+      "static": false
+    },
+    {
+      "id": "strength-elevations-laterales",
+      "start": "lateral-start",
+      "end": "lateral-end",
+      "static": false
+    },
+    {
+      "id": "strength-curl-marteau",
+      "start": "hammer-start",
+      "end": "hammer-end",
+      "static": false
+    },
+    {
+      "id": "strength-extension-poulie-haute-corde",
+      "start": "pushdown-start",
+      "end": "pushdown-end",
+      "static": false
+    },
+    {
+      "id": "strength-presse-a-cuisses",
+      "start": "legpress-start-v2",
+      "end": "legpress-end",
+      "static": false
+    },
+    {
+      "id": "strength-leg-extension",
+      "start": "legextension-start",
+      "end": "legextension-end",
+      "static": false
+    },
+    {
+      "id": "strength-fentes-marchees",
+      "start": "lunge-start",
+      "end": "lunge-end",
+      "static": false
+    },
+    {
+      "id": "strength-leg-curl-allonge",
+      "start": "legcurl-start",
+      "end": "legcurl-end",
+      "static": false
+    },
+    {
+      "id": "strength-mollets-debout",
+      "start": "calf-start",
+      "end": "calf-end",
+      "static": false
+    },
+    {
+      "id": "strength-crunch-poulie",
+      "start": "crunch-start",
+      "end": "crunch-end",
+      "static": false
+    },
+    {
+      "id": "strength-gainage-planche",
+      "start": "plank",
+      "end": null,
+      "static": true
+    }
+  ],
+  "records": [
+    {
+      "asset": "bench-start-v2",
+      "exerciseId": "strength-developpe-couche-barre",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-23e71418-ca47-4a5b-bbce-153823b6d229.png",
+      "prompt": "Use case: photorealistic-natural. Asset: professional Track Perso instructional exercise photograph, one landscape 3:2 photograph, no collage, text, diagrams, branding or watermark. Reference image is STYLE/ATHLETE reference only, not a pose to copy. Same fit adult man in his 30s, short dark hair, black athletic T-shirt, charcoal shorts and black trainers, realistic proportions and hands. Same upscale charcoal gym, large daylight windows, muted green foliage, rubber flooring and realistic black metal equipment. Soft professional daylight with realistic skin and fabric. Camera frames the entire body including feet and every active piece of equipment, with comfortable margins. No equipment obscuring hands or joints. Exactly two arms and two legs, normal fingers. Exercise: FLAT BARBELL BENCH PRESS bottom of press. Recreate a technically clear PURE SIDE VIEW, camera only 15 degrees toward the foot end from perpendicular side, athlete head LEFT feet RIGHT. A long flat bench pad runs HORIZONTALLY beneath the ENTIRE rear of his head, shoulder blades and buttocks. IMPORTANT: back of head and upper back REST PHYSICALLY ON the bench pad; head is NOT lifted, neck is relaxed, face naturally looks toward ceiling. Torso lies nearly horizontal with modest natural lumbar curve and hips resting on pad, knees bent and both feet on floor. Two hands grip a modestly loaded straight barbell slightly wider than shoulders in pronation. Bar 2cm above mid chest, elbows bent about 90 degrees, wrists directly above elbows, shoulders supported. No incline, no sit-up or crunch, no head hovering above pad, no extreme arch. Show all contact points and whole bar with correct normal proportions. No rack upright in foreground; a simple safety rack may be visible behind the head.",
+      "reference": "D:\\myproject\\app_track_perso\\public\\images\\exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "bench-end-v2",
+      "exerciseId": "strength-developpe-couche-barre",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-320440b2-47b9-482b-93eb-d7c23620a838.png",
+      "prompt": "Edit ONLY the elbows and bar position to the TOP of this SAME FLAT BARBELL BENCH PRESS. The current head, shoulders, back, pelvis and feet correctly touch their supports: KEEP THESE EXACT CONTACT POINTS AND BODY POSITIONS UNCHANGED. Back of head remains resting on bench pad, face toward ceiling; do not raise head or torso at all. Extend both elbows and press the SAME straight bar with SAME plates vertically above the middle/upper chest, wrists stacked over elbows, grip unchanged. Keep bench truly horizontal, torso and pelvis on pad, feet on floor in identical positions. Both arms almost straight, no forced locking. Same side camera, gym, clothing and lighting, whole bar visible. No text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-23e71418-ca47-4a5b-bbce-153823b6d229.png",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "fly-start",
+      "exerciseId": "strength-ecarte-poulie-vis-a-vis",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-224f5e5f-ba4f-4f5f-879d-d5e5d285e458.png",
+      "prompt": "Use case: photorealistic-natural. Asset: professional Track Perso instructional exercise photograph, one landscape 3:2 photograph, no collage, text, diagrams, branding or watermark. Reference image is STYLE/ATHLETE reference only, not a pose to copy. Same fit adult man in his 30s, short dark hair, black athletic T-shirt, charcoal shorts and black trainers, realistic proportions and hands. Same upscale charcoal gym, large daylight windows, muted green foliage, rubber flooring and realistic black metal equipment. Soft professional daylight with realistic skin and fabric. Camera frames the entire body including feet and every active piece of equipment, with comfortable margins. No equipment obscuring hands or joints. Exactly two arms and two legs, normal fingers. Exercise: STANDING MID-HEIGHT CABLE CHEST FLY, open starting phase. Full body frontal three-quarter view. Adult man in middle slightly in FRONT of TWO matching black cable towers, one on each side. Both pulleys set at SHOULDER height, each cable visibly runs taut from its pulley to a separate single-hand D-handle clipped securely. Man uses comfortable staggered foot stance with torso very slightly inclined forward, knees soft and pelvis controlled. Arms open outward at shoulder height, elbows slightly bent, hands no further behind torso than chest line. Palms face forward/inward naturally, wrists straight, each hand grips one handle. Show both pulley-to-handle cable connections, hands, chest, feet and towers; no cable passing through body, no floating attachments. No text, no press position with elbows deeply bent.",
+      "reference": "D:\\myproject\\app_track_perso\\public\\images\\exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "fly-end-v2",
+      "exerciseId": "strength-ecarte-poulie-vis-a-vis",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-5b46bc02-8d8c-41e4-9f02-16b8eb27ee85.png",
+      "prompt": "Correct ONLY the arm geometry of this CLOSED cable chest FLY photograph. It currently looks too much like a chest press because the elbows are bent too much. Keep exact man, stance, torso, two cable towers, shoulder-height pulleys, individual taut cables, separate D-handles, clothes, camera and lighting. Place BOTH upper arms FORWARD from shoulders at chest height and extend BOTH elbows until the included elbow angle is about 160-170 DEGREES: a very small 10-20 degree soft bend only. The handles should be held together well OUT IN FRONT at nearly full arm's length, NOT held close to the chest. Shoulder-to-elbow-to-hand paths are nearly straight forward lines, with elbows clearly away from ribs. Palms face one another, wrists straight. This is a closed nearly-straight-arm fly, NOT a press, row, curl or pushdown. The hands may appear slightly foreshortened but both arm silhouettes must show the small elbow bend. Each handle remains connected through its own carabiner to its original cable. Do not change lower-body position, camera or anything else. Full body visible, no text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-e2f8cbec-7812-4eff-a46d-5947497f0f2f.png",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "pullup-start",
+      "exerciseId": "strength-tractions",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-720a0ee2-97dc-48fd-8938-dd676a2d6bea.png",
+      "prompt": "Use case: photorealistic-natural. Asset: professional Track Perso instructional exercise photograph, one landscape 3:2 photograph, no collage, text, diagrams, branding or watermark. Reference image is STYLE/ATHLETE reference only, not a pose to copy. Same fit adult man in his 30s, short dark hair, black athletic T-shirt, charcoal shorts and black trainers, realistic proportions and hands. Same upscale charcoal gym, large daylight windows, muted green foliage, rubber flooring and realistic black metal equipment. Soft professional daylight with realistic skin and fabric. Camera frames the entire body including feet and every active piece of equipment, with comfortable margins. No equipment obscuring hands or joints. Exactly two arms and two legs, normal fingers. Exercise: strict PRONATED PULL-UP, supported hanging starting phase. Adult man hanging from a sturdy horizontal pull-up bar fixed to a realistic black power rack. Hands slightly wider than shoulders, closed overhand grip with palms AWAY from him. Arms nearly straight, shoulders engaged rather than collapsed. Body upright and still under bar, knees gently bent and feet together clear of the floor. Camera front three-quarter with whole body from bar, both grips and head to both shoes visible. NO lat pulldown cable, NO chin-up supinated grip, no kipping. Show sufficient headroom for the pull-up bar, plausible rack attachment and natural hand anatomy. Same gym lighting and attire.",
+      "reference": "D:\\myproject\\app_track_perso\\public\\images\\exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "pullup-end",
+      "exerciseId": "strength-tractions",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-891b9976-3b9b-4714-b63e-c914958f2597.png",
+      "prompt": "Edit ONLY the exercise phase to the TOP of this same strict overhand PULL-UP. Keep exact rack, horizontal bar fixed in place, pronated hand grip and spacing, man, gym and clothes. Pull his body upward by bending both elbows down toward ribs until CHIN JUST CLEARS THE BAR, neck neutral without craning. Upper chest approaches bar, shoulders controlled, no kipping or leg swing. Knees softly bent and feet off floor as before, whole body visible. Bar stays fixed to rack, not moving down like a lat pulldown. Both hands remain on same bar and palms face away. No text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-720a0ee2-97dc-48fd-8938-dd676a2d6bea.png",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "row-start-v2",
+      "exerciseId": "strength-rowing-barre",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-ec4259b0-a848-417b-8b0a-3770533cf3c5.png",
+      "prompt": "Correct ONLY the head and neck alignment in this bent-over barbell row starting photograph. The original chin is too high. Tilt his face gently downward so he looks at the floor several feet ahead, neck continuing the neutral line of the thoracic spine. Preserve every other element exactly: hip-hinged torso angle, neutral back, knee bend, feet, both nearly straight arms, pronated grip, bar and matching plates, lighting, body proportions and framing. This is a small natural correction, not looking backwards or rounding the back. No text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-5a1cbda5-091a-4ed4-a241-4af1cd5f77cb.png",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "row-end",
+      "exerciseId": "strength-rowing-barre",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-227eff2b-beb4-4f62-9afa-73233a883592.png",
+      "prompt": "Edit ONLY the movement phase of this bent-over barbell row. Preserve the corrected downward gaze and neutral neck, fixed hip hinge/torso inclination, spine, knee bend, foot stance, man, camera, lighting, straight bar and matching plates. Bend both elbows to pull the bar toward the lower ribs/upper abdomen. Elbows travel backward beside the torso, shoulders controlled, grip remains pronated with same hand spacing. Bar held symmetrically near abdomen, NOT up at neck, torso does not rise and legs do not straighten. Maintain head alignment looking at floor. Full body and bar visible, no text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-ec4259b0-a848-417b-8b0a-3770533cf3c5.png",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "overhead-start",
+      "exerciseId": "strength-developpe-militaire-barre",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-dac9b168-a6da-4b49-a6de-51aed5c3bfb2.png",
+      "prompt": "Use case: photorealistic-natural. Asset: professional Track Perso instructional exercise photograph, one landscape 3:2 photograph, no collage, text, diagrams, branding or watermark. Reference image is STYLE/ATHLETE reference only, not a pose to copy. Same fit adult man in his 30s, short dark hair, black athletic T-shirt, charcoal shorts and black trainers, realistic proportions and hands. Same upscale charcoal gym, large daylight windows, muted green foliage, rubber flooring and realistic black metal equipment. Soft professional daylight with realistic skin and fabric. Camera frames the entire body including feet and every active piece of equipment, with comfortable margins. No equipment obscuring hands or joints. Exactly two arms and two legs, normal fingers. Exercise: STANDING STRICT BARBELL OVERHEAD PRESS, start position. Full body three-quarter side view. Upright stance feet hip width, knees straight but comfortable, ribs stacked over pelvis, no lumbar overextension. Straight barbell with equal small plates resting just in front of upper chest/clavicles, hands closed PRONATED a little wider than shoulders, forearms nearly vertical, elbows just forward of bar. Bar clearly at FRONT of shoulders, not behind neck. Both feet grounded, arms and bar completely visible, rack softly in background, no leg dip.",
+      "reference": "D:\\myproject\\app_track_perso\\public\\images\\exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "overhead-end",
+      "exerciseId": "strength-developpe-militaire-barre",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-98700ffb-466c-452b-9949-a40720cb494c.png",
+      "prompt": "Edit the same exercise to the TOP of a STRICT STANDING BARBELL OVERHEAD PRESS. Keep the exact man, same straight barbell and same plates, pronated grip, stance, clothing, gym, camera angle and lighting. Extend both arms overhead with elbows nearly straight, bar above shoulder line and midfoot. Torso upright with ribs stacked over pelvis and no exaggerated lumbar arch; head naturally between the upper arms, gaze forward. Keep knees and hips unbent, both feet planted exactly as before. Move camera back ONLY as necessary to include the entire overhead barbell, both hands and both shoes with margin; preserve viewpoint and background style. Do not leave the bar at forehead/chest height. No extra arms, no text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-dac9b168-a6da-4b49-a6de-51aed5c3bfb2.png",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "lateral-start",
+      "exerciseId": "strength-elevations-laterales",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-d61acfe4-9410-43ef-bada-8cd189176409.png",
+      "prompt": "Use case: photorealistic-natural. Asset: professional Track Perso instructional exercise photograph, one landscape 3:2 photograph, no collage, text, diagrams, branding or watermark. Reference image is STYLE/ATHLETE reference only, not a pose to copy. Same fit adult man in his 30s, short dark hair, black athletic T-shirt, charcoal shorts and black trainers, realistic proportions and hands. Same upscale charcoal gym, large daylight windows, muted green foliage, rubber flooring and realistic black metal equipment. Soft professional daylight with realistic skin and fabric. Camera frames the entire body including feet and every active piece of equipment, with comfortable margins. No equipment obscuring hands or joints. Exactly two arms and two legs, normal fingers. Exercise: STANDING DUMBBELL LATERAL RAISE, bottom position. Full body front three-quarter camera. Feet hip width, knees comfortable, upright torso without leaning. One modest matching hex dumbbell in each hand resting just outside the thighs. Palms face toward the thighs, elbows slightly bent but upper arms down. Shoulders relaxed, gaze forward. Both hands clearly gripping handles, wrists neutral. Start of raising the arms to the sides, NOT a shrug, curl or front raise. Show the complete man, shoes and dumbbells.",
+      "reference": "D:\\myproject\\app_track_perso\\public\\images\\exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "lateral-end",
+      "exerciseId": "strength-elevations-laterales",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-78dc20bf-fc15-40dd-93ae-5eae23cf8cdc.png",
+      "prompt": "Edit ONLY both arm positions to the TOP of the same STANDING DUMBBELL LATERAL RAISE. Keep same adult man, foot stance, torso upright, gym, hex dumbbells, clothing and camera. Lift arms outward to the SIDES, slightly in front of the frontal plane, stopping just BELOW shoulder height (around 75-85 degrees). Elbows softly bent, wrists straight, thumbs neutral or a little up, not pouring downward. Dumbbells at sides, not together in front, upper traps not visibly shrugged, head and trunk stationary. Show entire arm span and both dumbbells and shoes with margin, widen framing if needed. No text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-d61acfe4-9410-43ef-bada-8cd189176409.png",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "hammer-start",
+      "exerciseId": "strength-curl-marteau",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-31a0525f-1a85-4249-aa52-f200949795c9.png",
+      "prompt": "Use case: photorealistic-natural. Asset: professional Track Perso instructional exercise photograph, one landscape 3:2 photograph, no collage, text, diagrams, branding or watermark. Reference image is STYLE/ATHLETE reference only, not a pose to copy. Same fit adult man in his 30s, short dark hair, black athletic T-shirt, charcoal shorts and black trainers, realistic proportions and hands. Same upscale charcoal gym, large daylight windows, muted green foliage, rubber flooring and realistic black metal equipment. Soft professional daylight with realistic skin and fabric. Camera frames the entire body including feet and every active piece of equipment, with comfortable margins. No equipment obscuring hands or joints. Exactly two arms and two legs, normal fingers. Exercise: STANDING TWO-DUMBBELL HAMMER CURL, start position. Full body front three-quarter view. Standing feet hip width, knees soft, torso upright, shoulders relaxed. One identical hex dumbbell in each hand hanging beside thighs, elbows nearly straight, upper arms beside torso. NEUTRAL grip with palms facing each other toward thighs and thumbs facing forward, wrists straight, handles oriented front-to-back. Both hands clearly visible. Not supinated, not a barbell curl. Anatomically credible relaxed starting position, no motion blur.",
+      "reference": "D:\\myproject\\app_track_perso\\public\\images\\exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "hammer-end",
+      "exerciseId": "strength-curl-marteau",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-99687162-0c38-44d7-b7bf-e8aa699027b3.png",
+      "prompt": "Edit only the movement phase to the top of a simultaneous STANDING HAMMER CURL. Preserve the exact man, stance, stable shoulders, upright torso, matching hex dumbbells, clothing, gym and camera. Bend BOTH elbows so dumbbells rise near the fronts of the shoulders while upper arms stay beside the ribs. Keep NEUTRAL grip throughout: palms face each other, thumbs point UP, each dumbbell long axis approximately vertical (one hex head above and one below the hand). No supination, palms do NOT face ceiling, no wrist flexion. Elbows remain below shoulders near sides, no swinging or leaning. Two natural hands gripping clearly, full body and feet visible. No text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-31a0525f-1a85-4249-aa52-f200949795c9.png",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "pushdown-start",
+      "exerciseId": "strength-extension-poulie-haute-corde",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-cf86127a-fabd-403c-8afa-ba088524ac32.png",
+      "prompt": "Use case: photorealistic-natural. Asset: professional Track Perso instructional exercise photograph, one landscape 3:2 photograph, no collage, text, diagrams, branding or watermark. Reference image is STYLE/ATHLETE reference only, not a pose to copy. Same fit adult man in his 30s, short dark hair, black athletic T-shirt, charcoal shorts and black trainers, realistic proportions and hands. Same upscale charcoal gym, large daylight windows, muted green foliage, rubber flooring and realistic black metal equipment. Soft professional daylight with realistic skin and fabric. Camera frames the entire body including feet and every active piece of equipment, with comfortable margins. No equipment obscuring hands or joints. Exactly two arms and two legs, normal fingers. Exercise: HIGH-CABLE ROPE TRICEPS PUSHDOWN, start phase. Full body side three-quarter view, man faces a single realistic black cable tower positioned to the RIGHT. A SINGLE taut cable runs from its visible pulley ABOVE his head to a metal carabiner attached to center eye of ONE bifurcated black braided TRICEPS ROPE with two knotted rubber-ended branches, one gripped in each hand. Hands at lower chest/upper abdomen, elbows bent roughly 90 degrees, upper arms held vertically close to ribs. Palms face each other, wrists straight. Stable hip-width stance, soft knees, torso nearly upright with slight hip hinge. Show entire cable-to-rope link clearly, hands, elbows and feet. No straight bar, no multiple cables, no pulldown or overhead extension, no text.",
+      "reference": "D:\\myproject\\app_track_perso\\public\\images\\exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "pushdown-end",
+      "exerciseId": "strength-extension-poulie-haute-corde",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-7c629c29-22c7-481d-99ac-24317e8d4e93.png",
+      "prompt": "Edit ONLY the elbow extension to the BOTTOM of the SAME high-cable ROPE TRICEPS PUSHDOWN. Preserve exact man, stance, torso, shoulders, camera, gym, high pulley and SINGLE cable connected by SAME carabiner to SAME TWO-BRANCH black triceps rope. Keep upper arms fixed beside ribs and extend both elbows until hands are beside upper thighs, ends of rope slightly separated outward with neutral wrists and palms facing inward. No exaggerated backward elbow travel, no leaning or squat. Taut cable now runs diagonally from unchanged high pulley to rope center above the hands. Both rope branches, rubber ends, hands and connector clearly visible, no missing attachments, no text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-cf86127a-fabd-403c-8afa-ba088524ac32.png",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "legpress-start-v2",
+      "exerciseId": "strength-presse-a-cuisses",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-ca2bba3f-fb99-4898-8a6b-d164ce75e39b.png",
+      "prompt": "Correct ONLY the head/backrest support in this same leg-press starting photograph. Extend the TOP END of the existing black backrest upward behind his head as a credible continuous padded HEADREST and gently settle the back of his head against it with neck neutral and chin relaxed. His head must visibly touch the pad, not hover in front. Keep pelvis and back on existing pads, both hands on handles, exact bent-knee angles, feet flat on footplate, rails, plates, sled, shoes, whole machine, gym, light and camera unchanged. No other equipment or pose changes, no text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-1167a249-96dc-41d2-b84d-afd2721e7137.png",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "legpress-end",
+      "exerciseId": "strength-presse-a-cuisses",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-21283ae6-5bcb-4bab-9e1c-056ecc595ddc.png",
+      "prompt": "Edit ONLY the pressing phase of this SAME 45-degree sled leg press. Keep exact headrest with HEAD resting on pad, back and pelvis supported, hands on handles, both feet FLAT on SAME footplate, rails and plates, camera, gym and lighting. Extend BOTH knees and hips together to push the SLED outward/up along the SAME TWO PARALLEL RAILS until legs are almost straight, leaving a slight comfortable knee bend without hyperextension. Footplate and attached matching plates move as one carriage, seat and headrest stay fixed. Heels do not lift; knees track toes. No new machine parts and no changed foot stance. Show entire man, feet, plate and machine, pulling camera back slightly only if needed. No text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-ca2bba3f-fb99-4898-8a6b-d164ce75e39b.png",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "legextension-start",
+      "exerciseId": "strength-leg-extension",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-e6ae78db-17d3-431f-8d6a-6043fe6f0dfc.png",
+      "prompt": "Use case: photorealistic-natural. Asset: professional Track Perso instructional exercise photograph, one landscape 3:2 photograph, no collage, text, diagrams, branding or watermark. Reference image is STYLE/ATHLETE reference only, not a pose to copy. Same fit adult man in his 30s, short dark hair, black athletic T-shirt, charcoal shorts and black trainers, realistic proportions and hands. Same upscale charcoal gym, large daylight windows, muted green foliage, rubber flooring and realistic black metal equipment. Soft professional daylight with realistic skin and fabric. Camera frames the entire body including feet and every active piece of equipment, with comfortable margins. No equipment obscuring hands or joints. Exactly two arms and two legs, normal fingers. Exercise: SEATED MACHINE LEG EXTENSION, starting position. Full body SIDE three-quarter instructional view. He sits on a credible black selectorized leg-extension machine with back and pelvis resting against backrest/seat, knees at front edge of seat aligned with machine pivot. Both knees bent roughly 90 degrees, thighs supported horizontal on seat, shins pointing down. A single horizontal foam roller presses on FRONT of lower shins just ABOVE ankles, attached via a visible metal lever to pivot beside knee. Both hands hold small handles beside hips, feet forward and not planted on floor. Show feet, knees, pad placement, pivot and machine fully. Moderate load, no plates floating, no impossible limbs. This is NOT a leg curl or leg press.",
+      "reference": "D:\\myproject\\app_track_perso\\public\\images\\exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "legextension-end",
+      "exerciseId": "strength-leg-extension",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-0ff3c613-c283-47c6-b5a3-c7dd1e1e9420.png",
+      "prompt": "Edit only the exercise phase to the TOP of this SAME seated leg-extension machine. Preserve the exact man, torso and pelvis against pads, hands on side handles, machine seat, knee-axis pivot, stack and camera. Straighten BOTH knees together until lower legs are nearly horizontal in front, stopping before forced locking. The SAME foam roller stays pressed against FRONT of lower shins above ankles and travels upward with them on the SAME hinged metal lever rotating about the SAME knee-axis pivot. Do not add or remove machine parts, do not place roller behind heels, do not move hips off seat. Both feet and lever visible, widen camera only if necessary. Same clothes and lighting, no text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-e6ae78db-17d3-431f-8d6a-6043fe6f0dfc.png",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "lunge-start",
+      "exerciseId": "strength-fentes-marchees",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-9f05173d-1d05-4434-af5c-3b9d2cc343ff.png",
+      "prompt": "Use case: photorealistic-natural. Asset: professional Track Perso instructional exercise photograph, one landscape 3:2 photograph, no collage, text, diagrams, branding or watermark. Reference image is STYLE/ATHLETE reference only, not a pose to copy. Same fit adult man in his 30s, short dark hair, black athletic T-shirt, charcoal shorts and black trainers, realistic proportions and hands. Same upscale charcoal gym, large daylight windows, muted green foliage, rubber flooring and realistic black metal equipment. Soft professional daylight with realistic skin and fabric. Camera frames the entire body including feet and every active piece of equipment, with comfortable margins. No equipment obscuring hands or joints. Exactly two arms and two legs, normal fingers. Exercise: WALKING DUMBBELL LUNGE, upright starting position before stepping forward. Full body SIDE three-quarter camera. Stand tall on floor, feet hip width rather than heel-to-toe, both knees nearly straight. One modest matching hex dumbbell held naturally by each side with neutral palms facing inward and straight arms. Torso upright and gaze level. Plenty of clear floor in front for the step. Head to both shoes and both dumbbells fully visible, no obstacles. No lunge yet, no squat; this is the upright start before a walking lunge.",
+      "reference": "D:\\myproject\\app_track_perso\\public\\images\\exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "lunge-end",
+      "exerciseId": "strength-fentes-marchees",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-e1467e6b-3ec6-45f6-9daa-32addf0ff541.png",
+      "prompt": "Edit this image to show the lowered phase of ONE FORWARD WALKING DUMBBELL LUNGE. Same adult man, two matching dumbbells held by sides with straight arms, clothing, gym and side camera. Take one natural long step forward to his RIGHT in the picture: front foot fully flat, front knee following toes with roughly 90 degrees bend, rear heel raised and rear knee lowered close to but NOT touching the floor. Legs on two hip-width tracks, not a tightrope. Torso upright with controlled pelvis, both dumbbells hang freely outside thighs, no contact with knees. Entire body, BOTH shoes and both dumbbells visible. This is a single phase; do not depict a split squat with elevated rear foot, and do not invent duplicate legs. No text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-9f05173d-1d05-4434-af5c-3b9d2cc343ff.png",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "legcurl-start",
+      "exerciseId": "strength-leg-curl-allonge",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-d4bfa507-aa66-4f4b-b09c-498100009f21.png",
+      "prompt": "Use case: photorealistic-natural. Asset: professional Track Perso instructional exercise photograph, one landscape 3:2 photograph, no collage, text, diagrams, branding or watermark. Reference image is STYLE/ATHLETE reference only, not a pose to copy. Same fit adult man in his 30s, short dark hair, black athletic T-shirt, charcoal shorts and black trainers, realistic proportions and hands. Same upscale charcoal gym, large daylight windows, muted green foliage, rubber flooring and realistic black metal equipment. Soft professional daylight with realistic skin and fabric. Camera frames the entire body including feet and every active piece of equipment, with comfortable margins. No equipment obscuring hands or joints. Exactly two arms and two legs, normal fingers. Exercise: LYING PRONE MACHINE LEG CURL, start position. Full body PURE SIDE view with slight three-quarter angle, head LEFT and feet RIGHT. Man lies FACE DOWN on a long slightly angled padded lying-leg-curl machine, torso and pelvis fully supported, neck neutral gaze down, both hands gripping front handles below shoulders. Thighs supported, knees just beyond the end of pad aligned with side lever pivot. Legs almost straight; both shoes and ankles visible. ONE padded horizontal roller rests on BACK of lower legs just ABOVE heels/Achilles area, connected to a realistic hinged lever at knee axis. The lever can rotate upward when knees bend. Show whole machine, roller, feet, body and physical contact points. No seated curl, no leg extension, no floating roller or unsupported pelvis.",
+      "reference": "D:\\myproject\\app_track_perso\\public\\images\\exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "legcurl-end",
+      "exerciseId": "strength-leg-curl-allonge",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-fc214ab0-6cc6-49ee-888f-b58cfe761fce.png",
+      "prompt": "Edit ONLY the knee-bending phase of this SAME lying prone leg curl. Keep man face down, gaze down with neutral neck, hips and thighs pressed on pads, both hands on SAME front handles, identical machine, torso angle, camera and lighting. Bend BOTH knees to about 80-90 degrees so shoes rise toward buttocks. The SAME foam roller remains against BACK of lower legs just above heels and rotates upward on the SAME lever around fixed knee-axis pivot. The thighs stay on pad and hips do not lift or arch. No separate floating pad, no calf-shaped extra limb, no changed bench. Show entire bent legs, shoes and roller and machine with margin. No text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-d4bfa507-aa66-4f4b-b09c-498100009f21.png",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "calf-start",
+      "exerciseId": "strength-mollets-debout",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-816d2e28-5188-4a3f-b9a7-bf530174d523.png",
+      "prompt": "Use case: photorealistic-natural. Asset: professional Track Perso instructional exercise photograph, one landscape 3:2 photograph, no collage, text, diagrams, branding or watermark. Reference image is STYLE/ATHLETE reference only, not a pose to copy. Same fit adult man in his 30s, short dark hair, black athletic T-shirt, charcoal shorts and black trainers, realistic proportions and hands. Same upscale charcoal gym, large daylight windows, muted green foliage, rubber flooring and realistic black metal equipment. Soft professional daylight with realistic skin and fabric. Camera frames the entire body including feet and every active piece of equipment, with comfortable margins. No equipment obscuring hands or joints. Exactly two arms and two legs, normal fingers. Exercise: STANDING BODYWEIGHT CALF RAISE, starting phase with heels DOWN. Entire body SIDE three-quarter view, with both shoes clearly visible. Stand upright feet parallel hip-width on FLAT gym floor, both heels and forefeet fully grounded, knees softly straight, neutral torso. One hand lightly touches a black rack upright at chest height for balance, the other rests naturally by his side; do not lean body weight through support. No weight plates, no barbell, no dumbbell and no elevated step. Compose enough space around both shoes to clearly compare heel height in the next photograph. Same professional gym and adult male attire, realistic anatomy. No text.",
+      "reference": "D:\\myproject\\app_track_perso\\public\\images\\exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "calf-end",
+      "exerciseId": "strength-mollets-debout",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-8c81531e-7797-4992-af23-b728bcdd4963.png",
+      "prompt": "Edit ONLY the ankle position to the TOP of this SAME standing bodyweight CALF RAISE. Keep exact man, rack, hand lightly touching upright, torso, hips, straight comfortable knees, feet spacing, clothing, camera, gym and lighting. Lift BOTH heels visibly 5-7 cm off the flat floor by rising onto balls of BOTH feet; toes/forefeet stay in contact with the SAME floor points. Whole body rises naturally as rigid line, knees do NOT bend, do NOT lift toes instead. Both shoes must show credible forefoot contact and heel elevation, no floating person, no elevated platform or weights. Keep the balance hand relaxed, not pulling. Full body and feet clearly visible, no text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-816d2e28-5188-4a3f-b9a7-bf530174d523.png",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "crunch-start",
+      "exerciseId": "strength-crunch-poulie",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-29bc7a92-eaeb-4d9c-b24c-d23042b36268.png",
+      "prompt": "Use case: photorealistic-natural. Asset: professional Track Perso instructional exercise photograph, one landscape 3:2 photograph, no collage, text, diagrams, branding or watermark. Reference image is STYLE/ATHLETE reference only, not a pose to copy. Same fit adult man in his 30s, short dark hair, black athletic T-shirt, charcoal shorts and black trainers, realistic proportions and hands. Same upscale charcoal gym, large daylight windows, muted green foliage, rubber flooring and realistic black metal equipment. Soft professional daylight with realistic skin and fabric. Camera frames the entire body including feet and every active piece of equipment, with comfortable margins. No equipment obscuring hands or joints. Exactly two arms and two legs, normal fingers. Exercise: KNEELING HIGH-CABLE ROPE ABDOMINAL CRUNCH, upright starting phase. Full body SIDE view with slight three-quarter angle, man kneeling on a plain dark mat facing a cable tower to the RIGHT. Both knees on mat, hips above knees and held stable, torso upright and spine neutral. Both hands grip the two ends of ONE black braided rope beside his temples/upper shoulders. One taut cable connects a visible HIGH pulley on tower through one carabiner to the CENTER of this rope in front/above forehead. Elbows bent and held beside face pointing slightly forward; hands do NOT pull rope behind neck. Neck neutral, gaze forward/down slightly. Show high pulley, connected cable and rope, both hands, entire torso, knees and feet. This is not a triceps pushdown, no standing pose, no text.",
+      "reference": "D:\\myproject\\app_track_perso\\public\\images\\exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "crunch-end",
+      "exerciseId": "strength-crunch-poulie",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-a1d653fd-f6f3-43a0-8f0d-d4e621b55419.png",
+      "prompt": "Edit ONLY the trunk flexion to the curled phase of the SAME KNEELING CABLE CRUNCH. Keep exact knees on mat, hip position above knees and pelvis stable, feet, machine, pulley, cable and connected two-branch rope, clothing, camera and lighting. Round the UPPER/MID BACK gently by bringing ribs toward pelvis and chest down toward thighs, with neck following the curve naturally. Elbows move DOWN toward knees because the TRUNK curls; keep elbow bend and hands near forehead/temples rather than pulling rope with arms. Hips do NOT sit back onto heels; do NOT just hinge a straight torso forward, do NOT yank the neck. Single cable remains taut and attached to same rope center with carabiner, upper back visibly curved, full body and cable path visible. No text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-29bc7a92-eaeb-4d9c-b24c-d23042b36268.png",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "plank",
+      "exerciseId": "strength-gainage-planche",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-f87be4dd-0e69-4966-863c-cc02e6aec5aa.png",
+      "prompt": "Use case: photorealistic-natural. Asset: Track Perso exercise-library photograph, landscape 3:2, one single photograph, no montage or text. Reference image is ONLY the visual style and adult athlete reference, NOT the exercise or pose to reproduce. Produce a new full-body SIDE VIEW photograph of a fit adult man about 30, dark short hair, sober black fitted T-shirt, charcoal shorts, black trainers in the same tasteful charcoal professional gym with large daylight windows and restrained green plants. Exercise: STATIC FOREARM PLANK. He faces the floor, both forearms and toes resting naturally on a plain dark mat. Elbows directly below shoulders, forearms forward and parallel with relaxed closed hands, straight neutral line from ears through shoulders, hips and heels; gaze down, abdomen braced, pelvis neither sagging nor excessively raised. Legs extended, feet hip width, shoulders stable. Show the full body from head to both feet, entire mat and actual floor contact points, body horizontal and clearly visible. Camera at hip height perpendicular to his side with a very slight frontal angle so both arms remain identifiable. Photorealistic skin and fabric, realistic hands and joints, soft window lighting, uncluttered background, professional fitness instructional photography. No text, labels, arrows, logos or watermark, no second person, no weights, no bench. This is a sustained hold, NOT a push-up and NOT straight-arm plank. Exactly two arms, two legs; toes grounded, heels raised as natural for a plank. Output a clean 1536x1024 landscape composition if supported.",
+      "reference": "D:\\myproject\\app_track_perso\\public\\images\\exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "status": "visually-reviewed",
+      "review": "Actually inspected in built-in image output: exact movement, equipment, support points, grip, joints, body alignment, framing and continuity between positions checked. AI visual review, pending user validation; not a clinical or biomechanical certification."
+    },
+    {
+      "asset": "bench-start",
+      "exerciseId": "strength-developpe-couche-barre",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-7a672a7d-7b43-44a9-8a67-d1e94f7f4a35.png",
+      "prompt": "Use case: photorealistic-natural. Asset: professional Track Perso instructional exercise photograph, one landscape 3:2 photograph, no collage, text, diagrams, branding or watermark. Reference image is STYLE/ATHLETE reference only, not a pose to copy. Same fit adult man in his 30s, short dark hair, black athletic T-shirt, charcoal shorts and black trainers, realistic proportions and hands. Same upscale charcoal gym, large daylight windows, muted green foliage, rubber flooring and realistic black metal equipment. Soft professional daylight with realistic skin and fabric. Camera frames the entire body including feet and every active piece of equipment, with comfortable margins. No equipment obscuring hands or joints. Exactly two arms and two legs, normal fingers. Exercise: FLAT BARBELL BENCH PRESS, bottom position before the press. He lies on a truly horizontal flat bench, head, upper back and pelvis supported, both feet firmly on floor. A straight barbell with matching modest plates is held just above lower-to-mid chest, hands closed pronated slightly wider than shoulders, wrists aligned directly over elbows. Elbows bent about 90 degrees and angled about 45 degrees from torso, shoulders controlled. Safety rack uprights visible beyond his head but not blocking him, bar clearly in his hands and off hooks. Three-quarter SIDE camera view sufficiently elevated to see both hands and bench horizontal angle. Do not depict an incline bench, dumbbells, excessive back arch or bar over neck.",
+      "reference": "D:\\myproject\\app_track_perso\\public\\images\\exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "status": "rejected",
+      "review": "Rear head/upper-back support unclear, replaced by side-view v2."
+    },
+    {
+      "asset": "bench-end",
+      "exerciseId": "strength-developpe-couche-barre",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-ad673614-d6a8-4acc-8a0c-8c555edb7387.png",
+      "prompt": "Edit this photograph to show ONLY the top of the same flat barbell bench press. Preserve this exact adult man, horizontal bench, rack, both feet and pelvis support, same straight bar and matching plates, gym, camera viewpoint and lighting. Extend both elbows to nearly straight without forced hyperextension, moving the bar vertically above mid/upper chest and shoulders. Bar held symmetrically in the same closed pronated grip, wrists straight and stacked over elbows. Shoulders remain supported on the flat bench, head and pelvis in place, feet in exactly the same floor positions. Clearly different from the bent-elbow bottom phase. Show the entire bar and both arms, no cropping. No change to equipment, no extra limbs, no text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-7a672a7d-7b43-44a9-8a67-d1e94f7f4a35.png",
+      "status": "rejected",
+      "review": "Head and upper back visibly lifted from bench, replaced by v2."
+    },
+    {
+      "asset": "row-start",
+      "exerciseId": "strength-rowing-barre",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-5a1cbda5-091a-4ed4-a241-4af1cd5f77cb.png",
+      "prompt": "Use case: photorealistic-natural. Asset: professional Track Perso instructional exercise photograph, one landscape 3:2 photograph, no collage, text, diagrams, branding or watermark. Reference image is STYLE/ATHLETE reference only, not a pose to copy. Same fit adult man in his 30s, short dark hair, black athletic T-shirt, charcoal shorts and black trainers, realistic proportions and hands. Same upscale charcoal gym, large daylight windows, muted green foliage, rubber flooring and realistic black metal equipment. Soft professional daylight with realistic skin and fabric. Camera frames the entire body including feet and every active piece of equipment, with comfortable margins. No equipment obscuring hands or joints. Exactly two arms and two legs, normal fingers. Exercise: BENT-OVER BARBELL ROW with PRONATED grip, bottom position. Full body side three-quarter view. Feet hip width planted, knees slightly bent, hips hinged back and torso inclined roughly 35 degrees above horizontal, neutral stable back, neck aligned. Both hands hold the SAME straight horizontal barbell with matching modest plates, overhand grip slightly wider than shoulders. Arms nearly straight hanging below shoulders, bar just below knees, not touching floor. Both elbows relaxed and nearly straight, back remains fixed. Show barbell, both hands, feet and neutral spine clearly. This is NOT a deadlift, upright row or cable row.",
+      "reference": "D:\\myproject\\app_track_perso\\public\\images\\exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "status": "rejected",
+      "review": "Neck too extended, corrected in v2."
+    },
+    {
+      "asset": "legpress-start",
+      "exerciseId": "strength-presse-a-cuisses",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-1167a249-96dc-41d2-b84d-afd2721e7137.png",
+      "prompt": "Use case: photorealistic-natural. Asset: professional Track Perso instructional exercise photograph, one landscape 3:2 photograph, no collage, text, diagrams, branding or watermark. Reference image is STYLE/ATHLETE reference only, not a pose to copy. Same fit adult man in his 30s, short dark hair, black athletic T-shirt, charcoal shorts and black trainers, realistic proportions and hands. Same upscale charcoal gym, large daylight windows, muted green foliage, rubber flooring and realistic black metal equipment. Soft professional daylight with realistic skin and fabric. Camera frames the entire body including feet and every active piece of equipment, with comfortable margins. No equipment obscuring hands or joints. Exactly two arms and two legs, normal fingers. Exercise: 45-DEGREE INCLINED SLED LEG PRESS, bottom position before pressing. Full body SIDE three-quarter view of a realistic black plate-loaded leg press with TWO straight PARALLEL inclined rails, sled carriage and broad rigid footplate perpendicular to rails, equal modest plates on sled pegs. He reclines with head, back and pelvis supported on low seat pad, hands holding seat-side handles, both feet flat hip-width on the SAME footplate. Knees bent about 90 degrees and aligned with toes, thighs not crushed against belly, heels remain on plate, pelvis does not curl off pad. Sled close enough for controlled bent knees, rails clearly permit outward upward travel. Show both feet, footplate, both knees, handles and machine connection without occlusion. No dangling feet, no impossible detached sled. No text.",
+      "reference": "D:\\myproject\\app_track_perso\\public\\images\\exercises\\pilot\\incline-dumbbell-curl-end.webp",
+      "status": "rejected",
+      "review": "Head support unclear; continuous headrest added in v2."
+    },
+    {
+      "asset": "fly-end",
+      "exerciseId": "strength-ecarte-poulie-vis-a-vis",
+      "original": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-e2f8cbec-7812-4eff-a46d-5947497f0f2f.png",
+      "prompt": "Edit ONLY the arm movement to the CLOSED phase of the SAME standing mid-height cable chest fly. Preserve exact staggered feet, torso angle, man, clothing, both cable towers, same pulley heights, matching handles and lighting. Sweep both arms FORWARD in an arc until the two SEPARATE D-handles nearly meet directly IN FRONT of his middle chest with palms facing each other. Both elbows remain slightly bent rather than deeply bent; do not turn it into a chest press or pull. Each of the TWO cables stays individually taut and connected from its ORIGINAL shoulder-height pulley to the matching handle; cables pass outside the body, not through chest. Shoulders stable and same stance, no body rotation. Full body and both connections visible, no text.",
+      "reference": "C:\\Users\\hp\\.codex\\generated_images\\01a1b60c-8151-7d11-9964-ffbe4791c5d3\\exec-224f5e5f-ba4f-4f5f-879d-d5e5d285e458.png",
+      "status": "rejected",
+      "review": "Elbows too flexed: confused fly with chest press; corrected in v2."
+    }
+  ]
+}

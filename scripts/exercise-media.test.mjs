@@ -10,12 +10,13 @@ const { EXERCISE_VISUAL_MEDIA: registry, visualMediaFor } = load("src/lib/exerci
 const { EXERCISE_THUMBNAILS, exerciseThumbnail } = load("src/lib/exercises/media-thumbnails.ts");
 const { baseCatalog } = load("src/lib/exercises/catalog.ts");
 const { exerciseCatalogComposition } = load("src/lib/exercises/composition.ts");
+const { MEDIA_EXPERIENCE_PILOTS } = load("src/lib/exercises/media-experience.ts");
 const local = (src) => `public${src}`;
 
-test("only the five requested pilot exercises get new position pairs", () => {
-  const pairs = Object.values(registry).filter((item) => item.startPositionImage && item.endPositionImage);
+test("the five original pilot position pairs remain intact after later batches", () => {
+  const pairs = Object.values(registry).filter((item) => MEDIA_EXPERIENCE_PILOTS.includes(item.exerciseId) && item.startPositionImage && item.endPositionImage);
   assert.deepEqual(pairs.map((item) => item.exerciseId).sort(), ["strength-developpe-incline-halteres", "strength-rowing-haltere-unilateral", "strength-squat", "strength-curl-incline", "strength-tirage-horizontal-poulie"].sort());
-  assert.equal(Object.keys(registry).length, 7);
+  assert.equal(pairs.length, 5);
   assert.deepEqual(Object.keys(registry).sort(), Object.keys(EXERCISE_THUMBNAILS).sort());
   for (const pair of pairs) {
     assert.notEqual(pair.startPositionImage.src, pair.endPositionImage.src);

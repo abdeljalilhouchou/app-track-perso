@@ -1,0 +1,94 @@
+{
+  "method": "Initial route manifests checked for actual Three.js implementation and anatomy detail markers; deferred files measured from build output, not a browser transfer measurement.",
+  "beforePath": "docs/exercise-visual-library-v3/before-build.json",
+  "afterPath": "docs/exercise-visual-library-v3/after-build.json",
+  "initialEngineAbsent": true,
+  "initialAnatomyDetailsAbsent": true,
+  "routes": [
+    {
+      "route": "/dashboard",
+      "beforeGzip": 301524,
+      "afterGzip": 301524,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/habits",
+      "beforeGzip": 316283,
+      "afterGzip": 316283,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/nutrition",
+      "beforeGzip": 323737,
+      "afterGzip": 323737,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/humeur",
+      "beforeGzip": 310130,
+      "afterGzip": 310130,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/profil",
+      "beforeGzip": 371189,
+      "afterGzip": 371189,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/sport",
+      "beforeGzip": 303884,
+      "afterGzip": 303884,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/sport/musculation",
+      "beforeGzip": 339228,
+      "afterGzip": 340465,
+      "deltaGzip": 1237
+    },
+    {
+      "route": "/sport/calendar",
+      "beforeGzip": 295580,
+      "afterGzip": 295580,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/sport/stats",
+      "beforeGzip": 307197,
+      "afterGzip": 307197,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/sport/calisthenics",
+      "beforeGzip": 316089,
+      "afterGzip": 316090,
+      "deltaGzip": 1
+    },
+    {
+      "route": "/sport/running",
+      "beforeGzip": 311242,
+      "afterGzip": 311242,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/sport/exercises",
+      "beforeGzip": 309593,
+      "afterGzip": 309593,
+      "deltaGzip": 0
+    },
+    {
+      "route": "/sport/exercises/[key]",
+      "beforeGzip": 314310,
+      "afterGzip": 315103,
+      "deltaGzip": 793
+    }
+  ],
+  "deferredEngineFiles": [
+    {
+      "file": "static/chunks/3mwyu_z299373.js",
+      "bytes": 654903,
+      "gzip": 162125
+    }
+  ]
+}

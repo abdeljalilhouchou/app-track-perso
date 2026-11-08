@@ -5,9 +5,10 @@ export type ExercisePositionImage = ExerciseImageAsset & { label: Localized<stri
 export type ExerciseVisualMedia = {
   exerciseId: string; heroImage: ExerciseImageAsset; thumbnail: ExerciseImageAsset;
   startPositionImage?: ExercisePositionImage; endPositionImage?: ExercisePositionImage;
+  staticPositionImage?: ExercisePositionImage;
   variant: Localized<string>; technicalChecks: Localized<string>[];
   illustratedEquipment: Equipment[];
   source: "image_gen"; license: "generated-for-project-no-third-party-license-asserted";
-  reviewStatus: "technical-reviewed"; userApproval: "pending-pilot-validation" | "existing-media";
+  reviewStatus: "technical-reviewed"; userApproval: "pending-pilot-validation" | "pending-batch-validation" | "existing-media";
   technicalSources: { title: string; url: string }[];
 };

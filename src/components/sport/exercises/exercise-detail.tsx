@@ -13,10 +13,10 @@ import { ExerciseMuscleButton } from "../anatomy/exercise-muscle-button";
 import { ExerciseVisualSequence, ExerciseVisualTechnique } from "./exercise-visual-sequence";
 import { ExercisePerformance } from "./exercise-performance";
 import { ExercisePremiumDetail } from "./exercise-premium-detail";
-import { isMediaExperiencePilot } from "@/lib/exercises/media-experience";
+import { hasExerciseMediaExperience } from "@/lib/exercises/media-experience";
 
 export function ExerciseDetailContent({ data }: { data: Detail }) {
-  if (data.media && isMediaExperiencePilot(data.exercise.key)) return <ExercisePremiumDetail key={data.exercise.key} data={data} />;
+  if (data.media && hasExerciseMediaExperience(data.exercise.key)) return <ExercisePremiumDetail key={data.exercise.key} data={data} />;
   return <ClassicExerciseDetail data={data} />;
 }
 
