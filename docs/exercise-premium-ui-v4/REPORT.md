@@ -86,6 +86,12 @@ JavaScript initial compressé, même script ([measure-build.mjs](../../scripts/m
 
 Les +67 octets communs viennent des clés de traduction. La fiche, le dialogue photo et le visualiseur 3D restent chargés à la demande. Détail dans [after-build.json](after-build.json).
 
+## Correctif après essai sur téléphone
+
+Le premier essai réel a montré deux défauts que la campagne initiale ne couvrait pas : la fiche ouverte par « Technique » avait un en-tête écrasé (titre vertical), et la croix de fermeture du visualiseur 3D sortait de l'écran. Cause commune : ces dialogues sont rendus à l'intérieur de la rangée d'actions de la carte, et les règles « bouton pleine largeur » de cette rangée atteignaient leurs boutons. Les règles de la carte ciblent maintenant uniquement ses enfants directs (`>`), y compris celles des champs et des boutons de validation. La flèche d'agrandissement du visualiseur reçoit le sélecteur de variante texte pour ne plus s'afficher en émoji sur iOS.
+
+La campagne vérifie désormais ces deux en-têtes : [fiche depuis Technique](screenshots/v4-fix-sheet-from-technique-fr-dark-390.webp), [visualiseur depuis la carte](screenshots/v4-fix-viewer-from-card-fr-dark-390.webp).
+
 ## Limites
 
 - **Mode développement** : sous `next dev`, le visualiseur 3D ouvert depuis une carte se referme aussitôt. React StrictMode rejoue l'effet du dialogue anatomique, et son nettoyage émet un `close` natif qui appelle `onClose`. Le défaut vient de `exercise-muscle-dialog.tsx`, non modifié ici, et n'apparaît pas sur un build de production. La campagne doit donc tourner avec `--production`.

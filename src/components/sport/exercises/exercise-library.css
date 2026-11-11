@@ -165,8 +165,8 @@
 .sport-ui { --exercise-action: color-mix(in srgb, var(--accent) 60%, #4c1d95); }
 .sport-ui .exercise-session-card { padding: 14px; box-shadow: var(--sport-card-shadow); }
 .sport-ui .exercise-session-head { display: grid; grid-template-columns: 104px minmax(0,1fr); gap: 4px 12px; margin-bottom: 14px; }
-.sport-ui .exercise-session-head .exercise-photo-trigger { width: 100%; min-width: 0; height: auto; aspect-ratio: 1; border-radius: 16px; box-shadow: 0 4px 14px #0000002e; transition: transform 140ms ease, box-shadow 140ms ease; }
-.sport-ui .exercise-session-head .exercise-photo-trigger:active { transform: scale(.97); }
+.sport-ui .exercise-session-head > .exercise-photo-trigger { width: 100%; min-width: 0; height: auto; aspect-ratio: 1; border-radius: 16px; box-shadow: 0 4px 14px #0000002e; transition: transform 140ms ease, box-shadow 140ms ease; }
+.sport-ui .exercise-session-head > .exercise-photo-trigger:active { transform: scale(.97); }
 .sport-ui .exercise-session-main { min-width: 0; display: flex; flex-direction: column; gap: 7px; }
 .sport-ui .exercise-session-titlebar { display: flex; align-items: flex-start; justify-content: space-between; gap: 4px; }
 .sport-ui .exercise-session-title { min-width: 0; font-size: 17px; font-weight: 700; line-height: 1.25; letter-spacing: -.015em; overflow-wrap: anywhere; }
@@ -189,18 +189,18 @@
 .sport-ui .exercise-session-last svg { flex-shrink: 0; margin-top: 1px; }
 .sport-ui .exercise-session-target { font-size: 11px; color: var(--foreground-muted); }
 .sport-ui .exercise-session-quick-actions { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-top: 8px; }
-.sport-ui .exercise-session-quick-actions .sport-button { width: 100%; min-width: 0; min-height: 48px; margin: 0; padding: 10px 8px; font-size: 13px; font-weight: 650; border-radius: 14px; transition: transform 120ms ease, background-color 160ms ease; }
-.sport-ui .exercise-session-quick-actions .sport-button:active { transform: scale(.97); }
-.sport-ui .exercise-session-quick-actions .anatomy-open-button { color: #fff; background: var(--exercise-action); border-color: var(--exercise-action); box-shadow: 0 4px 14px color-mix(in srgb,var(--exercise-action) 40%,transparent); }
-.sport-ui .exercise-session-quick-actions .exercise-guide-action { color: var(--foreground); background: var(--surface); border-color: var(--sport-control-border); }
-.sport-ui .exercise-session-card input { min-height: 46px; border-radius: 12px; font-size: 16px; font-weight: 650; }
-.sport-ui .exercise-session-card input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb,var(--accent) 28%,transparent); }
-.sport-ui .exercise-session-card button[aria-pressed] { min-height: 46px; border-radius: 12px; }
-.sport-ui .exercise-session-card button[aria-pressed="true"] { animation: exercise-set-pop 220ms cubic-bezier(.3,1.4,.5,1); }
+.sport-ui .exercise-session-quick-actions > .sport-button { width: 100%; min-width: 0; min-height: 48px; margin: 0; padding: 10px 8px; font-size: 13px; font-weight: 650; border-radius: 14px; transition: transform 120ms ease, background-color 160ms ease; }
+.sport-ui .exercise-session-quick-actions > .sport-button:active { transform: scale(.97); }
+.sport-ui .exercise-session-quick-actions > .anatomy-open-button { color: #fff; background: var(--exercise-action); border-color: var(--exercise-action); box-shadow: 0 4px 14px color-mix(in srgb,var(--exercise-action) 40%,transparent); }
+.sport-ui .exercise-session-quick-actions > .exercise-guide-action { color: var(--foreground); background: var(--surface); border-color: var(--sport-control-border); }
+.sport-ui .exercise-session-set > input { min-height: 46px; border-radius: 12px; font-size: 16px; font-weight: 650; }
+.sport-ui .exercise-session-set > input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb,var(--accent) 28%,transparent); }
+.sport-ui .exercise-session-set > button[aria-pressed] { min-height: 46px; border-radius: 12px; }
+.sport-ui .exercise-session-set > button[aria-pressed="true"] { animation: exercise-set-pop 220ms cubic-bezier(.3,1.4,.5,1); }
 .sport-ui .exercise-session-card .exercise-session-set, .sport-ui .exercise-session-card .exercise-session-colhead { grid-template-columns: 32px minmax(0,1fr) minmax(0,1fr) 46px 28px; gap: 6px; }
 .sport-ui .exercise-session-card .exercise-session-colhead { font-weight: 650; letter-spacing: .06em; }
 .sport-ui .exercise-session-set > button:last-child { min-width: 28px; min-height: 44px; opacity: .6; }
-.sport-ui .exercise-session-set:has([aria-pressed="true"]) > span:first-child { display: grid; place-items: center; min-height: 32px; border-radius: 9px; color: var(--sport-ink); background: var(--sport-soft); box-shadow: inset 0 0 0 1px color-mix(in srgb,var(--sport) 45%,transparent); }
+.sport-ui .exercise-session-set:has(> [aria-pressed="true"]) > span:first-child { display: grid; place-items: center; min-height: 32px; border-radius: 9px; color: var(--sport-ink); background: var(--sport-soft); box-shadow: inset 0 0 0 1px color-mix(in srgb,var(--sport) 45%,transparent); }
 .sport-ui .exercise-session-add-set { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 48px; border: 1.5px solid color-mix(in srgb,var(--accent) 70%,var(--border)); border-radius: 14px; font-size: 14px; color: color-mix(in srgb,var(--accent) 80%,var(--foreground)); background: var(--accent-soft); font-weight: 650; transition: transform 120ms ease, background-color 160ms ease; }
 .sport-ui .exercise-session-add-set:active { transform: scale(.98); }
 .sport-ui .exercise-session-add-icon { font-size: 18px; line-height: 1; }
@@ -221,6 +221,6 @@
 .sport-ui .exercise-gallery-dots span[data-active="true"] { width: 22px; background: var(--exercise-action); }
 @media (max-width: 767px) { .sport-ui .exercise-sheet-thumbnail { width: 60px; } }
 @media (prefers-reduced-motion: reduce) {
-  .sport-ui .exercise-session-card button[aria-pressed="true"], .sport-ui .exercise-session-menu > div { animation: none; }
-  .sport-ui .exercise-premium-tab-indicator, .sport-ui .exercise-gallery-dots span, .sport-ui .exercise-session-head .exercise-photo-trigger, .sport-ui .exercise-session-quick-actions .sport-button, .sport-ui .exercise-session-add-set, .sport-ui .exercise-premium-3d .anatomy-open-button { transition: none; }
+  .sport-ui .exercise-session-set > button[aria-pressed="true"], .sport-ui .exercise-session-menu > div { animation: none; }
+  .sport-ui .exercise-premium-tab-indicator, .sport-ui .exercise-gallery-dots span, .sport-ui .exercise-session-head > .exercise-photo-trigger, .sport-ui .exercise-session-quick-actions > .sport-button, .sport-ui .exercise-session-add-set, .sport-ui .exercise-premium-3d .anatomy-open-button { transition: none; }
 }

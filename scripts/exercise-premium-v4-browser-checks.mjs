@@ -62,12 +62,19 @@ export async function checkExercisePremiumV4({ send, evaluate, navigatePage, rea
       await evaluate("document.querySelector('#sport-panel-session .exercise-guide-action').click()");
       await until(() => evaluate("document.querySelector('[data-premium-tab=technique]')?.getAttribute('aria-selected')==='true'"), "Technique shortcut opens the Technique tab");
       assert.equal(await evaluate("getComputedStyle(document.querySelector('.exercise-premium-tab-indicator')).transform !== 'none'"), true, "Sliding indicator positioned");
+      // The sheet is rendered inside the card's action row: card styles must not reach its header.
+      const sheetHeader = JSON.parse(await evaluate("JSON.stringify({close:document.querySelector('[data-guide-close]').getBoundingClientRect().width,title:document.querySelector('.exercise-sheet-heading h2').getBoundingClientRect().width})"));
+      assert.ok(sheetHeader.close <= 60 && sheetHeader.title >= 120, `Sheet header intact when opened from Technique: ${JSON.stringify(sheetHeader)}`);
+      await shot("sheet-from-technique-fr-dark-390");
       await click("[data-guide-close]");
       await until(() => evaluate("!document.querySelector('[data-exercise-guide-dialog]')"), "sheet closed");
       // 3D shortcut -> nested viewer -> Escape -> back to the session, draft untouched.
       // Run with --production: in next dev, StrictMode replays the dialog effect and its native close event closes it.
       await evaluate("document.querySelector('#sport-panel-session .exercise-session-quick-actions .anatomy-open-button').click()");
       await until(() => evaluate("!!document.querySelector('[data-muscle-dialog][open]')"), "3D dialog opened", 60000);
+      const viewerHeader = JSON.parse(await evaluate("JSON.stringify([...document.querySelectorAll('[data-muscle-dialog] .anatomy-header-actions button')].map(b=>{const r=b.getBoundingClientRect();return {width:r.width,right:r.right}}).concat({viewport:innerWidth}))"));
+      assert.ok(viewerHeader.slice(0, 2).every((b) => b.width <= 60 && b.right <= viewerHeader[2].viewport), `3D header buttons visible: ${JSON.stringify(viewerHeader)}`);
+      await shot("viewer-from-card-fr-dark-390");
       await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
       await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
       await until(() => evaluate("!document.querySelector('[data-muscle-dialog]')"), "3D dialog closed");
