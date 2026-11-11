@@ -12,6 +12,7 @@ import { ExercisePicker } from "@/components/strength/exercise-picker";
 import { ExerciseGuideButton } from "@/components/sport/exercises/exercise-guide-button";
 import { ExerciseMuscleButton } from "@/components/sport/anatomy/exercise-muscle-button";
 import { ExerciseThumbnail } from "@/components/sport/exercises/exercise-thumbnail";
+import { ExerciseSessionHeader } from "@/components/strength/exercise-session-header";
 import { mediaExperienceId } from "@/lib/exercises/media-experience";
 import { EXERCISE_MEDIA_EQUIPMENT } from "@/lib/exercises/media-thumbnails";
 import { detectRecords, type ExerciseSummary } from "@/lib/strength-stats";
@@ -355,6 +356,11 @@ export function SessionLogger({
         const last = lastByKey.get(exerciseKey(exercise.name));
         const hasData = exercise.sets.some((s) => s.reps !== "" || s.weight !== "");
         const mediaId = mediaExperienceId(exercise.name, exercise.muscle);
+        const removeExercise = () => {
+          if (!hasData || confirm(t("sport.sessionLogger.confirmRemoveExercise", { name: exercise.name }))) {
+            setDraft((d) => ({ ...d, exercises: d.exercises.filter((e) => e.id !== exercise.id) }));
+          }
+        };
         return (
           <motion.div
             key={exercise.id}
@@ -362,66 +368,77 @@ export function SessionLogger({
             className={`rounded-2xl border-[1.5px] bg-surface p-4${mediaId ? " exercise-session-card" : ""}`}
             style={{ borderColor: `color-mix(in srgb, ${muscleColor(exercise.muscle)} 50%, var(--border))` }}
           >
-            <div className={mediaId ? "exercise-session-overview" : undefined}>
-            <div className={`mb-3 flex items-start justify-between gap-2${mediaId ? " exercise-session-heading" : ""}`}>
-              <div className={`min-w-0${mediaId ? " exercise-session-identity" : ""}`}>
-                <div className={mediaId ? "exercise-session-name-row" : "flex items-center gap-2"}><ExerciseThumbnail name={exercise.name} muscle={exercise.muscle} /><div className="min-w-0"><p className={mediaId ? "min-w-0 break-words font-semibold leading-snug" : "min-w-0 truncate font-medium"}>{exercise.name}</p>{mediaId && <div className="exercise-session-tags"><span>{muscleLabel(exercise.muscle)}</span>{EXERCISE_MEDIA_EQUIPMENT[mediaId].map((item) => <span key={item}>{t(`sport.library.materials.${item}`)}</span>)}</div>}</div><ExerciseGuideButton name={exercise.name} exerciseKey={mediaId ?? undefined} /></div>
-                <p className="text-xs" style={{ color: muscleColor(exercise.muscle) }}>
-                  {muscleLabel(exercise.muscle)}
-                  {exercise.targetReps ? (
-                    <span className="text-foreground-muted">
-                      {" "}
-                      {t("sport.sessionLogger.targetLabel", { sets: exercise.sets.length, reps: exercise.targetReps })}
-                    </span>
-                  ) : null}
-                </p>
-                <p className={`mt-0.5 text-[11px] text-foreground-muted${mediaId ? " exercise-session-last" : ""}`}>
-                  {last ? t("sport.sessionLogger.lastTime", { sets: compactSets(last.sets, t) }) : t("sport.sessionLogger.firstTime")}
-                </p>
-              </div>
-              <details className={mediaId ? "exercise-session-actions exercise-session-menu" : undefined} open={mediaId ? undefined : true}>
-                <summary hidden={!mediaId} aria-label={t("sport.library.exerciseActions")}><span aria-hidden="true">⋮</span></summary>
-                <div className="flex shrink-0 items-center gap-1 text-foreground-muted">
-                <button
-                  type="button"
-                  disabled={exIndex === 0}
-                  onClick={() => moveExercise(exercise.id, -1)}
-                  aria-label={t("sport.sessionLogger.moveExerciseUpAria")}
-                  className="rounded-md px-1.5 py-1 text-xs transition hover:bg-surface-muted disabled:opacity-30"
-                >
-                  ▲
-                </button>
-                <button
-                  type="button"
-                  disabled={exIndex === draft.exercises.length - 1}
-                  onClick={() => moveExercise(exercise.id, 1)}
-                  aria-label={t("sport.sessionLogger.moveExerciseDownAria")}
-                  className="rounded-md px-1.5 py-1 text-xs transition hover:bg-surface-muted disabled:opacity-30"
-                >
-                  ▼
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (!hasData || confirm(t("sport.sessionLogger.confirmRemoveExercise", { name: exercise.name }))) {
-                      setDraft((d) => ({ ...d, exercises: d.exercises.filter((e) => e.id !== exercise.id) }));
-                    }
-                  }}
-                  aria-label={t("sport.sessionLogger.removeExerciseAria")}
-                  className="rounded-md px-1.5 py-1 text-xs transition hover:bg-surface-muted hover:text-danger"
-                >
-                  ✕
-                </button>
+            {mediaId ? <ExerciseSessionHeader
+              name={exercise.name}
+              muscle={exercise.muscle}
+              mediaId={mediaId}
+              muscleLabel={muscleLabel(exercise.muscle)}
+              equipment={EXERCISE_MEDIA_EQUIPMENT[mediaId].map((item) => t(`sport.library.materials.${item}`))}
+              targetText={exercise.targetReps ? t("sport.sessionLogger.targetLabel", { sets: exercise.sets.length, reps: exercise.targetReps }).replace(/^s*·s*/, "") : null}
+              lastText={last ? t("sport.sessionLogger.lastTime", { sets: compactSets(last.sets, t) }) : t("sport.sessionLogger.firstTime")}
+              hasHistory={!!last}
+              canMoveUp={exIndex > 0}
+              canMoveDown={exIndex < draft.exercises.length - 1}
+              onMoveUp={() => moveExercise(exercise.id, -1)}
+              onMoveDown={() => moveExercise(exercise.id, 1)}
+              onRemove={removeExercise}
+            /> : <>
+              <div>
+              <div className="mb-3 flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2"><ExerciseThumbnail name={exercise.name} muscle={exercise.muscle} /><div className="min-w-0"><p className="min-w-0 truncate font-medium">{exercise.name}</p></div><ExerciseGuideButton name={exercise.name} /></div>
+                  <p className="text-xs" style={{ color: muscleColor(exercise.muscle) }}>
+                    {muscleLabel(exercise.muscle)}
+                    {exercise.targetReps ? (
+                      <span className="text-foreground-muted">
+                        {" "}
+                        {t("sport.sessionLogger.targetLabel", { sets: exercise.sets.length, reps: exercise.targetReps })}
+                      </span>
+                    ) : null}
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-foreground-muted">
+                    {last ? t("sport.sessionLogger.lastTime", { sets: compactSets(last.sets, t) }) : t("sport.sessionLogger.firstTime")}
+                  </p>
                 </div>
-              </details>
-            </div>
-
-            {mediaId ? <div className="exercise-session-quick-actions"><ExerciseMuscleButton name={exercise.name} muscle={exercise.muscle} label={t("sport.library.muscles3D")} /><ExerciseGuideButton name={exercise.name} exerciseKey={mediaId} label={t("sport.library.technique")} /></div> : <ExerciseMuscleButton name={exercise.name} muscle={exercise.muscle} />}
-            </div>
-            <div className="mb-1 grid grid-cols-[2rem_1fr_1fr_2.5rem_1.5rem] items-center gap-2 text-center text-[10px] uppercase tracking-wide text-foreground-muted">
+                <details open>
+                  <summary hidden aria-label={t("sport.library.exerciseActions")}><span aria-hidden="true">⋮</span></summary>
+                  <div className="flex shrink-0 items-center gap-1 text-foreground-muted">
+                  <button
+                    type="button"
+                    disabled={exIndex === 0}
+                    onClick={() => moveExercise(exercise.id, -1)}
+                    aria-label={t("sport.sessionLogger.moveExerciseUpAria")}
+                    className="rounded-md px-1.5 py-1 text-xs transition hover:bg-surface-muted disabled:opacity-30"
+                  >
+                    ▲
+                  </button>
+                  <button
+                    type="button"
+                    disabled={exIndex === draft.exercises.length - 1}
+                    onClick={() => moveExercise(exercise.id, 1)}
+                    aria-label={t("sport.sessionLogger.moveExerciseDownAria")}
+                    className="rounded-md px-1.5 py-1 text-xs transition hover:bg-surface-muted disabled:opacity-30"
+                  >
+                    ▼
+                  </button>
+                  <button
+                    type="button"
+                    onClick={removeExercise}
+                    aria-label={t("sport.sessionLogger.removeExerciseAria")}
+                    className="rounded-md px-1.5 py-1 text-xs transition hover:bg-surface-muted hover:text-danger"
+                  >
+                    ✕
+                  </button>
+                  </div>
+                </details>
+              </div>
+              <ExerciseMuscleButton name={exercise.name} muscle={exercise.muscle} />
+              </div>
+            </>}
+            <div className={`mb-1 grid grid-cols-[2rem_1fr_1fr_2.5rem_1.5rem] items-center gap-2 text-center text-[10px] uppercase tracking-wide text-foreground-muted${mediaId ? " exercise-session-colhead" : ""}`}>
               <span>{t("sport.sessionLogger.colSet")}</span>
-              <span>kg</span>
-              <span>{t("sport.sessionLogger.colReps")}</span>
+              <span>{mediaId ? t("sport.sessionLogger.colLoad") : "kg"}</span>
+              <span>{mediaId ? t("sport.sessionLogger.colRepsFull") : t("sport.sessionLogger.colReps")}</span>
               <span />
               <span />
             </div>
@@ -503,7 +520,7 @@ export function SessionLogger({
               }
               className={`mt-3 rounded-lg border border-dashed border-sport/50 px-3 py-1.5 text-xs font-medium text-sport transition hover:bg-sport-soft${mediaId ? " exercise-session-add-set" : ""}`}
             >
-              {t("sport.sessionLogger.addSet")}
+              {mediaId ? <><span aria-hidden="true" className="exercise-session-add-icon">+</span>{t("sport.sessionLogger.addSetFull")}</> : t("sport.sessionLogger.addSet")}
             </button>
           </motion.div>
         );

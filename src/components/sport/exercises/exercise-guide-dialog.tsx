@@ -5,12 +5,13 @@ import { useLanguage } from "@/components/language-provider";
 import type { Discipline, ExerciseDetail } from "@/lib/exercises/types";
 import { SportButton, SportErrorState, SportLink } from "../ui/sport-primitives";
 import { ExerciseDetailContent } from "./exercise-detail";
+import type { ExerciseSheetTab } from "./exercise-premium-detail";
 import { hasExerciseMediaExperience } from "@/lib/exercises/media-experience";
 import { muscleGroupI18nPath } from "@/lib/strength";
 import { SportMedia } from "../ui/sport-media";
 import { SportIcon } from "../ui/sport-icons";
 
-export default function ExerciseGuideDialog({ name, discipline, exerciseId, exerciseKey, returnScroll, onClose }: { name: string; discipline: Discipline; exerciseId?: string; exerciseKey?: string; returnScroll?: { left: number; top: number }; onClose: () => void }) {
+export default function ExerciseGuideDialog({ name, discipline, exerciseId, exerciseKey, initialTab, returnScroll, onClose }: { name: string; discipline: Discipline; exerciseId?: string; exerciseKey?: string; initialTab?: ExerciseSheetTab; returnScroll?: { left: number; top: number }; onClose: () => void }) {
   const { t, dir } = useLanguage();
   const dialog = useRef<HTMLDialogElement>(null);
   const heading = useRef<HTMLHeadingElement>(null);
@@ -74,7 +75,7 @@ export default function ExerciseGuideDialog({ name, discipline, exerciseId, exer
       </div>
     </div>
     <div className="exercise-guide-dialog-body p-4 sm:p-6">{failed ? <SportErrorState title={t("sport.library.failed")} action={<SportButton onClick={() => { setFailed(false); setData(null); setAttempt((current) => current + 1); }}>{t("sport.library.retry")}</SportButton>} />
-      : data ? <><ExerciseDetailContent data={data} /><SportLink prefetch={false} className="mt-5" href={data.exercise.key === "unlisted" ? `/sport/exercises/lookup?${query}` : `/sport/exercises/${encodeURIComponent(data.exercise.key)}`} target="_blank" rel="noopener noreferrer">{t("sport.library.fullPage")} ↗</SportLink></>
+      : data ? <><ExerciseDetailContent data={data} initialTab={initialTab} /><SportLink prefetch={false} className="mt-5" href={data.exercise.key === "unlisted" ? `/sport/exercises/lookup?${query}` : `/sport/exercises/${encodeURIComponent(data.exercise.key)}`} target="_blank" rel="noopener noreferrer">{t("sport.library.fullPage")} ↗</SportLink></>
         : <p role="status" className="sport-description">{t("sport.library.loading")}</p>}</div>
   </dialog>;
 }

@@ -53,6 +53,7 @@ export function ExercisePhotoGallery({ media, guideId, name }: { media: Exercise
       <figcaption className="exercise-gallery-caption" aria-live="polite" aria-atomic="true"><span className="exercise-gallery-marker" aria-hidden="true" /><strong data-gallery-label>{active?.label[language] ?? t("sport.library.illustration")}</strong></figcaption>
       {active && <button ref={enlargeTrigger} type="button" className="exercise-gallery-enlarge" aria-label={t("sport.library.enlargePhoto")} aria-haspopup="dialog" onClick={() => setEnlarged(true)} data-gallery-enlarge><SportIcon name="expand" /></button>}
     </figure>
+    {multiple && <div className="exercise-gallery-dots" aria-hidden="true">{frames.map((frame, value) => <span key={frame.src} data-active={index === value} />)}</div>}
     {active?.caption[language] && <p className="sport-description exercise-gallery-description">{active.caption[language]}</p>}
     {multiple && <div className="exercise-gallery-controls">
       <SportButton variant="secondary" onClick={() => move(-1)} aria-label={t("sport.library.previousPhoto")} data-gallery-previous><SportIcon name="chevron" className="exercise-gallery-prev-icon h-5 w-5" /></SportButton>

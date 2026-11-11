@@ -1,0 +1,173 @@
+{
+  "mode": "Edge headless + next start + local auth/REST fixtures; not real-device or deployed-environment measurements",
+  "consoleErrors": [],
+  "writes": [],
+  "exercisePremiumV4": {
+    "prefix": "after",
+    "cases": [
+      {
+        "language": "fr",
+        "theme": "dark",
+        "width": 320,
+        "overflow": 0
+      },
+      {
+        "language": "fr",
+        "theme": "dark",
+        "width": 390,
+        "overflow": 0
+      },
+      {
+        "language": "fr",
+        "theme": "dark",
+        "width": 430,
+        "overflow": 0
+      },
+      {
+        "language": "fr",
+        "theme": "dark",
+        "width": 1440,
+        "overflow": -10
+      },
+      {
+        "language": "fr",
+        "theme": "light",
+        "width": 320,
+        "overflow": 0
+      },
+      {
+        "language": "fr",
+        "theme": "light",
+        "width": 390,
+        "overflow": 0
+      },
+      {
+        "language": "fr",
+        "theme": "light",
+        "width": 430,
+        "overflow": 0
+      },
+      {
+        "language": "fr",
+        "theme": "light",
+        "width": 1440,
+        "overflow": -10
+      },
+      {
+        "language": "ar",
+        "theme": "dark",
+        "width": 320,
+        "overflow": 0
+      },
+      {
+        "language": "ar",
+        "theme": "dark",
+        "width": 390,
+        "overflow": 0
+      },
+      {
+        "language": "ar",
+        "theme": "dark",
+        "width": 430,
+        "overflow": 0
+      },
+      {
+        "language": "ar",
+        "theme": "dark",
+        "width": 1440,
+        "overflow": -10
+      },
+      {
+        "language": "en",
+        "theme": "light",
+        "width": 320,
+        "overflow": 0
+      },
+      {
+        "language": "en",
+        "theme": "light",
+        "width": 390,
+        "overflow": 0
+      },
+      {
+        "language": "en",
+        "theme": "light",
+        "width": 430,
+        "overflow": 0
+      },
+      {
+        "language": "en",
+        "theme": "light",
+        "width": 1440,
+        "overflow": -10
+      }
+    ],
+    "screenshots": [
+      "v4-after-card-fr-dark-320.webp",
+      "v4-after-sheet-photos-fr-dark-320.webp",
+      "v4-after-card-fr-dark-390.webp",
+      "v4-after-sheet-photos-fr-dark-390.webp",
+      "v4-after-sheet-technique-fr-dark-390.webp",
+      "v4-after-sheet-muscles-fr-dark-390.webp",
+      "v4-after-sheet-advice-fr-dark-390.webp",
+      "v4-after-card-validated-fr-dark-390.webp",
+      "v4-after-menu-open-fr-dark-390.webp",
+      "v4-after-card-fr-dark-430.webp",
+      "v4-after-sheet-photos-fr-dark-430.webp",
+      "v4-after-card-fr-dark-1440.webp",
+      "v4-after-sheet-photos-fr-dark-1440.webp",
+      "v4-after-sheet-technique-fr-dark-1440.webp",
+      "v4-after-sheet-muscles-fr-dark-1440.webp",
+      "v4-after-sheet-advice-fr-dark-1440.webp",
+      "v4-after-card-fr-light-320.webp",
+      "v4-after-sheet-photos-fr-light-320.webp",
+      "v4-after-card-fr-light-390.webp",
+      "v4-after-sheet-photos-fr-light-390.webp",
+      "v4-after-sheet-technique-fr-light-390.webp",
+      "v4-after-sheet-muscles-fr-light-390.webp",
+      "v4-after-sheet-advice-fr-light-390.webp",
+      "v4-after-card-fr-light-430.webp",
+      "v4-after-sheet-photos-fr-light-430.webp",
+      "v4-after-card-fr-light-1440.webp",
+      "v4-after-sheet-photos-fr-light-1440.webp",
+      "v4-after-sheet-technique-fr-light-1440.webp",
+      "v4-after-sheet-muscles-fr-light-1440.webp",
+      "v4-after-sheet-advice-fr-light-1440.webp",
+      "v4-after-card-ar-dark-320.webp",
+      "v4-after-sheet-photos-ar-dark-320.webp",
+      "v4-after-card-ar-dark-390.webp",
+      "v4-after-sheet-photos-ar-dark-390.webp",
+      "v4-after-sheet-technique-ar-dark-390.webp",
+      "v4-after-sheet-muscles-ar-dark-390.webp",
+      "v4-after-sheet-advice-ar-dark-390.webp",
+      "v4-after-card-ar-dark-430.webp",
+      "v4-after-sheet-photos-ar-dark-430.webp",
+      "v4-after-card-ar-dark-1440.webp",
+      "v4-after-sheet-photos-ar-dark-1440.webp",
+      "v4-after-sheet-technique-ar-dark-1440.webp",
+      "v4-after-sheet-muscles-ar-dark-1440.webp",
+      "v4-after-sheet-advice-ar-dark-1440.webp",
+      "v4-after-card-en-light-320.webp",
+      "v4-after-sheet-photos-en-light-320.webp",
+      "v4-after-card-en-light-390.webp",
+      "v4-after-sheet-photos-en-light-390.webp",
+      "v4-after-sheet-technique-en-light-390.webp",
+      "v4-after-sheet-muscles-en-light-390.webp",
+      "v4-after-sheet-advice-en-light-390.webp",
+      "v4-after-card-en-light-430.webp",
+      "v4-after-sheet-photos-en-light-430.webp",
+      "v4-after-card-en-light-1440.webp",
+      "v4-after-sheet-photos-en-light-1440.webp",
+      "v4-after-sheet-technique-en-light-1440.webp",
+      "v4-after-sheet-muscles-en-light-1440.webp",
+      "v4-after-sheet-advice-en-light-1440.webp"
+    ],
+    "mode": "Actual application, Edge headless, local fixtures only",
+    "parity": {
+      "techniqueTab": true,
+      "indicator": true,
+      "nested3d": true,
+      "validation": true
+    }
+  }
+}

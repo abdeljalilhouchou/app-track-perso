@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, type KeyboardEvent } from "react";
+import { useId, useState, type CSSProperties, type KeyboardEvent } from "react";
 import { useLanguage } from "@/components/language-provider";
 import { muscleGroupI18nPath } from "@/lib/strength";
 import type { ExerciseDetail } from "@/lib/exercises/types";
@@ -12,11 +12,12 @@ import { SportIcon, type SportIconName } from "../ui/sport-icons";
 
 const tabs = ["demonstration", "technique", "muscles", "advice"] as const;
 type Tab = typeof tabs[number];
+export type ExerciseSheetTab = Tab;
 const tabIcons: Record<Tab, SportIconName> = { demonstration: "image", technique: "program", muscles: "anatomy", advice: "alert" };
-export function ExercisePremiumDetail({ data }: { data: ExerciseDetail }) {
+export function ExercisePremiumDetail({ data, initialTab }: { data: ExerciseDetail; initialTab?: Tab }) {
   const { t, language, dir } = useLanguage();
   const id = useId();
-  const [tab, setTab] = useState<Tab>("demonstration");
+  const [tab, setTab] = useState<Tab>(initialTab ?? "demonstration");
   const { exercise, media, text, anatomySummary } = data;
   const l = (key: string) => t(`sport.library.${key}`);
   if (!media) return null;
@@ -29,7 +30,7 @@ export function ExercisePremiumDetail({ data }: { data: ExerciseDetail }) {
   }
   return <div className="exercise-detail exercise-premium-detail" data-exercise-detail data-premium-exercise={exercise.key}>
     <div className="exercise-premium-meta">{exercise.primary.map((group) => <SportBadge key={group} tone="sport">{muscleLabel(group)}</SportBadge>)}{media.illustratedEquipment.map((item) => <SportBadge key={item}>{l(`materials.${item}`)}</SportBadge>)}{exercise.level && <SportBadge>{l(`levels.${exercise.level}`)}</SportBadge>}</div>
-    <div className="exercise-premium-tabs" role="tablist" aria-label={l("guide")}>{tabs.map((value, index) => <button key={value} id={`${id}-tab-${value}`} role="tab" type="button" aria-selected={tab === value} aria-controls={`${id}-panel-${value}`} tabIndex={tab === value ? 0 : -1} onClick={() => setTab(value)} onKeyDown={(event) => navigate(event, index)} data-premium-tab={value}><SportIcon name={tabIcons[value]} className="h-5 w-5" /><span>{l(value === "demonstration" ? "photos" : value === "advice" ? "mistakesAndTips" : value)}</span></button>)}</div>
+    <div className="exercise-premium-tabs" role="tablist" aria-label={l("guide")} style={{ "--tab-index": tabs.indexOf(tab) } as CSSProperties}><span className="exercise-premium-tab-indicator" aria-hidden="true" />{tabs.map((value, index) => <button key={value} id={`${id}-tab-${value}`} role="tab" type="button" aria-selected={tab === value} aria-controls={`${id}-panel-${value}`} tabIndex={tab === value ? 0 : -1} onClick={() => setTab(value)} onKeyDown={(event) => navigate(event, index)} data-premium-tab={value}><SportIcon name={tabIcons[value]} className="h-5 w-5" /><span>{l(value === "demonstration" ? "photos" : value === "advice" ? "mistakesAndTips" : value)}</span></button>)}</div>
     <div id={`${id}-panel-demonstration`} role="tabpanel" tabIndex={0} aria-labelledby={`${id}-tab-demonstration`} hidden={tab !== "demonstration"}>
       <ExercisePhotoGallery key={media.exerciseId} media={media} guideId={exercise.guideId} name={exercise.name} />
       <p className="sport-description exercise-premium-variant">{media.variant[language]}</p>

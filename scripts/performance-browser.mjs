@@ -9,6 +9,7 @@ import { sourceLoader } from "./test-source-loader.mjs";
 // Offline application QA: all auth/data use this local fixture server. Never
 // reads .env files or connects to Supabase. Requires local Microsoft Edge.
 const require = createRequire(import.meta.url);
+const exercisePremiumV4 = process.argv.includes("--exercise-premium-v4");
 const exerciseExperienceV3 = process.argv.includes("--exercise-experience-v3");
 const exerciseMediaV3 = process.argv.includes("--exercise-media-v3") || exerciseExperienceV3;
 const exerciseMediaV2 = process.argv.includes("--exercise-media-v2") || exerciseMediaV3;
@@ -95,7 +96,7 @@ if (production) {
 }
 const app = spawn(process.execPath, [require.resolve("next/dist/bin/next"), production ? "start" : "dev", "--hostname", "127.0.0.1", "--port", String(appPort)], { env, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
 app.stdout.on("data", log); app.stderr.on("data", log);
-const browser = spawn(edge, ["--headless=new", "--disable-gpu", ...(anatomy || exerciseMedia ? ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : []), "--disable-extensions", "--disable-background-networking", "--no-first-run", "--no-default-browser-check", `--remote-debugging-port=${debugPort}`, `--user-data-dir=${browserProfile}`, "about:blank"], { windowsHide: true, stdio: "ignore" });
+const browser = spawn(edge, ["--headless=new", "--disable-gpu", ...(anatomy || exerciseMedia || exercisePremiumV4 ? ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : []), "--disable-extensions", "--disable-background-networking", "--no-first-run", "--no-default-browser-check", `--remote-debugging-port=${debugPort}`, `--user-data-dir=${browserProfile}`, "about:blank"], { windowsHide: true, stdio: "ignore" });
 let socket;
 let inspectPage;
 let capturePage;
@@ -163,7 +164,7 @@ try {
   await navigatePage(`http://127.0.0.1:${appPort}/sport`);
   await ready("/sport");
   console.log("Sport Hub loaded with local fixtures.");
-  if (!anatomyOnly && !exerciseMedia) {
+  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4) {
   assert.ok(await evaluate("document.body.innerText.includes('QA Dos & Biceps')"));
   for (const width of [320, 360, 375, 390, 430, 768, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: width < 768 });
@@ -357,6 +358,10 @@ try {
   if (exerciseMedia && !process.argv.includes("--experience-only")) {
     const { checkExerciseMedia } = await import(exerciseMediaV3 ? "./exercise-media-v3-browser-checks.mjs" : exerciseMediaV2 ? "./exercise-media-v2-browser-checks.mjs" : "./exercise-media-browser-checks.mjs");
     await checkExerciseMedia({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, networkRequests, output, appPort });
+  }
+  if (exercisePremiumV4) {
+    const { checkExercisePremiumV4 } = await import("./exercise-premium-v4-browser-checks.mjs");
+    await checkExercisePremiumV4({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, output, appPort });
   }
   if (exerciseExperienceV3) {
     const { checkExerciseExperience } = await import("./exercise-experience-v3-browser-checks.mjs");

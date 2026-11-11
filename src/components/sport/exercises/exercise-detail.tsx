@@ -12,11 +12,11 @@ import { ExerciseDemonstration } from "./exercise-demonstration";
 import { ExerciseMuscleButton } from "../anatomy/exercise-muscle-button";
 import { ExerciseVisualSequence, ExerciseVisualTechnique } from "./exercise-visual-sequence";
 import { ExercisePerformance } from "./exercise-performance";
-import { ExercisePremiumDetail } from "./exercise-premium-detail";
+import { ExercisePremiumDetail, type ExerciseSheetTab } from "./exercise-premium-detail";
 import { hasExerciseMediaExperience } from "@/lib/exercises/media-experience";
 
-export function ExerciseDetailContent({ data }: { data: Detail }) {
-  if (data.media && hasExerciseMediaExperience(data.exercise.key)) return <ExercisePremiumDetail key={data.exercise.key} data={data} />;
+export function ExerciseDetailContent({ data, initialTab }: { data: Detail; initialTab?: ExerciseSheetTab }) {
+  if (data.media && hasExerciseMediaExperience(data.exercise.key)) return <ExercisePremiumDetail key={data.exercise.key} data={data} initialTab={initialTab} />;
   return <ClassicExerciseDetail data={data} />;
 }
 
