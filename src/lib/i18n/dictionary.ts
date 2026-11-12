@@ -55,6 +55,9 @@ const fr = {
     mood: "Humeur",
     profile: "Profil",
     signOut: "Se déconnecter",
+    settings: "Paramètres",
+    badges: "Badges",
+    accountMenu: "Menu du compte",
   },
   auth: {
     brandTagline: "Suis tes habitudes, ton sport et ton humeur au même endroit.",
@@ -181,6 +184,9 @@ const en: Dictionary = {
     mood: "Mood",
     profile: "Profile",
     signOut: "Sign out",
+    settings: "Settings",
+    badges: "Badges",
+    accountMenu: "Account menu",
   },
   auth: {
     brandTagline: "Track your habits, workouts and mood in one place.",
@@ -307,6 +313,9 @@ const ar: Dictionary = {
     mood: "المزاج",
     profile: "الملف الشخصي",
     signOut: "تسجيل الخروج",
+    settings: "الإعدادات",
+    badges: "الشارات",
+    accountMenu: "قائمة الحساب",
   },
   auth: {
     brandTagline: "تابع عاداتك ورياضتك ومزاجك في مكان واحد.",
