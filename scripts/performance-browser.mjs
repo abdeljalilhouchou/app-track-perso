@@ -10,6 +10,7 @@ import { sourceLoader } from "./test-source-loader.mjs";
 // reads .env files or connects to Supabase. Requires local Microsoft Edge.
 const require = createRequire(import.meta.url);
 const exercisePremiumV4 = process.argv.includes("--exercise-premium-v4");
+const sportModules = process.argv.includes("--sport-modules");
 const exerciseExperienceV3 = process.argv.includes("--exercise-experience-v3");
 const exerciseMediaV3 = process.argv.includes("--exercise-media-v3") || exerciseExperienceV3;
 const exerciseMediaV2 = process.argv.includes("--exercise-media-v2") || exerciseMediaV3;
@@ -45,6 +46,40 @@ if (exerciseMediaV3) {
   tables.workout_template_exercises=DEFAULT_PROGRAM.flatMap((program,index)=>program.exercises.map((item,position)=>({id:`66666666-6666-4666-8666-${String(index*100+position).padStart(12,"0")}`,template_id:templates[index].id,user_id:uid,exercise_name:item.name,muscle_group:item.muscle,position,target_sets:item.sets,target_reps:item.reps})));
   for(const [index,item] of baseCatalog("fr").filter(item=>EXERCISE_V3_IDS.includes(item.key)).entries())tables.exercises.push({id:`99999999-9999-4999-8999-${String(index).padStart(12,"0")}`,user_id:uid,name:item.storedName,muscle_group:item.primary[0]});
 }
+if (sportModules) {
+  const day = (offset) => { const date = new Date(); date.setDate(date.getDate() - offset); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; };
+  const runRows = [
+    [1, "Sortie du matin", "easy", 6.2, 2232, 40], [3, "Fractionné court", "interval", 5, 1450, 10],
+    [8, "Sortie longue", "long", 14.1, 5340, 160], [10, "Footing", "easy", 7.4, 2700, 55],
+    [12, "Test 1 km", "race", 1, 232, 0], [17, "Tempo", "tempo", 8, 2688, 60],
+    [24, "Course 10 km", "race", 10.05, 3178, 90], [38, "Endurance", "endurance", 9.3, 3450, 80], [52, "Footing", "easy", 5.5, 2061, 30],
+  ];
+  tables.running_sessions = [];
+  for (const [index, [offset, name, run_type, km, seconds, elevation]] of runRows.entries()) {
+    const id = `aaaaaaa0-0000-4000-8000-${String(index).padStart(12, "0")}`;
+    workouts.push({ id, user_id: uid, workout_date: day(offset), activity: name, duration_minutes: Math.round(seconds / 60), intensity: 3, notes: index === 0 ? "Bonnes sensations." : null, muscle_groups: [], template_id: null, discipline: "running", created_at: `${day(offset)}T08:00:00Z` });
+    tables.running_sessions.push({ workout_id: id, user_id: uid, name, run_type, distance_km: km, duration_seconds: seconds, elevation_gain_m: elevation, average_heart_rate: 152, cadence_spm: null, created_at: `${day(offset)}T08:00:00Z` });
+  }
+  tables.running_goals = [{ user_id: uid, weekly_distance_km: 20, weekly_runs: 3, monthly_distance_km: 80, target_5k_seconds: 1500, target_10k_seconds: 3300, created_at: user.created_at, updated_at: user.created_at }];
+  const texts = { fr: "Garde le corps gainé du début à la fin.", en: "Keep the body braced throughout.", ar: "حافظ على شد الجسم طوال التمرين." };
+  tables.calisthenics_exercises = [["pompes", "push", "Pectoraux", "beginner", "reps", "Pompes", "Push-ups", "تمارين الضغط"], ["tractions", "pull", "Dos", "intermediate", "reps", "Tractions", "Pull-ups", "العقلة"], ["gainage", "core", "Abdominaux", "beginner", "hold", "Gainage", "Plank", "البلانك"]]
+    .map(([exercise_key, category, primary_muscle, level, measurement_type, name_fr, name_en, name_ar], index) => ({ id: `bbbbbbb0-0000-4000-8000-${String(index).padStart(12, "0")}`, user_id: null, exercise_key, category, primary_muscle, level, measurement_type, name_fr, name_en, name_ar, description_fr: texts.fr, description_en: texts.en, description_ar: texts.ar, instructions_fr: texts.fr, instructions_en: texts.en, instructions_ar: texts.ar, created_at: user.created_at }));
+  const calWorkoutDays = [2, 6, 9];
+  tables.calisthenics_sets = [];
+  for (const [index, offset] of calWorkoutDays.entries()) {
+    const id = `ccccccc0-0000-4000-8000-${String(index).padStart(12, "0")}`;
+    workouts.push({ id, user_id: uid, workout_date: day(offset), activity: `Full body ${index + 1}`, duration_minutes: 40 + index * 5, intensity: 3, notes: null, muscle_groups: [], template_id: null, discipline: "calisthenics", created_at: `${day(offset)}T18:00:00Z` });
+    tables.calisthenics_sets.push(
+      { id: `ddddddd0-0000-4000-8000-${String(index * 2).padStart(12, "0")}`, user_id: uid, workout_id: id, exercise_id: tables.calisthenics_exercises[0].id, exercise_name: "Pompes", exercise_position: 0, set_number: 1, reps: 15 + index, hold_seconds: null, assistance_kg: null, added_weight_kg: null, variation: "", notes: null, created_at: `${day(offset)}T18:05:00Z` },
+      { id: `ddddddd0-0000-4000-8000-${String(index * 2 + 1).padStart(12, "0")}`, user_id: uid, workout_id: id, exercise_id: tables.calisthenics_exercises[2].id, exercise_name: "Gainage", exercise_position: 1, set_number: 1, reps: null, hold_seconds: 40 + index * 5, assistance_kg: null, added_weight_kg: null, variation: "", notes: null, created_at: `${day(offset)}T18:10:00Z` },
+    );
+  }
+  tables.calisthenics_programs = [{ id: "eeeeeee0-0000-4000-8000-000000000000", user_id: uid, name: "Programme Full body", notes: "", created_at: user.created_at }];
+  tables.calisthenics_program_sessions = [0, 1].map((position) => ({ id: `eeeeeee0-0000-4000-8000-00000000000${position + 1}`, program_id: tables.calisthenics_programs[0].id, user_id: uid, name: position === 0 ? "Séance A" : "Séance B", position, created_at: user.created_at }));
+  tables.calisthenics_program_exercises = tables.calisthenics_program_sessions.flatMap((session, sessionIndex) => [0, 1].map((position) => ({ id: `fffffff0-0000-4000-8000-${String(sessionIndex * 2 + position).padStart(12, "0")}`, program_session_id: session.id, user_id: uid, exercise_id: tables.calisthenics_exercises[position].id, target_sets: 3, target_reps: 10, target_hold_seconds: null, assistance_kg: null, added_weight_kg: null, notes: "", position, created_at: user.created_at })));
+  tables.calisthenics_skills = [{ id: "abababa0-0000-4000-8000-000000000000", user_id: uid, name: "Handstand", skill_key: "handstand", current_step: 1, target_step: 3, progression_steps: ["Wall hold", "Wall handstand contrôlé", "Freestanding attempts", "Freestanding hold"], measurement_type: "hold", started_on: day(30), notes: "", created_at: user.created_at, updated_at: user.created_at }];
+  tables.calisthenics_skill_logs = [{ id: "acacaca0-0000-4000-8000-000000000000", user_id: uid, skill_id: tables.calisthenics_skills[0].id, logged_on: day(2), reps: null, hold_seconds: 25, notes: "", created_at: user.created_at }];
+}
 let fixtureState = "normal";
 const mock = http.createServer((request, response) => {
   const url = new URL(request.url, "http://localhost");
@@ -78,7 +113,7 @@ const output = path.resolve(".next/qa");
 const designSystem = process.argv.includes("--design-system");
 await mkdir(output, { recursive: true });
 const browserProfile = await mkdtemp(path.join(output, "edge-"));
-const env = { ...process.env, NEXT_PUBLIC_SUPABASE_URL: `http://127.0.0.1:${mockPort}`, NEXT_PUBLIC_SUPABASE_ANON_KEY: "local-fixture-key", CALISTHENICS_SCHEMA_READY: "false", RUNNING_SCHEMA_READY: "false", NEXT_PUBLIC_PERFORMANCE_DEBUG: "true", PERFORMANCE_DEBUG: "true" };
+const env = { ...process.env, NEXT_PUBLIC_SUPABASE_URL: `http://127.0.0.1:${mockPort}`, NEXT_PUBLIC_SUPABASE_ANON_KEY: "local-fixture-key", CALISTHENICS_SCHEMA_READY: sportModules ? "true" : "false", RUNNING_SCHEMA_READY: sportModules ? "true" : "false", NEXT_PUBLIC_PERFORMANCE_DEBUG: "true", PERFORMANCE_DEBUG: "true" };
 if (designSystem) env.SPORT_UI_PREVIEW = "true";
 let appLog = "";
 const log = (data) => { appLog = (appLog + data).slice(-150000); };
@@ -164,7 +199,7 @@ try {
   await navigatePage(`http://127.0.0.1:${appPort}/sport`);
   await ready("/sport");
   console.log("Sport Hub loaded with local fixtures.");
-  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4) {
+  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules) {
   assert.ok(await evaluate("document.body.innerText.includes('QA Dos & Biceps')"));
   for (const width of [320, 360, 375, 390, 430, 768, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: width < 768 });
@@ -359,6 +394,10 @@ try {
     const { checkExerciseMedia } = await import(exerciseMediaV3 ? "./exercise-media-v3-browser-checks.mjs" : exerciseMediaV2 ? "./exercise-media-v2-browser-checks.mjs" : "./exercise-media-browser-checks.mjs");
     await checkExerciseMedia({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, networkRequests, output, appPort });
   }
+  if (sportModules) {
+    const { checkSportModules } = await import("./sport-modules-browser-checks.mjs");
+    await checkSportModules({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, output, appPort, setFixture: (value) => { fixtureState = value; } });
+  }
   if (exercisePremiumV4) {
     const { checkExercisePremiumV4 } = await import("./exercise-premium-v4-browser-checks.mjs");
     await checkExercisePremiumV4({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, output, appPort });
@@ -369,7 +408,7 @@ try {
   }
   results.writes = requests.filter((request) => !["GET", "HEAD"].includes(request.method));
   assert.deepEqual(results.writes, []);
-  assert.ok(!requests.some((request) => /calisthenics_|running_/.test(request.resource)), "Disabled disciplines queried their schema");
+  if (!sportModules) assert.ok(!requests.some((request) => /calisthenics_|running_/.test(request.resource)), "Disabled disciplines queried their schema");
   assert.deepEqual(results.consoleErrors, []);
   await pause(500);
   await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false }).then(({ data }) => writeFile(path.join(output, "sport-ar-system.png"), Buffer.from(data, "base64")));

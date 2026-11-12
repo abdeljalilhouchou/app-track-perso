@@ -67,6 +67,8 @@ export function computeRunningStats(runs: RunningRun[], goals: RunningGoals | nu
   const currentWeek = weekKey(now);
   const currentMonth = format(now, "yyyy-MM");
   const thisWeek = validRuns.filter((run) => weekKey(parseISO(run.workout_date)) === currentWeek);
+  const previousWeekKey = dateKey(subWeeks(startOfWeek(now, { weekStartsOn: 1 }), 1));
+  const lastWeekRuns = validRuns.filter((run) => weekKey(parseISO(run.workout_date)) === previousWeekKey);
   const thisMonth = validRuns.filter((run) => run.workout_date.startsWith(currentMonth));
   const sumDistance = (rows: RunningRun[]) =>
     rows.reduce((totalMeters, run) => totalMeters + Math.round(run.distance_km * 1000), 0) / 1000;
@@ -102,6 +104,7 @@ export function computeRunningStats(runs: RunningRun[], goals: RunningGoals | nu
     totalDistanceKm,
     totalDurationSeconds,
     thisWeek: { runs: thisWeek.length, distanceKm: sumDistance(thisWeek), durationSeconds: sumDuration(thisWeek) },
+    lastWeek: { runs: lastWeekRuns.length, distanceKm: sumDistance(lastWeekRuns), durationSeconds: sumDuration(lastWeekRuns) },
     thisMonth: { distanceKm: sumDistance(thisMonth), runs: thisMonth.length },
     weightedAveragePace,
     bestPace: paceRows[0]?.pace ?? null,
@@ -111,6 +114,7 @@ export function computeRunningStats(runs: RunningRun[], goals: RunningGoals | nu
     weeklyConsistency: weeklyDistance.filter((week) => week.runCount > 0).length,
     weeklyDistance,
     monthlyDistance,
+    comparable1k: comparableRecord(1),
     comparable5k: comparableRecord(5),
     comparable10k: comparableRecord(10),
     goals: goals ?? null,

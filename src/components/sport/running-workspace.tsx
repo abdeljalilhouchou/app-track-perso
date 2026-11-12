@@ -9,11 +9,12 @@ import { deleteRunningSession, saveRunningGoals, saveRunningSession } from "@/li
 import { formatLocalizedDate } from "@/lib/format-date";
 import { SportModuleShell, SportModuleTabs, SportStatusMessage } from "@/components/sport/ui/sport-module-shell";
 import { SportStatCard } from "@/components/sport/ui/sport-stat-card";
+import { SportProgressRing } from "@/components/sport/ui/sport-progress";
 import type { Language } from "@/lib/language";
 import type { RunningGoal } from "@/types/database";
 import { calculateRunningMetrics, computeRunningStats, formatDuration, formatPace, RUN_TYPES, type RunningGoals, type RunningRun, type RunType } from "@/lib/running/stats";
 
-type Section = "overview" | "newRun" | "history" | "progress" | "goals";
+type Section = "overview" | "sessions" | "progress" | "goals";
 const RunningDistanceChart = dynamic(() => import("@/components/charts/running-plots").then((module) => module.RunningDistanceChart), { ssr: false, loading: ChartPlaceholder });
 const RunningPaceChart = dynamic(() => import("@/components/charts/running-plots").then((module) => module.RunningPaceChart), { ssr: false, loading: ChartPlaceholder });
 type RunForm = {
@@ -68,7 +69,8 @@ export function RunningWorkspace({
   const router = useRouter();
   const [runs, setRuns] = useState(initialRuns);
   const [goals, setGoals] = useState<RunningGoals | null>(initialGoals);
-  const [section, setSection] = useState<Section>(initialSessionId ? "history" : "overview");
+  const [section, setSection] = useState<Section>(initialSessionId ? "sessions" : "overview");
+  const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState<RunForm>(() => blankForm(initialDate || todayKey()));
   const [editingId, setEditingId] = useState<string | null>(null);
   const [status, setStatus] = useState<{ key: string; error: boolean } | null>(null);
@@ -83,7 +85,7 @@ export function RunningWorkspace({
   const [timerRunning, setTimerRunning] = useState(false);
   const timerStartedAt = useRef<number | null>(null);
   const timerBaseMs = useRef(0);
-  const [goalForm, setGoalForm] = useState({ weeklyDistance: "", weeklyRuns: "", monthlyDistance: "", target5k: "", target10k: "" });
+  const [goalForm, setGoalForm] = useState({ weeklyDistance: "", weeklyRuns: "", monthlyDistance: "", target5kMin: "", target5kSec: "", target10kMin: "", target10kSec: "" });
 
   useEffect(() => setRuns(initialRuns), [initialRuns]);
   useEffect(() => {
@@ -92,8 +94,10 @@ export function RunningWorkspace({
       weeklyDistance: initialGoals?.weekly_distance_km?.toString() ?? "",
       weeklyRuns: initialGoals?.weekly_runs?.toString() ?? "",
       monthlyDistance: initialGoals?.monthly_distance_km?.toString() ?? "",
-      target5k: initialGoals?.target_5k_seconds?.toString() ?? "",
-      target10k: initialGoals?.target_10k_seconds?.toString() ?? "",
+      target5kMin: initialGoals?.target_5k_seconds != null ? String(Math.floor(initialGoals.target_5k_seconds / 60)) : "",
+      target5kSec: initialGoals?.target_5k_seconds != null ? String(initialGoals.target_5k_seconds % 60) : "",
+      target10kMin: initialGoals?.target_10k_seconds != null ? String(Math.floor(initialGoals.target_10k_seconds / 60)) : "",
+      target10kSec: initialGoals?.target_10k_seconds != null ? String(initialGoals.target_10k_seconds % 60) : "",
     });
   }, [initialGoals]);
 
@@ -109,11 +113,14 @@ export function RunningWorkspace({
 
   const stats = useMemo(() => computeRunningStats(runs, goals), [runs, goals]);
   const locale = language === "ar" ? "ar" : language === "en" ? "en-US" : "fr-FR";
-  const sections: Section[] = ["overview", "newRun", "history", "progress", "goals"];
+  const sections: Section[] = ["overview", "sessions", "progress", "goals"];
   const messageFor = (code: string) => {
     const messages: Record<string, string> = { validation: "errorValidation", schema: "errorSchema", auth: "errorAuth", ownership: "errorOwnership", generic: "errorGeneric", goals: "errorGoals" };
     return messages[code] ?? "errorGeneric";
   };
+  const signedCount = (value: number) => new Intl.NumberFormat(locale, { signDisplay: "exceptZero", maximumFractionDigits: 0 }).format(value);
+  const signedDistance = (value: number) => new Intl.NumberFormat(locale, { signDisplay: "exceptZero", maximumFractionDigits: 2 }).format(Math.round(value * 100) / 100);
+  const signedDuration = (value: number) => `${value > 0 ? "+" : value < 0 ? "-" : "±"}${formatDuration(Math.abs(value))}`;
   const update = <K extends keyof RunForm>(key: K, value: RunForm[K]) => setForm((current) => ({ ...current, [key]: value }));
   const resetForm = () => { setForm(blankForm(initialDate || todayKey())); setEditingId(null); };
   const startEditing = (run: RunningRun) => {
@@ -124,7 +131,8 @@ export function RunningWorkspace({
       elevation: run.elevation_gain_m?.toString() ?? "", heartRate: run.average_heart_rate?.toString() ?? "", cadence: run.cadence_spm?.toString() ?? "",
     });
     setEditingId(run.workout_id);
-    setSection("newRun");
+    setSection("sessions");
+    setFormOpen(true);
     setStatus(null);
   };
 
@@ -162,6 +170,7 @@ export function RunningWorkspace({
       else {
         setStatus({ key: editingId ? "updateSuccess" : "saveSuccess", error: false });
         resetForm();
+        setFormOpen(false);
         router.refresh();
       }
     } catch {
@@ -191,12 +200,18 @@ export function RunningWorkspace({
     event.preventDefault();
     setSaving(true); setStatus(null);
     const parse = (value: string) => value === "" ? null : Number(value);
+    // Both fields empty (or zero) means the target is not tracked.
+    const parseTime = (minutes: string, seconds: string) => {
+      if (minutes === "" && seconds === "") return null;
+      const total = (minutes === "" ? 0 : Number(minutes)) * 60 + (seconds === "" ? 0 : Number(seconds));
+      return total > 0 ? total : null;
+    };
     const values = {
       weeklyDistanceKm: parse(goalForm.weeklyDistance),
       weeklyRuns: parse(goalForm.weeklyRuns),
       monthlyDistanceKm: parse(goalForm.monthlyDistance),
-      target5kSeconds: parse(goalForm.target5k),
-      target10kSeconds: parse(goalForm.target10k),
+      target5kSeconds: parseTime(goalForm.target5kMin, goalForm.target5kSec),
+      target10kSeconds: parseTime(goalForm.target10kMin, goalForm.target10kSec),
     };
     try {
       const result = await saveRunningGoals(values);
@@ -275,12 +290,12 @@ export function RunningWorkspace({
     >
 
       {section === "overview" && <div className="space-y-5">
-        {runs.length === 0 ? <section className="rounded-3xl border border-dashed border-sport/40 bg-sport-soft/30 p-6 sm:p-8"><h2 className="text-lg font-semibold">{t("sport.runningUi.noRuns")}</h2><p className="mt-2 max-w-xl text-sm leading-relaxed text-foreground-muted">{t("sport.runningUi.noRunsBody")}</p><button type="button" className={`${button} mt-5`} onClick={() => setSection("newRun")}>{t("sport.runningUi.startRun")}</button></section> : <>
+        {runs.length === 0 ? <section className="rounded-3xl border border-dashed border-sport/40 bg-sport-soft/30 p-6 sm:p-8"><h2 className="text-lg font-semibold">{t("sport.runningUi.noRuns")}</h2><p className="mt-2 max-w-xl text-sm leading-relaxed text-foreground-muted">{t("sport.runningUi.noRunsBody")}</p><button type="button" className={`${button} mt-5`} onClick={() => { resetForm(); setFormOpen(true); setSection("sessions"); }}>{t("sport.runningUi.startRun")}</button></section> : <>
           <div className="sport-stat-grid">
-            <MetricCard title={t("sport.runningUi.runsThisWeek")} value={stats.thisWeek.runs} />
-            <MetricCard title={t("sport.runningUi.distanceThisWeek")} value={formatDistance(stats.thisWeek.distanceKm, language)} unit="km" />
-            <MetricCard title={t("sport.runningUi.durationThisWeek")} value={formatDuration(stats.thisWeek.durationSeconds)} />
-            <MetricCard title={t("sport.runningUi.averagePace")} value={formatPace(stats.thisWeek.distanceKm > 0 ? stats.thisWeek.durationSeconds / stats.thisWeek.distanceKm : null)} unit={t("sport.runningUi.minPerKm")} />
+            <MetricCard title={t("sport.runningUi.runsThisWeek")} value={stats.thisWeek.runs} detail={`${signedCount(stats.thisWeek.runs - stats.lastWeek.runs)} ${t("sport.runningUi.vsLastWeek")}`} />
+            <MetricCard title={t("sport.runningUi.distanceThisWeek")} value={formatDistance(stats.thisWeek.distanceKm, language)} unit="km" detail={`${signedDistance(stats.thisWeek.distanceKm - stats.lastWeek.distanceKm)} km ${t("sport.runningUi.vsLastWeek")}`} />
+            <MetricCard title={t("sport.runningUi.durationThisWeek")} value={formatDuration(stats.thisWeek.durationSeconds)} detail={`${signedDuration(stats.thisWeek.durationSeconds - stats.lastWeek.durationSeconds)} ${t("sport.runningUi.vsLastWeek")}`} />
+            <MetricCard title={t("sport.runningUi.averagePace")} value={formatPace(stats.thisWeek.distanceKm > 0 ? stats.thisWeek.durationSeconds / stats.thisWeek.distanceKm : null)} unit={t("sport.runningUi.minPerKm")} detail={t("sport.runningUi.lastWeekValue", { value: formatPace(stats.lastWeek.distanceKm > 0 ? stats.lastWeek.durationSeconds / stats.lastWeek.distanceKm : null) })} />
           </div>
           <div className="grid gap-3 lg:grid-cols-[minmax(0,1.4fr)_minmax(16rem,0.6fr)]">
             <section className="min-w-0 rounded-2xl border border-border bg-surface p-4 sm:p-5">
@@ -290,12 +305,20 @@ export function RunningWorkspace({
             </section>
             <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.runningUi.thisMonth")}</h2><p className="mt-2 text-3xl font-semibold text-sport">{formatDistance(stats.thisMonth.distanceKm, language)} <span className="text-sm">km</span></p><p className="mt-1 text-xs text-foreground-muted">{stats.thisMonth.runs} {t("sport.runningUi.totalRuns").toLowerCase()}</p></section>
           </div>
-          {(goals?.weekly_distance_km || goals?.weekly_runs) && <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="mb-4 text-sm font-semibold">{t("sport.runningUi.weekGoal")}</h2><div className="grid gap-4 sm:grid-cols-2">{goals.weekly_distance_km && <GoalProgress label={t("sport.runningUi.weeklyDistanceGoal")} current={stats.thisWeek.distanceKm} goal={goals.weekly_distance_km} format={(value) => `${formatDistance(value, language)} km`} progress={stats.goalProgress.weeklyDistance ?? 0} />}{goals.weekly_runs && <GoalProgress label={t("sport.runningUi.weeklyRunsGoal")} current={stats.thisWeek.runs} goal={goals.weekly_runs} format={(value) => String(value)} progress={stats.goalProgress.weeklyRuns ?? 0} />}</div></section>}
+          {(goals?.weekly_distance_km || goals?.weekly_runs) && <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="mb-4 text-sm font-semibold">{t("sport.runningUi.weekGoal")}</h2><div className="grid gap-4 sm:grid-cols-2">
+            {goals.weekly_distance_km && <div className="flex items-center gap-4"><SportProgressRing label={t("sport.runningUi.weeklyDistanceGoal")} value={stats.thisWeek.distanceKm} max={goals.weekly_distance_km} valueText={`${Math.round((stats.goalProgress.weeklyDistance ?? 0) * 100)}%`} /><div className="min-w-0"><p className="text-xs text-foreground-muted">{t("sport.runningUi.weeklyDistanceGoal")}</p><p className="mt-1 text-sm font-semibold tabular-nums">{formatDistance(stats.thisWeek.distanceKm, language)} / {formatDistance(goals.weekly_distance_km, language)} km</p></div></div>}
+            {goals.weekly_runs && <div className="flex items-center gap-4"><SportProgressRing label={t("sport.runningUi.weeklyRunsGoal")} value={stats.thisWeek.runs} max={goals.weekly_runs} valueText={`${Math.round((stats.goalProgress.weeklyRuns ?? 0) * 100)}%`} /><div className="min-w-0"><p className="text-xs text-foreground-muted">{t("sport.runningUi.weeklyRunsGoal")}</p><p className="mt-1 text-sm font-semibold tabular-nums">{stats.thisWeek.runs} / {goals.weekly_runs}</p></div></div>}
+          </div></section>}
         </>}
-        {runs.length > 0 && <button type="button" className={button} onClick={() => { resetForm(); setSection("newRun"); }}>{t("sport.runningUi.startRun")}</button>}
+        {runs.length > 0 && <button type="button" className={button} onClick={() => { resetForm(); setFormOpen(true); setSection("sessions"); }}>{t("sport.runningUi.startRun")}</button>}
       </div>}
 
-      {section === "newRun" && <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_19rem]">
+      {section === "sessions" && <div className="space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold">{t("sport.runningUi.historyTitle")}</h2>
+          <button type="button" className={formOpen ? secondary : button} aria-expanded={formOpen} onClick={() => { resetForm(); setFormOpen((open) => !open); }}>{formOpen ? t("sport.runningUi.closeForm") : t("sport.runningUi.startRun")}</button>
+        </div>
+        {formOpen && <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_19rem]">
         <form onSubmit={onSaveRun} className="min-w-0 space-y-4 rounded-2xl border border-border bg-surface p-4 sm:p-5">
           <div><h2 className="text-lg font-semibold">{t(editingId ? "sport.runningUi.editRun" : "sport.runningUi.runFormTitle")}</h2><p className="mt-1 text-xs text-foreground-muted">{t("sport.runningUi.subtitle")}</p></div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -318,9 +341,9 @@ export function RunningWorkspace({
           <div className="flex flex-wrap gap-2"><button className={button} disabled={saving} type="submit">{saving ? t("sport.runningUi.saving") : t(editingId ? "sport.runningUi.updateRun" : "sport.runningUi.saveRun")}</button>{editingId && <button type="button" className={secondary} onClick={resetForm}>{t("sport.runningUi.cancelEdit")}</button>}</div>
         </form>
         <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5 xl:sticky xl:top-4"><h2 className="text-sm font-semibold">{t("sport.runningUi.manualTimer")}</h2><p className="mt-1 text-xs leading-relaxed text-foreground-muted">{t("sport.runningUi.timerHint")}</p><p aria-live="polite" className="my-5 text-center text-4xl font-semibold tabular-nums text-sport">{formatDuration(Math.floor(elapsedMs / 1000))}</p><div className="grid grid-cols-2 gap-2">{!timerRunning ? <button type="button" className={secondary} onClick={beginTimer}>{elapsedMs > 0 ? t("sport.runningUi.resumeTimer") : t("sport.runningUi.startTimer")}</button> : <button type="button" className={secondary} onClick={pauseTimer}>{t("sport.runningUi.pauseTimer")}</button>}<button type="button" className={secondary} disabled={elapsedMs === 0 && !timerRunning} onClick={stopTimer}>{t("sport.runningUi.stopTimer")}</button><button type="button" className={secondary} onClick={resetTimer}>{t("sport.runningUi.resetTimer")}</button><button type="button" className={`${secondary} col-span-2`} disabled={elapsedMs < 1000 || timerRunning} onClick={copyTimerDuration}>{t("sport.runningUi.useTimer")}</button></div></section>
-      </div>}
+        </div>}
 
-      {section === "history" && <section className="space-y-3">
+        <div className="space-y-3">
         <div className="rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="mb-3 text-sm font-semibold">{t("sport.runningUi.historyTitle")}</h2><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Field label={t("sport.runningUi.period")}><select className={control} value={period} onChange={(event) => { setPeriod(event.target.value); setPage(1); }}><option value="all">{t("sport.runningUi.allPeriods")}</option><option value="7">{t("sport.runningUi.last7Days")}</option><option value="30">{t("sport.runningUi.last30Days")}</option><option value="90">{t("sport.runningUi.last90Days")}</option></select></Field>
           <Field label={t("sport.runningUi.runTypeFilter")}><select className={control} value={filterType} onChange={(event) => { setFilterType(event.target.value); setPage(1); }}><option value="all">{t("sport.runningUi.allTypes")}</option>{RUN_TYPES.map((item) => <option key={item} value={item}>{t(`sport.runningUi.runTypes.${item}`)}</option>)}</select></Field>
@@ -339,23 +362,31 @@ export function RunningWorkspace({
           </article>;
         })}</div> : <p className="rounded-xl bg-surface-muted p-5 text-sm text-foreground-muted">{t("sport.runningUi.noFilteredRuns")}</p>}
         {filteredRuns.length > pageSize && <div className="flex items-center justify-center gap-3"><button className={secondary} type="button" disabled={page <= 1} onClick={() => setPage((value) => Math.max(1, value - 1))}>{t("sport.runningUi.previous")}</button><span className="text-xs text-foreground-muted">{t("sport.runningUi.page")} {page} / {pageCount}</span><button className={secondary} type="button" disabled={page >= pageCount} onClick={() => setPage((value) => Math.min(pageCount, value + 1))}>{t("sport.runningUi.next")}</button></div>}
-      </section>}
+        </div>
+      </div>}
 
       {section === "progress" && <div className="space-y-4">
         <div className="sport-stat-grid"><MetricCard title={t("sport.runningUi.totalRuns")} value={stats.runCount} /><MetricCard title={t("sport.runningUi.totalDistance")} value={formatDistance(stats.totalDistanceKm, language)} unit="km" /><MetricCard title={t("sport.runningUi.totalTime")} value={formatDuration(stats.totalDurationSeconds)} /><MetricCard title={t("sport.runningUi.averagePace")} value={formatPace(stats.weightedAveragePace)} unit={t("sport.runningUi.minPerKm")} /><MetricCard title={t("sport.runningUi.bestPace")} value={formatPace(stats.bestPace)} unit={t("sport.runningUi.minPerKm")} /></div>
         <div className="grid min-w-0 gap-4 lg:grid-cols-2"><ChartCard title={t("sport.runningUi.weeklyDistance")} data={chartWeeks} unit="km" /><ChartCard title={t("sport.runningUi.monthlyDistance")} data={chartMonths} unit="km" /></div>
         <section className="min-w-0 rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="mb-3 text-sm font-semibold">{t("sport.runningUi.paceTrend")}</h2>{paceTrend.length ? <div className="h-56 w-full"><RunningPaceChart data={paceTrend} unit={t("sport.runningUi.minPerKm")} label={t("sport.runningUi.pace")} /></div> : <p className="text-sm text-foreground-muted">{t("sport.runningUi.noRunsBody")}</p>}</section>
         <div className="grid gap-4 sm:grid-cols-2"><RecordCard title={t("sport.runningUi.longestRun")} run={stats.longestDistance} value={(run) => `${formatDistance(run.distance_km, language)} km`} language={language} /><RecordCard title={t("sport.runningUi.longestDuration")} run={stats.longestDuration} value={(run) => formatDuration(run.duration_seconds)} language={language} /></div>
-        <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="text-sm font-semibold">{t("sport.runningUi.records")}</h2><p className="mt-1 text-xs leading-relaxed text-foreground-muted">{t("sport.runningUi.toleranceNote")}</p><div className="mt-4 grid gap-3 sm:grid-cols-2"><ComparableRecord title={t("sport.runningUi.record5k")} run={stats.comparable5k} language={language} /><ComparableRecord title={t("sport.runningUi.record10k")} run={stats.comparable10k} language={language} /></div></section>
+        <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="text-sm font-semibold">{t("sport.runningUi.records")}</h2><p className="mt-1 text-xs leading-relaxed text-foreground-muted">{t("sport.runningUi.toleranceNote")}</p><div className="mt-4 grid gap-3 sm:grid-cols-3"><ComparableRecord title={t("sport.runningUi.record1k")} run={stats.comparable1k} language={language} /><ComparableRecord title={t("sport.runningUi.record5k")} run={stats.comparable5k} language={language} /><ComparableRecord title={t("sport.runningUi.record10k")} run={stats.comparable10k} language={language} /></div></section>
         <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="text-sm font-semibold">{t("sport.runningUi.consistency")}</h2><p className="mt-2 text-3xl font-semibold text-sport">{stats.weeklyConsistency} / 8</p></section>
       </div>}
 
       {section === "goals" && <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.8fr)]">
-        <form onSubmit={onSaveGoals} className="space-y-4 rounded-2xl border border-border bg-surface p-4 sm:p-5"><div><h2 className="text-lg font-semibold">{t("sport.runningUi.goalsTitle")}</h2><p className="mt-1 text-xs text-foreground-muted">{t("sport.runningUi.goalsHint")}</p></div><div className="grid gap-3 sm:grid-cols-2"><GoalField label={t("sport.runningUi.weeklyDistanceGoal")} value={goalForm.weeklyDistance} min="0.01" max="1000" step="0.01" onChange={(value) => setGoalForm((current) => ({ ...current, weeklyDistance: value }))} /><GoalField label={t("sport.runningUi.weeklyRunsGoal")} value={goalForm.weeklyRuns} min="1" max="14" step="1" onChange={(value) => setGoalForm((current) => ({ ...current, weeklyRuns: value }))} /><GoalField label={t("sport.runningUi.monthlyDistanceGoal")} value={goalForm.monthlyDistance} min="0.01" max="5000" step="0.01" onChange={(value) => setGoalForm((current) => ({ ...current, monthlyDistance: value }))} /><GoalField label={t("sport.runningUi.target5k")} value={goalForm.target5k} min="1" max="86400" step="1" onChange={(value) => setGoalForm((current) => ({ ...current, target5k: value }))} /><GoalField label={t("sport.runningUi.target10k")} value={goalForm.target10k} min="1" max="86400" step="1" onChange={(value) => setGoalForm((current) => ({ ...current, target10k: value }))} /></div><button className={button} type="submit" disabled={saving}>{saving ? t("sport.runningUi.saving") : t("sport.runningUi.saveGoals")}</button></form>
+        <form onSubmit={onSaveGoals} className="space-y-4 rounded-2xl border border-border bg-surface p-4 sm:p-5"><div><h2 className="text-lg font-semibold">{t("sport.runningUi.goalsTitle")}</h2><p className="mt-1 text-xs text-foreground-muted">{t("sport.runningUi.goalsHint")}</p></div><div className="grid gap-3 sm:grid-cols-2"><GoalField label={t("sport.runningUi.weeklyDistanceGoal")} value={goalForm.weeklyDistance} min="0.01" max="1000" step="0.01" onChange={(value) => setGoalForm((current) => ({ ...current, weeklyDistance: value }))} /><GoalField label={t("sport.runningUi.weeklyRunsGoal")} value={goalForm.weeklyRuns} min="1" max="14" step="1" onChange={(value) => setGoalForm((current) => ({ ...current, weeklyRuns: value }))} /><GoalField label={t("sport.runningUi.monthlyDistanceGoal")} value={goalForm.monthlyDistance} min="0.01" max="5000" step="0.01" onChange={(value) => setGoalForm((current) => ({ ...current, monthlyDistance: value }))} /><TimeGoalField label={t("sport.runningUi.target5k")} minutes={goalForm.target5kMin} seconds={goalForm.target5kSec} onChange={(minutes, seconds) => setGoalForm((current) => ({ ...current, target5kMin: minutes, target5kSec: seconds }))} /><TimeGoalField label={t("sport.runningUi.target10k")} minutes={goalForm.target10kMin} seconds={goalForm.target10kSec} onChange={(minutes, seconds) => setGoalForm((current) => ({ ...current, target10kMin: minutes, target10kSec: seconds }))} /></div><button className={button} type="submit" disabled={saving}>{saving ? t("sport.runningUi.saving") : t("sport.runningUi.saveGoals")}</button></form>
         <section className="space-y-4 rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="text-sm font-semibold">{t("sport.runningUi.progressGoal")}</h2>{!goals ? <p className="text-sm text-foreground-muted">{t("sport.runningUi.goalsHint")}</p> : <div className="space-y-4">{goals.weekly_distance_km && <GoalProgress label={t("sport.runningUi.weeklyDistanceGoal")} current={stats.thisWeek.distanceKm} goal={goals.weekly_distance_km} format={(value) => `${formatDistance(value, language)} km`} progress={stats.goalProgress.weeklyDistance ?? 0} />}{goals.weekly_runs && <GoalProgress label={t("sport.runningUi.weeklyRunsGoal")} current={stats.thisWeek.runs} goal={goals.weekly_runs} format={(value) => String(value)} progress={stats.goalProgress.weeklyRuns ?? 0} />}{goals.monthly_distance_km && <GoalProgress label={t("sport.runningUi.monthlyDistanceGoal")} current={stats.thisMonth.distanceKm} goal={goals.monthly_distance_km} format={(value) => `${formatDistance(value, language)} km`} progress={stats.goalProgress.monthlyDistance ?? 0} />}{goals.target_5k_seconds !== null && <p className="text-sm"><span className="font-medium">{t("sport.runningUi.target5k")}:</span> {formatDuration(goals.target_5k_seconds)} <span className="text-foreground-muted">· {t("sport.runningUi.record5k")}: {stats.comparable5k ? formatDuration(stats.comparable5k.duration_seconds) : t("sport.runningUi.noRecord")}</span></p>}{goals.target_10k_seconds !== null && <p className="text-sm"><span className="font-medium">{t("sport.runningUi.target10k")}:</span> {formatDuration(goals.target_10k_seconds)} <span className="text-foreground-muted">· {t("sport.runningUi.record10k")}: {stats.comparable10k ? formatDuration(stats.comparable10k.duration_seconds) : t("sport.runningUi.noRecord")}</span></p>}</div>}</section>
       </div>}
     </SportModuleShell>
   );
+
+  function TimeGoalField({ label, minutes, seconds, onChange }: { label: string; minutes: string; seconds: string; onChange: (minutes: string, seconds: string) => void }) {
+    return <div className="min-w-0"><span className={labelClass}>{label}</span><div className="grid grid-cols-2 gap-2">
+      <Field label={t("sport.runningUi.minutes")}><input type="number" inputMode="numeric" min="0" max="1439" step="1" value={minutes} className={control} onChange={(event) => onChange(event.target.value, seconds)} /></Field>
+      <Field label={t("sport.runningUi.seconds")}><input type="number" inputMode="numeric" min="0" max="59" step="1" value={seconds} className={control} onChange={(event) => onChange(minutes, event.target.value)} /></Field>
+    </div></div>;
+  }
 
   function GoalProgress({ label, current, goal, format, progress }: { label: string; current: number; goal: number; format: (value: number) => string; progress: number }) {
     return <div><div className="mb-1.5 flex justify-between gap-3 text-xs"><span>{label}</span><span className="shrink-0 font-medium tabular-nums">{format(current)} / {format(goal)}</span></div><div className="h-2 overflow-hidden rounded-full bg-surface-muted"><div className="h-full rounded-full bg-sport transition-[width]" style={{ width: `${Math.round(progress * 100)}%` }} /></div></div>;
