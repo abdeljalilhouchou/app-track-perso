@@ -1,7 +1,9 @@
 "use client";
 
 import { ExerciseGuideButton } from "@/components/sport/exercises/exercise-guide-button";
-import { SportLink } from "@/components/sport/ui/sport-primitives";
+import { SportButton, SportEmptyState, SportLink } from "@/components/sport/ui/sport-primitives";
+import { SportModuleShell, SportModuleTabs, SportStatusMessage } from "@/components/sport/ui/sport-module-shell";
+import { SportStatCard } from "@/components/sport/ui/sport-stat-card";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -317,40 +319,25 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
   const bestSkillResults = new Map<string, number>();
   for (const log of activeSkillLogs) bestSkillResults.set(log.skill_id, Math.max(bestSkillResults.get(log.skill_id) ?? 0, log.hold_seconds ?? log.reps ?? 0));
 
-  const navigation = <>
-    <label className="block sm:hidden">
-      <span className="sr-only">{t("sport.calisthenicsUi.navigationLabel")}</span>
-      <select className={controlClass} value={section} onChange={(event) => setSection(event.target.value as Section)}>
-        {SECTIONS.map((item) => <option key={item} value={item}>{t(`sport.calisthenicsUi.sections.${item}`)}</option>)}
-      </select>
-    </label>
-    <nav aria-label={t("sport.calisthenicsUi.navigationLabel")} className="hidden flex-wrap gap-2 sm:flex">
-      {SECTIONS.map((item) => <button key={item} type="button" onClick={() => setSection(item)} aria-current={section === item ? "page" : undefined}
-        className={`min-h-10 rounded-xl border px-3 text-xs font-medium transition ${section === item ? "border-sport/50 bg-sport-soft text-sport" : "border-border bg-surface text-foreground-muted hover:bg-surface-muted"}`}>
-        {t(`sport.calisthenicsUi.sections.${item}`)}
-      </button>)}
-    </nav>
-  </>;
+  const navigation = <SportModuleTabs label={t("sport.calisthenicsUi.navigationLabel")} value={section} options={SECTIONS.map((item) => ({ value: item, label: t(`sport.calisthenicsUi.sections.${item}`) }))} onChange={setSection} />;
 
-  const statusMessage = feedback ? <p role="status" className="rounded-xl border border-sport/30 bg-sport-soft/50 px-4 py-3 text-sm text-foreground">{feedback}</p> : null;
+  const statusMessage = feedback ? <SportStatusMessage onDismiss={() => setFeedback("")} dismissLabel={t("sport.ui.dismissStatus")}>{feedback}</SportStatusMessage> : null;
 
-  return <div className="space-y-5 animate-fade-in">
-    <header className="rounded-3xl border border-sport/30 bg-surface p-5 sm:p-7">
-      <div className="flex items-start gap-3">
-        <span aria-hidden className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sport-soft text-sport"><span className="text-xl">✦</span></span>
-        <div className="min-w-0"><p className="text-xs font-semibold uppercase tracking-[0.16em] text-sport">{t("sport.hub.calisthenics.title")}</p><h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">{section === "overview" ? t("sport.calisthenicsUi.overviewTitle") : t(`sport.calisthenicsUi.sections.${section}`)}</h1><p className="mt-1 text-sm text-foreground-muted">{t("sport.hub.calisthenics.description")}</p></div>
-      </div>
-    </header>
-    {navigation}
-    {statusMessage}
+  return <SportModuleShell
+    title={t("sport.hub.calisthenics.title")}
+    description={t("sport.hub.calisthenics.description")}
+    icon="activity"
+    tabs={navigation}
+    status={statusMessage}
+  >
 
     {section === "overview" && <div className="space-y-4">
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Card><p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{c("weekSessions")}</p><p className="mt-2 text-3xl font-semibold text-sport">{overviewStats.sessionsThisWeek}</p></Card>
-        <Card><p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{c("weekMinutes")}</p><p className="mt-2 text-3xl font-semibold text-sport">{overviewStats.minutesThisWeek}</p><p className="text-xs text-foreground-muted">{c("minutesLabel")}</p></Card>
-        <Card><p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{c("lastSession")}</p>{recentWorkout ? <><p className="mt-2 truncate text-base font-semibold">{recentWorkout.activity}</p><p className="mt-1 text-xs text-foreground-muted">{formatDate(recentWorkout.workout_date, language)} · {recentWorkout.duration_minutes} {c("minutesLabel")}</p></> : <p className="mt-2 text-sm text-foreground-muted">{c("noLastSession")}</p>}</Card>
-        <Card><p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{c("totalSessions")}</p><p className="mt-2 text-3xl font-semibold text-sport">{data.workouts.length}</p></Card>
-      </div>
+      {data.workouts.length === 0 ? <SportEmptyState icon="activity" title={c("noLastSession")} description={c("overviewEmpty")} action={<SportButton onClick={() => setSection("session")}>{c("startSession")}</SportButton>} /> : <div className="sport-stat-grid">
+        <SportStatCard label={c("weekSessions")} value={overviewStats.sessionsThisWeek} icon="calendar" />
+        <SportStatCard label={c("weekMinutes")} value={overviewStats.minutesThisWeek} unit={c("minutesLabel")} icon="stats" />
+        <SportStatCard label={c("lastSession")} value={recentWorkout ? recentWorkout.activity : "—"} detail={recentWorkout ? `${formatDate(recentWorkout.workout_date, language)} · ${recentWorkout.duration_minutes} ${c("minutesLabel")}` : c("noLastSession")} />
+        <SportStatCard label={c("totalSessions")} value={data.workouts.length} icon="activity" />
+      </div>}
       <div className="grid gap-4 lg:grid-cols-2">
         <Card className="flex flex-col">
           <h2 className="text-sm font-semibold">{c("startSession")}</h2><p className="mt-1 flex-1 text-sm text-foreground-muted">{data.workouts.length === 0 && data.skills.length === 0 ? c("overviewEmpty") : c("continueTraining")}</p>
@@ -435,7 +422,7 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
     {section === "progress" && <div className="space-y-4"><Card><div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-lg font-semibold">{c("progressTitle")}</h2><p className="mt-1 text-xs text-foreground-muted">{c("historyTitle")}</p></div><Field label={c("period")} className="w-40"><select className={controlClass} value={period} onChange={(event) => setPeriod(event.target.value as typeof period)}><option value="30">{c("last30")}</option><option value="90">{c("last90")}</option><option value="all">{c("all")}</option></select></Field></div><div className="mt-4 grid grid-cols-2 gap-3"><div className="rounded-xl bg-surface-muted p-4"><p className="text-xs text-foreground-muted">{c("totalReps")}</p><p className="mt-1 text-2xl font-semibold tabular-nums">{totalReps}</p></div><div className="rounded-xl bg-surface-muted p-4"><p className="text-xs text-foreground-muted">{c("totalHold")}</p><p className="mt-1 text-2xl font-semibold tabular-nums">{totalHold} {c("secondsLabel")}</p></div></div></Card><Card><h3 className="mb-2 text-sm font-semibold">{c("weekMinutes")}</h3><WeeklyBarChart data={weeklyChartData(data.workouts, language)} color="var(--sport)" unit={c("minutesLabel")} /></Card><div className="grid gap-4 lg:grid-cols-2"><Card><h3 className="text-sm font-semibold">{c("reps")}</h3>{repsMap.size ? <ul className="mt-2 divide-y divide-border">{Array.from(repsMap.values()).sort((a, b) => b.total - a.total).map((record) => <li key={record.name} className="flex items-center justify-between gap-3 py-3"><span className="truncate text-sm">{record.name}</span><span className="shrink-0 text-xs tabular-nums text-foreground-muted">{record.total} · {c("bestSet")} {record.best}</span></li>)}</ul> : <p className="mt-3 text-sm text-foreground-muted">{c("noProgress")}</p>}</Card><Card><h3 className="text-sm font-semibold">{c("holdSeconds")}</h3>{holdsMap.size ? <ul className="mt-2 divide-y divide-border">{Array.from(holdsMap.values()).sort((a, b) => b.total - a.total).map((record) => <li key={record.name} className="flex items-center justify-between gap-3 py-3"><span className="truncate text-sm">{record.name}</span><span className="shrink-0 text-xs tabular-nums text-foreground-muted">{record.total} {c("secondsLabel")} · {c("bestSet")} {record.best} {c("secondsLabel")}</span></li>)}</ul> : <p className="mt-3 text-sm text-foreground-muted">{c("noProgress")}</p>}</Card></div><Card><h3 className="text-sm font-semibold">{c("activeSkills")}</h3>{data.skills.length ? <div className="mt-3 grid gap-3 sm:grid-cols-2">{data.skills.map((skill) => <div key={skill.id} className="rounded-xl bg-surface-muted p-3"><div className="flex justify-between gap-2"><span className="truncate text-sm font-medium">{skill.name}</span><span className="text-xs tabular-nums text-foreground-muted">{skill.current_step}/{skill.target_step}</span></div><div className="mt-2 h-1.5 rounded-full bg-background"><div className="h-full rounded-full bg-sport" style={{ width: `${Math.min(100, (skill.current_step / skill.target_step) * 100)}%` }} /></div></div>)}</div> : <p className="mt-3 text-sm text-foreground-muted">{c("noSkills")}</p>}</Card></div>}
 
     {section === "history" && <div className="space-y-4"><Card><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-semibold">{c("historyTitle")}</h2><div className="grid w-full gap-2 sm:w-auto sm:grid-cols-2 xl:grid-cols-4"><Field label={c("date")}><input type="date" className={controlClass} value={historyDate} onChange={(event) => setHistoryDate(event.target.value)} /></Field><Field label={c("search")}><input className={controlClass} value={historySearch} onChange={(event) => setHistorySearch(event.target.value)} /></Field><Field label={c("filterExercise")}><select className={controlClass} value={historyExercise} onChange={(event) => setHistoryExercise(event.target.value)}><option value="all">{c("allExercises")}</option>{data.exercises.map((exercise) => <option key={exercise.id} value={exercise.id}>{localeName(exercise, language)}</option>)}</select></Field><Field label={c("programTitle")}><select className={controlClass} value={historyProgram} onChange={(event) => setHistoryProgram(event.target.value)}><option value="all">{c("allPrograms")}</option>{data.programs.map((program) => <option key={program.id} value={program.id}>{program.name}</option>)}</select></Field></div></div></Card>{filteredWorkouts.length ? filteredWorkouts.map((workout) => { const workoutSets = setsByWorkout.get(workout.id) ?? []; return <details key={workout.id} open={initialSessionId === workout.id} className="rounded-2xl border border-border bg-surface"><summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-3 p-4"><span className="min-w-0"><span className="block truncate text-sm font-semibold">{workout.activity}</span><span className="mt-1 block text-xs text-foreground-muted">{formatDate(workout.workout_date, language)} · {workout.duration_minutes} {c("minutesLabel")} · {workout.intensity}/5</span></span><span className="shrink-0 text-xs text-sport">{workoutSets.length} {c("setsLabel")}</span></summary><div className="border-t border-border p-4"><ul className="space-y-2">{workoutSets.map((set) => { const exercise = set.exercise_id ? exercisesById.get(set.exercise_id) : undefined; return <li key={set.id} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-xl bg-surface-muted p-3 text-xs"><span className="font-medium">{exercise ? localeName(exercise, language) : set.exercise_name} · {c("sets")} {set.set_number}</span><span className="text-foreground-muted">{set.reps !== null ? `${set.reps} ${c("reps")}` : `${set.hold_seconds} ${c("secondsLabel")}`}{set.assistance_kg ? ` · -${set.assistance_kg} kg` : ""}{set.added_weight_kg ? ` · +${set.added_weight_kg} kg` : ""}</span>{(set.variation || set.notes) && <span className="w-full text-foreground-muted">{[set.variation, set.notes].filter(Boolean).join(" · ")}</span>}</li>; })}</ul>{workout.notes && <p className="mt-3 whitespace-pre-wrap text-sm text-foreground-muted">{workout.notes}</p>}<button type="button" className="mt-3 min-h-10 rounded-lg px-3 text-xs font-medium text-danger hover:bg-danger/10" onClick={() => window.confirm(c("deleteConfirm")) && runMutation(() => deleteCalisthenicsWorkout(workout.id))}>{c("remove")}</button></div></details>; }) : <Card><p className="text-sm text-foreground-muted">{c("noHistory")}</p></Card>}</div>}
-  </div>;
+  </SportModuleShell>;
 }
 
 function SkillLogger({ skill, label, dateLabel, resultLabel, notesLabel, submitLabel, date, busy, onSave }: {

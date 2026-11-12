@@ -176,3 +176,21 @@
   .sport-ui .sport-hub-hero h2 { max-width: 22ch; }
   .sport-ui .sport-hub-training-grid { grid-template-columns: 1fr 1.15fr; }
 }
+
+/* Module shell shared by the discipline workspaces. */
+.sport-ui .sport-module-header { display: flex; min-width: 0; align-items: flex-start; gap: .75rem; }
+.sport-ui .sport-module-title { font-size: clamp(1.25rem, 2.4vw, 1.625rem); font-weight: 700; letter-spacing: -.03em; line-height: 1.2; overflow-wrap: anywhere; }
+.sport-ui:dir(rtl) .sport-module-title { letter-spacing: normal; }
+.sport-ui .sport-module-summary { display: none; }
+@media (min-width: 640px) { .sport-ui .sport-module-summary { display: flex; flex-shrink: 0; align-items: center; gap: .5rem; } }
+.sport-ui .sport-segmented-control.is-scrollable { display: flex; max-width: 100%; flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
+.sport-ui .sport-segmented-control.is-scrollable::-webkit-scrollbar { display: none; }
+.sport-ui .sport-segmented-control.is-scrollable .sport-segment { flex-shrink: 0; }
+.sport-ui .sport-status-message { display: flex; align-items: flex-start; gap: .625rem; border: 1px solid color-mix(in srgb, var(--sport) 35%, var(--border)); border-radius: 14px; padding: .625rem .875rem; font-size: .875rem; line-height: 1.5; color: var(--sport-ink); background: var(--sport-soft); }
+.sport-ui .sport-status-message.is-error { border-color: color-mix(in srgb, var(--danger) 40%, var(--border)); color: var(--danger); background: color-mix(in srgb, var(--danger) 9%, var(--surface)); }
+.sport-ui .sport-status-dismiss { display: grid; place-items: center; align-self: center; min-width: 44px; min-height: 44px; margin-block: -.625rem; margin-inline-end: -.625rem; border-radius: 10px; color: inherit; }
+.sport-ui .sport-status-dismiss:hover { background: color-mix(in srgb, currentColor 12%, transparent) }
+.sport-ui .sport-stat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .625rem; }
+.sport-ui .sport-stat-grid .sport-stat-card { padding: .75rem; }
+.sport-ui .sport-stat-grid .sport-stat-value { font-size: clamp(1.125rem, 4.3vw, 1.5rem); }
+@media (min-width: 1024px) { .sport-ui .sport-stat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; } .sport-ui .sport-stat-grid .sport-stat-card { padding: 1rem; } }

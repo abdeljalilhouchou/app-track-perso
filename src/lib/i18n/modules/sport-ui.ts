@@ -1,5 +1,6 @@
 export const sportUiFr = {
   mediaUnavailable: "Visuel indisponible",
+  dismissStatus: "Fermer ce message",
   previewTitle: "Design system Sport",
   previewDescription: "Aperçu interne des composants. Les indicateurs utilisent vos séances ; aucun entraînement n’est ajouté.",
   components: "Composants Sport",
@@ -33,6 +34,7 @@ type SportUiDictionary = { [Key in keyof typeof sportUiFr]: string };
 
 export const sportUiEn: SportUiDictionary = {
   mediaUnavailable: "Image unavailable",
+  dismissStatus: "Dismiss this message",
   previewTitle: "Sport design system",
   previewDescription: "Internal component preview. Indicators use your sessions; no workout is added.",
   components: "Sport components",
@@ -64,6 +66,7 @@ export const sportUiEn: SportUiDictionary = {
 
 export const sportUiAr: SportUiDictionary = {
   mediaUnavailable: "الصورة غير متاحة",
+  dismissStatus: "إغلاق هذه الرسالة",
   previewTitle: "نظام تصميم الرياضة",
   previewDescription: "معاينة داخلية للمكوّنات. تعتمد المؤشرات على حصصك ولا تتم إضافة أي تدريب.",
   components: "مكوّنات الرياضة",

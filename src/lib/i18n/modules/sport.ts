@@ -49,7 +49,7 @@ export const sportFr = {
   calisthenicsUi: {
     ...calisthenicsExtraFr,
     navigationLabel: "Navigation Calisthenics",
-    sections: { overview: "Vue générale", session: "Séance", program: "Programme", exercises: "Exercices", skills: "Skills", progress: "Progression", history: "Historique" },
+    sections: { overview: "Vue d’ensemble", session: "Séance", program: "Programme", exercises: "Exercices", skills: "Skills", progress: "Progression", history: "Historique" },
     gateTitle: "Calisthenics en préparation",
     gateBody: "Le module sera disponible après validation et exécution manuelle de la migration Supabase. Aucune donnée ne sera écrite avant cette étape.",
     overviewTitle: "Vue d’ensemble", weekSessions: "Séances cette semaine", weekMinutes: "Minutes cette semaine", totalSessions: "Séances enregistrées",
@@ -80,7 +80,7 @@ export const sportFr = {
   },
   hub: {
     navigationLabel: "Navigation Sport Hub",
-    nav: { overview: "Vue générale", strength: "Musculation", calisthenics: "Calisthenics", running: "Running", calendar: "Calendrier", stats: "Statistiques" },
+    nav: { overview: "Vue d’ensemble", strength: "Musculation", calisthenics: "Calisthenics", running: "Running", calendar: "Calendrier", stats: "Statistiques" },
     title: "Sport Hub",
     description: "Toute ton activité sportive, réunie au même endroit.",
     weekSummary: "Cette semaine",
