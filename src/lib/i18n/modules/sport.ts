@@ -49,6 +49,7 @@ export const sportFr = {
   calisthenicsUi: {
     ...calisthenicsExtraFr,
     navigationLabel: "Navigation Calisthenics",
+    weekVolume: "Volume cette semaine", weekStreak: "Série en cours", repsLabel: "reps", weeksLabel: "sem.",
     sections: { overview: "Vue d’ensemble", session: "Séance", program: "Programme", exercises: "Exercices", skills: "Skills", progress: "Progression", history: "Historique" },
     gateTitle: "Calisthenics en préparation",
     gateBody: "Le module sera disponible après validation et exécution manuelle de la migration Supabase. Aucune donnée ne sera écrite avant cette étape.",
@@ -397,6 +398,7 @@ export const sportEn = {
   calisthenicsUi: {
     ...calisthenicsExtraEn,
     navigationLabel: "Calisthenics navigation",
+    weekVolume: "Volume this week", weekStreak: "Current streak", repsLabel: "reps", weeksLabel: "wk",
     sections: { overview: "Overview", session: "Session", program: "Program", exercises: "Exercises", skills: "Skills", progress: "Progress", history: "History" },
     gateTitle: "Calisthenics is being prepared",
     gateBody: "The module will be available after the Supabase migration is reviewed and run manually. No data will be written before then.",
@@ -745,6 +747,7 @@ export const sportAr = {
   calisthenicsUi: {
     ...calisthenicsExtraAr,
     navigationLabel: "تنقل الكاليستنكس",
+    weekVolume: "الحجم هذا الأسبوع", weekStreak: "السلسلة الحالية", repsLabel: "تكرار", weeksLabel: "أسبوع",
     sections: { overview: "نظرة عامة", session: "حصة", program: "برنامج", exercises: "تمارين", skills: "مهارات", progress: "التقدم", history: "السجل" },
     gateTitle: "يجري تجهيز الكاليستنكس",
     gateBody: "سيصبح القسم متاحاً بعد مراجعة ترحيل Supabase وتشغيله يدوياً. لن تُكتب أي بيانات قبل ذلك.",

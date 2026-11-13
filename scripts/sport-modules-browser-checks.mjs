@@ -80,11 +80,22 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
 
   // Calisthenics interactions.
   await go("/sport/calisthenics");
-  await until(() => evaluate("document.querySelectorAll('[data-module-tab]').length >= 6"), "calisthenics tabs rendered");
+  await until(() => evaluate("document.querySelectorAll('[data-module-tab]').length === 5"), "calisthenics has 5 sections");
+  assert.ok(await evaluate("document.body.innerText.includes('Volume cette semaine')"), "week volume card");
+  assert.ok(await evaluate("document.body.innerText.includes('Série en cours')"), "streak card");
   await tab("session");
+  // The session tab now also carries the history that used to have its own tab.
+  assert.ok(await evaluate("document.body.innerText.includes('Full body')"), "history visible under the session tab");
   await shot("calisthenics-session-fr-dark-375");
   await tab("exercises");
+  const groups = await evaluate("[...document.querySelectorAll('.sport-group-heading')].map((h) => h.firstChild.textContent)");
+  assert.ok(groups.length >= 2, `library grouped by category: ${JSON.stringify(groups)}`);
+  assert.ok(await evaluate("[...document.querySelectorAll('.sport-group-heading')].every((h) => h.id && document.querySelector(`[aria-labelledby=\"${h.id}\"]`))"), "each group is labelled");
   await shot("calisthenics-exercises-fr-dark-375");
+  await tab("progress");
+  // Skills moved under Progression and keep their own heading.
+  assert.ok(await evaluate("document.body.innerText.includes('Handstand')"), "skills visible under progress");
+  await shot("calisthenics-progress-fr-dark-375");
 
   // Both modules without any data.
   setFixture("empty");

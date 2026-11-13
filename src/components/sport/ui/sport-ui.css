@@ -194,3 +194,7 @@
 .sport-ui .sport-stat-grid .sport-stat-card { padding: .75rem; }
 .sport-ui .sport-stat-grid .sport-stat-value { font-size: clamp(1.125rem, 4.3vw, 1.5rem); }
 @media (min-width: 1024px) { .sport-ui .sport-stat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; } .sport-ui .sport-stat-grid .sport-stat-card { padding: 1rem; } }
+
+/* Category headings in the grouped exercise library. */
+.sport-ui .sport-group-heading { display: flex; align-items: center; gap: .5rem; margin-block-end: .75rem; font-size: .8125rem; font-weight: 650; letter-spacing: .04em; text-transform: uppercase; color: var(--sport-ink); }
+.sport-ui .sport-group-heading span { display: grid; place-items: center; min-width: 1.5rem; padding: 0 .375rem; border-radius: 99px; background: var(--surface-muted); color: var(--foreground-muted); font-size: .6875rem; font-weight: 600; letter-spacing: normal; }
