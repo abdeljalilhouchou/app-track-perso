@@ -106,10 +106,14 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   await until(() => evaluate("document.body.innerText.includes('Aucune course enregistrée')"), "running empty state");
   assert.equal(await evaluate("[...document.querySelectorAll('button')].filter((b) => b.textContent.trim() === 'Enregistrer une course').length"), 1, "Single CTA in the empty state");
   await noOverflow("running empty");
+  assert.ok(await evaluate("!!document.querySelector('.sport-empty-state')"), "running uses the shared empty state");
   await shot("running-empty-fr-dark-375");
   await go("/sport/calisthenics");
   await until(() => evaluate("!!document.querySelector('.sport-empty-state')"), "calisthenics empty state");
   assert.ok(await evaluate("!!document.querySelector('.sport-empty-state button')"), "empty state has a create action");
+  // An empty screen offers its action once; it must not repeat the empty state's wording.
+  assert.equal(await evaluate("[...document.querySelectorAll('button')].filter((b) => b.textContent.trim() === 'Commencer une séance').length"), 1, "One start action on the empty Calisthenics overview");
+  assert.equal(await evaluate("(document.body.innerText.match(/Commence par enregistrer/g) || []).length"), 1, "The empty wording appears once");
   await noOverflow("calisthenics empty");
   await shot("calisthenics-empty-fr-dark-375");
   setFixture("normal");

@@ -341,6 +341,7 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
         <SportStatCard label={c("weekVolume")} value={overviewStats.weekVolume.reps} unit={c("repsLabel")} detail={overviewStats.weekVolume.holdSeconds > 0 ? `${overviewStats.weekVolume.holdSeconds} ${c("secondsLabel")}` : undefined} icon="strength" />
         <SportStatCard label={c("weekStreak")} value={overviewStats.weekStreak} unit={c("weeksLabel")} detail={c("totalSessions") + " : " + data.workouts.length} icon="trophy" />
       </div>}
+      {data.workouts.length > 0 && <>
       <div className="grid gap-4 lg:grid-cols-2">
         <Card className="flex flex-col">
           <h2 className="text-sm font-semibold">{c("startSession")}</h2><p className="mt-1 flex-1 text-sm text-foreground-muted">{data.workouts.length === 0 && data.skills.length === 0 ? c("overviewEmpty") : c("continueTraining")}</p>
@@ -356,6 +357,7 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
           {data.skills.length ? <ul className="mt-3 divide-y divide-border">{data.skills.slice(0, 4).map((skill) => <li key={skill.id} className="flex items-center justify-between gap-3 py-3"><span className="truncate text-sm font-medium">{skill.name}</span><span className="text-xs text-foreground-muted">{skill.current_step}/{skill.target_step}</span></li>)}</ul> : <p className="mt-3 text-sm text-foreground-muted">{c("noSkills")}</p>}</Card>
         <Card><h2 className="text-sm font-semibold">{c("recentProgress")}</h2><div className="mt-3 grid grid-cols-2 gap-3"><div className="rounded-xl bg-surface-muted p-3"><p className="text-xs text-foreground-muted">{c("totalReps")}</p><p className="mt-1 text-xl font-semibold">{recentReps}</p></div><div className="rounded-xl bg-surface-muted p-3"><p className="text-xs text-foreground-muted">{c("totalHold")}</p><p className="mt-1 text-xl font-semibold">{recentHold} {c("secondsLabel")}</p></div></div></Card>
       </div>
+      </>}
     </div>}
 
     {section === "session" && <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_19rem]">

@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import clsx from "clsx";
 import { SportIcon, type SportIconName } from "./sport-icons";
 
@@ -41,8 +41,14 @@ export function SportModuleTabs<T extends string>({ label, value, options, onCha
   options: readonly { value: T; label: string }[];
   onChange: (value: T) => void;
 }) {
+  const list = useRef<HTMLDivElement>(null);
+  // Keep the selected section visible when it sits past the trailing edge.
+  useEffect(() => {
+    const active = list.current?.querySelector<HTMLElement>('[aria-pressed="true"]');
+    active?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }, [value]);
   return <nav aria-label={label}>
-    <div role="group" aria-label={label} className="sport-segmented-control is-scrollable">
+    <div ref={list} role="group" aria-label={label} className="sport-segmented-control is-scrollable">
       {options.map((option) => <button key={option.value} type="button" aria-pressed={value === option.value} onClick={() => onChange(option.value)} className={clsx("sport-segment", value === option.value && "is-active")} data-module-tab={option.value}>{option.label}</button>)}
     </div>
   </nav>;

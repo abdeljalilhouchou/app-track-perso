@@ -11,6 +11,7 @@ import { SportModuleShell, SportModuleTabs, SportStatusMessage } from "@/compone
 import { SportStatCard } from "@/components/sport/ui/sport-stat-card";
 import { SportProgressRing } from "@/components/sport/ui/sport-progress";
 import { SportHeatmap } from "@/components/sport/sport-overview";
+import { SportButton, SportEmptyState } from "@/components/sport/ui/sport-primitives";
 import type { Language } from "@/lib/language";
 import type { RunningGoal } from "@/types/database";
 import { calculateRunningMetrics, computeRunningStats, formatDuration, formatPace, RUN_TYPES, type RunningGoals, type RunningRun, type RunType } from "@/lib/running/stats";
@@ -291,7 +292,7 @@ export function RunningWorkspace({
     >
 
       {section === "overview" && <div className="space-y-5">
-        {runs.length === 0 ? <section className="rounded-3xl border border-dashed border-sport/40 bg-sport-soft/30 p-6 sm:p-8"><h2 className="text-lg font-semibold">{t("sport.runningUi.noRuns")}</h2><p className="mt-2 max-w-xl text-sm leading-relaxed text-foreground-muted">{t("sport.runningUi.noRunsBody")}</p><button type="button" className={`${button} mt-5`} onClick={() => { resetForm(); setFormOpen(true); setSection("sessions"); }}>{t("sport.runningUi.startRun")}</button></section> : <>
+        {runs.length === 0 ? <SportEmptyState icon="running" title={t("sport.runningUi.noRuns")} description={t("sport.runningUi.noRunsBody")} action={<SportButton onClick={() => { resetForm(); setFormOpen(true); setSection("sessions"); }}>{t("sport.runningUi.startRun")}</SportButton>} /> : <>
           <div className="sport-stat-grid">
             <MetricCard title={t("sport.runningUi.runsThisWeek")} value={stats.thisWeek.runs} detail={`${signedCount(stats.thisWeek.runs - stats.lastWeek.runs)} ${t("sport.runningUi.vsLastWeek")}`} />
             <MetricCard title={t("sport.runningUi.distanceThisWeek")} value={formatDistance(stats.thisWeek.distanceKm, language)} unit="km" detail={`${signedDistance(stats.thisWeek.distanceKm - stats.lastWeek.distanceKm)} km ${t("sport.runningUi.vsLastWeek")}`} />

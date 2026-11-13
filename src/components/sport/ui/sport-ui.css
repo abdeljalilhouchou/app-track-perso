@@ -186,6 +186,10 @@
 .sport-ui .sport-segmented-control.is-scrollable { display: flex; max-width: 100%; flex-wrap: nowrap; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
 .sport-ui .sport-segmented-control.is-scrollable::-webkit-scrollbar { display: none; }
 .sport-ui .sport-segmented-control.is-scrollable .sport-segment { flex-shrink: 0; }
+/* Fade the trailing edge so a cut-off tab reads as more to scroll, not as clipped. */
+.sport-ui .sport-segmented-control.is-scrollable { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent); scroll-padding-inline: 1rem; }
+.sport-ui:dir(rtl) .sport-segmented-control.is-scrollable { -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 2rem), transparent); mask-image: linear-gradient(to left, #000 calc(100% - 2rem), transparent); }
+.sport-ui .sport-segmented-control.is-scrollable:not(:hover):not(:focus-within) { scroll-behavior: smooth; }
 .sport-ui .sport-status-message { display: flex; align-items: flex-start; gap: .625rem; border: 1px solid color-mix(in srgb, var(--sport) 35%, var(--border)); border-radius: 14px; padding: .625rem .875rem; font-size: .875rem; line-height: 1.5; color: var(--sport-ink); background: var(--sport-soft); }
 .sport-ui .sport-status-message.is-error { border-color: color-mix(in srgb, var(--danger) 40%, var(--border)); color: var(--danger); background: color-mix(in srgb, var(--danger) 9%, var(--surface)); }
 .sport-ui .sport-status-dismiss { display: grid; place-items: center; align-self: center; min-width: 44px; min-height: 44px; margin-block: -.625rem; margin-inline-end: -.625rem; border-radius: 10px; color: inherit; }
