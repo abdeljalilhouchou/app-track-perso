@@ -10,6 +10,7 @@ import { formatLocalizedDate } from "@/lib/format-date";
 import { SportModuleShell, SportModuleTabs, SportStatusMessage } from "@/components/sport/ui/sport-module-shell";
 import { SportStatCard } from "@/components/sport/ui/sport-stat-card";
 import { SportProgressRing } from "@/components/sport/ui/sport-progress";
+import { SportHeatmap } from "@/components/sport/sport-overview";
 import type { Language } from "@/lib/language";
 import type { RunningGoal } from "@/types/database";
 import { calculateRunningMetrics, computeRunningStats, formatDuration, formatPace, RUN_TYPES, type RunningGoals, type RunningRun, type RunType } from "@/lib/running/stats";
@@ -372,6 +373,7 @@ export function RunningWorkspace({
         <div className="grid gap-4 sm:grid-cols-2"><RecordCard title={t("sport.runningUi.longestRun")} run={stats.longestDistance} value={(run) => `${formatDistance(run.distance_km, language)} km`} language={language} /><RecordCard title={t("sport.runningUi.longestDuration")} run={stats.longestDuration} value={(run) => formatDuration(run.duration_seconds)} language={language} /></div>
         <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="text-sm font-semibold">{t("sport.runningUi.records")}</h2><p className="mt-1 text-xs leading-relaxed text-foreground-muted">{t("sport.runningUi.toleranceNote")}</p><div className="mt-4 grid gap-3 sm:grid-cols-3"><ComparableRecord title={t("sport.runningUi.record1k")} run={stats.comparable1k} language={language} /><ComparableRecord title={t("sport.runningUi.record5k")} run={stats.comparable5k} language={language} /><ComparableRecord title={t("sport.runningUi.record10k")} run={stats.comparable10k} language={language} /></div></section>
         <section className="rounded-2xl border border-border bg-surface p-4 sm:p-5"><h2 className="text-sm font-semibold">{t("sport.runningUi.consistency")}</h2><p className="mt-2 text-3xl font-semibold text-sport">{stats.weeklyConsistency} / 8</p></section>
+        <SportHeatmap heat={stats.heat} />
       </div>}
 
       {section === "goals" && <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.8fr)]">

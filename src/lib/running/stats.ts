@@ -112,6 +112,10 @@ export function computeRunningStats(runs: RunningRun[], goals: RunningGoals | nu
     longestDuration: validRuns.reduce<RunningRun | null>((best, run) => !best || run.duration_seconds > best.duration_seconds ? run : best, null),
     paceTrend: orderedRuns.slice(0, 8).reverse().map((run) => ({ date: run.workout_date, pace: calculateRunningMetrics(run.distance_km, run.duration_seconds)!.paceSecondsPerKm })),
     weeklyConsistency: weeklyDistance.filter((week) => week.runCount > 0).length,
+    heat: validRuns.reduce<Record<string, number>>((heat, run) => {
+      heat[run.workout_date] = Math.min(1, (heat[run.workout_date] ?? 0) + run.distance_km / 10);
+      return heat;
+    }, {}),
     weeklyDistance,
     monthlyDistance,
     comparable1k: comparableRecord(1),

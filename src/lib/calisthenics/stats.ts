@@ -47,6 +47,10 @@ export function computeCalisthenicsStats(workouts: Workout[], sets: Calisthenics
     minutesThisWeek: thisWeek.reduce((total, workout) => total + workout.duration_minutes, 0),
     weekVolume,
     weekStreak,
+    heat: workouts.reduce<Record<string, number>>((heat, workout) => {
+      heat[workout.workout_date] = Math.min(1, (heat[workout.workout_date] ?? 0) + workout.duration_minutes / 60);
+      return heat;
+    }, {}),
     totalSessions: workouts.length,
     totalMinutes: workouts.reduce((total, workout) => total + workout.duration_minutes, 0),
     reps: Array.from(reps.values()).sort((a, b) => b.total - a.total),

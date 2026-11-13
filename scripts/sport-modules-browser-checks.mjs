@@ -70,6 +70,8 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   await shot("running-sessions-fr-dark-375");
   await tab("progress");
   await until(() => evaluate("document.body.innerText.includes('1 km')"), "1 km record visible");
+  // The activity calendar reuses the Sport Hub component already in the app.
+  assert.ok(await evaluate("document.body.innerText.toLowerCase().includes(\"calendrier d'activité\")"), "running activity calendar");
   await shot("running-progress-fr-dark-375");
   await tab("goals");
   assert.equal(await evaluate("[...document.querySelectorAll('form label')].filter((l) => /Minutes|Secondes/.test(l.textContent)).length"), 4, "mm:ss fields for both targets");
@@ -95,6 +97,7 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   await tab("progress");
   // Skills moved under Progression and keep their own heading.
   assert.ok(await evaluate("document.body.innerText.includes('Handstand')"), "skills visible under progress");
+  assert.ok(await evaluate("document.body.innerText.toLowerCase().includes(\"calendrier d'activité\")"), "calisthenics activity calendar");
   await shot("calisthenics-progress-fr-dark-375");
 
   // Both modules without any data.
