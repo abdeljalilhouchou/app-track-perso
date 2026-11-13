@@ -55,8 +55,14 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   await evaluate("[...document.querySelectorAll('button')].find((b) => b.textContent.trim() === 'Enregistrer une course').click()");
   await until(() => evaluate("document.querySelector('[data-module-tab=sessions]').getAttribute('aria-pressed')==='true'"), "CTA lands on the sessions tab");
   await until(() => evaluate("!!document.querySelector('form input[type=date]')"), "run form open");
-  await evaluate("const d=document.querySelector('form input[inputmode=decimal]');const s=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;s.call(d,'5');d.dispatchEvent(new Event('input',{bubbles:true}))");
-  await until(() => evaluate("document.body.innerText.includes('Allure')"), "pace preview appears");
+  // Type like a person would, so React's own handler runs. A pace needs both a
+  // distance and a duration: 5 km in one second has no meaningful pace.
+  await evaluate("document.querySelector('form input[inputmode=decimal]').focus()");
+  await send("Input.insertText", { text: "5" });
+  await evaluate("const m=[...document.querySelectorAll('form input[inputmode=numeric]')][1];m.focus();m.select()");
+  await send("Input.insertText", { text: "25" });
+  await until(() => evaluate("!!document.querySelector('[data-run-metrics]')"), "pace preview appears");
+  assert.ok(await evaluate("document.querySelector('[data-run-metrics]').innerText.includes('min/km')"), "pace is computed from the typed distance");
   await shot("running-form-fr-dark-375");
   await evaluate("[...document.querySelectorAll('button')].find((b) => b.textContent.trim() === 'Fermer le formulaire').click()");
   await until(() => evaluate("!document.querySelector('form input[type=date]')"), "form closes");
