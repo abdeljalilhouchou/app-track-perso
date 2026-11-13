@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar } from "@/components/avatar";
+import { MobileAccountMenu } from "@/components/mobile-account-menu";
 import { useT } from "@/components/language-provider";
 import {
   HomeIcon,
@@ -34,13 +35,7 @@ export function SidebarNav({ displayName, avatarUrl }: { displayName: string; av
     <>
       {/* Mobile top bar */}
       <div className="mobile-topbar sticky top-0 z-30 flex items-center justify-center border-b border-border bg-surface px-4 md:hidden">
-        <Link
-          href="/profil"
-          aria-label={t("nav.profile")}
-          className="absolute start-2 flex h-11 w-11 items-center justify-center rounded-xl transition hover:bg-surface-muted"
-        >
-          <Avatar name={displayName} url={avatarUrl} size="sm" className="h-9 w-9" />
-        </Link>
+        <MobileAccountMenu displayName={displayName} avatarUrl={avatarUrl} />
         <Link href="/dashboard" className="text-lg font-semibold tracking-tight">
           track<span className="text-accent">.perso</span>
         </Link>

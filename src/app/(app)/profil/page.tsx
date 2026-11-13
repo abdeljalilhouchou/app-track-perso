@@ -89,6 +89,7 @@ export default async function ProfilPage() {
         ]}
       />
 
+      <div id="parametres" className="scroll-mt-20">
       <AccountSettings
         userId={user.id}
         email={user.email ?? ""}
@@ -96,6 +97,7 @@ export default async function ProfilPage() {
         avatarUrl={profile?.avatar_url ?? null}
         memberSinceYear={new Date(user.created_at).getFullYear()}
       />
+      </div>
 
       <div className="rounded-2xl border-[1.5px] border-accent/40 bg-surface p-5">
         <h2 className="mb-3 flex items-center gap-2 text-sm font-medium">
@@ -122,7 +124,7 @@ export default async function ProfilPage() {
         <ReminderSettings initialTime={profile?.reminder_time ?? null} email={user.email ?? ""} />
       </div>
 
-      <div>
+      <div id="badges" className="scroll-mt-20">
         <h2 className="mb-3 text-sm font-medium text-foreground-muted">{t("profile.badgesHeading")}</h2>
         <BadgeGrid
           badges={[...unlockedBadges, ...lockedBadges].map((badge) => ({

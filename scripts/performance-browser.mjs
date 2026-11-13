@@ -11,6 +11,7 @@ import { sourceLoader } from "./test-source-loader.mjs";
 const require = createRequire(import.meta.url);
 const exercisePremiumV4 = process.argv.includes("--exercise-premium-v4");
 const sportModules = process.argv.includes("--sport-modules");
+const accountMenu = process.argv.includes("--account-menu");
 const exerciseExperienceV3 = process.argv.includes("--exercise-experience-v3");
 const exerciseMediaV3 = process.argv.includes("--exercise-media-v3") || exerciseExperienceV3;
 const exerciseMediaV2 = process.argv.includes("--exercise-media-v2") || exerciseMediaV3;
@@ -199,7 +200,7 @@ try {
   await navigatePage(`http://127.0.0.1:${appPort}/sport`);
   await ready("/sport");
   console.log("Sport Hub loaded with local fixtures.");
-  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules) {
+  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu) {
   assert.ok(await evaluate("document.body.innerText.includes('QA Dos & Biceps')"));
   for (const width of [320, 360, 375, 390, 430, 768, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: width < 768 });
@@ -397,6 +398,10 @@ try {
   if (sportModules) {
     const { checkSportModules } = await import("./sport-modules-browser-checks.mjs");
     await checkSportModules({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, output, appPort, setFixture: (value) => { fixtureState = value; } });
+  }
+  if (accountMenu) {
+    const { checkMobileAccountMenu } = await import("./mobile-account-menu-browser-checks.mjs");
+    await checkMobileAccountMenu({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, output, appPort });
   }
   if (exercisePremiumV4) {
     const { checkExercisePremiumV4 } = await import("./exercise-premium-v4-browser-checks.mjs");

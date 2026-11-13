@@ -32,18 +32,18 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   };
 
   // Visual matrix with data.
-  for (const module of ["running", "calisthenics"]) {
+  for (const discipline of ["running", "calisthenics"]) {
     for (const [language, theme, width] of [["fr", "dark", 375], ["fr", "light", 320], ["ar", "dark", 390], ["en", "light", 1440]]) {
       profile.language = language; profile.theme = theme;
-      await size(width); await go(`/sport/${module}`);
+      await size(width); await go(`/sport/${discipline}`);
       await until(() => evaluate("document.querySelectorAll('[data-module-tab]').length >= 4"), "module tabs rendered");
-      await noOverflow(`${module} ${language}/${theme}/${width}`);
+      await noOverflow(`${discipline} ${language}/${theme}/${width}`);
       if (width < 1024) {
         const columns = await evaluate("getComputedStyle(document.querySelector('.sport-stat-grid')).gridTemplateColumns.split(' ').length");
-        assert.equal(columns, 2, `Two stat columns on phones (${module} ${width}px)`);
+        assert.equal(columns, 2, `Two stat columns on phones (${discipline} ${width}px)`);
       }
-      await shot(`${module}-overview-${language}-${theme}-${width}`);
-      result.cases.push({ module, language, theme, width });
+      await shot(`${discipline}-overview-${language}-${theme}-${width}`);
+      result.cases.push({ discipline, language, theme, width });
     }
   }
 
