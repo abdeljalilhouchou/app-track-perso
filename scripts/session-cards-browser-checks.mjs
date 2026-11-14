@@ -67,5 +67,39 @@ export async function checkSessionCards({ send, evaluate, navigatePage, ready, u
   assert.deepEqual(after.exercises.find((exercise) => exercise.id === "card-curl").sets, before.exercises.find((exercise) => exercise.id === "card-curl").sets, "sets travel with their card");
   await shot("after-drag");
   result.cases.push({ case: "drag", order: after.exercises.map((exercise) => exercise.id) });
+  // Long list: a card must reach the very end and the very top, which needs the page
+  // to scroll while dragging near the screen edge.
+  const long = { ...seed, exercises: [
+    ...seed.exercises,
+    { id: "card-row", name: "Rowing barre", muscle: "Dos", targetReps: 10, sets: [{ weight: "60", reps: "10", done: false }] },
+    { id: "card-squat", name: "Squat", muscle: "Quadriceps", targetReps: 8, sets: [{ weight: "80", reps: "8", done: false }] },
+  ] };
+  await evaluate(`localStorage.setItem('strength-draft-v1',${JSON.stringify(JSON.stringify(long))})`);
+  await send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+  await navigatePage(`http://127.0.0.1:${appPort}/sport/musculation?tab=session`); await ready("/sport/musculation");
+  await until(() => evaluate("!!document.querySelector('#sport-panel-session .bg-mood-soft button')"), "resume long session");
+  await evaluate("document.querySelector('#sport-panel-session .bg-mood-soft button').click()");
+  await until(() => evaluate("document.querySelectorAll('[data-exercise-card]').length === 5"), "five cards");
+  const dragToEdge = async (id, edge) => {
+    await evaluate(`document.querySelector('[data-exercise-card="${id}"]').scrollIntoView({block:'center',behavior:'instant'})`);
+    await pause(200);
+    const box = JSON.parse(await evaluate(`JSON.stringify(document.querySelector('[data-exercise-card="${id}"] [data-exercise-drag]').getBoundingClientRect())`));
+    const px = box.x + box.width / 2, start = box.y + box.height / 2;
+    const end = edge === "bottom" ? 838 : 6;
+    await send("Input.dispatchMouseEvent", { type: "mousePressed", x: px, y: start, button: "left", buttons: 1, clickCount: 1 });
+    for (let step = 1; step <= 10; step++) { await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: px, y: start + (end - start) * step / 10, button: "left", buttons: 1 }); await pause(25); }
+    // Hold at the edge with the small movements a finger makes, while the page scrolls.
+    for (let tick = 0; tick < 140; tick++) { await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: px + (tick % 2), y: end + (edge === "bottom" ? tick % 2 : -(tick % 2)), button: "left", buttons: 1 }); await pause(20); }
+    await send("Input.dispatchMouseEvent", { type: "mouseReleased", x: px, y: end, button: "left", buttons: 0, clickCount: 1 });
+    await pause(400);
+  };
+  await dragToEdge("card-curl", "bottom");
+  let order = (await draft()).exercises.map((exercise) => exercise.id);
+  assert.equal(order.at(-1), "card-curl", `first card dragged to the very end: ${JSON.stringify(order)}`);
+  await shot("dragged-to-end");
+  await dragToEdge("card-squat", "top");
+  order = (await draft()).exercises.map((exercise) => exercise.id);
+  assert.equal(order[0], "card-squat", `last card dragged to the very top: ${JSON.stringify(order)}`);
+  result.cases.push({ case: "drag to both ends", order });
   assert.ok(!requests.some((request) => !["GET", "HEAD"].includes(request.method)), "no writes");
 }

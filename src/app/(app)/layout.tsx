@@ -31,7 +31,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <div className="app-shell flex min-h-dvh min-w-0 flex-col md:flex-row">
             {process.env.NEXT_PUBLIC_PERFORMANCE_DEBUG === "true" && <PerformanceMetrics />}
             <SidebarNav displayName={displayName} avatarUrl={profile?.avatar_url ?? null} />
-            <main className="app-main min-w-0 flex-1 overflow-y-auto">
+            {/* The document scrolls, not <main>: a scroll container here would capture drag auto-scroll. */}
+            <main className="app-main min-w-0 flex-1 overflow-x-clip">
               <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 md:px-10">
                 <PageTransition>{children}</PageTransition>
               </div>
