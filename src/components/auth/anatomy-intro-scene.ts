@@ -36,7 +36,7 @@ export const INTRO_STEPS: Step[] = [
   { key: "calves", match: ["gastrocnemius_", "soleus_"], anchor: "gastrocnemius_lateral_right", side: "right", face: "back" },
 ];
 
-export type IntroKind = "full" | "short" | "reduced";
+export type IntroKind = "full" | "reduced";
 export type IntroTimeline = { assemble: number; steps: number[]; toBack: [number, number] | null; toFront: [number, number] | null; brand: number; end: number; turn: boolean };
 
 const FLIGHT = 750;
@@ -47,7 +47,6 @@ export function introTimeline(kind: IntroKind): IntroTimeline {
   const front = INTRO_STEPS.filter((step) => step.face === "front").length;
   if (kind === "reduced") return { assemble: 0, steps: INTRO_STEPS.map((step) => step.face === "front" ? 150 : Infinity), toBack: null, toFront: null, brand: 400, end: 1600, turn: false };
   const a = 2100;
-  if (kind === "short") return { assemble: a, steps: INTRO_STEPS.map((step, index) => step.face === "front" ? a + 300 + index * 120 : Infinity), toBack: null, toFront: null, brand: a + 1300, end: a + 2100, turn: true };
   return {
     assemble: a,
     steps: INTRO_STEPS.map((step, index) => step.face === "front" ? a + 600 + index * 250 : a + 4250 + (index - front) * 250),

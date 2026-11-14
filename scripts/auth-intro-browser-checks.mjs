@@ -54,7 +54,7 @@ export async function checkAuthIntro({ send, evaluate, navigatePage, ready, unti
   await shot("login-after");
   result.cases.push({ case: "first sign-out plays the full sequence" });
 
-  // 2. Second sign-out: the short sequence, and a tap skips it.
+  // 2. Second sign-out: the full sequence plays again, and a tap skips it.
   await send("Network.setCookies", { cookies });
   await navigatePage(`http://127.0.0.1:${appPort}/dashboard`); await ready("/dashboard");
   await signOut();

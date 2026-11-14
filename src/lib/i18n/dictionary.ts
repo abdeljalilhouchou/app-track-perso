@@ -59,6 +59,13 @@ const fr = {
     badges: "Badges",
     accountMenu: "Menu du compte",
   },
+  appError: {
+    title: "Cette page n’a pas pu s’afficher",
+    body: "Réessaie. Si ça recommence, recharge l’application : tes données enregistrées ne sont pas perdues.",
+    retry: "Réessayer",
+    reload: "Recharger l’application",
+    updating: "Nouvelle version disponible, rechargement…",
+  },
   auth: {
     brandTagline: "Suis tes habitudes, ton sport et ton humeur au même endroit.",
     login: {
@@ -197,6 +204,13 @@ const en: Dictionary = {
     badges: "Badges",
     accountMenu: "Account menu",
   },
+  appError: {
+    title: "This page couldn’t be shown",
+    body: "Try again. If it happens again, reload the app: your saved data is not lost.",
+    retry: "Try again",
+    reload: "Reload the app",
+    updating: "New version available, reloading…",
+  },
   auth: {
     brandTagline: "Track your habits, workouts and mood in one place.",
     login: {
@@ -334,6 +348,13 @@ const ar: Dictionary = {
     settings: "الإعدادات",
     badges: "الشارات",
     accountMenu: "قائمة الحساب",
+  },
+  appError: {
+    title: "تعذّر عرض هذه الصفحة",
+    body: "حاول مرة أخرى. إذا تكرر الأمر، أعد تحميل التطبيق: بياناتك المحفوظة لم تُفقد.",
+    retry: "حاول مرة أخرى",
+    reload: "إعادة تحميل التطبيق",
+    updating: "إصدار جديد متاح، جارٍ إعادة التحميل…",
   },
   auth: {
     brandTagline: "تابع عاداتك ورياضتك ومزاجك في مكان واحد.",

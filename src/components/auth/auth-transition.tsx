@@ -20,8 +20,6 @@ export function introTexts(t: (key: string) => string, status: string): IntroTex
 
 const AnatomyIntro = dynamic(() => import("./anatomy-intro"), { ssr: false, loading: () => <div className="anatomy-intro" aria-hidden="true" /> });
 
-// The full sequence plays the first time on a device, then a shorter one.
-const SEEN_KEY = "track-perso:anatomy-intro-seen-v1";
 // Never hold the screen longer than this waiting for a navigation that does not come.
 const MAX_WAIT_MS = 20000;
 
@@ -35,16 +33,9 @@ export function useAuthTransition() {
   return useContext(AuthTransitionContext);
 }
 
+// The full sequence (front, then back) every time; a tap skips it. Reduced motion gets a still figure.
 function introKind(): IntroKind {
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return "reduced";
-  try {
-    if (localStorage.getItem(SEEN_KEY)) return "short";
-    localStorage.setItem(SEEN_KEY, "1");
-  } catch {
-    // Storage unavailable: play the short sequence rather than the long one every time.
-    return "short";
-  }
-  return "full";
+  return matchMedia("(prefers-reduced-motion: reduce)").matches ? "reduced" : "full";
 }
 
 /** Lives in the root layout so the intro outlasts the redirect that sign-in and sign-out perform. */
