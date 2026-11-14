@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import Link from "next/link";
 import { signIn } from "@/lib/actions/auth";
-import { SignatureOverlay } from "@/components/auth/signature-overlay";
+import { introTexts, useAuthTransition } from "@/components/auth/auth-transition";
+import { ANATOMY_ASSET } from "@/lib/anatomy/rowing";
 import { useAuthT } from "@/lib/i18n/use-auth-t";
 
 export default function LoginPage() {
@@ -12,6 +13,20 @@ export default function LoginPage() {
     { error: null }
   );
   const t = useAuthT();
+  const { start, cancel } = useAuthTransition();
+
+  // A refused sign-in stays on this page: drop the intro so the error is visible.
+  useEffect(() => {
+    if (!pending && state.error) cancel();
+  }, [pending, state, cancel]);
+
+  // Fetch the anatomy model while the person types, unless they asked to save data.
+  useEffect(() => {
+    const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    if (connection?.saveData) return;
+    const idle = window.setTimeout(() => { fetch(ANATOMY_ASSET.url, { cache: "force-cache" }).catch(() => {}); }, 1500);
+    return () => window.clearTimeout(idle);
+  }, []);
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
@@ -23,7 +38,7 @@ export default function LoginPage() {
           <p className="mt-2 text-sm text-foreground-muted">{t("auth.login.welcomeBack")}</p>
         </div>
 
-        <form action={formAction} className="space-y-4 rounded-2xl border border-border bg-surface p-6 shadow-sm">
+        <form action={formAction} onSubmit={() => start("login", introTexts(t, t("auth.login.overlayLabel")))} className="space-y-4 rounded-2xl border border-border bg-surface p-6 shadow-sm">
           <div className="space-y-1.5">
             <label htmlFor="email" className="text-sm font-medium">{t("auth.login.email")}</label>
             <input
@@ -76,7 +91,6 @@ export default function LoginPage() {
         </p>
       </div>
 
-      <SignatureOverlay show={pending} label={t("auth.login.overlayLabel")} />
     </div>
   );
 }

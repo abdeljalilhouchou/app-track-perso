@@ -108,6 +108,15 @@ const fr = {
       overlayLabel: "Connexion...",
     },
     signOutOverlayLabel: "Déconnexion...",
+    intro: {
+      skip: "Touche l’écran pour passer",
+      muscles: {
+        deltoids: "Deltoïdes", chest: "Pectoraux", biceps: "Biceps", abs: "Abdominaux", obliques: "Obliques",
+        forearms: "Avant-bras", quadriceps: "Quadriceps", tibialis: "Tibial antérieur", traps: "Trapèzes",
+        triceps: "Triceps", lats: "Grand dorsal", lowerBack: "Lombaires", glutes: "Fessiers",
+        hamstrings: "Ischio-jambiers", calves: "Mollets",
+      },
+    },
   },
   dashboard: {
     greeting: "Salut {name} 👋",
@@ -237,6 +246,15 @@ const en: Dictionary = {
       overlayLabel: "Signing in...",
     },
     signOutOverlayLabel: "Signing out...",
+    intro: {
+      skip: "Tap the screen to skip",
+      muscles: {
+        deltoids: "Deltoids", chest: "Chest", biceps: "Biceps", abs: "Abs", obliques: "Obliques",
+        forearms: "Forearms", quadriceps: "Quadriceps", tibialis: "Tibialis anterior", traps: "Traps",
+        triceps: "Triceps", lats: "Lats", lowerBack: "Lower back", glutes: "Glutes",
+        hamstrings: "Hamstrings", calves: "Calves",
+      },
+    },
   },
   dashboard: {
     greeting: "Hi {name} 👋",
@@ -366,6 +384,15 @@ const ar: Dictionary = {
       overlayLabel: "جارٍ تسجيل الدخول...",
     },
     signOutOverlayLabel: "جارٍ تسجيل الخروج...",
+    intro: {
+      skip: "المس الشاشة للتخطي",
+      muscles: {
+        deltoids: "الدالية", chest: "الصدرية", biceps: "ذات الرأسين", abs: "عضلات البطن", obliques: "المائلة",
+        forearms: "الساعد", quadriceps: "رباعية الرؤوس", tibialis: "الظنبوبية الأمامية", traps: "شبه المنحرفة",
+        triceps: "ثلاثية الرؤوس", lats: "الظهرية العريضة", lowerBack: "أسفل الظهر", glutes: "الألوية",
+        hamstrings: "أوتار الركبة", calves: "ربلة الساق",
+      },
+    },
   },
   dashboard: {
     greeting: "مرحبًا {name} 👋",

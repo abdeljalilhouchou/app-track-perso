@@ -11,6 +11,7 @@ import { sourceLoader } from "./test-source-loader.mjs";
 const require = createRequire(import.meta.url);
 const exercisePremiumV4 = process.argv.includes("--exercise-premium-v4");
 const sportModules = process.argv.includes("--sport-modules");
+const authIntro = process.argv.includes("--auth-intro");
 const accountMenu = process.argv.includes("--account-menu");
 const exerciseExperienceV3 = process.argv.includes("--exercise-experience-v3");
 const exerciseMediaV3 = process.argv.includes("--exercise-media-v3") || exerciseExperienceV3;
@@ -132,7 +133,7 @@ if (production) {
 }
 const app = spawn(process.execPath, [require.resolve("next/dist/bin/next"), production ? "start" : "dev", "--hostname", "127.0.0.1", "--port", String(appPort)], { env, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
 app.stdout.on("data", log); app.stderr.on("data", log);
-const browser = spawn(edge, ["--headless=new", "--disable-gpu", ...(anatomy || exerciseMedia || exercisePremiumV4 ? ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : []), "--disable-extensions", "--disable-background-networking", "--no-first-run", "--no-default-browser-check", `--remote-debugging-port=${debugPort}`, `--user-data-dir=${browserProfile}`, "about:blank"], { windowsHide: true, stdio: "ignore" });
+const browser = spawn(edge, ["--headless=new", "--disable-gpu", ...(anatomy || exerciseMedia || exercisePremiumV4 || authIntro ? ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : []), "--disable-extensions", "--disable-background-networking", "--no-first-run", "--no-default-browser-check", `--remote-debugging-port=${debugPort}`, `--user-data-dir=${browserProfile}`, "about:blank"], { windowsHide: true, stdio: "ignore" });
 let socket;
 let inspectPage;
 let capturePage;
@@ -200,7 +201,7 @@ try {
   await navigatePage(`http://127.0.0.1:${appPort}/sport`);
   await ready("/sport");
   console.log("Sport Hub loaded with local fixtures.");
-  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu) {
+  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu && !authIntro) {
   assert.ok(await evaluate("document.body.innerText.includes('QA Dos & Biceps')"));
   for (const width of [320, 360, 375, 390, 430, 768, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: width < 768 });
@@ -395,6 +396,10 @@ try {
     const { checkExerciseMedia } = await import(exerciseMediaV3 ? "./exercise-media-v3-browser-checks.mjs" : exerciseMediaV2 ? "./exercise-media-v2-browser-checks.mjs" : "./exercise-media-browser-checks.mjs");
     await checkExerciseMedia({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, networkRequests, output, appPort });
   }
+  if (authIntro) {
+    const { checkAuthIntro } = await import("./auth-intro-browser-checks.mjs");
+    await checkAuthIntro({ send, evaluate, navigatePage, ready, until, pause, results, profile, output, appPort });
+  }
   if (sportModules) {
     const { checkSportModules } = await import("./sport-modules-browser-checks.mjs");
     await checkSportModules({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, output, appPort, setFixture: (value) => { fixtureState = value; } });
@@ -411,7 +416,7 @@ try {
     const { checkExerciseExperience } = await import("./exercise-experience-v3-browser-checks.mjs");
     await checkExerciseExperience({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, networkRequests, output, appPort });
   }
-  results.writes = requests.filter((request) => !["GET", "HEAD"].includes(request.method));
+  results.writes = requests.filter((request) => !["GET", "HEAD"].includes(request.method) && !(authIntro && ["/auth/v1/logout", "/auth/v1/token"].includes(request.resource)));
   assert.deepEqual(results.writes, []);
   if (!sportModules) assert.ok(!requests.some((request) => /calisthenics_|running_/.test(request.resource)), "Disabled disciplines queried their schema");
   assert.deepEqual(results.consoleErrors, []);
