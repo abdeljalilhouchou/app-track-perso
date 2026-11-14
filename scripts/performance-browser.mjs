@@ -12,6 +12,7 @@ const require = createRequire(import.meta.url);
 const exercisePremiumV4 = process.argv.includes("--exercise-premium-v4");
 const sportModules = process.argv.includes("--sport-modules");
 const authIntro = process.argv.includes("--auth-intro");
+const sessionCards = process.argv.includes("--session-cards");
 const accountMenu = process.argv.includes("--account-menu");
 const exerciseExperienceV3 = process.argv.includes("--exercise-experience-v3");
 const exerciseMediaV3 = process.argv.includes("--exercise-media-v3") || exerciseExperienceV3;
@@ -201,7 +202,7 @@ try {
   await navigatePage(`http://127.0.0.1:${appPort}/sport`);
   await ready("/sport");
   console.log("Sport Hub loaded with local fixtures.");
-  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu && !authIntro) {
+  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu && !authIntro && !sessionCards) {
   assert.ok(await evaluate("document.body.innerText.includes('QA Dos & Biceps')"));
   for (const width of [320, 360, 375, 390, 430, 768, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: width < 768 });
@@ -395,6 +396,10 @@ try {
   if (exerciseMedia && !process.argv.includes("--experience-only")) {
     const { checkExerciseMedia } = await import(exerciseMediaV3 ? "./exercise-media-v3-browser-checks.mjs" : exerciseMediaV2 ? "./exercise-media-v2-browser-checks.mjs" : "./exercise-media-browser-checks.mjs");
     await checkExerciseMedia({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, networkRequests, output, appPort });
+  }
+  if (sessionCards) {
+    const { checkSessionCards } = await import("./session-cards-browser-checks.mjs");
+    await checkSessionCards({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, output, appPort });
   }
   if (authIntro) {
     const { checkAuthIntro } = await import("./auth-intro-browser-checks.mjs");

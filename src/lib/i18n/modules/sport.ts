@@ -344,6 +344,7 @@ export const sportFr = {
     removeSetAria: "Supprimer la série {n}",
     addSet: "+ Série",
     addSetFull: "Ajouter une série",
+    dragAria: "Maintenir pour déplacer {name}",
     needRepsHint:
       "💡 Renseigne au moins les répétitions d'une série (ou touche ✓ pour reprendre les valeurs de la dernière fois) pour pouvoir terminer la séance.",
     finishSession: "Terminer la séance ({count} {unit})",
@@ -693,6 +694,7 @@ export const sportEn = {
     removeSetAria: "Remove set {n}",
     addSet: "+ Set",
     addSetFull: "Add a set",
+    dragAria: "Hold to move {name}",
     needRepsHint:
       "💡 Fill in at least the reps for one set (or tap ✓ to reuse last time's values) to be able to finish the session.",
     finishSession: "Finish session ({count} {unit})",
@@ -1042,6 +1044,7 @@ export const sportAr = {
     removeSetAria: "حذف المجموعة {n}",
     addSet: "+ مجموعة",
     addSetFull: "إضافة مجموعة",
+    dragAria: "اضغط مطولًا لتحريك {name}",
     needRepsHint: "💡 أدخل على الأقل تكرارات مجموعة واحدة (أو اضغط ✓ لاستعادة قيم آخر مرة) حتى تتمكن من إنهاء الحصة.",
     finishSession: "إنهاء الحصة ({count} {unit})",
     discard: "التخلي",

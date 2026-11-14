@@ -169,7 +169,7 @@
 .sport-ui .exercise-session-head > .exercise-photo-trigger:active { transform: scale(.97); }
 .sport-ui .exercise-session-main { min-width: 0; display: flex; flex-direction: column; gap: 7px; }
 .sport-ui .exercise-session-titlebar { display: flex; align-items: flex-start; justify-content: space-between; gap: 4px; }
-.sport-ui .exercise-session-title { min-width: 0; font-size: 17px; font-weight: 700; line-height: 1.25; letter-spacing: -.015em; overflow-wrap: anywhere; }
+.sport-ui .exercise-session-title { min-width: 0; font-size: 17px; font-weight: 700; line-height: 1.25; letter-spacing: -.015em; overflow-wrap: break-word; hyphens: auto; }
 .sport-ui .exercise-session-menu { position: relative; flex-shrink: 0; margin: -8px -8px 0 0; }
 .sport-ui:dir(rtl) .exercise-session-menu { margin: -8px 0 0 -8px; }
 .sport-ui .exercise-session-menu > summary { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; font-size: 22px; color: var(--foreground-muted); cursor: pointer; list-style: none; }
@@ -188,6 +188,15 @@
 .sport-ui .exercise-session-last[data-has-history="true"] { color: var(--sport-ink); }
 .sport-ui .exercise-session-last svg { flex-shrink: 0; margin-top: 1px; }
 .sport-ui .exercise-session-target { font-size: 11px; color: var(--foreground-muted); }
+/* Cards without a photo: the same frame, with an illustration instead. */
+.sport-ui .exercise-session-placeholder { display: grid; place-items: center; width: 100%; height: 100%; color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface-muted)); }
+/* Hold this handle to move the card; it alone starts a drag, so scrolling elsewhere still works. */
+.sport-ui .exercise-session-grip { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; margin-top: -8px; border-radius: 12px; color: var(--foreground-muted); touch-action: none; cursor: grab; }
+.sport-ui .exercise-session-grip:hover, .sport-ui .exercise-session-grip:active { background: var(--surface-muted); }
+.sport-ui .exercise-session-grip:active { cursor: grabbing; }
+.sport-ui .exercise-session-grip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* An exercise with no anatomy mapping has only the Technique shortcut: it takes the full row. */
+.sport-ui .exercise-session-quick-actions > :only-child { grid-column: 1 / -1; }
 .sport-ui .exercise-session-quick-actions { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-top: 8px; }
 .sport-ui .exercise-session-quick-actions > .sport-button { width: 100%; min-width: 0; min-height: 48px; margin: 0; padding: 10px 8px; font-size: 13px; font-weight: 650; border-radius: 14px; transition: transform 120ms ease, background-color 160ms ease; }
 .sport-ui .exercise-session-quick-actions > .sport-button:active { transform: scale(.97); }
@@ -205,7 +214,7 @@
 .sport-ui .exercise-session-add-set:active { transform: scale(.98); }
 .sport-ui .exercise-session-add-icon { font-size: 18px; line-height: 1; }
 @keyframes exercise-set-pop { 0% { transform: scale(.82); } 60% { transform: scale(1.1); } 100% { transform: scale(1); } }
-@media (max-width: 359px) { .sport-ui .exercise-session-head { grid-template-columns: 88px minmax(0,1fr); gap: 4px 10px; } .sport-ui .exercise-session-title { font-size: 16px; } }
+@media (max-width: 359px) { .sport-ui .exercise-session-head { grid-template-columns: 72px minmax(0,1fr); gap: 4px 10px; } .sport-ui .exercise-session-title { font-size: 15px; } }
 
 /* v4 — sheet: sliding tab indicator, filled 3D call to action, gallery dots. */
 .sport-ui .exercise-premium-tabs { position: relative; }
