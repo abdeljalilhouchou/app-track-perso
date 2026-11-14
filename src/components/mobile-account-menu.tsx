@@ -46,8 +46,8 @@ export function MobileAccountMenu({ displayName, avatarUrl }: { displayName: str
 
   const links = [
     { href: "/profil", label: t("nav.profile"), Icon: UserCircleIcon },
-    { href: "/profil#parametres", label: t("nav.settings"), Icon: SettingsIcon },
-    { href: "/profil#badges", label: t("nav.badges"), Icon: AwardIcon },
+    { href: "/profil/parametres", label: t("nav.settings"), Icon: SettingsIcon },
+    { href: "/profil/badges", label: t("nav.badges"), Icon: AwardIcon },
   ];
 
   return (

@@ -41,14 +41,21 @@ export async function checkMobileAccountMenu({ send, evaluate, navigatePage, rea
     await until(() => evaluate("!document.querySelector('.mobile-account-menu')"), "closed by outside press");
     // Badges destination.
     await openMenu();
-    await evaluate("[...document.querySelectorAll('.mobile-account-menu a')].find(a=>a.getAttribute('href')==='/profil#badges').click()");
-    await until(() => evaluate("location.pathname==='/profil'&&location.hash==='#badges'&&!!document.getElementById('badges')"), "badges destination");
-    await until(() => evaluate("(()=>{const r=document.getElementById('badges').getBoundingClientRect();return r.top>=0&&r.top<innerHeight*0.6})()"), "badges scrolled into view");
+    // Each destination is its own page; settings and badges are not stacked on the profile.
+    await evaluate("[...document.querySelectorAll('.mobile-account-menu a')].find(a=>a.getAttribute('href')==='/profil/badges').click()");
+    await until(() => evaluate("location.pathname==='/profil/badges'&&!!document.querySelector('main h1')"), "badges page");
     assert.ok(await evaluate("!document.querySelector('.mobile-account-menu')"), "Menu closed after navigation");
-    if (width === 390 && language === "fr") await shot("badges-destination");
+    assert.ok(await evaluate("!document.querySelector('main input[type=email]')"), "badges page carries no account settings");
+    if (width === 390 && language === "fr") await shot("badges-page");
     await openMenu();
-    await evaluate("[...document.querySelectorAll('.mobile-account-menu a')].find(a=>a.getAttribute('href')==='/profil#parametres').click()");
-    await until(() => evaluate("location.hash==='#parametres'&&(()=>{const r=document.getElementById('parametres').getBoundingClientRect();return r.top>=0&&r.top<innerHeight*0.6})()"), "settings scrolled into view");
+    await evaluate("[...document.querySelectorAll('.mobile-account-menu a')].find(a=>a.getAttribute('href')==='/profil/parametres').click()");
+    await until(() => evaluate("location.pathname==='/profil/parametres'&&!!document.querySelector('main h1')"), "settings page");
+    if (width === 390 && language === "fr") await shot("settings-page");
+    // The back link returns to the profile overview, which no longer holds settings or badges.
+    await evaluate("document.querySelector('main a[href=\"/profil\"]').click()");
+    await until(() => evaluate("location.pathname==='/profil'"), "back to profile");
+    await until(() => evaluate("!!document.querySelector('main a[href=\"/profil/parametres\"]')&&!!document.querySelector('main a[href=\"/profil/badges\"]')"), "profile links to both sub-pages");
+    if (width === 390 && language === "fr") await shot("profile-overview");
     result.cases.push({ language, theme, width, items: box.items.map((item) => item.text) });
   }
   assert.ok(!requests.some((request) => !["GET", "HEAD"].includes(request.method)), "No writes");

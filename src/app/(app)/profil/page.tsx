@@ -1,18 +1,14 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/supabase/read-context";
 import { BADGES } from "@/lib/gamification";
 import { computeProfileStats, summarizeProgress } from "@/lib/profile-stats";
-import { ReminderSettings } from "@/components/reminder-settings";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { ProfileStats } from "@/components/profile-stats";
-import { BadgeGrid } from "@/components/badge-grid";
 import { StreakFlame } from "@/components/ui/streak-flame";
-import { ThemeSelector } from "@/components/theme-selector";
 import { Avatar } from "@/components/avatar";
-import { Callout } from "@/components/ui/callout";
-import { AccountSettings } from "@/components/account-settings";
 import { AnimatedCounter } from "@/components/ui/animated-counter";
-import { LanguageSelector } from "@/components/language-selector";
+import { AwardIcon, SettingsIcon } from "@/components/ui/nav-icons";
 import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
 
 export default async function ProfilPage() {
@@ -31,11 +27,16 @@ export default async function ProfilPage() {
   ]);
   if (profileError) throw new Error("Impossible de charger le profil.");
 
-  const { points, level, pointsIntoLevel, pointsForNextLevel, progressPct, unlocked: unlockedBadges, locked: lockedBadges } =
+  const { points, level, pointsIntoLevel, pointsForNextLevel, progressPct, unlocked: unlockedBadges } =
     summarizeProgress(stats);
   const bestStreak = stats.bestStreak;
 
   const displayName = profile?.display_name || user.email?.split("@")[0] || "toi";
+  // Settings and badges live on their own pages; this one links to them.
+  const subpages = [
+    { href: "/profil/parametres", label: dict.nav.settings, Icon: SettingsIcon },
+    { href: "/profil/badges", label: dict.nav.badges, Icon: AwardIcon, detail: t("profile.badgesUnlocked", { unlocked: unlockedBadges.length, total: BADGES.length }) },
+  ];
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -69,17 +70,6 @@ export default async function ProfilPage() {
         </div>
       </div>
 
-      {!profile?.reminder_time && (
-        <Callout variant="tip" title={t("profile.calloutReminder.title")} dismissKey="profile-reminder" compact>
-          {t("profile.calloutReminder.text")}
-        </Callout>
-      )}
-      {!profile?.avatar_url && (
-        <Callout variant="info" title={t("profile.calloutCustomize.title")} dismissKey="profile-avatar" compact>
-          {t("profile.calloutCustomize.text")}
-        </Callout>
-      )}
-
       <ProfileStats
         stats={[
           { label: t("profile.stats.habitsChecked"), value: stats.habitLogsCount, color: "var(--habit)" },
@@ -89,51 +79,24 @@ export default async function ProfilPage() {
         ]}
       />
 
-      <div id="parametres" className="scroll-mt-20">
-      <AccountSettings
-        userId={user.id}
-        email={user.email ?? ""}
-        displayName={displayName}
-        avatarUrl={profile?.avatar_url ?? null}
-        memberSinceYear={new Date(user.created_at).getFullYear()}
-      />
-      </div>
-
-      <div className="rounded-2xl border-[1.5px] border-accent/40 bg-surface p-5">
-        <h2 className="mb-3 flex items-center gap-2 text-sm font-medium">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft">🎨</span>
-          {t("profile.appearanceHeading")}
-        </h2>
-        <ThemeSelector />
-      </div>
-
-      <div className="rounded-2xl border-[1.5px] border-accent/40 bg-surface p-5">
-        <h2 className="mb-1 flex items-center gap-2 text-sm font-medium">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft">🌐</span>
-          {dict.language.title}
-        </h2>
-        <p className="mb-3 text-xs text-foreground-muted">{dict.language.description}</p>
-        <LanguageSelector />
-      </div>
-
-      <div className="rounded-2xl border border-border bg-surface p-5">
-        <h2 className="mb-3 flex items-center gap-2 text-sm font-medium">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft">🔔</span>
-          {t("profile.reminders.heading")}
-        </h2>
-        <ReminderSettings initialTime={profile?.reminder_time ?? null} email={user.email ?? ""} />
-      </div>
-
-      <div id="badges" className="scroll-mt-20">
-        <h2 className="mb-3 text-sm font-medium text-foreground-muted">{t("profile.badgesHeading")}</h2>
-        <BadgeGrid
-          badges={[...unlockedBadges, ...lockedBadges].map((badge) => ({
-            id: badge.id,
-            icon: badge.icon,
-            unlocked: unlockedBadges.includes(badge),
-          }))}
-        />
-      </div>
+      <nav aria-label={dict.pages.profile.title} className="overflow-hidden rounded-2xl border border-border bg-surface">
+        {subpages.map(({ href, label, Icon, detail }) => (
+          <Link
+            key={href}
+            href={href}
+            className="flex min-h-14 items-center gap-3 border-b border-border px-4 last:border-b-0 transition hover:bg-surface-muted"
+          >
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-soft text-accent">
+              <Icon className="h-5 w-5" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-medium">{label}</span>
+              {detail && <span className="block text-xs text-foreground-muted">{detail}</span>}
+            </span>
+            <span aria-hidden className="text-foreground-muted rtl:rotate-180">›</span>
+          </Link>
+        ))}
+      </nav>
 
       <SignOutButton className="w-full rounded-2xl border border-border bg-surface px-4 py-3 text-center text-sm font-medium text-foreground-muted transition hover:bg-surface-muted md:hidden">
         {dict.nav.signOut}
