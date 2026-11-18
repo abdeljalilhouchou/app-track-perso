@@ -28,6 +28,22 @@ export async function checkAuthIntro({ send, evaluate, navigatePage, ready, unti
   await navigatePage(`http://127.0.0.1:${appPort}/dashboard`); await ready("/dashboard");
   await evaluate("localStorage.removeItem('track-perso:anatomy-intro-seen-v1')");
 
+  // 0. The page behind the reset email, while its session is live: new password with live checks. Not submitted.
+  await navigatePage(`http://127.0.0.1:${appPort}/reset-password`);
+  await until(() => evaluate("!!document.querySelector('#password') && !!document.querySelector('#confirm')"), "reset form");
+  assert.ok(await evaluate("document.querySelector('[data-reset-submit]').disabled"), "reset waits for a valid password");
+  await evaluate("document.querySelector('#password').focus()");
+  await send("Input.insertText", { text: "nouveau1" });
+  await evaluate("document.querySelector('#confirm').focus()");
+  await send("Input.insertText", { text: "nouveau" });
+  await until(() => evaluate("document.querySelector('#reset-match')?.textContent.includes('ne correspondent pas')"), "mismatch shown while typing");
+  assert.ok(await evaluate("document.querySelector('[data-reset-submit]').disabled"), "no submit while they differ");
+  await send("Input.insertText", { text: "1" });
+  await until(() => evaluate("document.querySelector('#reset-match').textContent.includes('correspondent') && !document.querySelector('[data-reset-submit]').disabled"), "match confirmed");
+  assert.ok(await evaluate("document.documentElement.scrollWidth - innerWidth <= 1"), "reset page has no horizontal overflow");
+  await shot("reset-form");
+  await navigatePage(`http://127.0.0.1:${appPort}/dashboard`); await ready("/dashboard");
+
   // Sign-out clears the session cookie; keep it to sign back in for the second case.
   const { cookies } = await send("Network.getAllCookies");
 
@@ -128,4 +144,25 @@ export async function checkAuthIntro({ send, evaluate, navigatePage, ready, unti
   await shot("signup-1440");
   await evaluate("localStorage.removeItem('language')");
   result.cases.push({ case: "sign-up page" });
+
+  // 6. Forgotten password, signed out: request, confirmation with a held-back resend, another address.
+  await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true });
+  await navigatePage(`http://127.0.0.1:${appPort}/forgot-password`);
+  await until(() => evaluate("!!document.querySelector('#email')"), "forgot-password page");
+  assert.equal(await evaluate("document.querySelector('main h1').textContent"), "Mot de passe oublié ?", "forgot-password title");
+  await shot("forgot-375");
+  await evaluate("const s=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set;const e=document.querySelector('#email');s.call(e,'qa@example.invalid');e.dispatchEvent(new Event('input',{bubbles:true}))");
+  await evaluate("document.querySelector('form button[type=submit]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-reset-sent]')"), "confirmation screen");
+  assert.ok(await evaluate("document.querySelector('main').innerText.includes('qa@example.invalid')"), "confirmation names the address");
+  assert.ok(await evaluate("document.querySelector('[data-reset-resend]').disabled && /Renvoyer dans [0-9]+ s/.test(document.querySelector('[data-reset-resend]').textContent)"), "resend held back with a countdown");
+  assert.ok(await evaluate("document.documentElement.scrollWidth - innerWidth <= 1"), "confirmation has no horizontal overflow");
+  await shot("forgot-sent");
+  await evaluate("[...document.querySelectorAll('main button')].find((b) => b.textContent.includes('autre adresse')).click()");
+  await until(() => evaluate("document.querySelector('#email')?.value === 'qa@example.invalid'"), "back to the form with the address kept");
+  // Signed out, the reset page explains the link is spent and offers a new one.
+  await navigatePage(`http://127.0.0.1:${appPort}/reset-password`);
+  await until(() => evaluate("!!document.querySelector('[data-reset-request-new]')"), "spent link screen");
+  await shot("reset-expired");
+  result.cases.push({ case: "password reset flow" });
 }

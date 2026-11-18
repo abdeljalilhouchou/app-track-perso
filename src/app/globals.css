@@ -298,3 +298,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .anatomy-intro, .anatomy-intro canvas, .anatomy-intro-label, .anatomy-intro-brand { transition: none; }
 }
+
+/* Password fields carry their own show/hide button: hide the one Edge adds on top. */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}

@@ -53,14 +53,15 @@ export async function signOut() {
   redirect("/login");
 }
 
-type ForgotPasswordState = { error: string | null; sent: boolean };
+export type ForgotPasswordState = { error: "invalid" | "failed" | null; sent: boolean; email: string };
 
 export async function requestPasswordReset(
   _prevState: ForgotPasswordState,
   formData: FormData
 ): Promise<ForgotPasswordState> {
   const email = String(formData.get("email") ?? "").trim();
-  if (!isValidEmail(email)) return { error: "Entre une adresse e-mail valide.", sent: false };
+  const kept = email.slice(0, 320);
+  if (!isValidEmail(email)) return { error: "invalid", sent: false, email: kept };
 
   const supabase = await createClient();
   const siteUrl = await getSiteUrl();
@@ -73,13 +74,13 @@ export async function requestPasswordReset(
   // form can't be used to check who has an account. A real send failure (bad SMTP, rate limit,
   // malformed address) is the one case worth surfacing.
   if (error && error.status !== 429 && !error.message.toLowerCase().includes("rate limit")) {
-    return { error: "Impossible d’envoyer le lien. Réessaie plus tard.", sent: false };
+    return { error: "failed", sent: false, email: kept };
   }
 
-  return { error: null, sent: true };
+  return { error: null, sent: true, email: kept };
 }
 
-type ResetPasswordState = { error: string | null };
+export type ResetPasswordState = { error: "length" | "mismatch" | "expired" | "failed" | null };
 
 export async function updatePasswordAfterReset(
   _prevState: ResetPasswordState,
@@ -88,17 +89,17 @@ export async function updatePasswordAfterReset(
   const password = String(formData.get("password") ?? "");
   const confirm = String(formData.get("confirm") ?? "");
 
-  if (password.length < 6 || password.length > 1024) return { error: "Le mot de passe doit contenir entre 6 et 1024 caractères." };
-  if (password !== confirm) return { error: "Les deux mots de passe ne correspondent pas." };
+  if (password.length < 6 || password.length > 1024) return { error: "length" };
+  if (password !== confirm) return { error: "mismatch" };
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { error: "Lien expiré ou déjà utilisé. Redemande un lien de réinitialisation." };
+  if (!user) return { error: "expired" };
 
   const { error } = await supabase.auth.updateUser({ password });
-  if (error) return { error: "Impossible de mettre à jour le mot de passe. Redemande un lien." };
+  if (error) return { error: "failed" };
 
   redirect("/dashboard");
 }

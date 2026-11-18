@@ -1,68 +1,97 @@
 "use client";
 
-import { useActionState } from "react";
-import Link from "next/link";
-import { requestPasswordReset } from "@/lib/actions/auth";
+import { useActionState, useEffect, useState } from "react";
+import { requestPasswordReset, type ForgotPasswordState } from "@/lib/actions/auth";
+import { AuthError, AuthLayout, AuthSwitch, authField, authPrimary, authSecondary } from "@/components/auth/auth-layout";
 import { useAuthT } from "@/lib/i18n/use-auth-t";
 
+const RESEND_SECONDS = 60;
+
 export default function ForgotPasswordPage() {
-  const [state, formAction, pending] = useActionState(requestPasswordReset, { error: null, sent: false });
+  const [state, formAction, pending] = useActionState<ForgotPasswordState, FormData>(requestPasswordReset, { error: null, sent: false, email: "" });
+  const [editing, setEditing] = useState(false);
+  // Counts each successful send, so the resend timer restarts after a resend too.
+  const [sends, setSends] = useState(0);
+  const [lastState, setLastState] = useState(state);
+  if (state !== lastState) {
+    setLastState(state);
+    if (state.sent) { setSends((count) => count + 1); setEditing(false); }
+  }
   const t = useAuthT();
+  const error = state.error === "failed" ? t("auth.forgotPassword.errorFailed") : state.error ? t("auth.forgotPassword.errorInvalid") : null;
+
+  if (state.sent && !editing) {
+    return (
+      <AuthLayout title={t("auth.forgotPassword.sentHeadline")} subtitle={t("auth.forgotPassword.sentTo", { email: state.email })}>
+        <div className="space-y-4" data-reset-sent>
+          <ol className="space-y-3 rounded-2xl border border-border bg-surface p-4 text-sm">
+            <li className="flex gap-3"><span aria-hidden className="text-xl">📬</span><span>{t("auth.forgotPassword.sentSteps")}</span></li>
+            <li className="flex gap-3 text-foreground-muted"><span aria-hidden className="text-xl">🔎</span><span>{t("auth.forgotPassword.spamHint")}</span></li>
+          </ol>
+          <form action={formAction}>
+            <input type="hidden" name="email" value={state.email} />
+            <ResendButton key={sends} pending={pending} />
+          </form>
+          <button type="button" onClick={() => setEditing(true)} className="mx-auto flex min-h-11 items-center px-3 text-sm font-medium text-accent hover:underline">
+            {t("auth.forgotPassword.otherEmail")}
+          </button>
+        </div>
+        <AuthSwitch question={t("auth.forgotPassword.remembered")} href="/login" label={t("auth.forgotPassword.backToLogin")} />
+      </AuthLayout>
+    );
+  }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <Link href="/" className="text-2xl font-semibold tracking-tight">
-            track<span className="text-accent">.perso</span>
-          </Link>
-          <p className="mt-2 text-sm text-foreground-muted">{t("auth.forgotPassword.tagline")}</p>
+    <AuthLayout title={t("auth.forgotPassword.headline")} subtitle={t("auth.forgotPassword.tagline")}>
+      <form action={formAction} className="space-y-5">
+        <div className="space-y-2">
+          <label htmlFor="email" className="text-sm font-medium">{t("auth.forgotPassword.email")}</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            inputMode="email"
+            autoCapitalize="none"
+            spellCheck={false}
+            autoFocus
+            defaultValue={state.email}
+            key={state.email}
+            aria-invalid={state.error === "invalid" || undefined}
+            aria-describedby={error ? "forgot-error" : undefined}
+            className={authField}
+            placeholder={t("auth.login.emailPlaceholder")}
+            dir="ltr"
+          />
         </div>
 
-        {state.sent ? (
-          <div className="space-y-4 rounded-2xl border border-border bg-surface p-6 text-center shadow-sm">
-            <span className="text-3xl">📬</span>
-            <p className="text-sm">{t("auth.forgotPassword.sentMessage")}</p>
-            <Link href="/login" className="inline-block text-sm font-medium text-accent hover:underline">
-              {t("auth.forgotPassword.backToLogin")}
-            </Link>
-          </div>
-        ) : (
-          <form action={formAction} className="space-y-4 rounded-2xl border border-border bg-surface p-6 shadow-sm">
-            <div className="space-y-1.5">
-              <label htmlFor="email" className="text-sm font-medium">{t("auth.forgotPassword.email")}</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                autoComplete="email"
-                autoFocus
-                className="w-full rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-accent"
-                placeholder="toi@exemple.com"
-              />
-            </div>
+        {error && <AuthError id="forgot-error">{error}</AuthError>}
 
-            {state.error && (
-              <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{state.error}</p>
-            )}
+        <button type="submit" disabled={pending} className={authPrimary}>
+          {pending && <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none" aria-hidden />}
+          {pending ? t("auth.forgotPassword.submitting") : t("auth.forgotPassword.submit")}
+        </button>
+      </form>
 
-            <button
-              type="submit"
-              disabled={pending}
-              className="w-full rounded-lg bg-accent px-3 py-2.5 text-sm font-medium text-on-accent transition hover:opacity-90 disabled:opacity-60"
-            >
-              {pending ? t("auth.forgotPassword.submitting") : t("auth.forgotPassword.submit")}
-            </button>
+      <AuthSwitch question={t("auth.forgotPassword.remembered")} href="/login" label={t("auth.forgotPassword.backToLogin")} />
+    </AuthLayout>
+  );
+}
 
-            <p className="text-center text-sm text-foreground-muted">
-              <Link href="/login" className="font-medium text-accent hover:underline">
-                {t("auth.forgotPassword.backToLogin")}
-              </Link>
-            </p>
-          </form>
-        )}
-      </div>
-    </div>
+/** Resend, held back for a minute after each send so the inbox is not flooded. */
+function ResendButton({ pending }: { pending: boolean }) {
+  const t = useAuthT();
+  const [left, setLeft] = useState(RESEND_SECONDS);
+  useEffect(() => {
+    if (left <= 0) return;
+    const timer = window.setTimeout(() => setLeft((value) => value - 1), 1000);
+    return () => window.clearTimeout(timer);
+  }, [left]);
+
+  return (
+    <button type="submit" disabled={pending || left > 0} className={authSecondary + " disabled:opacity-60"} data-reset-resend>
+      {left > 0 ? t("auth.forgotPassword.resendIn", { seconds: left }) : pending ? t("auth.forgotPassword.submitting") : t("auth.forgotPassword.resend")}
+    </button>
   );
 }

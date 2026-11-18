@@ -100,6 +100,8 @@ const mock = http.createServer((request, response) => {
   if (request.method === "OPTIONS") { response.end(); return; }
   requests.push({ method: request.method, resource: url.pathname, params: Object.fromEntries(url.searchParams) });
   if (url.pathname === "/auth/v1/user") { response.end(JSON.stringify(user)); return; }
+  // The reset-email request succeeds so the confirmation screen can be checked; nothing is stored.
+  if (url.pathname === "/auth/v1/recover" && request.method === "POST") { response.end("{}"); return; }
   if (request.method !== "GET" && request.method !== "HEAD") { response.writeHead(405); response.end("{}"); return; }
   const table = url.pathname.split("/")[3];
   if (fixtureState === "failure" && table === "workouts") { response.writeHead(503); response.end(JSON.stringify({ message: "QA_LOCAL_READ_FAILURE" })); return; }
@@ -433,7 +435,7 @@ try {
     const { checkExerciseExperience } = await import("./exercise-experience-v3-browser-checks.mjs");
     await checkExerciseExperience({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, networkRequests, output, appPort });
   }
-  results.writes = requests.filter((request) => !["GET", "HEAD"].includes(request.method) && !(authIntro && ["/auth/v1/logout", "/auth/v1/token"].includes(request.resource)));
+  results.writes = requests.filter((request) => !["GET", "HEAD"].includes(request.method) && !(authIntro && ["/auth/v1/logout", "/auth/v1/token", "/auth/v1/recover"].includes(request.resource)));
   assert.deepEqual(results.writes, []);
   if (!sportModules) assert.ok(!requests.some((request) => /calisthenics_|running_/.test(request.resource)), "Disabled disciplines queried their schema");
   assert.deepEqual(results.consoleErrors, []);
