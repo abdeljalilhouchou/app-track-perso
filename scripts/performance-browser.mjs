@@ -81,7 +81,8 @@ if (sportModules) {
   tables.calisthenics_program_sessions = [0, 1].map((position) => ({ id: `eeeeeee0-0000-4000-8000-00000000000${position + 1}`, program_id: tables.calisthenics_programs[0].id, user_id: uid, name: position === 0 ? "Séance A" : "Séance B", position, created_at: user.created_at }));
   tables.calisthenics_program_exercises = tables.calisthenics_program_sessions.flatMap((session, sessionIndex) => [0, 1].map((position) => ({ id: `fffffff0-0000-4000-8000-${String(sessionIndex * 2 + position).padStart(12, "0")}`, program_session_id: session.id, user_id: uid, exercise_id: tables.calisthenics_exercises[position].id, target_sets: 3, target_reps: 10, target_hold_seconds: null, assistance_kg: null, added_weight_kg: null, notes: "", position, created_at: user.created_at })));
   tables.calisthenics_skills = [{ id: "abababa0-0000-4000-8000-000000000000", user_id: uid, name: "Handstand", skill_key: "handstand", current_step: 1, target_step: 3, progression_steps: ["Wall hold", "Wall handstand contrôlé", "Freestanding attempts", "Freestanding hold"], measurement_type: "hold", started_on: day(30), notes: "", created_at: user.created_at, updated_at: user.created_at }];
-  tables.calisthenics_skill_logs = [{ id: "acacaca0-0000-4000-8000-000000000000", user_id: uid, skill_id: tables.calisthenics_skills[0].id, logged_on: day(2), reps: null, hold_seconds: 25, notes: "", created_at: user.created_at }];
+  // Three results on the current step, so the skill offers its next one.
+  tables.calisthenics_skill_logs = [[6, 18], [4, 22], [2, 25]].map(([offset, hold], index) => ({ id: `acacaca0-0000-4000-8000-00000000000${index}`, user_id: uid, skill_id: tables.calisthenics_skills[0].id, logged_on: day(offset), step_index: 0, reps: null, hold_seconds: hold, notes: "", created_at: `${day(offset)}T19:00:00Z` }));
 }
 let fixtureState = "normal";
 const mock = http.createServer((request, response) => {

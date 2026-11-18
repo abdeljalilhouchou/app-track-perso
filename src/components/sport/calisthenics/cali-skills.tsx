@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { useT } from "@/components/language-provider";
 import { ModuleBars, ModuleCard, ModuleChips } from "@/components/sport/ui/module-kit";
-import type { ExerciseRecord } from "@/lib/calisthenics/insights";
+import { readyForNextStep, type ExerciseRecord } from "@/lib/calisthenics/insights";
 import type { CalisthenicsData } from "@/lib/calisthenics/data";
 
 type Skill = CalisthenicsData["skills"][number];
@@ -26,8 +26,7 @@ export function CaliSkills({ skills, records, onEdit, onDelete, onAdvance, logge
   const [selectedId, setSelectedId] = useState(skills[0]?.id ?? "");
   const skill = skills.find((item) => item.id === selectedId) ?? skills[0];
   const unit = (value: number) => skill?.measurement_type === "hold" ? clock(value) : `${value} reps`;
-  const lastThree = skill ? [...skill.logs].sort((a, b) => b.logged_on.localeCompare(a.logged_on) || b.created_at.localeCompare(a.created_at)).slice(0, 3) : [];
-  const canAdvance = !!skill && skill.current_step >= 1 && skill.current_step < skill.progression_steps.length && lastThree.length === 3 && lastThree.every((log) => log.step_index === skill.current_step - 1);
+  const canAdvance = !!skill && readyForNextStep(skill);
   const logs = skill ? [...skill.logs].sort((a, b) => a.logged_on.localeCompare(b.logged_on) || a.created_at.localeCompare(b.created_at)).slice(-6) : [];
 
   return <div className="space-y-4">

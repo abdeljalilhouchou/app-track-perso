@@ -43,3 +43,15 @@ test("the balance counts this week's sets per category and names an untrained on
   assert.equal(balance.max, 2);
   assert.deepEqual(weekBalance([], [], () => undefined, now).lagging, [], "nothing trained, nothing flagged");
 });
+
+test("the next step is offered only after three results in a row on the current step", () => {
+  const { readyForNextStep } = load("src/lib/calisthenics/insights.ts");
+  const log = (logged_on, step_index) => ({ logged_on, created_at: `${logged_on}T10:00:00Z`, step_index });
+  const skill = (current_step, logs) => ({ current_step, progression_steps: ["a", "b", "c"], logs });
+  assert.equal(readyForNextStep(skill(1, [log("2026-11-01", 0), log("2026-11-03", 0), log("2026-11-05", 0)])), true);
+  assert.equal(readyForNextStep(skill(1, [log("2026-11-03", 0), log("2026-11-05", 0)])), false, "two results are not enough");
+  assert.equal(readyForNextStep(skill(1, [log("2026-11-01", 0), log("2026-11-03", 1), log("2026-11-05", 0), log("2026-11-06", 0)])), false, "the third latest is on another step");
+  assert.equal(readyForNextStep(skill(1, [log("2026-11-01", 1), log("2026-11-02", 0), log("2026-11-03", 0), log("2026-11-05", 0)])), true, "older results do not count");
+  assert.equal(readyForNextStep(skill(3, [log("2026-11-01", 2), log("2026-11-03", 2), log("2026-11-05", 2)])), false, "the last step has no next one");
+  assert.equal(readyForNextStep(skill(0, [log("2026-11-01", 0), log("2026-11-03", 0), log("2026-11-05", 0)])), false, "a skill not started yet");
+});

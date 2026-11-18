@@ -115,7 +115,8 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   await until(() => evaluate("!!document.querySelector('[data-cali-ladder]')"), "skill ladder");
   assert.ok(await evaluate("document.body.innerText.includes('Handstand')"), "skills visible under progress");
   assert.ok(await evaluate("document.querySelector('[data-cali-ladder] [data-state=\"current\"]') !== null"), "current step highlighted");
-  assert.ok(await evaluate("!document.querySelector('[data-cali-advance]')"), "no step change offered after a single result");
+  assert.ok(await evaluate("!!document.querySelector('[data-cali-advance] .module-primary')"), "next step offered after three results on the current one");
+  assert.ok(await evaluate("!!document.querySelector('[data-cali-ladder] + div, .module-bars')"), "recent results chart");
   assert.ok(await evaluate("document.body.innerText.toLowerCase().includes(\"calendrier d'activité\")"), "calisthenics activity calendar");
   await noOverflow("calisthenics progress");
   await shot("calisthenics-progress-fr-dark-375");

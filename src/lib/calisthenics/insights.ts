@@ -72,3 +72,12 @@ export function weekBalance(workouts: Workout[], sets: CalisthenicsSet[], catego
   const lagging = total > 0 ? BALANCE_CATEGORIES.filter((category) => counts[category] === 0) : [];
   return { counts, max: Math.max(...BALANCE_CATEGORIES.map((category) => counts[category]), 0), lagging };
 }
+
+type SkillForStep = { current_step: number; progression_steps: string[]; logs: { logged_on: string; created_at: string; step_index: number | null }[] };
+
+/** A skill is ready for its next step when its last three results were all logged on the current step. */
+export function readyForNextStep(skill: SkillForStep) {
+  if (skill.current_step < 1 || skill.current_step >= skill.progression_steps.length) return false;
+  const lastThree = [...skill.logs].sort((a, b) => b.logged_on.localeCompare(a.logged_on) || b.created_at.localeCompare(a.created_at)).slice(0, 3);
+  return lastThree.length === 3 && lastThree.every((log) => log.step_index === skill.current_step - 1);
+}
