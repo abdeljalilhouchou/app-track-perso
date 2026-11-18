@@ -10,11 +10,13 @@ type Skill = CalisthenicsData["skills"][number];
 const clock = (seconds: number) => seconds >= 60 ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}` : `${seconds} s`;
 
 /** Calisthenics "Progrès": one skill's step ladder, its recent results, and records by exercise. */
-export function CaliSkills({ skills, records, onEdit, onDelete, logger }: {
+export function CaliSkills({ skills, records, onEdit, onDelete, onAdvance, logger }: {
   skills: Skill[];
   records: (ExerciseRecord & { label: string })[];
   onEdit: (skill: Skill) => void;
   onDelete: (skill: Skill) => void;
+  /** Moves the skill to its next step; offered once the last 3 results sit on the current step. */
+  onAdvance: (skill: Skill) => void;
   /** The existing result logger for the selected skill. */
   logger: (skill: Skill) => ReactNode;
 }) {
@@ -24,6 +26,8 @@ export function CaliSkills({ skills, records, onEdit, onDelete, logger }: {
   const [selectedId, setSelectedId] = useState(skills[0]?.id ?? "");
   const skill = skills.find((item) => item.id === selectedId) ?? skills[0];
   const unit = (value: number) => skill?.measurement_type === "hold" ? clock(value) : `${value} reps`;
+  const lastThree = skill ? [...skill.logs].sort((a, b) => b.logged_on.localeCompare(a.logged_on) || b.created_at.localeCompare(a.created_at)).slice(0, 3) : [];
+  const canAdvance = !!skill && skill.current_step >= 1 && skill.current_step < skill.progression_steps.length && lastThree.length === 3 && lastThree.every((log) => log.step_index === skill.current_step - 1);
   const logs = skill ? [...skill.logs].sort((a, b) => a.logged_on.localeCompare(b.logged_on) || a.created_at.localeCompare(b.created_at)).slice(-6) : [];
 
   return <div className="space-y-4">
@@ -47,6 +51,10 @@ export function CaliSkills({ skills, records, onEdit, onDelete, logger }: {
       {logs.length >= 2 && <div className="space-y-2">
         <p className="text-[13px] font-semibold">{v("bestPerSession")}</p>
         <ModuleBars label={v("bestPerSession")} bars={logs.map((log, index) => ({ key: log.id, label: String(log.hold_seconds ?? log.reps ?? 0), value: log.hold_seconds ?? log.reps ?? 0, highlight: index === logs.length - 1 }))} />
+      </div>}
+      {canAdvance && <div className="space-y-2 rounded-2xl p-3" style={{ background: "color-mix(in srgb, var(--sport) 10%, transparent)" }} data-cali-advance>
+        <p className="text-[13px]">{v("advanceReady")}</p>
+        <button type="button" className="module-primary" onClick={() => onAdvance(skill)}>{v("advanceStep")}</button>
       </div>}
       {logger(skill)}
       <div className="grid grid-cols-2 gap-2">

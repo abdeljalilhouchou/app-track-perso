@@ -3,7 +3,7 @@ export const runningExtraFr = {
   gateBody: "Le suivi Running sera disponible après validation et exécution manuelle de la migration Supabase. Aucune course ne sera enregistrée avant cette étape.",
   subtitle: "Enregistre tes sorties, suis tes progrès et avance à ton rythme.",
   sections: { overview: "Aperçu", sessions: "Séances", progress: "Progrès", goals: "Objectifs" },
-  weekShort: "S", detailsCta: "Détails", weekEyebrow: "Semaine {week} · {range}", streak: "{count} sem. d’affilée", goalOfWeek: "Objectif de la semaine", goalWord: "objectif", runsPlanned: "{done} sorties sur {goal} prévues", noGoalHint: "Fixe un objectif pour suivre ta semaine.", setGoal: "Fixer un objectif",
+  weekShort: "S", detailsCta: "Détails", weekEyebrow: "Semaine {week} · {range}", streak: "{count} sem. d’affilée", goalOfWeek: "Objectif de la semaine", goalWord: "objectif", runsPlanned: "Sorties : {done} / {goal} prévues", noGoalHint: "Fixe un objectif pour suivre ta semaine.", setGoal: "Fixer un objectif",
   distanceLabel: "Distance", timeLabel: "Temps", paceLabel: "Allure moyenne", runsLabel: "Sorties", deltaSame: "= semaine passée", fasterBy: "{value} plus rapide", slowerBy: "{value} plus lent",
   distancePerWeek: "Distance par semaine", eightWeeks: "8 semaines", lastRunWhen: "Dernière course · {when}", feeling: "Ressenti", personalRecords: "Records personnels", seeAll: "Tout voir", longestShort: "Plus longue",
   newRun: "Nouvelle course", close: "Fermer", runTypeLabel: "Type de sortie", durationPlaceholder: "h:mm:ss", computedPace: "Allure calculée", moreDetails: "Plus de détails", useStopwatch: "Utiliser le chronomètre", saveRunFull: "Enregistrer la course",

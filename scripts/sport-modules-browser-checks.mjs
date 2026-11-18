@@ -97,6 +97,7 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   await until(() => evaluate("!!document.querySelector('.cali-rest')"), "rest timer starts after a set");
   assert.ok(await evaluate("document.querySelector('[data-cali-card] .cali-check').getAttribute('aria-pressed') === 'true'"), "set marked done");
   assert.ok(await evaluate("!!document.querySelector('.cali-footer .module-primary')"), "finish action in the footer");
+  assert.ok(await evaluate("/^[0-9]+:[0-9]{2}$/.test(document.querySelector('[data-cali-elapsed]').textContent)"), "session clock running");
   await noOverflow("calisthenics session");
   await shot("calisthenics-session-fr-dark-375");
   await evaluate("[...document.querySelectorAll('.cali-rest button')].pop().click()");
@@ -114,6 +115,7 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   await until(() => evaluate("!!document.querySelector('[data-cali-ladder]')"), "skill ladder");
   assert.ok(await evaluate("document.body.innerText.includes('Handstand')"), "skills visible under progress");
   assert.ok(await evaluate("document.querySelector('[data-cali-ladder] [data-state=\"current\"]') !== null"), "current step highlighted");
+  assert.ok(await evaluate("!document.querySelector('[data-cali-advance]')"), "no step change offered after a single result");
   assert.ok(await evaluate("document.body.innerText.toLowerCase().includes(\"calendrier d'activité\")"), "calisthenics activity calendar");
   await noOverflow("calisthenics progress");
   await shot("calisthenics-progress-fr-dark-375");

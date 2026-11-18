@@ -110,6 +110,9 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
   const [draftRestored, setDraftRestored] = useState(false);
   const [date, setDate] = useState("");
   const [durationMinutes, setDurationMinutes] = useState(45);
+  // When the draft got its first exercise; the session length comes from it unless typed in.
+  const [startedAt, setStartedAt] = useState<number | null>(null);
+  const [durationTouched, setDurationTouched] = useState(false);
   const [intensity, setIntensity] = useState(3);
   const [sessionNotes, setSessionNotes] = useState("");
   const [programSessionId, setProgramSessionId] = useState("");
@@ -163,7 +166,7 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
       try {
         const saved = window.localStorage.getItem(DRAFT_KEY);
         if (saved) {
-          const draft = JSON.parse(saved) as Partial<{ date: string; durationMinutes: number; intensity: number; notes: string; programSessionId: string; items: DraftItem[] }>;
+          const draft = JSON.parse(saved) as Partial<{ date: string; durationMinutes: number; intensity: number; notes: string; programSessionId: string; items: DraftItem[]; startedAt: number }>;
           if (Array.isArray(draft.items) && draft.items.length <= 50 && draft.items.every((item) => item && typeof item.exerciseId === "string" && Array.isArray(item.sets))) {
             setDate(typeof draft.date === "string" ? draft.date : localDate());
             setDurationMinutes(Number.isInteger(draft.durationMinutes) ? draft.durationMinutes! : 45);
@@ -171,6 +174,7 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
             setSessionNotes(typeof draft.notes === "string" ? draft.notes : "");
             setProgramSessionId(typeof draft.programSessionId === "string" ? draft.programSessionId : "");
             setDraftItems(draft.items);
+            setStartedAt(typeof draft.startedAt === "number" && draft.startedAt <= Date.now() ? draft.startedAt : Date.now());
             setDraftRestored(draft.items.length > 0);
           } else {
             setDate(localDate());
@@ -194,11 +198,11 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
       return;
     }
     try {
-      window.localStorage.setItem(DRAFT_KEY, JSON.stringify({ date, durationMinutes, intensity, notes: sessionNotes, programSessionId, items: draftItems }));
+      window.localStorage.setItem(DRAFT_KEY, JSON.stringify({ date, durationMinutes, intensity, notes: sessionNotes, programSessionId, items: draftItems, startedAt }));
     } catch {
       // Storage may be disabled or full; the in-memory session remains usable.
     }
-  }, [draftReady, date, durationMinutes, intensity, sessionNotes, programSessionId, draftItems]);
+  }, [draftReady, date, durationMinutes, intensity, sessionNotes, programSessionId, draftItems, startedAt]);
 
   useEffect(() => {
     if (!draftItems.length) return;
@@ -247,6 +251,7 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
     const exercise = exercisesById.get(exerciseId);
     if (!exercise) return;
     if (draftItems.length >= 50) { setFeedback(c("errors.invalid")); return; }
+    setStartedAt((value) => value ?? Date.now());
     const count = target?.target_sets ?? 3;
     const sets = Array.from({ length: count }, () => {
       const item = blankSet(exercise.measurement_type);
@@ -276,6 +281,8 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
       }),
     })).filter((item) => item.exerciseId));
     setDurationMinutes(45);
+    setDurationTouched(false);
+    setStartedAt(() => Date.now());
     setSection("session");
   };
 
@@ -297,8 +304,9 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
         notes: set.notes,
       })),
     }));
-    runMutation(() => saveCalisthenicsWorkout({ date, durationMinutes, intensity, notes: sessionNotes, programSessionId: programSessionId || null, items }), () => {
-      setDraftItems([]); setProgramSessionId(""); setSessionNotes(""); setDate(localDate()); setDurationMinutes(45); setIntensity(3); setDraftRestored(false);
+    const minutes = !durationTouched && startedAt !== null ? Math.min(600, Math.max(1, Math.round((Date.now() - startedAt) / 60_000))) : durationMinutes;
+    runMutation(() => saveCalisthenicsWorkout({ date, durationMinutes: minutes, intensity, notes: sessionNotes, programSessionId: programSessionId || null, items }), () => {
+      setDraftItems([]); setProgramSessionId(""); setSessionNotes(""); setDate(localDate()); setDurationMinutes(45); setIntensity(3); setDraftRestored(false); setStartedAt(null); setDurationTouched(false);
     });
   };
 
@@ -366,7 +374,7 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
 
     {section === "session" && <div className="space-y-4">
       <ModuleCard highlight>
-        <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--sport-ink)" }}>{v("sessionInProgress")}</p>
+        <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--sport-ink)" }}>{v("sessionInProgress")}{startedAt !== null && <> · <ElapsedClock since={startedAt} /></>}</p>
         <h2 className="text-xl font-bold tracking-tight">{data.programs.flatMap((program) => program.sessions).find((session) => session.id === programSessionId)?.name ?? v("freeSessionTitle")}</h2>
         {draftItems.length > 0 && (() => {
           const done = draftItems.filter((item) => item.sets.length > 0 && item.sets.every((set) => set.done)).length;
@@ -406,7 +414,7 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
         <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold">{v("sessionDetails")}</summary>
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label={c("date")}><input type="date" className={controlClass} value={date} onChange={(event) => setDate(event.target.value)} /></Field>
-          <Field label={c("duration")}><input type="number" inputMode="numeric" min={1} max={600} className={controlClass} value={durationMinutes} onChange={(event) => setDurationMinutes(Number(event.target.value))} /></Field>
+          <Field label={c("duration")}><input type="number" inputMode="numeric" min={1} max={600} className={controlClass} value={durationMinutes} onChange={(event) => { setDurationMinutes(Number(event.target.value)); setDurationTouched(true); }} /></Field>
           <Field label={c("intensity")}><select className={controlClass} value={intensity} onChange={(event) => setIntensity(Number(event.target.value))}>{[1, 2, 3, 4, 5].map((value) => <option key={value} value={value}>{value} / 5</option>)}</select></Field>
           <Field label={c("chooseProgramSession")}><select className={controlClass} value={programSessionId} onChange={(event) => setProgramSessionId(event.target.value)}><option value="">{c("freeSession")}</option>{data.programs.flatMap((program) => program.sessions.map((session) => <option key={session.id} value={session.id}>{program.name} · {session.name}</option>))}</select></Field>
         </div>
@@ -421,7 +429,7 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
 
       {draftItems.length > 0 && <div className="cali-footer">
         <button type="button" className="module-primary" disabled={busy} onClick={submitSession}>{busy ? c("saving") : v("finishSession")}</button>
-        <button type="button" className="module-secondary" style={{ minHeight: 52 }} onClick={() => { if (window.confirm(v("discardConfirm"))) { setDraftItems([]); setProgramSessionId(""); setDraftRestored(false); setTimerEnd(null); setSecondsLeft(0); } }}>{v("discardSession")}</button>
+        <button type="button" className="module-secondary" style={{ minHeight: 52 }} onClick={() => { if (window.confirm(v("discardConfirm"))) { setDraftItems([]); setProgramSessionId(""); setDraftRestored(false); setTimerEnd(null); setSecondsLeft(0); setStartedAt(null); setDurationTouched(false); } }}>{v("discardSession")}</button>
       </div>}
     </div>}
 
@@ -472,6 +480,7 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
         records={records}
         onEdit={(skill) => setSkillForm({ id: skill.id, name: skill.name, skillKey: skill.skill_key, currentStep: skill.current_step, targetStep: skill.target_step, progressionSteps: [...skill.progression_steps], measurementType: skill.measurement_type, startedOn: skill.started_on ?? "", notes: skill.notes })}
         onDelete={(skill) => window.confirm(c("deleteConfirm")) && runMutation(() => deleteCalisthenicsSkill(skill.id))}
+        onAdvance={(skill) => runMutation(() => saveCalisthenicsSkill({ id: skill.id, name: skill.name, skillKey: skill.skill_key, currentStep: skill.current_step + 1, targetStep: Math.max(skill.target_step, skill.current_step + 1), progressionSteps: [...skill.progression_steps], measurementType: skill.measurement_type, startedOn: skill.started_on || null, notes: skill.notes }))}
         logger={(skill) => <SkillLogger key={skill.id} skill={skill} label={c("logResult")} dateLabel={c("logDate")} resultLabel={skill.measurement_type === "hold" ? c("resultHold") : c("resultReps")} notesLabel={c("skillNotes")} submitLabel={c("logResult")} date={date} busy={busy} onSave={(payload) => runMutation(() => logCalisthenicsSkill(payload))} />}
       />
       {skillForm && <Card><form className="space-y-4" onSubmit={(event) => { event.preventDefault(); runMutation(() => saveCalisthenicsSkill({ ...skillForm, startedOn: skillForm.startedOn || null }), () => setSkillForm(null)); }}><div className="flex items-center justify-between gap-3"><h3 className="text-base font-semibold">{skillForm.id ? c("saveSkill") : c("newSkill")}</h3><button type="button" className={secondaryButtonClass} onClick={() => setSkillForm(null)}>{c("remove")}</button></div><div className="grid gap-3 sm:grid-cols-2"><Field label={c("skillName")}><input required maxLength={80} className={controlClass} value={skillForm.name} onChange={(event) => setSkillForm((form) => form ? ({ ...form, name: event.target.value }) : null)} /></Field><Field label={c("measurement")}><select className={controlClass} value={skillForm.measurementType} onChange={(event) => setSkillForm((form) => form ? ({ ...form, measurementType: event.target.value as "reps" | "hold" }) : null)}><option value="hold">{c("holdSeconds")}</option><option value="reps">{c("reps")}</option></select></Field></div><div><p className="mb-2 text-xs font-medium text-foreground-muted">{c("progressionSteps")}</p><div className="space-y-2">{skillForm.progressionSteps.map((step, index) => <div key={index} className="flex gap-2"><input required maxLength={80} className={controlClass} value={step} onChange={(event) => setSkillForm((form) => form ? ({ ...form, progressionSteps: form.progressionSteps.map((value, row) => row === index ? event.target.value : value) }) : null)} /><button type="button" className={secondaryButtonClass} onClick={() => setSkillForm((form) => form ? ({ ...form, progressionSteps: form.progressionSteps.filter((_, row) => row !== index), currentStep: Math.min(form.currentStep, form.progressionSteps.length - 2), targetStep: Math.min(form.targetStep, form.progressionSteps.length - 1) }) : null)}>{c("remove")}</button></div>)}</div><button type="button" className={`${secondaryButtonClass} mt-2`} onClick={() => setSkillForm((form) => form ? ({ ...form, progressionSteps: [...form.progressionSteps, ""], targetStep: Math.min(form.progressionSteps.length + 1, 30) }) : null)}>＋ {c("addStep")}</button></div><div className="grid gap-3 sm:grid-cols-3"><Field label={c("currentStep")}><select className={controlClass} value={skillForm.currentStep} onChange={(event) => setSkillForm((form) => form ? ({ ...form, currentStep: Number(event.target.value) }) : null)}><option value={0}>—</option>{skillForm.progressionSteps.map((step, index) => <option key={index} value={index + 1}>{step}</option>)}</select></Field><Field label={c("targetStep")}><select className={controlClass} value={skillForm.targetStep} onChange={(event) => setSkillForm((form) => form ? ({ ...form, targetStep: Number(event.target.value) }) : null)}>{skillForm.progressionSteps.map((step, index) => <option key={index} value={index + 1}>{step}</option>)}</select></Field><Field label={c("startedOn")}><input type="date" className={controlClass} value={skillForm.startedOn} onChange={(event) => setSkillForm((form) => form ? ({ ...form, startedOn: event.target.value }) : null)} /></Field></div><Field label={c("skillNotes")}><textarea className={`${controlClass} min-h-20 py-3`} maxLength={2000} value={skillForm.notes} onChange={(event) => setSkillForm((form) => form ? ({ ...form, notes: event.target.value }) : null)} /></Field><button type="submit" className={buttonClass} disabled={busy}>{c("saveSkill")}</button></form></Card>}
@@ -594,3 +603,15 @@ function muscleLabel(muscle: string, t: (path: string) => string) {
   return translated === path ? muscle : translated;
 }
 
+
+/** Time since the session started, ticking on its own so the workspace does not re-render every second. */
+function ElapsedClock({ since }: { since: number }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const interval = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(interval);
+  }, []);
+  const seconds = Math.max(0, Math.floor((now - since) / 1000));
+  const h = Math.floor(seconds / 3600), m = Math.floor((seconds % 3600) / 60), sec = seconds % 60;
+  return <time className="tabular-nums" data-cali-elapsed>{h ? `${h}:${String(m).padStart(2, "0")}` : m}:{String(sec).padStart(2, "0")}</time>;
+}

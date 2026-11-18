@@ -206,10 +206,10 @@
 /* Module kit (src/components/sport/ui/module-kit.tsx), shared by Running and Calisthenics. */
 .sport-ui .sport-module-eyebrow { margin: 0; font-size: .75rem; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: var(--sport-ink); }
 .sport-ui .sport-module-head-row { display: flex; align-items: flex-end; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
-.sport-ui .sport-segmented-control.is-module { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); width: 100%; box-sizing: border-box; border-radius: 16px; padding: 4px; gap: 2px; background: var(--surface); -webkit-mask-image: none; mask-image: none; overflow: visible; }
-.sport-ui .sport-segmented-control.is-module .sport-segment { min-width: 0; border-radius: 12px; padding: .5rem .25rem; font-size: .75rem; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sport-ui .sport-segmented-control.is-module { display: flex; width: 100%; box-sizing: border-box; border-radius: 16px; padding: 4px; gap: 2px; background: var(--surface); -webkit-mask-image: none; mask-image: none; overflow: visible; }
+.sport-ui .sport-segmented-control.is-module .sport-segment { flex: 1 1 auto; min-width: 0; border-radius: 12px; padding: .5rem .25rem; font-size: .75rem; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sport-ui .sport-segmented-control.is-module .sport-segment.is-active { background: var(--sport); color: #062016; }
-@media (max-width: 359px) { .sport-ui .sport-segmented-control.is-module { grid-auto-columns: max-content; overflow-x: auto; scrollbar-width: none; } .sport-ui .sport-segmented-control.is-module .sport-segment { padding-inline: .75rem; } }
+@media (max-width: 359px) { .sport-ui .sport-segmented-control.is-module { -webkit-mask-image: linear-gradient(to right, #000 85%, transparent); mask-image: linear-gradient(to right, #000 85%, transparent); overflow-x: auto; scrollbar-width: none; } .sport-ui .sport-segmented-control.is-module .sport-segment { flex: 0 0 auto; padding-inline: .75rem; } }
 .sport-ui .module-card { min-width: 0; display: flex; flex-direction: column; gap: .75rem; padding: 1rem; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); }
 .sport-ui .module-card.is-highlight { background: color-mix(in srgb, var(--sport) 9%, var(--surface)); border-color: color-mix(in srgb, var(--sport) 32%, var(--border)); }
 .sport-ui .module-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; }
@@ -250,6 +250,8 @@
 .sport-ui .module-secondary { display: inline-flex; align-items: center; justify-content: center; gap: .375rem; min-height: 44px; padding: 0 1rem; border-radius: 12px; border: 1px solid var(--border); background: transparent; color: var(--foreground); font-size: .875rem; font-weight: 600; cursor: pointer; }
 .sport-ui .module-secondary.is-danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 35%, var(--border)); }
 @media (prefers-reduced-motion: reduce) { .sport-ui .module-ring-value { transition: none; } }
+
+@media (max-width: 359px) { [dir="rtl"] .sport-ui .sport-segmented-control.is-module { -webkit-mask-image: linear-gradient(to left, #000 85%, transparent); mask-image: linear-gradient(to left, #000 85%, transparent); } }
 
 /* Running: the log/edit sheet (src/components/sport/running/run-form-sheet.tsx). */
 .sport-ui.run-sheet { width: min(560px, calc(100vw - 32px)); max-height: min(92dvh, 900px); margin: auto; padding: 0; border: 1px solid var(--border); border-radius: 24px; background: var(--surface); color: var(--foreground); overflow: hidden; animation: run-sheet-in .22s ease-out; }
