@@ -84,22 +84,41 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   // Calisthenics interactions.
   await go("/sport/calisthenics");
   await until(() => evaluate("document.querySelectorAll('[data-module-tab]').length === 5"), "calisthenics has 5 sections");
-  assert.ok(await evaluate("document.body.innerText.includes('Volume cette semaine')"), "week volume card");
-  assert.ok(await evaluate("document.body.innerText.includes('Série en cours')"), "streak card");
-  await tab("session");
-  // The session tab now also carries the history that used to have its own tab.
-  assert.ok(await evaluate("document.body.innerText.includes('Full body')"), "history visible under the session tab");
+  assert.equal(await evaluate("document.querySelectorAll('.module-primary').length"), 1, "One primary action on the Calisthenics overview");
+  assert.ok(await evaluate("!!document.querySelector('[data-cali-start-next]')"), "next program session suggested");
+  assert.ok(await evaluate("document.body.innerText.includes('Séance A') || document.body.innerText.includes('Séance B')"), "suggested session named");
+  assert.ok(await evaluate("/Semaine [0-9]+/i.test(document.querySelector('.sport-module-eyebrow').textContent)"), "calisthenics week eyebrow");
+  await shot("calisthenics-overview-detail-fr-dark-375");
+  // Starting the suggested session fills the draft and opens the session tab.
+  await evaluate("document.querySelector('[data-cali-start-next]').click()");
+  await until(() => evaluate("document.querySelectorAll('[data-cali-card]').length === 2"), "two exercise cards in the session");
+  assert.equal(await evaluate("document.querySelector('[data-module-tab=\"session\"]').getAttribute('aria-pressed')"), "true", "session tab opened");
+  await evaluate("document.querySelector('[data-cali-card] .cali-check').click()");
+  await until(() => evaluate("!!document.querySelector('.cali-rest')"), "rest timer starts after a set");
+  assert.ok(await evaluate("document.querySelector('[data-cali-card] .cali-check').getAttribute('aria-pressed') === 'true'"), "set marked done");
+  assert.ok(await evaluate("!!document.querySelector('.cali-footer .module-primary')"), "finish action in the footer");
+  await noOverflow("calisthenics session");
   await shot("calisthenics-session-fr-dark-375");
+  await evaluate("[...document.querySelectorAll('.cali-rest button')].pop().click()");
+  await until(() => evaluate("!document.querySelector('.cali-rest')"), "rest can be skipped");
+  // The session tab still carries the history.
+  assert.ok(await evaluate("document.body.innerText.includes('Full body')"), "history visible under the session tab");
   await tab("exercises");
   const groups = await evaluate("[...document.querySelectorAll('.sport-group-heading')].map((h) => h.firstChild.textContent)");
   assert.ok(groups.length >= 2, `library grouped by category: ${JSON.stringify(groups)}`);
   assert.ok(await evaluate("[...document.querySelectorAll('.sport-group-heading')].every((h) => h.id && document.querySelector(`[aria-labelledby=\"${h.id}\"]`))"), "each group is labelled");
+  assert.ok(await evaluate("document.querySelectorAll('[data-cali-exercise] .cali-lib-add').length >= 2"), "each exercise can be added");
+  await noOverflow("calisthenics exercises");
   await shot("calisthenics-exercises-fr-dark-375");
   await tab("progress");
-  // Skills moved under Progression and keep their own heading.
+  await until(() => evaluate("!!document.querySelector('[data-cali-ladder]')"), "skill ladder");
   assert.ok(await evaluate("document.body.innerText.includes('Handstand')"), "skills visible under progress");
+  assert.ok(await evaluate("document.querySelector('[data-cali-ladder] [data-state=\"current\"]') !== null"), "current step highlighted");
   assert.ok(await evaluate("document.body.innerText.toLowerCase().includes(\"calendrier d'activité\")"), "calisthenics activity calendar");
+  await noOverflow("calisthenics progress");
   await shot("calisthenics-progress-fr-dark-375");
+  // Leave no draft behind for the next checks.
+  await evaluate("localStorage.removeItem('track-perso:calisthenics-session-v1')");
 
   // Both modules without any data.
   setFixture("empty");

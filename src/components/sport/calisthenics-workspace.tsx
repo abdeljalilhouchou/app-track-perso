@@ -4,7 +4,12 @@ import { ExerciseGuideButton } from "@/components/sport/exercises/exercise-guide
 import { SportButton, SportEmptyState, SportLink } from "@/components/sport/ui/sport-primitives";
 import { SportModuleShell, SportModuleTabs, SportStatusMessage } from "@/components/sport/ui/sport-module-shell";
 import { SportHeatmap } from "@/components/sport/sport-overview";
-import { SportStatCard } from "@/components/sport/ui/sport-stat-card";
+import { CaliOverview } from "@/components/sport/calisthenics/cali-overview";
+import { CaliExerciseCard, type DraftItem, type DraftSet } from "@/components/sport/calisthenics/cali-exercise-card";
+import { CaliSkills } from "@/components/sport/calisthenics/cali-skills";
+import { ModuleCard, ModuleChips, ModulePill } from "@/components/sport/ui/module-kit";
+import { compareWeeks, exerciseRecords, weekBalance } from "@/lib/calisthenics/insights";
+import { weekHeading } from "@/lib/sport-week";
 
 import { useEffect, useId, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -34,8 +39,6 @@ import type {
 } from "@/types/database";
 
 type Section = "overview" | "session" | "program" | "exercises" | "progress";
-type DraftSet = { key: string; reps: number | null; holdSeconds: number | null; mode: "reps" | "hold"; assistanceKg: number | null; addedWeightKg: number | null; variation: string; notes: string };
-type DraftItem = { key: string; exerciseId: string; sets: DraftSet[] };
 type ProgramForm = {
   id?: string;
   name: string;
@@ -112,7 +115,6 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
   const [programSessionId, setProgramSessionId] = useState("");
   const [draftItems, setDraftItems] = useState<DraftItem[]>([]);
   const [exerciseSearch, setExerciseSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all");
   const [levelFilter, setLevelFilter] = useState("all");
   const [exerciseForm, setExerciseForm] = useState<ExerciseForm | null>(null);
   const [programForm, setProgramForm] = useState<ProgramForm | null>(null);
@@ -134,13 +136,27 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
     return grouped;
   }, [data.sets]);
   const overviewStats = computeCalisthenicsStats(data.workouts, data.sets);
-  const recentWorkout = data.workouts[0];
   const programSessions = data.programs.flatMap((program) => program.sessions.map((session) => ({ program, session })));
   const lastUsedProgramSessionId = data.workouts.find((workout) => workout.calisthenics_program_session_id)?.calisthenics_program_session_id;
   const lastUsed = programSessions.findIndex(({ session }) => session.id === lastUsedProgramSessionId);
   const suggestion = lastUsed >= 0
     ? (() => { const current = programSessions[lastUsed]; const next = current.program.sessions[(current.program.sessions.findIndex((session) => session.id === current.session.id) + 1) % current.program.sessions.length]; return { program: current.program, session: next }; })()
     : programSessions[0];
+  const v = (key: string, vars?: Record<string, string | number>) => t(`sport.calisthenicsUi.v2.${key}`, vars);
+  const heading = weekHeading(new Date(), language === "ar" ? "ar" : language === "en" ? "en-US" : "fr-FR");
+  const weeks = compareWeeks(data.workouts, data.sets);
+  const records = exerciseRecords(data.workouts, data.sets).map((record) => ({ ...record, label: exercisesById.has(record.key) ? localeName(exercisesById.get(record.key)!, language) : record.name }));
+  const balance = weekBalance(data.workouts, data.sets, (set) => set.exercise_id ? exercisesById.get(set.exercise_id)?.category : undefined);
+  const bestFor = (exerciseId: string, kind: "reps" | "hold") => records.find((record) => record.key === exerciseId && record.kind === kind)?.value ?? 0;
+  // The values of each exercise's most recent session, newest workouts first.
+  const lastByExercise = new Map<string, string>();
+  for (const workout of data.workouts) {
+    const rows = setsByWorkout.get(workout.id) ?? [];
+    for (const set of rows) {
+      if (!set.exercise_id || lastByExercise.has(set.exercise_id)) continue;
+      lastByExercise.set(set.exercise_id, rows.filter((row) => row.exercise_id === set.exercise_id).map((row) => row.hold_seconds !== null ? `${row.hold_seconds} s` : String(row.reps ?? 0)).join(" · "));
+    }
+  }
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -289,7 +305,7 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
   const filteredExercises = data.exercises.filter((exercise) => {
     const name = localeName(exercise, language).toLowerCase();
     return (!exerciseSearch || name.includes(exerciseSearch.toLowerCase()) || exercise.exercise_key.includes(exerciseSearch.toLowerCase())) &&
-      (categoryFilter === "all" || exercise.category === categoryFilter) && (levelFilter === "all" || exercise.level === levelFilter);
+      (levelFilter === "all" || exercise.level === levelFilter);
   });
 
   const filteredWorkouts = data.workouts.filter((workout) => {
@@ -309,14 +325,6 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
   const holdsMap = new Map(periodStats.holds.map((record) => [record.key, { ...record, name: exercisesById.has(record.key) ? localeName(exercisesById.get(record.key)!, language) : record.name }]));
   const totalReps = periodStats.reps.reduce((sum, record) => sum + record.total, 0);
   const totalHold = periodStats.holds.reduce((sum, record) => sum + record.total, 0);
-  const recentCutoff = new Date();
-  recentCutoff.setDate(recentCutoff.getDate() - 6);
-  const recentWorkouts = data.workouts.filter((workout) => workout.workout_date >= localDateOf(recentCutoff) && workout.workout_date <= localDate());
-  const recentWorkoutIds = new Set(recentWorkouts.map((workout) => workout.id));
-  const recentSets = data.sets.filter((set) => recentWorkoutIds.has(set.workout_id));
-  const recentStats = computeCalisthenicsStats(recentWorkouts, recentSets);
-  const recentReps = recentStats.reps.reduce((sum, record) => sum + record.total, 0);
-  const recentHold = recentStats.holds.reduce((sum, record) => sum + record.total, 0);
   const activeSkillLogs = data.skills.flatMap((skill) => skill.logs);
   const bestSkillResults = new Map<string, number>();
   for (const log of activeSkillLogs) bestSkillResults.set(log.skill_id, Math.max(bestSkillResults.get(log.skill_id) ?? 0, log.hold_seconds ?? log.reps ?? 0));
@@ -327,83 +335,123 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
 
   return <SportModuleShell
     title={t("sport.hub.calisthenics.title")}
-    description={t("sport.hub.calisthenics.description")}
-    icon="activity"
+    eyebrow={v("weekEyebrow", heading)}
+    badge={overviewStats.weekStreak >= 2 ? <ModulePill>{v("streak", { count: overviewStats.weekStreak })}</ModulePill> : undefined}
     tabs={navigation}
     status={statusMessage}
   >
 
-    {section === "overview" && <div className="space-y-4">
-      {data.workouts.length === 0 ? <SportEmptyState icon="activity" title={c("noLastSession")} description={c("overviewEmpty")} action={<SportButton onClick={() => setSection("session")}>{c("startSession")}</SportButton>} /> : <div className="sport-stat-grid">
-        <SportStatCard label={c("weekSessions")} value={overviewStats.sessionsThisWeek} icon="calendar" />
-        <SportStatCard label={c("weekMinutes")} value={overviewStats.minutesThisWeek} unit={c("minutesLabel")} icon="stats" />
-        <SportStatCard label={c("lastSession")} value={recentWorkout ? recentWorkout.activity : "—"} detail={recentWorkout ? `${formatDate(recentWorkout.workout_date, language)} · ${recentWorkout.duration_minutes} ${c("minutesLabel")}` : c("noLastSession")} />
-        <SportStatCard label={c("weekVolume")} value={overviewStats.weekVolume.reps} unit={c("repsLabel")} detail={overviewStats.weekVolume.holdSeconds > 0 ? `${overviewStats.weekVolume.holdSeconds} ${c("secondsLabel")}` : undefined} icon="strength" />
-        <SportStatCard label={c("weekStreak")} value={overviewStats.weekStreak} unit={c("weeksLabel")} detail={c("totalSessions") + " : " + data.workouts.length} icon="trophy" />
-      </div>}
-      {data.workouts.length > 0 && <>
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="flex flex-col">
-          <h2 className="text-sm font-semibold">{c("startSession")}</h2><p className="mt-1 flex-1 text-sm text-foreground-muted">{data.workouts.length === 0 && data.skills.length === 0 ? c("overviewEmpty") : c("continueTraining")}</p>
-          <button className={`${buttonClass} mt-4 w-full sm:w-auto`} type="button" onClick={() => setSection("session")}>{c("startSession")}</button>
-        </Card>
-        <Card>
-          <h2 className="text-sm font-semibold">{c("suggestion")}</h2>
-          {suggestion ? <div className="mt-3 flex items-center justify-between gap-3"><div className="min-w-0"><p className="truncate text-sm font-medium">{suggestion.program.name} · {suggestion.session.name}</p><p className="mt-1 text-xs text-foreground-muted">{suggestion.session.exercises.length} {c("sections.exercises").toLowerCase()}</p></div><button type="button" className={secondaryButtonClass} onClick={() => startProgramSession(suggestion.session)}>{c("startFromProgram")}</button></div> : <p className="mt-2 text-sm text-foreground-muted">{c("noSuggestion")}</p>}
-        </Card>
-      </div>
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card><div className="flex items-center justify-between gap-3"><h2 className="text-sm font-semibold">{c("activeSkills")}</h2><button className={secondaryButtonClass} type="button" onClick={() => setSection("progress")}>{c("skillsTitle")}</button></div>
-          {data.skills.length ? <ul className="mt-3 divide-y divide-border">{data.skills.slice(0, 4).map((skill) => <li key={skill.id} className="flex items-center justify-between gap-3 py-3"><span className="truncate text-sm font-medium">{skill.name}</span><span className="text-xs text-foreground-muted">{skill.current_step}/{skill.target_step}</span></li>)}</ul> : <p className="mt-3 text-sm text-foreground-muted">{c("noSkills")}</p>}</Card>
-        <Card><h2 className="text-sm font-semibold">{c("recentProgress")}</h2><div className="mt-3 grid grid-cols-2 gap-3"><div className="rounded-xl bg-surface-muted p-3"><p className="text-xs text-foreground-muted">{c("totalReps")}</p><p className="mt-1 text-xl font-semibold">{recentReps}</p></div><div className="rounded-xl bg-surface-muted p-3"><p className="text-xs text-foreground-muted">{c("totalHold")}</p><p className="mt-1 text-xl font-semibold">{recentHold} {c("secondsLabel")}</p></div></div></Card>
-      </div>
-      </>}
-    </div>}
+    {section === "overview" && (data.workouts.length === 0 && !suggestion
+      ? <SportEmptyState icon="activity" title={c("noLastSession")} description={c("overviewEmpty")} action={<SportButton onClick={() => setSection("session")}>{c("startSession")}</SportButton>} />
+      : <CaliOverview
+        next={suggestion ? {
+          program: suggestion.program.name,
+          session: suggestion.session.name,
+          exercises: suggestion.session.exercises.map((item) => {
+            const exercise = exercisesById.get(item.exercise_id ?? "");
+            const target = item.target_hold_seconds ? `${item.target_sets}×${item.target_hold_seconds} s` : `${item.target_sets}×${item.target_reps ?? "–"}`;
+            return { id: item.id, label: `${exercise ? localeName(exercise, language) : "—"} ${target}` };
+          }),
+          start: () => startProgramSession(suggestion.session),
+        } : null}
+        week={weeks.current}
+        previous={weeks.previous}
+        skill={data.skills[0] ?? null}
+        records={records}
+        balance={balance}
+        onStartFree={() => setSection("session")}
+        onCreateProgram={() => setSection("program")}
+        onSeeSkills={() => setSection("progress")}
+      />)}
 
-    {section === "session" && <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_19rem]">
-      <Card className="space-y-4">
-        <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="text-lg font-semibold">{c("sessionTitle")}</h2><p className="mt-1 text-xs text-foreground-muted">{draftRestored ? c("draftRestored") : c("draftWarning")}</p></div><button type="button" className={secondaryButtonClass} onClick={() => setSection("exercises")}>{c("addExercise")}</button></div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    {section === "session" && <div className="space-y-4">
+      <ModuleCard highlight>
+        <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--sport-ink)" }}>{v("sessionInProgress")}</p>
+        <h2 className="text-xl font-bold tracking-tight">{data.programs.flatMap((program) => program.sessions).find((session) => session.id === programSessionId)?.name ?? v("freeSessionTitle")}</h2>
+        {draftItems.length > 0 && (() => {
+          const done = draftItems.filter((item) => item.sets.length > 0 && item.sets.every((set) => set.done)).length;
+          return <div className="flex items-center gap-2.5">
+            <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-muted"><span className="block h-full rounded-full" style={{ width: `${(done / draftItems.length) * 100}%`, background: "var(--sport)" }} /></span>
+            <span className="text-xs text-foreground-muted">{v("exercisesDone", { done, total: draftItems.length })}</span>
+          </div>;
+        })()}
+        <p className="text-xs text-foreground-muted">{draftRestored ? c("draftRestored") : c("draftWarning")}</p>
+      </ModuleCard>
+
+      {draftItems.map((item) => {
+        const exercise = exercisesById.get(item.exerciseId);
+        if (!exercise) return null;
+        return <CaliExerciseCard key={item.key} item={item} name={localeName(exercise, language)} exerciseId={exercise.id}
+          tags={[c(`categories.${exercise.category}`), c(`levels.${exercise.level}`)]}
+          measurement={exercise.measurement_type}
+          lastText={lastByExercise.get(exercise.id) ?? null}
+          bestReps={bestFor(exercise.id, "reps")}
+          bestHold={bestFor(exercise.id, "hold")}
+          onUpdate={(setKey, field, value) => updateSet(item.key, setKey, field, value)}
+          onToggleDone={(setKey) => {
+            const set = item.sets.find((candidate) => candidate.key === setKey);
+            setDraftItems((items) => items.map((current) => current.key !== item.key ? current : ({ ...current, sets: current.sets.map((candidate) => candidate.key === setKey ? { ...candidate, done: !candidate.done } : candidate) })));
+            // Completing a set starts the rest countdown, as in Musculation.
+            if (set && !set.done) { setSecondsLeft(90); setTimerEnd(Date.now() + 90_000); }
+          }}
+          onAddSet={() => setDraftItems((items) => items.map((current) => current.key !== item.key ? current : ({ ...current, sets: [...current.sets, blankSet(exercise.measurement_type)] })))}
+          onRemoveSet={(setKey) => setDraftItems((items) => items.map((current) => current.key !== item.key ? current : ({ ...current, sets: current.sets.filter((candidate) => candidate.key !== setKey) })))}
+          onRemoveExercise={() => setDraftItems((items) => items.filter((current) => current.key !== item.key))}
+        />;
+      })}
+
+      <button type="button" onClick={() => setSection("exercises")} className="flex min-h-14 w-full items-center justify-center rounded-2xl border-[1.5px] border-dashed border-border text-[15px] font-semibold text-foreground-muted">+ {v("addExerciseCta")}</button>
+
+      <details className="module-card">
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold">{v("sessionDetails")}</summary>
+        <div className="grid gap-3 sm:grid-cols-2">
           <Field label={c("date")}><input type="date" className={controlClass} value={date} onChange={(event) => setDate(event.target.value)} /></Field>
           <Field label={c("duration")}><input type="number" inputMode="numeric" min={1} max={600} className={controlClass} value={durationMinutes} onChange={(event) => setDurationMinutes(Number(event.target.value))} /></Field>
           <Field label={c("intensity")}><select className={controlClass} value={intensity} onChange={(event) => setIntensity(Number(event.target.value))}>{[1, 2, 3, 4, 5].map((value) => <option key={value} value={value}>{value} / 5</option>)}</select></Field>
           <Field label={c("chooseProgramSession")}><select className={controlClass} value={programSessionId} onChange={(event) => setProgramSessionId(event.target.value)}><option value="">{c("freeSession")}</option>{data.programs.flatMap((program) => program.sessions.map((session) => <option key={session.id} value={session.id}>{program.name} · {session.name}</option>))}</select></Field>
         </div>
-        <div className="space-y-3">
-          {draftItems.map((item) => {
-            const exercise = exercisesById.get(item.exerciseId);
-            if (!exercise) return null;
-            return <section key={item.key} className="rounded-2xl border border-border bg-background p-3 sm:p-4">
-              <div className="mb-3 flex items-center justify-between gap-3"><div className="min-w-0"><div className="flex items-center gap-2"><h3 className="min-w-0 truncate text-sm font-semibold">{localeName(exercise, language)}</h3><ExerciseGuideButton name={localeName(exercise, language)} discipline="calisthenics" exerciseId={exercise.id} /></div><p className="mt-0.5 text-xs text-foreground-muted">{c(`categories.${exercise.category}`)} · {c(`levels.${exercise.level}`)}</p></div><button type="button" className="min-h-10 rounded-lg px-3 text-xs font-medium text-danger hover:bg-danger/10" onClick={() => setDraftItems((items) => items.filter((current) => current.key !== item.key))}>{c("remove")}</button></div>
-              <div className="space-y-2">
-                {item.sets.map((set, index) => <div key={set.key} className="grid grid-cols-2 gap-2 rounded-xl bg-surface p-2 sm:grid-cols-6 sm:items-end">
-                  <div className="col-span-2 flex items-center justify-between sm:col-span-1"><span className="text-xs font-semibold text-foreground-muted">{c("sets")} {index + 1}</span><button type="button" aria-label={c("remove")} className="min-h-9 min-w-9 rounded-lg text-foreground-muted hover:bg-surface-muted" onClick={() => setDraftItems((items) => items.map((current) => current.key !== item.key ? current : ({ ...current, sets: current.sets.filter((candidate) => candidate.key !== set.key) })))}>−</button></div>
-                  {exercise.measurement_type === "mixed" && <Field label={c("measurement")} className="col-span-2 sm:col-span-1"><select className={controlClass} value={set.mode} onChange={(event) => updateSet(item.key, set.key, "mode", event.target.value)}><option value="reps">{c("reps")}</option><option value="hold">{c("holdSeconds")}</option></select></Field>}
-                  {(set.mode === "reps" || exercise.measurement_type === "reps") && <Field label={c("reps")}><input type="number" inputMode="numeric" min={1} max={500} className={controlClass} value={set.reps ?? ""} onChange={(event) => updateSet(item.key, set.key, "reps", event.target.value === "" ? null : Number(event.target.value))} /></Field>}
-                  {(set.mode === "hold" || exercise.measurement_type === "hold") && <Field label={c("holdSeconds")}><input type="number" inputMode="numeric" min={1} max={7200} className={controlClass} value={set.holdSeconds ?? ""} onChange={(event) => updateSet(item.key, set.key, "holdSeconds", event.target.value === "" ? null : Number(event.target.value))} /></Field>}
-                  <Field label={c("assistance")}><input type="number" inputMode="decimal" min={0} max={1000} step="0.5" className={controlClass} value={set.assistanceKg ?? ""} onChange={(event) => updateSet(item.key, set.key, "assistanceKg", event.target.value === "" ? null : Number(event.target.value))} /></Field>
-                  <Field label={c("addedWeight")}><input type="number" inputMode="decimal" min={0} max={1000} step="0.5" className={controlClass} value={set.addedWeightKg ?? ""} onChange={(event) => updateSet(item.key, set.key, "addedWeightKg", event.target.value === "" ? null : Number(event.target.value))} /></Field>
-                  <Field label={c("variation")} className="col-span-2"><input className={controlClass} maxLength={100} value={set.variation} onChange={(event) => updateSet(item.key, set.key, "variation", event.target.value)} /></Field>
-                  <Field label={c("setNotes")} className="col-span-2 sm:col-span-3"><input className={controlClass} maxLength={500} value={set.notes} onChange={(event) => updateSet(item.key, set.key, "notes", event.target.value)} /></Field>
-                </div>)}
-              </div>
-              <button type="button" className={`${secondaryButtonClass} mt-3 w-full sm:w-auto`} onClick={() => setDraftItems((items) => items.map((current) => current.key !== item.key ? current : ({ ...current, sets: [...current.sets, blankSet(exercise.measurement_type)] })))} disabled={item.sets.length >= 100}>＋ {c("addSet")}</button>
-            </section>;
-          })}
-        </div>
-        {draftItems.length === 0 && <button type="button" onClick={() => setSection("exercises")} className="flex min-h-24 w-full items-center justify-center rounded-2xl border border-dashed border-sport/40 bg-sport-soft/30 p-4 text-sm font-medium text-sport">＋ {c("addExercise")}</button>}
-        <Field label={c("notes")}><textarea className={`${controlClass} min-h-24 py-3`} maxLength={2000} value={sessionNotes} onChange={(event) => setSessionNotes(event.target.value)} /></Field>
-        <button type="button" className={`${buttonClass} w-full sm:w-auto`} disabled={busy || !draftItems.length} onClick={submitSession}>{busy ? c("saving") : c("saveSession")}</button>
-      </Card>
-      <Card className="xl:sticky xl:top-4"><h2 className="text-sm font-semibold">{c("restTimer")}</h2><p aria-live="polite" className="my-4 text-center text-4xl font-semibold tabular-nums text-sport">{String(Math.floor(secondsLeft / 60)).padStart(2, "0")}:{String(secondsLeft % 60).padStart(2, "0")}</p><div className="grid grid-cols-2 gap-2"><button type="button" className={buttonClass} onClick={() => { setSecondsLeft(90); setTimerEnd(Date.now() + 90_000); }}>{c("startTimer")}</button><button type="button" className={secondaryButtonClass} onClick={() => setTimerEnd(null)}>{c("pauseTimer")}</button><button type="button" className={`${secondaryButtonClass} col-span-2`} onClick={() => { setTimerEnd(null); setSecondsLeft(0); }}>{c("resetTimer")}</button></div></Card>
+        <Field label={c("notes")}><textarea className={`${controlClass} min-h-20 py-3`} maxLength={2000} value={sessionNotes} onChange={(event) => setSessionNotes(event.target.value)} /></Field>
+      </details>
+
+      {timerEnd !== null && secondsLeft > 0 && <div className="cali-rest" role="timer" aria-live="off">
+        <div className="flex-1"><p className="text-[11px] font-bold uppercase tracking-wide text-foreground-muted">{v("restLabel")}</p><p className="text-2xl font-bold tabular-nums" style={{ color: "var(--sport-ink)" }}>{Math.floor(secondsLeft / 60)}:{String(secondsLeft % 60).padStart(2, "0")}</p></div>
+        <button type="button" className="module-secondary" onClick={() => setTimerEnd((end) => (end ?? Date.now()) + 15_000)}>{v("plus15")}</button>
+        <button type="button" className="module-secondary" style={{ background: "var(--sport)", color: "#062016", borderColor: "var(--sport)" }} onClick={() => { setTimerEnd(null); setSecondsLeft(0); }}>{v("skipRest")}</button>
+      </div>}
+
+      {draftItems.length > 0 && <div className="cali-footer">
+        <button type="button" className="module-primary" disabled={busy} onClick={submitSession}>{busy ? c("saving") : v("finishSession")}</button>
+        <button type="button" className="module-secondary" style={{ minHeight: 52 }} onClick={() => { if (window.confirm(v("discardConfirm"))) { setDraftItems([]); setProgramSessionId(""); setDraftRestored(false); setTimerEnd(null); setSecondsLeft(0); } }}>{v("discardSession")}</button>
+      </div>}
     </div>}
 
-    {section === "exercises" && <div className="space-y-4"><SportLink href="/sport/exercises?discipline=calisthenics" icon="exercise">{t("sport.library.title")}</SportLink>
-      <Card className="space-y-4"><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-semibold">{c("libraryTitle")}</h2><button type="button" className={buttonClass} onClick={() => setExerciseForm({ exerciseKey: `custom-${crypto.randomUUID().replaceAll("-", "")}`, category: "push", primaryMuscle: "chest", level: "beginner", measurementType: "reps", names: { fr: "", en: "", ar: "" }, descriptions: { fr: "", en: "", ar: "" }, instructions: { fr: "", en: "", ar: "" } })}>{c("newExercise")}</button></div>
-        <div className="grid gap-3 sm:grid-cols-3"><Field label={c("search")}><input className={controlClass} value={exerciseSearch} onChange={(event) => setExerciseSearch(event.target.value)} /></Field><Field label={c("category")}><select className={controlClass} value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)}><option value="all">{c("all")}</option>{CATEGORIES.map((item) => <option key={item} value={item}>{c(`categories.${item}`)}</option>)}</select></Field><Field label={c("level")}><select className={controlClass} value={levelFilter} onChange={(event) => setLevelFilter(event.target.value)}><option value="all">{c("all")}</option>{LEVELS.map((item) => <option key={item} value={item}>{c(`levels.${item}`)}</option>)}</select></Field></div>
-      </Card>
+    {section === "exercises" && <div className="space-y-4">
+      <div className="flex gap-2">
+        <label htmlFor="cali-search" className="sr-only">{v("searchPlaceholder")}</label>
+        <input id="cali-search" className={`${controlClass} min-h-12 flex-1`} placeholder={v("searchPlaceholder")} value={exerciseSearch} onChange={(event) => setExerciseSearch(event.target.value)} />
+        <button type="button" aria-label={v("createExercise")} className="module-primary" style={{ width: 48, minHeight: 48, flexShrink: 0, fontSize: 22 }} onClick={() => setExerciseForm({ exerciseKey: `custom-${crypto.randomUUID().replaceAll("-", "")}`, category: "push", primaryMuscle: "chest", level: "beginner", measurementType: "reps", names: { fr: "", en: "", ar: "" }, descriptions: { fr: "", en: "", ar: "" }, instructions: { fr: "", en: "", ar: "" } })}>+</button>
+      </div>
+      <ModuleChips label={c("level")} value={levelFilter} options={[{ value: "all", label: v("allLevels") }, ...LEVELS.map((level) => ({ value: level, label: c(`levels.${level}`) }))]} onChange={setLevelFilter} />
       {exerciseForm && <Card><form className="space-y-4" onSubmit={(event) => { event.preventDefault(); runMutation(() => saveCalisthenicsExercise({ ...exerciseForm, descriptions: exerciseForm.descriptions, instructions: exerciseForm.instructions }), () => setExerciseForm(null)); }}><div className="flex items-center justify-between gap-3"><h3 className="text-base font-semibold">{exerciseForm.id ? c("editExercise") : c("newExercise")}</h3><button type="button" className={secondaryButtonClass} onClick={() => setExerciseForm(null)}>{c("remove")}</button></div><div className="grid gap-3 sm:grid-cols-3">{(["fr", "en", "ar"] as const).map((lang) => <Field key={lang} label={c(`name${lang.toUpperCase()}`)}><input required maxLength={80} className={controlClass} value={exerciseForm.names[lang]} onChange={(event) => setExerciseForm((form) => form ? ({ ...form, names: { ...form.names, [lang]: event.target.value } }) : null)} /></Field>)}</div><div className="grid gap-3 sm:grid-cols-3">{(["fr", "en", "ar"] as const).map((lang) => <Field key={lang} label={c(`description${lang.toUpperCase()}`)}><textarea maxLength={500} className={`${controlClass} min-h-20 py-3`} value={exerciseForm.descriptions[lang]} onChange={(event) => setExerciseForm((form) => form ? ({ ...form, descriptions: { ...form.descriptions, [lang]: event.target.value } }) : null)} /></Field>)}</div><div className="grid gap-3 sm:grid-cols-3">{(["fr", "en", "ar"] as const).map((lang) => <Field key={lang} label={c(`instructions${lang.toUpperCase()}`)}><textarea maxLength={500} className={`${controlClass} min-h-20 py-3`} value={exerciseForm.instructions[lang]} onChange={(event) => setExerciseForm((form) => form ? ({ ...form, instructions: { ...form.instructions, [lang]: event.target.value } }) : null)} /></Field>)}</div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><Field label={c("category")}><select className={controlClass} value={exerciseForm.category} onChange={(event) => setExerciseForm((form) => form ? ({ ...form, category: event.target.value as Category }) : null)}>{CATEGORIES.map((item) => <option key={item} value={item}>{c(`categories.${item}`)}</option>)}</select></Field><Field label={c("level")}><select className={controlClass} value={exerciseForm.level} onChange={(event) => setExerciseForm((form) => form ? ({ ...form, level: event.target.value as Level }) : null)}>{LEVELS.map((item) => <option key={item} value={item}>{c(`levels.${item}`)}</option>)}</select></Field><Field label={c("measurement")}><select className={controlClass} value={exerciseForm.measurementType} onChange={(event) => setExerciseForm((form) => form ? ({ ...form, measurementType: event.target.value as Measurement }) : null)}>{MEASUREMENTS.map((item) => <option key={item} value={item}>{c(`measurements.${item}`)}</option>)}</select></Field><Field label={c("primaryMuscle")}><input required maxLength={50} className={controlClass} value={exerciseForm.primaryMuscle} onChange={(event) => setExerciseForm((form) => form ? ({ ...form, primaryMuscle: event.target.value }) : null)} /></Field></div><button type="submit" className={buttonClass} disabled={busy}>{c("saveExercise")}</button></form></Card>}
-      {filteredExercises.length ? <div className="space-y-5">{CATEGORIES.filter((category) => filteredExercises.some((exercise) => exercise.category === category)).map((category) => <section key={category} aria-labelledby={`${sectionId}-${category}`}><h3 id={`${sectionId}-${category}`} className="sport-group-heading">{c(`categories.${category}`)}<span>{filteredExercises.filter((exercise) => exercise.category === category).length}</span></h3><div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{filteredExercises.filter((exercise) => exercise.category === category).map((exercise) => <Card key={exercise.id} className="flex flex-col"><div className="flex items-start justify-between gap-2"><div className="min-w-0"><div className="flex items-center gap-2"><h3 className="min-w-0 truncate text-sm font-semibold">{localeName(exercise, language)}</h3><ExerciseGuideButton name={localeName(exercise, language)} discipline="calisthenics" exerciseId={exercise.id} /></div><p className="mt-1 text-xs text-foreground-muted">{c(`categories.${exercise.category}`)} · {c(`levels.${exercise.level}`)} · {c(`measurements.${exercise.measurement_type}`)} · {muscleLabel(exercise.primary_muscle, t)}</p></div><span className="shrink-0 rounded-full bg-surface-muted px-2 py-1 text-[10px] text-foreground-muted">{exercise.user_id ? c("newExercise") : "Track Perso"}</span></div><p className="mt-3 text-xs leading-relaxed text-foreground-muted">{localizedExerciseText(exercise, language, "description") || fallbackDescription(exercise.category, language)}</p><p className="mt-2 flex-1 text-xs leading-relaxed text-foreground-muted">{localizedExerciseText(exercise, language, "instructions") || fallbackTechnique(exercise.category, language)}</p><div className="mt-4 flex flex-wrap gap-2"><button type="button" className={buttonClass} onClick={() => addExerciseToDraft(exercise.id)}>{c("addExercise")}</button>{exercise.user_id && <><button type="button" className={secondaryButtonClass} onClick={() => setExerciseForm({ id: exercise.id, exerciseKey: exercise.exercise_key, category: exercise.category, primaryMuscle: exercise.primary_muscle, level: exercise.level, measurementType: exercise.measurement_type, names: { fr: exercise.name_fr, en: exercise.name_en, ar: exercise.name_ar }, descriptions: { fr: exercise.description_fr, en: exercise.description_en, ar: exercise.description_ar }, instructions: { fr: exercise.instructions_fr, en: exercise.instructions_en, ar: exercise.instructions_ar } })}>{c("editExercise")}</button><button type="button" className={secondaryButtonClass} onClick={() => window.confirm(c("deleteConfirm")) && runMutation(() => deleteCalisthenicsExercise(exercise.id))}>{c("remove")}</button></>}</div></Card>)}</div></section>)}</div> : <Card><p className="text-sm text-foreground-muted">{c("noExercises")}</p></Card>}
+      {filteredExercises.length ? CATEGORIES.filter((category) => filteredExercises.some((exercise) => exercise.category === category)).map((category) => <section key={category} aria-labelledby={`${sectionId}-${category}`} className="space-y-2">
+        <h3 id={`${sectionId}-${category}`} className="sport-group-heading">{c(`categories.${category}`)}<span>{filteredExercises.filter((exercise) => exercise.category === category).length}</span></h3>
+        <div className="overflow-hidden rounded-[18px] border border-border bg-surface">
+          {filteredExercises.filter((exercise) => exercise.category === category).map((exercise) => {
+            const record = exercise.measurement_type === "hold" ? bestFor(exercise.id, "hold") : bestFor(exercise.id, "reps");
+            return <div key={exercise.id} className="cali-lib-row" data-cali-exercise={exercise.exercise_key}>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-semibold">{localeName(exercise, language)}</p>
+                <p className="truncate text-xs text-foreground-muted">{muscleLabel(exercise.primary_muscle, t)} · {c(`measurements.${exercise.measurement_type}`)}{record > 0 ? ` · ${v("recordShort", { value: exercise.measurement_type === "hold" ? `${record} s` : record })}` : ""}</p>
+                {exercise.user_id && <div className="mt-1 flex gap-3 text-xs font-semibold"><button type="button" className="module-card-link" onClick={() => setExerciseForm({ id: exercise.id, exerciseKey: exercise.exercise_key, category: exercise.category, primaryMuscle: exercise.primary_muscle, level: exercise.level, measurementType: exercise.measurement_type, names: { fr: exercise.name_fr, en: exercise.name_en, ar: exercise.name_ar }, descriptions: { fr: exercise.description_fr, en: exercise.description_en, ar: exercise.description_ar }, instructions: { fr: exercise.instructions_fr, en: exercise.instructions_en, ar: exercise.instructions_ar } })}>{c("editExercise")}</button><button type="button" className="module-card-link" style={{ color: "var(--danger)" }} onClick={() => window.confirm(c("deleteConfirm")) && runMutation(() => deleteCalisthenicsExercise(exercise.id))}>{c("remove")}</button></div>}
+              </div>
+              <ModulePill tone={exercise.level === "advanced" ? "accent" : "neutral"}>{c(`levels.${exercise.level}`)}</ModulePill>
+              <ExerciseGuideButton name={localeName(exercise, language)} discipline="calisthenics" exerciseId={exercise.id} />
+              <button type="button" className="cali-lib-add" aria-label={v("addToSession", { name: localeName(exercise, language) })} onClick={() => addExerciseToDraft(exercise.id)}>+</button>
+            </div>;
+          })}
+        </div>
+      </section>) : <ModuleCard><p className="text-sm text-foreground-muted">{c("noExercises")}</p></ModuleCard>}
+      <SportLink href="/sport/exercises?discipline=calisthenics" icon="exercise">{t("sport.library.title")}</SportLink>
     </div>}
 
     {section === "program" && <div className="space-y-4">
@@ -419,10 +467,16 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
     </div>}
 
     {section === "progress" && <div className="space-y-4">
-      <SportHeatmap heat={overviewStats.heat} />
-      <Card><div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-lg font-semibold">{c("skillsTitle")}</h2><p className="mt-1 text-xs text-foreground-muted">{c("progressionDisclaimer")}</p></div><button type="button" className={buttonClass} onClick={() => setSkillForm(blankSkill())}>{c("newSkill")}</button></div><div className="mt-3 flex flex-wrap gap-2">{Object.entries(SKILL_PRESETS).map(([key, preset]) => <button type="button" key={key} className={secondaryButtonClass} onClick={() => setSkillForm({ ...blankSkill(), name: preset.name[language], skillKey: key, measurementType: preset.measure, progressionSteps: [...preset.steps[language]] })}>{preset.name[language]}</button>)}</div></Card>
+      <CaliSkills
+        skills={data.skills}
+        records={records}
+        onEdit={(skill) => setSkillForm({ id: skill.id, name: skill.name, skillKey: skill.skill_key, currentStep: skill.current_step, targetStep: skill.target_step, progressionSteps: [...skill.progression_steps], measurementType: skill.measurement_type, startedOn: skill.started_on ?? "", notes: skill.notes })}
+        onDelete={(skill) => window.confirm(c("deleteConfirm")) && runMutation(() => deleteCalisthenicsSkill(skill.id))}
+        logger={(skill) => <SkillLogger key={skill.id} skill={skill} label={c("logResult")} dateLabel={c("logDate")} resultLabel={skill.measurement_type === "hold" ? c("resultHold") : c("resultReps")} notesLabel={c("skillNotes")} submitLabel={c("logResult")} date={date} busy={busy} onSave={(payload) => runMutation(() => logCalisthenicsSkill(payload))} />}
+      />
       {skillForm && <Card><form className="space-y-4" onSubmit={(event) => { event.preventDefault(); runMutation(() => saveCalisthenicsSkill({ ...skillForm, startedOn: skillForm.startedOn || null }), () => setSkillForm(null)); }}><div className="flex items-center justify-between gap-3"><h3 className="text-base font-semibold">{skillForm.id ? c("saveSkill") : c("newSkill")}</h3><button type="button" className={secondaryButtonClass} onClick={() => setSkillForm(null)}>{c("remove")}</button></div><div className="grid gap-3 sm:grid-cols-2"><Field label={c("skillName")}><input required maxLength={80} className={controlClass} value={skillForm.name} onChange={(event) => setSkillForm((form) => form ? ({ ...form, name: event.target.value }) : null)} /></Field><Field label={c("measurement")}><select className={controlClass} value={skillForm.measurementType} onChange={(event) => setSkillForm((form) => form ? ({ ...form, measurementType: event.target.value as "reps" | "hold" }) : null)}><option value="hold">{c("holdSeconds")}</option><option value="reps">{c("reps")}</option></select></Field></div><div><p className="mb-2 text-xs font-medium text-foreground-muted">{c("progressionSteps")}</p><div className="space-y-2">{skillForm.progressionSteps.map((step, index) => <div key={index} className="flex gap-2"><input required maxLength={80} className={controlClass} value={step} onChange={(event) => setSkillForm((form) => form ? ({ ...form, progressionSteps: form.progressionSteps.map((value, row) => row === index ? event.target.value : value) }) : null)} /><button type="button" className={secondaryButtonClass} onClick={() => setSkillForm((form) => form ? ({ ...form, progressionSteps: form.progressionSteps.filter((_, row) => row !== index), currentStep: Math.min(form.currentStep, form.progressionSteps.length - 2), targetStep: Math.min(form.targetStep, form.progressionSteps.length - 1) }) : null)}>{c("remove")}</button></div>)}</div><button type="button" className={`${secondaryButtonClass} mt-2`} onClick={() => setSkillForm((form) => form ? ({ ...form, progressionSteps: [...form.progressionSteps, ""], targetStep: Math.min(form.progressionSteps.length + 1, 30) }) : null)}>＋ {c("addStep")}</button></div><div className="grid gap-3 sm:grid-cols-3"><Field label={c("currentStep")}><select className={controlClass} value={skillForm.currentStep} onChange={(event) => setSkillForm((form) => form ? ({ ...form, currentStep: Number(event.target.value) }) : null)}><option value={0}>—</option>{skillForm.progressionSteps.map((step, index) => <option key={index} value={index + 1}>{step}</option>)}</select></Field><Field label={c("targetStep")}><select className={controlClass} value={skillForm.targetStep} onChange={(event) => setSkillForm((form) => form ? ({ ...form, targetStep: Number(event.target.value) }) : null)}>{skillForm.progressionSteps.map((step, index) => <option key={index} value={index + 1}>{step}</option>)}</select></Field><Field label={c("startedOn")}><input type="date" className={controlClass} value={skillForm.startedOn} onChange={(event) => setSkillForm((form) => form ? ({ ...form, startedOn: event.target.value }) : null)} /></Field></div><Field label={c("skillNotes")}><textarea className={`${controlClass} min-h-20 py-3`} maxLength={2000} value={skillForm.notes} onChange={(event) => setSkillForm((form) => form ? ({ ...form, notes: event.target.value }) : null)} /></Field><button type="submit" className={buttonClass} disabled={busy}>{c("saveSkill")}</button></form></Card>}
-      {data.skills.length ? <div className="grid gap-3 lg:grid-cols-2">{data.skills.map((skill) => { const currentLabel = skill.current_step > 0 ? skill.progression_steps[skill.current_step - 1] : c("notStarted"); const targetLabel = skill.progression_steps[skill.target_step - 1]; const percent = Math.min(100, Math.round((skill.current_step / skill.target_step) * 100)); return <Card key={skill.id}><div className="flex items-start justify-between gap-2"><div><h3 className="text-base font-semibold">{skill.name}</h3><p className="mt-1 text-xs text-foreground-muted">{currentLabel} / {targetLabel} · {skill.current_step}/{skill.target_step}</p></div><div className="flex gap-1"><button className={secondaryButtonClass} type="button" onClick={() => setSkillForm({ id: skill.id, name: skill.name, skillKey: skill.skill_key, currentStep: skill.current_step, targetStep: skill.target_step, progressionSteps: [...skill.progression_steps], measurementType: skill.measurement_type, startedOn: skill.started_on ?? "", notes: skill.notes })}>{c("editProgram")}</button><button className={secondaryButtonClass} type="button" onClick={() => window.confirm(c("deleteConfirm")) && runMutation(() => deleteCalisthenicsSkill(skill.id))}>{c("remove")}</button></div></div><div className="mt-3 h-2 overflow-hidden rounded-full bg-surface-muted" role="progressbar" aria-valuemin={0} aria-valuemax={skill.target_step} aria-valuenow={skill.current_step} aria-label={c("currentStep")}><div className="h-full rounded-full bg-sport transition-[width]" style={{ width: `${percent}%` }} /></div>{skill.started_on && <p className="mt-2 text-xs text-foreground-muted">{formatDate(skill.started_on, language)}</p>}{skill.notes && <p className="mt-2 whitespace-pre-wrap text-sm text-foreground-muted">{skill.notes}</p>}<div className="mt-3 flex flex-wrap items-center justify-between gap-2"><p className="text-xs text-foreground-muted">{c("bestSet")}: {bestSkillResults.get(skill.id) ?? 0} {skill.measurement_type === "hold" ? c("secondsLabel") : c("reps")}</p><span className="text-xs text-foreground-muted">{skill.logs.length} {c("historyTitle").toLowerCase()}</span></div>{skill.logs.length > 0 && <ul className="mt-3 space-y-1">{skill.logs.slice(0, 3).map((log) => <li key={log.id} className="flex justify-between gap-2 text-xs text-foreground-muted"><span className="truncate">{formatDate(log.logged_on, language)} · {log.step_name}</span><span className="shrink-0">{log.hold_seconds !== null ? `${log.hold_seconds} ${c("secondsLabel")}` : `${log.reps} ${c("reps")}`}</span></li>)}</ul>}<SkillLogger skill={skill} label={c("logResult")} dateLabel={c("logDate")} resultLabel={skill.measurement_type === "hold" ? c("resultHold") : c("resultReps")} notesLabel={c("skillNotes")} submitLabel={c("logResult")} date={date} busy={busy} onSave={(payload) => runMutation(() => logCalisthenicsSkill(payload))} /></Card>; })}</div> : <Card><p className="text-sm text-foreground-muted">{c("noSkills")}</p></Card>}
+      <Card><div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-lg font-semibold">{c("skillsTitle")}</h2><p className="mt-1 text-xs text-foreground-muted">{c("progressionDisclaimer")}</p></div><button type="button" className={buttonClass} onClick={() => setSkillForm(blankSkill())}>{c("newSkill")}</button></div><div className="mt-3 flex flex-wrap gap-2">{Object.entries(SKILL_PRESETS).map(([key, preset]) => <button type="button" key={key} className={secondaryButtonClass} onClick={() => setSkillForm({ ...blankSkill(), name: preset.name[language], skillKey: key, measurementType: preset.measure, progressionSteps: [...preset.steps[language]] })}>{preset.name[language]}</button>)}</div></Card>
+      <SportHeatmap heat={overviewStats.heat} />
     </div>}
 
     {section === "progress" && <div className="space-y-4"><Card><div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-lg font-semibold">{c("progressTitle")}</h2><p className="mt-1 text-xs text-foreground-muted">{c("historyTitle")}</p></div><Field label={c("period")} className="w-40"><select className={controlClass} value={period} onChange={(event) => setPeriod(event.target.value as typeof period)}><option value="30">{c("last30")}</option><option value="90">{c("last90")}</option><option value="all">{c("all")}</option></select></Field></div><div className="mt-4 grid grid-cols-2 gap-3"><div className="rounded-xl bg-surface-muted p-4"><p className="text-xs text-foreground-muted">{c("totalReps")}</p><p className="mt-1 text-2xl font-semibold tabular-nums">{totalReps}</p></div><div className="rounded-xl bg-surface-muted p-4"><p className="text-xs text-foreground-muted">{c("totalHold")}</p><p className="mt-1 text-2xl font-semibold tabular-nums">{totalHold} {c("secondsLabel")}</p></div></div></Card><Card><h3 className="mb-2 text-sm font-semibold">{c("weekMinutes")}</h3><WeeklyBarChart data={weeklyChartData(data.workouts, language)} color="var(--sport)" unit={c("minutesLabel")} /></Card><div className="grid gap-4 lg:grid-cols-2"><Card><h3 className="text-sm font-semibold">{c("reps")}</h3>{repsMap.size ? <ul className="mt-2 divide-y divide-border">{Array.from(repsMap.values()).sort((a, b) => b.total - a.total).map((record) => <li key={record.name} className="flex items-center justify-between gap-3 py-3"><span className="truncate text-sm">{record.name}</span><span className="shrink-0 text-xs tabular-nums text-foreground-muted">{record.total} · {c("bestSet")} {record.best}</span></li>)}</ul> : <p className="mt-3 text-sm text-foreground-muted">{c("noProgress")}</p>}</Card><Card><h3 className="text-sm font-semibold">{c("holdSeconds")}</h3>{holdsMap.size ? <ul className="mt-2 divide-y divide-border">{Array.from(holdsMap.values()).sort((a, b) => b.total - a.total).map((record) => <li key={record.name} className="flex items-center justify-between gap-3 py-3"><span className="truncate text-sm">{record.name}</span><span className="shrink-0 text-xs tabular-nums text-foreground-muted">{record.total} {c("secondsLabel")} · {c("bestSet")} {record.best} {c("secondsLabel")}</span></li>)}</ul> : <p className="mt-3 text-sm text-foreground-muted">{c("noProgress")}</p>}</Card></div><Card><h3 className="text-sm font-semibold">{c("activeSkills")}</h3>{data.skills.length ? <div className="mt-3 grid gap-3 sm:grid-cols-2">{data.skills.map((skill) => <div key={skill.id} className="rounded-xl bg-surface-muted p-3"><div className="flex justify-between gap-2"><span className="truncate text-sm font-medium">{skill.name}</span><span className="text-xs tabular-nums text-foreground-muted">{skill.current_step}/{skill.target_step}</span></div><div className="mt-2 h-1.5 rounded-full bg-background"><div className="h-full rounded-full bg-sport" style={{ width: `${Math.min(100, (skill.current_step / skill.target_step) * 100)}%` }} /></div></div>)}</div> : <p className="mt-3 text-sm text-foreground-muted">{c("noSkills")}</p>}</Card></div>}
@@ -534,60 +588,9 @@ function formatDate(value: string, language: string) {
   return new Intl.DateTimeFormat(language, { dateStyle: "medium" }).format(new Date(`${value}T12:00:00`));
 }
 
-function localizedExerciseText(exercise: CalisthenicsExercise, language: string, field: "description" | "instructions") {
-  const translations = field === "description"
-    ? { fr: exercise.description_fr, en: exercise.description_en, ar: exercise.description_ar }
-    : { fr: exercise.instructions_fr, en: exercise.instructions_en, ar: exercise.instructions_ar };
-  return translations[language === "ar" ? "ar" : language === "en" ? "en" : "fr"];
-}
-
 function muscleLabel(muscle: string, t: (path: string) => string) {
   const path = `sport.calisthenicsUi.muscles.${muscle}`;
   const translated = t(path);
   return translated === path ? muscle : translated;
 }
 
-function fallbackDescription(category: Category, language: string) {
-  const french: Record<Category, string> = {
-    push: "Mouvement de poussée pour le haut du corps.", pull: "Mouvement de tirage ou de suspension pour le haut du corps.",
-    legs: "Mouvement au poids du corps pour les jambes.", core: "Exercice de stabilité et de contrôle du tronc.",
-    skills: "Travail technique progressif d’équilibre ou de force.", mobility: "Travail doux de mobilité articulaire.",
-  };
-  const english: Record<Category, string> = {
-    push: "Upper body pushing movement.", pull: "Upper body pulling or hanging movement.", legs: "Bodyweight movement for the legs.",
-    core: "Trunk stability and control exercise.", skills: "Progressive balance or strength skill practice.", mobility: "Gentle joint mobility work.",
-  };
-  const arabic: Record<Category, string> = {
-    push: "حركة دفع للجزء العلوي من الجسم.", pull: "حركة سحب أو تعليق للجزء العلوي من الجسم.", legs: "حركة بوزن الجسم لتقوية الساقين.",
-    core: "تمرين لثبات الجذع والتحكم به.", skills: "تدريب تدريجي على التوازن أو القوة.", mobility: "حركة لطيفة لتحسين مرونة المفاصل.",
-  };
-  return (language === "ar" ? arabic : language === "en" ? english : french)[category];
-}
-
-function fallbackTechnique(category: Category, language: string) {
-  const french: Record<Category, string> = {
-    push: "Garde le tronc stable, contrôle la descente et utilise une amplitude confortable.",
-    pull: "Contrôle les épaules et le retour; évite l’élan et arrête en cas de douleur.",
-    legs: "Garde le pied stable et le genou dans l’axe; adapte l’amplitude à ton confort.",
-    core: "Respire régulièrement et maintiens la position sans cambrer le bas du dos.",
-    skills: "Travaille près d’un appui sûr, privilégie le contrôle et arrête avant la perte de forme.",
-    mobility: "Reste dans une amplitude confortable et évite les mouvements forcés ou douloureux.",
-  };
-  const english: Record<Category, string> = {
-    push: "Keep your trunk steady, control the lowering phase and use a comfortable range.",
-    pull: "Control your shoulders and return; avoid swinging and stop if anything hurts.",
-    legs: "Keep your foot grounded and knee aligned; use a comfortable range of motion.",
-    core: "Breathe steadily and hold the position without arching your lower back.",
-    skills: "Practise near a secure support, focus on control and stop before form breaks down.",
-    mobility: "Stay in a comfortable range and avoid forcing painful movement.",
-  };
-  const arabic: Record<Category, string> = {
-    push: "حافظ على ثبات الجذع وتحكم في النزول واستخدم مدى حركة مريحاً.",
-    pull: "تحكم في الكتفين والعودة، وتجنب التأرجح وتوقف عند الشعور بالألم.",
-    legs: "ثبت القدم وحافظ على استقامة الركبة، واستخدم مدى حركة مريحاً.",
-    core: "تنفس بانتظام وحافظ على الوضعية دون تقويس أسفل الظهر.",
-    skills: "تمرن قرب دعامة آمنة وركز على التحكم وتوقف قبل فقدان الوضعية.",
-    mobility: "تحرك ضمن مدى مريح وتجنب إجبار الحركة المؤلمة.",
-  };
-  return (language === "ar" ? arabic : language === "en" ? english : french)[category];
-}
