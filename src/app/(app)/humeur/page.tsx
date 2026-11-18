@@ -1,32 +1,36 @@
 import { format, subDays } from "date-fns";
-import { fr } from "date-fns/locale";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/supabase/read-context";
-import { MoodForm } from "@/components/mood/mood-form";
 import { Callout } from "@/components/ui/callout";
-import { MoodLineChart } from "@/components/charts/mood-line-chart";
-import { MoodEntryList } from "@/components/mood-entry-list";
 import { MoodCalendar } from "@/components/mood/mood-calendar";
-import { MoodInsights, MoodTiles, WeekdayBars } from "@/components/mood/mood-overview";
+import { MoodCheckin, type CheckinEntry } from "@/components/mood/mood-checkin";
+import { MoodJournal } from "@/components/mood/mood-journal";
+import { MoodFactors, MoodInsights, MoodStats, WeekdayBars } from "@/components/mood/mood-overview";
+import { MoodTrend } from "@/components/mood/mood-trend";
+import { formatDay } from "@/components/mood/mood-scale";
 import { buildMoodInsights, lowMoodStreak, moodSummary, weekdayAverages } from "@/lib/mood-insights";
-import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
+import { comparePeriods, tagEffects } from "@/lib/mood-tags";
+import { getDictionary, getLanguage, getT } from "@/lib/i18n/get-dictionary";
 import { fetchAllRows } from "@/lib/paging";
 
-export default async function HumeurPage() {
+export default async function HumeurPage({ searchParams }: { searchParams: Promise<{ date?: string }> }) {
   const supabase = await createClient();
   const user = await getCurrentUser();
   if (!user) return null;
 
   const now = new Date();
   const today = format(now, "yyyy-MM-dd");
+  const yesterday = format(subDays(now, 1), "yyyy-MM-dd");
   const since30 = format(subDays(now, 30), "yyyy-MM-dd");
   const since120 = format(subDays(now, 120), "yyyy-MM-dd");
   const since365 = format(subDays(now, 365), "yyyy-MM-dd");
 
-  const [dict, t, allEntries, workouts, meals, waterLogs, profileResult] =
+  const [dict, t, language, params, moodRows, workouts, meals, waterLogs, profileResult] =
     await Promise.all([
       getDictionary(),
       getT(),
+      getLanguage(),
+      searchParams,
       fetchAllRows((from, to) => supabase.from("mood_entries").select("*").eq("user_id", user.id)
         .order("entry_date").order("id").range(from, to)),
       fetchAllRows((from, to) => supabase.from("workouts").select("workout_date, id").eq("user_id", user.id).gte("workout_date", since120)
@@ -44,9 +48,17 @@ export default async function HumeurPage() {
     ]);
   if (profileResult.error) throw new Error("Impossible de charger les objectifs du profil.");
   const profile = profileResult.data;
+  // Oldest first, whatever order the rows arrive in.
+  const allEntries = [...moodRows].sort((a, b) => a.entry_date.localeCompare(b.entry_date));
 
-  const entries = allEntries.filter((e) => e.entry_date >= since30);
-  const todayEntry = entries.find((e) => e.entry_date === today);
+  // A past day opened from the journal; anything else falls back to today.
+  const editDate = params.date && /^\d{4}-\d{2}-\d{2}$/.test(params.date) && params.date <= today ? params.date : null;
+  const byDate = new Map(allEntries.map((entry) => [entry.entry_date, entry]));
+  const checkinEntries: Record<string, CheckinEntry> = {};
+  for (const date of [today, yesterday, editDate].filter((value): value is string => !!value)) {
+    const entry = byDate.get(date);
+    checkinEntries[date] = entry ? { mood_score: entry.mood_score, energy_level: entry.energy_level, notes: entry.notes } : null;
+  }
 
   const facts = new Map<string, { protein: number; sugar: number; caffeine: number; drinksMl: number; hasMeals: boolean }>();
   for (const m of meals) {
@@ -72,59 +84,62 @@ export default async function HumeurPage() {
     },
     t,
   });
-  const summary = moodSummary(allEntries, since30);
+  const { streak } = moodSummary(allEntries, since30);
   const lowStreak = lowMoodStreak(allEntries, now);
   const weekdays = weekdayAverages(recentMoods, t);
-
-  const chartData = (entries ?? []).map((e) => ({
-    label: format(new Date(e.entry_date), "d MMM", { locale: fr }),
-    mood: e.mood_score,
-    energy: e.energy_level,
-  }));
+  const periods = comparePeriods(allEntries, today, 30);
+  const effects = tagEffects(recentMoods);
+  const hasEntries = allEntries.length > 0;
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{dict.pages.mood.title}</h1>
-        <p className="mt-1 text-sm text-foreground-muted">{dict.pages.mood.subtitle}</p>
-      </div>
+    <div className="mx-auto max-w-5xl space-y-6 animate-fade-in">
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide first-letter:uppercase" style={{ color: "var(--mood-text)" }}>{formatDay(today, language)}</p>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight">{dict.pages.mood.title}</h1>
+        </div>
+        {streak >= 2 && (
+          <span className="rounded-full bg-mood-soft px-3 py-1 text-xs font-semibold" style={{ color: "var(--mood-text)" }} data-mood-streak>
+            🔥 {t("mood.v2.streak", { count: streak })}
+          </span>
+        )}
+      </header>
 
       {lowStreak >= 3 && (
         <Callout variant="warning" title={t("mood.page.lowStreakTitle")} dismissKey={`mood-low:${today}`}>
           {t("mood.page.lowStreakMessage", { days: lowStreak })}
         </Callout>
       )}
-      {!todayEntry && (
-        <Callout variant="tip" dismissKey={`mood-today:${today}`} compact>
-          {t("mood.page.todayTip")}
-        </Callout>
-      )}
 
-      <MoodTiles summary={summary} t={t} />
+      <MoodCheckin key={editDate ?? "today"} today={today} yesterday={yesterday} entries={checkinEntries} editDate={editDate} />
 
-      <MoodForm today={today} existing={todayEntry ?? null} />
+      {hasEntries ? (
+        <>
+          <MoodStats periods={periods} streak={streak} t={t} />
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <MoodCalendar
-          today={today}
-          days={allEntries.filter((e) => e.entry_date >= since365).map((e) => ({ date: e.entry_date, mood: e.mood_score, energy: e.energy_level, notes: e.notes }))}
-        />
-        <WeekdayBars data={weekdays} t={t} />
-      </div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            <MoodTrend today={today} entries={recentMoods.map((e) => ({ date: e.entry_date, mood: e.mood_score, energy: e.energy_level }))} />
+            <MoodFactors effects={effects} t={t} />
+          </div>
 
-      <MoodInsights insights={insights} t={t} />
+          <div className="grid gap-4 lg:grid-cols-2">
+            <MoodCalendar
+              today={today}
+              days={allEntries.filter((e) => e.entry_date >= since365).map((e) => ({ date: e.entry_date, mood: e.mood_score, energy: e.energy_level, notes: e.notes }))}
+            />
+            <WeekdayBars data={weekdays} t={t} />
+          </div>
 
-      <div className="rounded-2xl border-[1.5px] border-mood/50 bg-surface p-5">
-        <h2 className="text-sm font-medium text-foreground-muted">{t("mood.page.last30Days")}</h2>
-        {chartData.length > 0 ? (
-          <MoodLineChart data={chartData} />
-        ) : (
-          <p className="py-10 text-center text-sm text-foreground-muted">{t("mood.page.noChartData")}</p>
-        )}
-      </div>
+          <MoodInsights insights={insights} t={t} />
 
-      {entries && entries.length > 0 && (
-        <MoodEntryList entries={[...entries].reverse().slice(0, 10)} />
+          <MoodJournal today={today} yesterday={yesterday} entries={[...allEntries].reverse().filter((e) => e.entry_date >= since365)} />
+        </>
+      ) : (
+        <div className="rounded-2xl border border-dashed border-border p-6 text-center" data-mood-empty>
+          <p className="text-3xl" aria-hidden>📔</p>
+          <p className="mt-2 font-semibold">{t("mood.v2.emptyTitle")}</p>
+          <p className="mx-auto mt-1 max-w-sm text-sm text-foreground-muted">{t("mood.v2.emptyText")}</p>
+        </div>
       )}
     </div>
   );

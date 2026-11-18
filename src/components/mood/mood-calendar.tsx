@@ -13,17 +13,18 @@ import {
   startOfWeek,
   subMonths,
 } from "date-fns";
-import { fr } from "date-fns/locale";
 import { AnimatePresence, motion } from "framer-motion";
-import { useT } from "@/components/language-provider";
+import { useLanguage } from "@/components/language-provider";
+import { parseMoodNote } from "@/lib/mood-tags";
+import { formatDay, localeOf, MOOD_COLOR, MOOD_EMOJI } from "./mood-scale";
 
 export type MoodDay = { date: string; mood: number; energy: number; notes: string | null };
 
-const EMOJI = ["", "😞", "😕", "😐", "🙂", "😄"];
-const SCORE_COLOR = ["", "var(--danger)", "var(--nutrition)", "var(--mood)", "var(--sport)", "var(--success)"];
+const EMOJI = MOOD_EMOJI;
+const SCORE_COLOR = MOOD_COLOR;
 
 export function MoodCalendar({ days, today }: { days: MoodDay[]; today: string }) {
-  const t = useT();
+  const { t, language } = useLanguage();
   const byDate = new Map(days.map((d) => [d.date, d]));
   const [month, setMonth] = useState(startOfMonth(parseISO(today)));
   const [selected, setSelected] = useState(today);
@@ -46,25 +47,25 @@ export function MoodCalendar({ days, today }: { days: MoodDay[]; today: string }
   const isCurrentMonth = isSameMonth(month, parseISO(today));
 
   return (
-    <div className="rounded-2xl border-[1.5px] border-mood/50 bg-surface p-5">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("mood.calendar.title")}</h2>
+    <div className="rounded-2xl border border-border bg-surface p-5">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+        <h2 className="whitespace-nowrap font-semibold">{t("mood.calendar.title")}</h2>
         <div className="flex items-center gap-1">
           <button
             type="button"
             onClick={() => setMonth((m) => subMonths(m, 1))}
             aria-label={t("mood.calendar.prevMonth")}
-            className="rounded-lg px-2 py-1 text-foreground-muted transition hover:bg-surface-muted"
+            className="grid h-11 w-11 place-items-center rounded-lg text-foreground-muted transition hover:bg-surface-muted rtl:rotate-180"
           >
             ←
           </button>
-          <p className="min-w-32 text-center text-sm font-medium capitalize">{format(month, "MMMM yyyy", { locale: fr })}</p>
+          <p className="min-w-32 text-center text-sm font-medium first-letter:uppercase">{new Intl.DateTimeFormat(localeOf(language), { month: "long", year: "numeric" }).format(month)}</p>
           <button
             type="button"
             disabled={isCurrentMonth}
             onClick={() => setMonth((m) => addMonths(m, 1))}
             aria-label={t("mood.calendar.nextMonth")}
-            className="rounded-lg px-2 py-1 text-foreground-muted transition hover:bg-surface-muted disabled:opacity-30"
+            className="grid h-11 w-11 place-items-center rounded-lg text-foreground-muted transition hover:bg-surface-muted disabled:opacity-30 rtl:rotate-180"
           >
             →
           </button>
@@ -89,6 +90,8 @@ export function MoodCalendar({ days, today }: { days: MoodDay[]; today: string }
               type="button"
               disabled={future || !inMonth}
               onClick={() => setSelected(key)}
+              aria-pressed={isSel}
+              aria-label={`${formatDay(key, language)}${entry ? ` · ${t(`mood.v2.moodLevels.l${entry.mood}`)}` : ""}`}
               className="relative flex aspect-square flex-col items-center justify-center rounded-lg text-[10px] transition disabled:opacity-0"
               style={{
                 background: entry
@@ -125,7 +128,7 @@ export function MoodCalendar({ days, today }: { days: MoodDay[]; today: string }
           className="mt-4 rounded-xl border border-mood/30 p-3 text-sm"
         >
           <p className="text-xs font-semibold capitalize text-foreground-muted">
-            {format(parseISO(selected), "EEEE d MMMM", { locale: fr })}
+            {formatDay(selected, language)}
           </p>
           {detail ? (
             <p className="mt-1">
@@ -134,7 +137,7 @@ export function MoodCalendar({ days, today }: { days: MoodDay[]; today: string }
               <strong>{detail.energy}/5</strong>
               {detail.notes && (
                 <span className="block pt-1 text-xs text-foreground-muted">
-                  {t("mood.calendar.notesQuote", { notes: detail.notes })}
+                  {(() => { const note = parseMoodNote(detail.notes); return [note.tags.map((tag) => t(`mood.v2.tags.${tag}`)).join(" · "), note.text && t("mood.calendar.notesQuote", { notes: note.text })].filter(Boolean).join(" — "); })()}
                 </span>
               )}
             </p>

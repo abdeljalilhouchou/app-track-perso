@@ -2,7 +2,7 @@
 
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-export function MoodLineChart({ data }: { data: { label: string; mood: number; energy: number }[] }) {
+export function MoodLineChart({ data, labels = { mood: "Humeur", energy: "Énergie" } }: { data: { label: string; mood: number; energy: number }[]; labels?: { mood: string; energy: string } }) {
   return (
     <ResponsiveContainer width="100%" height={220}>
       <AreaChart accessibilityLayer data={data} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
@@ -30,7 +30,8 @@ export function MoodLineChart({ data }: { data: { label: string; mood: number; e
             fontSize: 12,
           }}
         />
-        <Area type="monotone" dataKey="mood" stroke="var(--mood)" strokeWidth={2} fill="url(#moodFill)" name="Humeur" />
+        <Area type="monotone" dataKey="mood" stroke="var(--mood)" strokeWidth={2} fill="url(#moodFill)" name={labels.mood} />
+        <Area type="monotone" dataKey="energy" stroke="var(--accent)" strokeWidth={1.5} strokeDasharray="4 3" fill="none" name={labels.energy} />
       </AreaChart>
     </ResponsiveContainer>
   );

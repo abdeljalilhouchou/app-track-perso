@@ -23,3 +23,8 @@ export async function getT() {
   const language = await resolveLanguage();
   return (path: string, vars?: Vars) => translate(language, path, vars);
 }
+
+/** The reader's language, for formatting dates and numbers on the server. */
+export async function getLanguage(): Promise<Language> {
+  return resolveLanguage();
+}

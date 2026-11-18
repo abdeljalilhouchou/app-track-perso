@@ -14,6 +14,7 @@ const sportModules = process.argv.includes("--sport-modules");
 const authIntro = process.argv.includes("--auth-intro");
 const sessionCards = process.argv.includes("--session-cards");
 const accountMenu = process.argv.includes("--account-menu");
+const mood = process.argv.includes("--mood");
 const exerciseExperienceV3 = process.argv.includes("--exercise-experience-v3");
 const exerciseMediaV3 = process.argv.includes("--exercise-media-v3") || exerciseExperienceV3;
 const exerciseMediaV2 = process.argv.includes("--exercise-media-v2") || exerciseMediaV3;
@@ -48,6 +49,12 @@ if (exerciseMediaV3) {
   templates.splice(0,templates.length,...DEFAULT_PROGRAM.map((program,index)=>({id:`44444444-4444-4444-8444-${String(index).padStart(12,"0")}`,user_id:uid,name:program.name,muscle_groups:program.muscleGroups,position:index,created_at:user.created_at})));
   tables.workout_template_exercises=DEFAULT_PROGRAM.flatMap((program,index)=>program.exercises.map((item,position)=>({id:`66666666-6666-4666-8666-${String(index*100+position).padStart(12,"0")}`,template_id:templates[index].id,user_id:uid,exercise_name:item.name,muscle_group:item.muscle,position,target_sets:item.sets,target_reps:item.reps})));
   for(const [index,item] of baseCatalog("fr").filter(item=>EXERCISE_V3_IDS.includes(item.key)).entries())tables.exercises.push({id:`99999999-9999-4999-8999-${String(index).padStart(12,"0")}`,user_id:uid,name:item.storedName,muscle_group:item.primary[0]});
+}
+if (mood) {
+  const day = (offset) => { const date = new Date(); date.setDate(date.getDate() - offset); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; };
+  // Twelve mood check-ins over two weeks: sport on the good days, stress on the hard ones; none today.
+  tables.mood_entries = [[1, 4, 4, "Bonne séance #sport #friends"], [2, 5, 4, "#sport #nature"], [3, 2, 2, "Journée chargée #work #stress"], [4, 3, 3, null], [5, 4, 3, "#sport"], [6, 2, 2, "#stress #sleep"], [8, 3, 3, "#work"], [9, 5, 5, "Week-end au grand air #sport #nature"], [10, 2, 3, "#stress"], [11, 3, 3, null], [12, 4, 4, "#friends"], [13, 3, 2, "#sleep"]]
+    .map(([offset, mood_score, energy_level, notes], index) => ({ id: `cdcdcdc0-0000-4000-8000-${String(index).padStart(12, "0")}`, user_id: uid, entry_date: day(offset), mood_score, energy_level, notes, created_at: `${day(offset)}T21:00:00Z` }));
 }
 if (sportModules) {
   const day = (offset) => { const date = new Date(); date.setDate(date.getDate() - offset); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; };
@@ -203,7 +210,7 @@ try {
   await navigatePage(`http://127.0.0.1:${appPort}/sport`);
   await ready("/sport");
   console.log("Sport Hub loaded with local fixtures.");
-  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu && !authIntro && !sessionCards) {
+  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu && !authIntro && !sessionCards && !mood) {
   assert.ok(await evaluate("document.body.innerText.includes('QA Dos & Biceps')"));
   for (const width of [320, 360, 375, 390, 430, 768, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: width < 768 });
@@ -413,6 +420,10 @@ try {
   if (accountMenu) {
     const { checkMobileAccountMenu } = await import("./mobile-account-menu-browser-checks.mjs");
     await checkMobileAccountMenu({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, output, appPort });
+  }
+  if (mood) {
+    const { checkMood } = await import("./mood-browser-checks.mjs");
+    await checkMood({ send, evaluate, navigatePage, ready, until, pause, results, profile, output, appPort, setFixture: (value) => { fixtureState = value; } });
   }
   if (exercisePremiumV4) {
     const { checkExercisePremiumV4 } = await import("./exercise-premium-v4-browser-checks.mjs");
