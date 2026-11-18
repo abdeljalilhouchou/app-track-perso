@@ -72,4 +72,34 @@ export async function checkAuthIntro({ send, evaluate, navigatePage, ready, unti
   await until(() => evaluate("!document.querySelector('.anatomy-intro') && !!document.querySelector('form .text-danger')"), "error shown, intro gone", 20000);
   await shot("login-error");
   result.cases.push({ case: "refused sign-in cancels the intro" });
+
+  // 4. The login page itself: kept email, announced error, password reveal, language picker, layouts.
+  assert.equal(await evaluate("document.querySelector('#email').value"), "qa@example.invalid", "email kept after a refusal");
+  assert.ok(await evaluate("document.querySelector('[role=alert]')?.textContent.includes('incorrect')"), "translated error announced");
+  assert.equal(await evaluate("document.querySelector('#password').getAttribute('aria-invalid')"), "true", "password marked invalid");
+  await evaluate("document.querySelector('[data-login-reveal]').click()");
+  assert.equal(await evaluate("document.querySelector('#password').type"), "text", "password can be shown");
+  await evaluate("document.querySelector('[data-login-reveal]').click()");
+  assert.equal(await evaluate("document.querySelector('#password').type"), "password", "and hidden again");
+  assert.equal(await evaluate("document.querySelectorAll('form button[type=submit]').length"), 1, "one submit button");
+  assert.ok(await evaluate("document.documentElement.scrollWidth - innerWidth <= 1"), "no horizontal overflow at 390px");
+  await evaluate("[...document.querySelectorAll('[data-login-language] [role=radio]')].find((b) => b.lang === 'en').click()");
+  await until(() => evaluate("document.querySelector('main h1').textContent === 'Welcome back'"), "login switches to English");
+  assert.ok(await evaluate("document.querySelector('[role=alert]').textContent.includes('Wrong email')"), "error follows the language");
+  await evaluate("[...document.querySelectorAll('[data-login-language] [role=radio]')].find((b) => b.lang === 'ar').click()");
+  await until(() => evaluate("document.documentElement.dir === 'rtl'"), "Arabic turns the page right-to-left");
+  assert.ok(await evaluate("document.documentElement.scrollWidth - innerWidth <= 1"), "no overflow in Arabic");
+  await shot("login-ar");
+  await evaluate("[...document.querySelectorAll('[data-login-language] [role=radio]')].find((b) => b.lang === 'fr').click()");
+  await until(() => evaluate("document.documentElement.dir === 'ltr'"), "back to French");
+  await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true });
+  await navigatePage(`http://127.0.0.1:${appPort}/login`);
+  await until(() => evaluate("!!document.querySelector('#email')"), "fresh login page");
+  await shot("login-375");
+  await send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
+  await pause(300);
+  assert.ok(await evaluate("getComputedStyle(document.querySelector('aside')).display !== 'none'"), "presentation panel on desktop");
+  await shot("login-1440");
+  await evaluate("localStorage.removeItem('language')");
+  result.cases.push({ case: "login page" });
 }

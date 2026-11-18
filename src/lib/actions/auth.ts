@@ -5,20 +5,19 @@ import { createClient } from "@/lib/supabase/server";
 import { getSiteUrl } from "@/lib/site-url";
 import { isValidEmail } from "@/lib/actions/validation";
 
-export async function signIn(_prevState: { error: string | null }, formData: FormData) {
+export type SignInState = { error: "invalid" | "unconfirmed" | null; email: string };
+
+/** Returns an error code the page translates, and the email so the field keeps it after a refusal. */
+export async function signIn(_prevState: SignInState, formData: FormData): Promise<SignInState> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
-  if (!isValidEmail(email) || password.length < 1 || password.length > 1024) return { error: "Email ou mot de passe incorrect." };
+  const kept = email.slice(0, 320);
+  if (!isValidEmail(email) || password.length < 1 || password.length > 1024) return { error: "invalid", email: kept };
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
-  if (error) {
-    if (error.code === "email_not_confirmed") {
-      return { error: "Email non confirmé. Clique sur le lien reçu par mail (vérifie aussi tes spams)." };
-    }
-    return { error: "Email ou mot de passe incorrect." };
-  }
+  if (error) return { error: error.code === "email_not_confirmed" ? "unconfirmed" : "invalid", email: kept };
 
   redirect("/dashboard");
 }
