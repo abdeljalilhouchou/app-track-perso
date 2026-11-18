@@ -54,6 +54,25 @@ export function formatDuration(totalSeconds: number) {
   return [hours, minutes, remainder].map((part) => String(part).padStart(2, "0")).join(":");
 }
 
+/**
+ * Reads a typed duration: "h:mm:ss", "mm:ss" or plain minutes ("45"). Returns seconds,
+ * or null when the text is not a valid positive duration (minutes and seconds under 60
+ * except for a lone minutes value).
+ */
+export function parseDuration(text: string): number | null {
+  const parts = text.trim().split(":").map((part) => part.trim());
+  if (!parts.length || parts.length > 3 || parts.some((part) => !/^\d+$/.test(part))) return null;
+  const numbers = parts.map(Number);
+  let total: number;
+  if (numbers.length === 1) total = numbers[0] * 60;
+  else {
+    const [seconds, minutes, hours = 0] = [...numbers].reverse();
+    if (seconds > 59 || (numbers.length === 3 && minutes > 59)) return null;
+    total = hours * 3600 + minutes * 60 + seconds;
+  }
+  return total > 0 && total <= 168 * 3600 ? total : null;
+}
+
 const dateKey = (date: Date) => format(date, "yyyy-MM-dd");
 const weekKey = (date: Date) => dateKey(startOfWeek(date, { weekStartsOn: 1 }));
 
@@ -92,6 +111,13 @@ export function computeRunningStats(runs: RunningRun[], goals: RunningGoals | nu
     const key = format(month, "yyyy-MM");
     return { month: key, distanceKm: sumDistance(validRuns.filter((run) => run.workout_date.startsWith(key))) };
   });
+  // Consecutive weeks with at least one run; a quiet current week keeps last week's streak.
+  const runWeeks = new Set(validRuns.map((run) => weekKey(parseISO(run.workout_date))));
+  let weekStreak = 0;
+  for (let offset = runWeeks.has(currentWeek) ? 0 : 1; offset < 520; offset += 1) {
+    if (!runWeeks.has(dateKey(subWeeks(startOfWeek(now, { weekStartsOn: 1 }), offset)))) break;
+    weekStreak += 1;
+  }
   const comparableRecord = (targetKm: number) => {
     const toleranceKm = targetKm * 0.01;
     return validRuns
@@ -112,6 +138,7 @@ export function computeRunningStats(runs: RunningRun[], goals: RunningGoals | nu
     longestDuration: validRuns.reduce<RunningRun | null>((best, run) => !best || run.duration_seconds > best.duration_seconds ? run : best, null),
     paceTrend: orderedRuns.slice(0, 8).reverse().map((run) => ({ date: run.workout_date, pace: calculateRunningMetrics(run.distance_km, run.duration_seconds)!.paceSecondsPerKm })),
     weeklyConsistency: weeklyDistance.filter((week) => week.runCount > 0).length,
+    weekStreak,
     heat: validRuns.reduce<Record<string, number>>((heat, run) => {
       heat[run.workout_date] = Math.min(1, (heat[run.workout_date] ?? 0) + run.distance_km / 10);
       return heat;

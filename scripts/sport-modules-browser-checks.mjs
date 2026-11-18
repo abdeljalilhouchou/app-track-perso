@@ -39,7 +39,7 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
       await until(() => evaluate("document.querySelectorAll('[data-module-tab]').length >= 4"), "module tabs rendered");
       await noOverflow(`${discipline} ${language}/${theme}/${width}`);
       if (width < 1024) {
-        const columns = await evaluate("getComputedStyle(document.querySelector('.sport-stat-grid')).gridTemplateColumns.split(' ').length");
+        const columns = await evaluate("getComputedStyle(document.querySelector('.module-stats, .sport-stat-grid')).gridTemplateColumns.split(' ').length");
         assert.equal(columns, 2, `Two stat columns on phones (${discipline} ${width}px)`);
       }
       await shot(`${discipline}-overview-${language}-${theme}-${width}`);
@@ -51,34 +51,35 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   profile.language = "fr"; profile.theme = "dark";
   await size(375); await go("/sport/running");
   await until(() => evaluate("document.querySelectorAll('[data-module-tab]').length === 4"), "running has 4 sections");
-  assert.equal(await evaluate("[...document.querySelectorAll('button')].filter((b) => b.textContent.trim() === 'Enregistrer une course').length"), 1, "One primary CTA on the overview");
-  await evaluate("[...document.querySelectorAll('button')].find((b) => b.textContent.trim() === 'Enregistrer une course').click()");
-  await until(() => evaluate("document.querySelector('[data-module-tab=sessions]').getAttribute('aria-pressed')==='true'"), "CTA lands on the sessions tab");
-  await until(() => evaluate("!!document.querySelector('form input[type=date]')"), "run form open");
-  // Type like a person would, so React's own handler runs. A pace needs both a
-  // distance and a duration: 5 km in one second has no meaningful pace.
-  await evaluate("document.querySelector('form input[inputmode=decimal]').focus()");
-  await send("Input.insertText", { text: "5" });
-  await evaluate("const m=[...document.querySelectorAll('form input[inputmode=numeric]')][1];m.focus();m.select()");
-  await send("Input.insertText", { text: "25" });
+  assert.equal(await evaluate("document.querySelectorAll('.module-primary').length"), 1, "One primary action on the overview");
+  assert.ok(await evaluate("!!document.querySelector('.module-ring')"), "weekly goal ring");
+  assert.ok(await evaluate("document.body.innerText.includes('vs semaine passée')"), "week-over-week comparison");
+  assert.ok(await evaluate("/Semaine [0-9]+/i.test(document.querySelector('.sport-module-eyebrow').textContent)"), "week eyebrow");
+  // The log sheet opens over the overview; the tab does not change.
+  await evaluate("document.querySelector('.module-primary').click()");
+  await until(() => evaluate("!!document.querySelector('dialog.run-sheet[open]')"), "run sheet open");
+  await evaluate("document.querySelector('[data-run-distance]').focus()");
+  await send("Input.insertText", { text: "5,2" });
+  await evaluate("document.querySelector('[data-run-duration]').focus()");
+  await send("Input.insertText", { text: "26:00" });
   await until(() => evaluate("!!document.querySelector('[data-run-metrics]')"), "pace preview appears");
-  assert.ok(await evaluate("document.querySelector('[data-run-metrics]').innerText.includes('min/km')"), "pace is computed from the typed distance");
+  assert.ok(await evaluate("document.querySelector('[data-run-metrics]').innerText.includes('5:00')"), "5,2 km in 26:00 is 5:00 per km");
   await shot("running-form-fr-dark-375");
-  await evaluate("[...document.querySelectorAll('button')].find((b) => b.textContent.trim() === 'Fermer le formulaire').click()");
-  await until(() => evaluate("!document.querySelector('form input[type=date]')"), "form closes");
-  await until(() => evaluate("document.querySelectorAll('[aria-expanded]').length >= 1"), "history visible");
+  await evaluate("document.querySelector('.run-sheet-close').click()");
+  await until(() => evaluate("!document.querySelector('dialog.run-sheet[open]')"), "sheet closes");
+  await tab("sessions");
+  await until(() => evaluate("document.querySelectorAll('[data-run-row]').length >= 3"), "history rows");
+  assert.ok(await evaluate("document.body.innerText.toLowerCase().includes('cette semaine')"), "runs grouped by week");
+  await evaluate("document.querySelector('[data-run-row] .run-row-main').click()");
+  await until(() => evaluate("[...document.querySelectorAll('button')].some((b) => b.textContent.trim() === 'Modifier la course')"), "run details open");
   await shot("running-sessions-fr-dark-375");
   await tab("progress");
-  await until(() => evaluate("document.body.innerText.includes('1 km')"), "1 km record visible");
-  // The activity calendar reuses the Sport Hub component already in the app.
+  await until(() => evaluate("!!document.querySelector('[data-run-record=\"1k\"]')"), "1 km record visible");
   assert.ok(await evaluate("document.body.innerText.toLowerCase().includes(\"calendrier d'activité\")"), "running activity calendar");
   await shot("running-progress-fr-dark-375");
   await tab("goals");
   assert.equal(await evaluate("[...document.querySelectorAll('form label')].filter((l) => /Minutes|Secondes/.test(l.textContent)).length"), 4, "mm:ss fields for both targets");
   await shot("running-goals-fr-dark-375");
-  await tab("overview");
-  await until(() => evaluate("document.querySelectorAll('[role=progressbar]').length >= 2"), "weekly goal rings");
-  assert.ok(await evaluate("document.body.innerText.includes('vs semaine passée')"), "week-over-week deltas shown");
 
   // Calisthenics interactions.
   await go("/sport/calisthenics");

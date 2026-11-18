@@ -202,3 +202,117 @@
 /* Category headings in the grouped exercise library. */
 .sport-ui .sport-group-heading { display: flex; align-items: center; gap: .5rem; margin-block-end: .75rem; font-size: .8125rem; font-weight: 650; letter-spacing: .04em; text-transform: uppercase; color: var(--sport-ink); }
 .sport-ui .sport-group-heading span { display: grid; place-items: center; min-width: 1.5rem; padding: 0 .375rem; border-radius: 99px; background: var(--surface-muted); color: var(--foreground-muted); font-size: .6875rem; font-weight: 600; letter-spacing: normal; }
+
+/* Module kit (src/components/sport/ui/module-kit.tsx), shared by Running and Calisthenics. */
+.sport-ui .sport-module-eyebrow { margin: 0; font-size: .75rem; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: var(--sport-ink); }
+.sport-ui .sport-module-head-row { display: flex; align-items: flex-end; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+.sport-ui .sport-segmented-control.is-module { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); width: 100%; box-sizing: border-box; border-radius: 16px; padding: 4px; gap: 2px; background: var(--surface); -webkit-mask-image: none; mask-image: none; overflow: visible; }
+.sport-ui .sport-segmented-control.is-module .sport-segment { min-width: 0; border-radius: 12px; padding: .5rem .25rem; font-size: .75rem; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sport-ui .sport-segmented-control.is-module .sport-segment.is-active { background: var(--sport); color: #062016; }
+@media (max-width: 359px) { .sport-ui .sport-segmented-control.is-module { grid-auto-columns: max-content; overflow-x: auto; scrollbar-width: none; } .sport-ui .sport-segmented-control.is-module .sport-segment { padding-inline: .75rem; } }
+.sport-ui .module-card { min-width: 0; display: flex; flex-direction: column; gap: .75rem; padding: 1rem; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); }
+.sport-ui .module-card.is-highlight { background: color-mix(in srgb, var(--sport) 9%, var(--surface)); border-color: color-mix(in srgb, var(--sport) 32%, var(--border)); }
+.sport-ui .module-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; }
+.sport-ui .module-card-title { margin: 0; font-size: .9375rem; font-weight: 650; }
+.sport-ui .module-card-link { font-size: .8125rem; font-weight: 650; color: var(--sport-ink); background: none; border: 0; padding: 0; min-height: 32px; cursor: pointer; }
+.sport-ui .module-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .625rem; }
+@media (min-width: 1024px) { .sport-ui .module-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.sport-ui .module-stat { min-width: 0; padding: .875rem; border-radius: 18px; background: var(--surface); border: 1px solid var(--border); }
+.sport-ui .module-stat-label { margin: 0; font-size: .75rem; color: var(--foreground-muted); }
+.sport-ui .module-stat-value { margin: .375rem 0 .125rem; font-size: 1.375rem; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.sport-ui .module-stat-unit { margin-inline-start: .25rem; font-size: .8125rem; font-weight: 500; color: var(--foreground-muted); }
+.sport-ui .module-stat-delta { margin: 0; font-size: .75rem; color: var(--foreground-muted); }
+.sport-ui .module-stat-delta[data-tone="good"] { color: var(--sport-ink); }
+.sport-ui .module-stat-delta[data-tone="bad"] { color: var(--mood-text, #b45309); }
+.sport-ui .module-chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+.sport-ui .module-chip { min-height: 36px; padding: 0 .875rem; border-radius: 999px; border: 1px solid var(--border); background: transparent; color: var(--foreground); font-size: .8125rem; font-weight: 500; cursor: pointer; }
+.sport-ui .module-chip[aria-pressed="true"] { border-color: var(--sport); background: var(--sport-soft); color: var(--sport-ink); font-weight: 650; }
+.sport-ui .module-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sport-ui .module-ring { position: relative; flex-shrink: 0; }
+.sport-ui .module-ring-track { fill: none; stroke: var(--surface-muted); stroke-width: 12; }
+.sport-ui .module-ring-value { fill: none; stroke: var(--sport); stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset .6s ease; }
+.sport-ui .module-ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.sport-ui .module-bars { margin: 0; }
+.sport-ui .module-bars-plot { height: 120px; display: grid; gap: .5rem; align-items: end; }
+.sport-ui .module-bar { display: block; border-radius: 6px; background: var(--surface-muted); }
+.sport-ui .module-bar[data-highlight] { background: var(--sport); }
+.sport-ui .module-bars-axis { margin-top: .5rem; display: grid; gap: .5rem; font-size: .625rem; color: var(--foreground-muted); text-align: center; }
+.sport-ui .module-bars-axis [data-highlight] { color: var(--sport-ink); font-weight: 700; }
+.sport-ui .module-pill { display: inline-flex; align-items: center; padding: .1875rem .625rem; border-radius: 999px; font-size: .75rem; font-weight: 600; white-space: nowrap; background: var(--sport-soft); color: var(--sport-ink); }
+.sport-ui .module-pill[data-tone="accent"] { background: var(--accent-soft); color: color-mix(in srgb, var(--accent) 75%, var(--foreground)); }
+.sport-ui .module-pill[data-tone="neutral"] { background: var(--surface-muted); color: var(--foreground-muted); }
+.sport-ui .module-pill[data-tone="warning"] { background: color-mix(in srgb, #f59e0b 16%, var(--surface)); color: var(--mood-text, #b45309); }
+.sport-ui .module-sticky-cta { position: sticky; bottom: calc(3.5rem + env(safe-area-inset-bottom) + .75rem); z-index: 5; }
+@media (min-width: 768px) { .sport-ui .module-sticky-cta { bottom: 1rem; } }
+.sport-ui .module-primary { display: flex; align-items: center; justify-content: center; gap: .5rem; width: 100%; min-height: 52px; border: 0; border-radius: 16px; background: var(--sport); color: #062016; font-size: 1rem; font-weight: 700; cursor: pointer; box-shadow: 0 8px 24px color-mix(in srgb, var(--sport) 25%, transparent); }
+.sport-ui .module-primary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.sport-ui .module-primary:disabled { opacity: .6; cursor: not-allowed; }
+.sport-ui .module-secondary { display: inline-flex; align-items: center; justify-content: center; gap: .375rem; min-height: 44px; padding: 0 1rem; border-radius: 12px; border: 1px solid var(--border); background: transparent; color: var(--foreground); font-size: .875rem; font-weight: 600; cursor: pointer; }
+.sport-ui .module-secondary.is-danger { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 35%, var(--border)); }
+@media (prefers-reduced-motion: reduce) { .sport-ui .module-ring-value { transition: none; } }
+
+/* Running: the log/edit sheet (src/components/sport/running/run-form-sheet.tsx). */
+.sport-ui.run-sheet { width: min(560px, calc(100vw - 32px)); max-height: min(92dvh, 900px); margin: auto; padding: 0; border: 1px solid var(--border); border-radius: 24px; background: var(--surface); color: var(--foreground); overflow: hidden; animation: run-sheet-in .22s ease-out; }
+.sport-ui.run-sheet::backdrop { background: rgba(5, 7, 12, .62); }
+.sport-ui .run-sheet-form { display: flex; flex-direction: column; max-height: inherit; }
+.sport-ui .run-sheet-head { padding: .625rem 1rem .5rem; display: flex; flex-direction: column; gap: .5rem; }
+.sport-ui .run-sheet-grip { align-self: center; width: 44px; height: 5px; border-radius: 99px; background: var(--border); }
+.sport-ui .run-sheet-close { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; border: 1px solid var(--border); background: var(--surface-muted); color: var(--foreground); font-size: 1rem; cursor: pointer; }
+.sport-ui .run-sheet-body { overflow-y: auto; overscroll-behavior: contain; padding: .25rem 1rem 1rem; display: flex; flex-direction: column; gap: 1.125rem; }
+.sport-ui .run-sheet-foot { padding: .75rem 1rem calc(1rem + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); }
+.sport-ui .run-big-field { display: flex; flex-direction: column; gap: .375rem; min-width: 0; }
+.sport-ui .run-big-field > span:first-child, .sport-ui .run-field > span { font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--foreground-muted); }
+.sport-ui .run-big-input { display: flex; align-items: baseline; justify-content: center; gap: .375rem; min-height: 64px; padding: .75rem .5rem 0; box-sizing: border-box; border-radius: 16px; border: 1px solid var(--border); background: var(--surface-muted); }
+.sport-ui .run-big-input:focus-within { border-color: var(--sport); box-shadow: 0 0 0 3px color-mix(in srgb, var(--sport) 22%, transparent); }
+.sport-ui .run-big-input input { width: 100%; min-width: 0; border: 0; background: transparent; color: var(--foreground); font-size: 1.625rem; font-weight: 700; text-align: center; outline: none; font-variant-numeric: tabular-nums; }
+.sport-ui .run-big-input em { font-style: normal; font-size: .9375rem; color: var(--foreground-muted); }
+.sport-ui .run-feel { min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 0 2px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface-muted); color: var(--foreground); font-size: .6875rem; font-weight: 600; line-height: 1.2; text-align: center; cursor: pointer; }
+.sport-ui .run-feel[aria-pressed="true"] { border-color: var(--sport); background: var(--sport-soft); color: var(--sport-ink); }
+.sport-ui .run-feel:focus-visible, .sport-ui .run-sheet-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sport-ui .run-field { display: flex; flex-direction: column; gap: .375rem; min-width: 0; }
+.sport-ui .run-field input { min-height: 48px; width: 100%; box-sizing: border-box; border-radius: 14px; border: 1px solid var(--border); background: var(--surface-muted); color: var(--foreground); padding: 0 .75rem; font-size: .875rem; }
+.sport-ui .run-field input:focus { outline: none; border-color: var(--sport); }
+.sport-ui .run-more { border-radius: 14px; border: 1px solid var(--border); padding: 0 .875rem; }
+.sport-ui .run-more > summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-size: .875rem; font-weight: 600; color: var(--sport-ink); }
+.sport-ui .run-more[open] { padding-bottom: .875rem; }
+@media (max-width: 767px) {
+  .sport-ui.run-sheet { width: 100%; max-width: 100%; max-height: calc(100dvh - max(24px, env(safe-area-inset-top))); margin: auto 0 0; border-radius: 26px 26px 0 0; border-inline: 0; border-bottom: 0; animation-name: run-sheet-up; }
+}
+@keyframes run-sheet-in { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes run-sheet-up { from { transform: translateY(40%); opacity: .4; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sport-ui.run-sheet { animation: none; } }
+/* Running: history rows. */
+.sport-ui .run-row { border-radius: 18px; background: var(--surface); border: 1px solid var(--border); overflow: hidden; }
+.sport-ui .run-row[data-open] { border-color: color-mix(in srgb, var(--sport) 45%, var(--border)); border-width: 1.5px; }
+.sport-ui .run-row-main { display: flex; align-items: center; gap: .75rem; width: 100%; min-height: 76px; padding: .875rem; border: 0; background: transparent; color: inherit; cursor: pointer; }
+.sport-ui .run-row-main:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.sport-ui .run-row-date { width: 46px; height: 50px; flex-shrink: 0; border-radius: 12px; background: var(--surface-muted); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.sport-ui .run-row-date span { font-size: .625rem; color: var(--foreground-muted); }
+.sport-ui .run-row-date strong { font-size: 1.125rem; }
+
+/* Calisthenics: session exercise card (src/components/sport/calisthenics/cali-exercise-card.tsx). */
+.sport-ui .cali-card { display: flex; flex-direction: column; gap: .75rem; padding: .875rem; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); }
+.sport-ui .cali-card[data-done] { border-color: color-mix(in srgb, var(--sport) 45%, var(--border)); }
+.sport-ui .cali-card-head { display: flex; gap: .75rem; align-items: flex-start; }
+.sport-ui .cali-card-icon { width: 56px; height: 56px; flex-shrink: 0; border-radius: 16px; display: grid; place-items: center; font-size: 1.375rem; font-weight: 700; color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface-muted)); }
+.sport-ui .cali-sets { display: grid; grid-template-columns: 30px minmax(0, 1fr) minmax(0, 1fr) 46px 28px; gap: 6px; align-items: center; }
+.sport-ui .cali-sets[data-mode="hold"] { grid-template-columns: 30px minmax(0, 1fr) 46px 28px; }
+.sport-ui .cali-col { font-size: .625rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; text-align: center; color: var(--foreground-muted); }
+.sport-ui .cali-set-number { display: grid; place-items: center; min-height: 32px; border-radius: 9px; font-size: .8125rem; font-weight: 600; color: var(--foreground-muted); }
+.sport-ui .cali-set-number[data-done] { color: var(--sport-ink); background: var(--sport-soft); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sport) 45%, transparent); }
+.sport-ui .cali-input { width: 100%; min-width: 0; min-height: 46px; box-sizing: border-box; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-muted); color: var(--foreground); text-align: center; font-size: 1rem; font-weight: 650; font-variant-numeric: tabular-nums; }
+.sport-ui .cali-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+.sport-ui .cali-input.is-small { min-height: 40px; font-size: .875rem; font-weight: 500; text-align: start; padding: 0 .625rem; }
+.sport-ui .cali-hold { display: grid; grid-template-columns: minmax(0, 1fr) 46px; gap: 6px; }
+.sport-ui .cali-timer { min-height: 46px; border-radius: 12px; border: 1.5px solid var(--sport); background: transparent; color: var(--sport-ink); font-size: .8125rem; font-weight: 700; cursor: pointer; }
+.sport-ui .cali-timer[data-running] { background: var(--sport); color: #062016; }
+.sport-ui .cali-check { min-height: 46px; border-radius: 12px; border: 1.5px solid var(--sport); background: transparent; color: var(--sport-ink); font-size: 1.125rem; font-weight: 800; cursor: pointer; }
+.sport-ui .cali-check[aria-pressed="true"] { background: var(--sport); color: #062016; animation: exercise-set-pop 220ms cubic-bezier(.3, 1.4, .5, 1); }
+.sport-ui .cali-remove { min-height: 44px; border: 0; background: transparent; color: var(--foreground-muted); opacity: .7; cursor: pointer; }
+.sport-ui .cali-check:focus-visible, .sport-ui .cali-timer:focus-visible, .sport-ui .cali-remove:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sport-ui .cali-options > summary { min-height: 40px; display: flex; align-items: center; font-size: .8125rem; font-weight: 600; color: var(--foreground-muted); cursor: pointer; }
+.sport-ui .cali-add-set { min-height: 46px; border-radius: 14px; border: 1.5px solid color-mix(in srgb, var(--accent) 60%, var(--border)); background: var(--accent-soft); color: color-mix(in srgb, var(--accent) 80%, var(--foreground)); font-size: .875rem; font-weight: 700; cursor: pointer; }
+.sport-ui .cali-rest { position: sticky; bottom: calc(3.5rem + env(safe-area-inset-bottom) + 76px); z-index: 6; display: flex; align-items: center; gap: .75rem; padding: .75rem .875rem; border-radius: 18px; background: color-mix(in srgb, var(--sport) 14%, var(--surface)); border: 1px solid color-mix(in srgb, var(--sport) 40%, var(--border)); box-shadow: 0 10px 30px rgba(0, 0, 0, .25); }
+.sport-ui .cali-footer { position: sticky; bottom: calc(3.5rem + env(safe-area-inset-bottom) + .75rem); z-index: 5; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .625rem; }
+@media (min-width: 768px) { .sport-ui .cali-rest { bottom: 88px; } .sport-ui .cali-footer { bottom: 1rem; } }
+@media (prefers-reduced-motion: reduce) { .sport-ui .cali-check[aria-pressed="true"] { animation: none; } }

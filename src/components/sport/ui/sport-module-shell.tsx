@@ -9,10 +9,14 @@ import { SportIcon, type SportIconName } from "./sport-icons";
  * one compact header, one scrollable section control, one status area.
  * It owns no data and never navigates; sections live in module state.
  */
-export function SportModuleShell({ title, description, icon, summary, tabs, status, children }: {
+export function SportModuleShell({ title, description, icon, eyebrow, badge, summary, tabs, status, children }: {
   title: string;
   description?: string;
   icon?: SportIconName;
+  /** Line above the title, e.g. the current week. */
+  eyebrow?: string;
+  /** Small pill beside the title, e.g. the current streak. */
+  badge?: ReactNode;
   /** Optional compact figures shown beside the header on wide screens. */
   summary?: ReactNode;
   tabs: ReactNode;
@@ -22,9 +26,13 @@ export function SportModuleShell({ title, description, icon, summary, tabs, stat
   return <div className="min-w-0 space-y-4 sm:space-y-5">
     <header className="sport-module-header">
       {icon && <span aria-hidden className="sport-icon-tile"><SportIcon name={icon} className="h-5 w-5" /></span>}
-      <div className="min-w-0 flex-1">
-        <h1 className="sport-module-title">{title}</h1>
-        {description && <p className="sport-description mt-1">{description}</p>}
+      <div className="sport-module-head-row min-w-0 flex-1">
+        <div className="min-w-0">
+          {eyebrow && <p className="sport-module-eyebrow">{eyebrow}</p>}
+          <h1 className="sport-module-title">{title}</h1>
+          {description && <p className="sport-description mt-1">{description}</p>}
+        </div>
+        {badge}
       </div>
       {summary && <div className="sport-module-summary">{summary}</div>}
     </header>
@@ -48,7 +56,7 @@ export function SportModuleTabs<T extends string>({ label, value, options, onCha
     active?.scrollIntoView({ block: "nearest", inline: "nearest" });
   }, [value]);
   return <nav aria-label={label}>
-    <div ref={list} role="group" aria-label={label} className="sport-segmented-control is-scrollable">
+    <div ref={list} role="group" aria-label={label} className="sport-segmented-control is-scrollable is-module">
       {options.map((option) => <button key={option.value} type="button" aria-pressed={value === option.value} onClick={() => onChange(option.value)} className={clsx("sport-segment", value === option.value && "is-active")} data-module-tab={option.value}>{option.label}</button>)}
     </div>
   </nav>;
