@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useRef, useState, useTransition, type ReactNode } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Avatar } from "@/components/avatar";
-import { changePassword, exportMyData, saveAvatarUrl, updateDisplayName } from "@/lib/actions/account";
+import { changePassword, saveAvatarUrl, updateDisplayName } from "@/lib/actions/account";
 import { getReport } from "@/lib/actions/report";
 import { useToast } from "@/components/toast/toast-provider";
 import { downloadReportPdf } from "@/lib/report-pdf";
@@ -13,11 +13,11 @@ const AVATAR_SIZE = 256;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
 
 const input =
-  "w-full rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm outline-none focus:border-accent";
+  "min-h-11 w-full rounded-xl border border-border bg-surface-muted px-3 text-sm outline-none transition focus:border-accent focus-visible:ring-2 focus-visible:ring-accent/30";
 const primary =
-  "rounded-lg bg-accent px-3.5 py-2 text-sm font-medium text-on-accent transition hover:opacity-90 disabled:opacity-50";
+  "inline-flex min-h-11 items-center justify-center rounded-xl bg-accent px-4 text-sm font-semibold text-on-accent transition hover:opacity-90 disabled:opacity-50";
 const outline =
-  "rounded-lg border border-border px-3.5 py-2 text-sm font-medium text-foreground-muted transition hover:bg-surface-muted disabled:opacity-50";
+  "inline-flex min-h-11 items-center justify-center rounded-xl border border-border px-4 text-sm font-medium transition hover:bg-surface-muted disabled:opacity-50";
 
 type Feedback = { kind: "ok" | "error"; text: string } | null;
 
@@ -37,10 +37,25 @@ function useFeedback(): [Feedback, (f: Feedback) => void] {
 function Notice({ feedback }: { feedback: Feedback }) {
   if (!feedback) return null;
   return (
-    <p className="mt-2 text-xs" style={{ color: feedback.kind === "ok" ? "var(--success)" : "var(--danger)" }}>
+    <p role={feedback.kind === "error" ? "alert" : "status"} className="mt-2 text-xs" style={{ color: feedback.kind === "ok" ? "var(--success)" : "var(--danger)" }}>
       {feedback.text}
     </p>
   );
+}
+
+/** A titled group of settings: a small label above one card, as in system settings screens. */
+export function SettingsSection({ id, title, children }: { id: string; title: string; children: ReactNode }) {
+  return (
+    <section aria-labelledby={id} className="space-y-2">
+      <h2 id={id} className="px-1 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{title}</h2>
+      <div className="divide-y divide-border rounded-2xl border border-border bg-surface">{children}</div>
+    </section>
+  );
+}
+
+/** One row of a settings card. */
+export function SettingsRow({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <div className={`p-4 ${className}`}>{children}</div>;
 }
 
 /** Center-crops the picked image to a square and downsizes it to keep uploads tiny. */
@@ -59,7 +74,8 @@ async function toSquareJpeg(file: File): Promise<Blob> {
   );
 }
 
-function AvatarSection({ userId, name, avatarUrl }: { userId: string; name: string; avatarUrl: string | null }) {
+/** The card at the top of Settings: photo, name, email and membership, with the photo actions. */
+export function IdentityCard({ userId, name, email, avatarUrl, memberSinceYear }: { userId: string; name: string; email: string; avatarUrl: string | null; memberSinceYear: number }) {
   const t = useT();
   const [pending, startTransition] = useTransition();
   const [url, setUrl] = useState(avatarUrl);
@@ -91,10 +107,7 @@ function AvatarSection({ userId, name, avatarUrl }: { userId: string; name: stri
         setFeedback({ kind: "ok", text: t("profile.account.photoUpdated") });
       } catch (e) {
         const message = e instanceof Error ? e.message : t("profile.account.unknownError");
-        setFeedback({
-          kind: "error",
-          text: t("profile.account.photoUploadError", { message }),
-        });
+        setFeedback({ kind: "error", text: t("profile.account.photoUploadError", { message }) });
       } finally {
         if (fileRef.current) fileRef.current.value = "";
       }
@@ -114,38 +127,36 @@ function AvatarSection({ userId, name, avatarUrl }: { userId: string; name: stri
   }
 
   return (
-    <div>
-      <div className="flex flex-wrap items-center gap-4">
+    <div className="rounded-3xl border border-border bg-surface p-5" data-settings-identity>
+      <div className="flex items-center gap-4">
         <Avatar name={name} url={url} size="xl" />
-        <div className="space-y-2">
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            className="sr-only"
-            onChange={(e) => onPick(e.target.files?.[0])}
-          />
-          <div className="flex flex-wrap gap-2">
-            <button type="button" disabled={pending} onClick={() => fileRef.current?.click()} className={primary}>
-              {pending ? t("profile.account.uploading") : url ? t("profile.account.changePhoto") : t("profile.account.addPhoto")}
-            </button>
-            {url && (
-              <button type="button" disabled={pending} onClick={remove} className={outline}>
-                {t("profile.account.removePhoto")}
-              </button>
-            )}
-          </div>
-          <p className="text-xs text-foreground-muted">{t("profile.account.photoHint")}</p>
+        <div className="min-w-0">
+          <p className="truncate text-lg font-semibold">{name}</p>
+          <p className="truncate text-sm text-foreground-muted">{email}</p>
+          <p className="mt-1 text-xs text-foreground-muted">{t("profile.settingsPage.memberSince", { year: memberSinceYear })}</p>
         </div>
       </div>
+      <input ref={fileRef} type="file" accept="image/*" className="sr-only" tabIndex={-1} aria-hidden onChange={(e) => onPick(e.target.files?.[0])} />
+      <div className="mt-4 flex flex-wrap gap-2">
+        <button type="button" disabled={pending} onClick={() => fileRef.current?.click()} className={`${primary} flex-1`}>
+          {pending ? t("profile.account.uploading") : url ? t("profile.account.changePhoto") : t("profile.account.addPhoto")}
+        </button>
+        {url && (
+          <button type="button" disabled={pending} onClick={remove} className={outline}>
+            {t("profile.account.removePhoto")}
+          </button>
+        )}
+      </div>
+      <p className="mt-2 text-xs text-foreground-muted">{t("profile.account.photoHint")}</p>
       <Notice feedback={feedback} />
     </div>
   );
 }
 
-function NameSection({ initialName }: { initialName: string }) {
+export function NameSetting({ initialName }: { initialName: string }) {
   const t = useT();
   const [pending, startTransition] = useTransition();
+  const [saved, setSaved] = useState(initialName);
   const [name, setName] = useState(initialName);
   const [feedback, setFeedback] = useFeedback();
 
@@ -156,16 +167,15 @@ function NameSection({ initialName }: { initialName: string }) {
         setFeedback(null);
         startTransition(async () => {
           const result = await updateDisplayName(name);
-          setFeedback(
-            result.error ? { kind: "error", text: result.error } : { kind: "ok", text: t("profile.account.nameUpdated") }
-          );
+          if (!result.error) setSaved(name.trim());
+          setFeedback(result.error ? { kind: "error", text: result.error } : { kind: "ok", text: t("profile.account.nameUpdated") });
         });
       }}
     >
-      <label className="mb-1 block text-xs font-medium text-foreground-muted">{t("profile.account.nameLabel")}</label>
+      <label htmlFor="settings-name" className="mb-1.5 block text-xs font-medium text-foreground-muted">{t("profile.account.nameLabel")}</label>
       <div className="flex gap-2">
-        <input value={name} onChange={(e) => setName(e.target.value)} maxLength={40} required className={input} />
-        <button type="submit" disabled={pending || name.trim() === initialName} className={primary}>
+        <input id="settings-name" value={name} onChange={(e) => setName(e.target.value)} maxLength={40} required autoComplete="nickname" className={input} />
+        <button type="submit" disabled={pending || name.trim() === saved} className={primary}>
           {t("profile.account.save")}
         </button>
       </div>
@@ -174,85 +184,66 @@ function NameSection({ initialName }: { initialName: string }) {
   );
 }
 
-function PasswordSection() {
+export function EmailSetting({ email }: { email: string }) {
+  const t = useT();
+  return (
+    <div>
+      <label htmlFor="settings-email" className="mb-1.5 block text-xs font-medium text-foreground-muted">{t("profile.account.emailLabel")}</label>
+      <input id="settings-email" type="email" value={email} readOnly className={`${input} text-foreground-muted`} />
+    </div>
+  );
+}
+
+/** Password change, folded away until asked for. */
+export function PasswordSetting() {
   const t = useT();
   const [pending, startTransition] = useTransition();
   const [formKey, setFormKey] = useState(0);
   const [feedback, setFeedback] = useFeedback();
 
   return (
-    <form
-      key={formKey}
-      onSubmit={(e) => {
-        e.preventDefault();
-        const data = new FormData(e.currentTarget);
-        const current = String(data.get("current"));
-        const next = String(data.get("next"));
-        const confirm = String(data.get("confirm"));
-        if (next !== confirm) return setFeedback({ kind: "error", text: t("profile.account.passwordMismatch") });
+    <details className="group">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-medium [&::-webkit-details-marker]:hidden">
+        {t("profile.account.changePassword")}
+        <span aria-hidden className="text-foreground-muted transition-transform group-open:rotate-90 rtl:rotate-180 rtl:group-open:rotate-90">›</span>
+      </summary>
+      <form
+        key={formKey}
+        onSubmit={(e) => {
+          e.preventDefault();
+          const data = new FormData(e.currentTarget);
+          const current = String(data.get("current"));
+          const next = String(data.get("next"));
+          const confirm = String(data.get("confirm"));
+          if (next !== confirm) return setFeedback({ kind: "error", text: t("profile.account.passwordMismatch") });
 
-        setFeedback(null);
-        startTransition(async () => {
-          const result = await changePassword(current, next);
-          if (result.error) return setFeedback({ kind: "error", text: result.error });
-          setFormKey((k) => k + 1);
-          setFeedback({ kind: "ok", text: t("profile.account.passwordChanged") });
-        });
-      }}
-      className="space-y-2"
-    >
-      <input
-        name="current"
-        type="password"
-        required
-        autoComplete="current-password"
-        placeholder={t("profile.account.currentPassword")}
-        className={input}
-      />
-      <div className="grid gap-2 sm:grid-cols-2">
-        <input
-          name="next"
-          type="password"
-          required
-          minLength={6}
-          autoComplete="new-password"
-          placeholder={t("profile.account.newPassword")}
-          className={input}
-        />
-        <input
-          name="confirm"
-          type="password"
-          required
-          minLength={6}
-          autoComplete="new-password"
-          placeholder={t("profile.account.confirmPassword")}
-          className={input}
-        />
-      </div>
-      <button type="submit" disabled={pending} className={primary}>
-        {pending ? t("profile.account.changingPassword") : t("profile.account.changePassword")}
-      </button>
-      <Notice feedback={feedback} />
-    </form>
+          setFeedback(null);
+          startTransition(async () => {
+            const result = await changePassword(current, next);
+            if (result.error) return setFeedback({ kind: "error", text: result.error });
+            setFormKey((k) => k + 1);
+            setFeedback({ kind: "ok", text: t("profile.account.passwordChanged") });
+          });
+        }}
+        className="mt-3 space-y-2"
+      >
+        <input name="current" type="password" required autoComplete="current-password" aria-label={t("profile.account.currentPassword")} placeholder={t("profile.account.currentPassword")} className={input} />
+        <input name="next" type="password" required minLength={6} autoComplete="new-password" aria-label={t("profile.account.newPassword")} placeholder={t("profile.account.newPassword")} className={input} />
+        <input name="confirm" type="password" required minLength={6} autoComplete="new-password" aria-label={t("profile.account.confirmPassword")} placeholder={t("profile.account.confirmPassword")} className={input} />
+        <p className="text-xs text-foreground-muted">{t("profile.settingsPage.passwordHint")}</p>
+        <button type="submit" disabled={pending} className={`${primary} w-full`}>
+          {pending ? t("profile.account.changingPassword") : t("profile.account.changePassword")}
+        </button>
+        <Notice feedback={feedback} />
+      </form>
+    </details>
   );
 }
 
-const MONTH_KEYS = [
-  "jan",
-  "feb",
-  "mar",
-  "apr",
-  "may",
-  "jun",
-  "jul",
-  "aug",
-  "sep",
-  "oct",
-  "nov",
-  "dec",
-];
+const MONTH_KEYS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
 
-function ExportSection({ sinceYear }: { sinceYear: number }) {
+/** Monthly or yearly PDF report. */
+export function ReportSetting({ sinceYear }: { sinceYear: number }) {
   const t = useT();
   const [pending, startTransition] = useTransition();
   const [feedback, setFeedback] = useFeedback();
@@ -271,157 +262,49 @@ function ExportSection({ sinceYear }: { sinceYear: number }) {
     setFeedback(null);
     startTransition(async () => {
       try {
-        const { data, error } = await getReport(
-          mode === "month" ? { kind: "month", year, month: safeMonth } : { kind: "year", year }
-        );
+        const { data, error } = await getReport(mode === "month" ? { kind: "month", year, month: safeMonth } : { kind: "year", year });
         if (error || !data) return setFeedback({ kind: "error", text: error ?? t("profile.account.reportUnavailable") });
         await downloadReportPdf(data);
         setFeedback({ kind: "ok", text: t("profile.account.pdfDownloaded", { label: data.periodLabel }) });
       } catch (e) {
-        setFeedback({
-          kind: "error",
-          text: e instanceof Error ? e.message : t("profile.account.pdfError"),
-        });
+        setFeedback({ kind: "error", text: e instanceof Error ? e.message : t("profile.account.pdfError") });
       }
     });
   }
 
-  function downloadJson() {
-    setFeedback(null);
-    startTransition(async () => {
-      const { json, error } = await exportMyData();
-      if (error || !json) return setFeedback({ kind: "error", text: error ?? t("profile.account.exportImpossible") });
-
-      const blob = new Blob([json], { type: "application/json" });
-      const href = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = href;
-      a.download = `track-perso-export-${new Date().toISOString().slice(0, 10)}.json`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(href);
-      setFeedback({ kind: "ok", text: t("profile.account.jsonDownloaded") });
-    });
-  }
-
-  const tab = (active: boolean) => ({
-    background: active ? "var(--accent)" : "transparent",
-    color: active ? "var(--on-accent)" : "var(--foreground-muted)",
-  });
-
   return (
-    <div className="space-y-4">
-      <p className="text-xs text-foreground-muted">{t("profile.account.exportIntro")}</p>
-
-      <div className="inline-flex gap-1 rounded-xl border border-accent/40 bg-surface-muted p-1">
-        <button
-          type="button"
-          onClick={() => setMode("month")}
-          className="rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors"
-          style={tab(mode === "month")}
-        >
-          {t("profile.account.month")}
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode("year")}
-          className="rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors"
-          style={tab(mode === "year")}
-        >
-          {t("profile.account.year")}
-        </button>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2">
-        {mode === "month" && (
-          <select
-            value={safeMonth}
-            onChange={(e) => setMonth(Number(e.target.value))}
-            aria-label={t("profile.account.monthAriaLabel")}
-            className={`${input} w-auto min-w-36`}
+    <div className="space-y-3">
+      <p className="text-sm text-foreground-muted">{t("profile.settingsPage.reportHint")}</p>
+      <div role="radiogroup" aria-label={t("profile.settingsPage.reportsSection")} className="grid grid-cols-2 gap-1 rounded-xl bg-surface-muted p-1">
+        {(["month", "year"] as const).map((value) => (
+          <button
+            key={value}
+            type="button"
+            role="radio"
+            aria-checked={mode === value}
+            onClick={() => setMode(value)}
+            className={`min-h-10 rounded-lg text-sm font-medium transition-colors ${mode === value ? "bg-surface text-foreground shadow-sm" : "text-foreground-muted"}`}
           >
+            {t(`profile.account.${value}`)}
+          </button>
+        ))}
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        {mode === "month" && (
+          <select value={safeMonth} onChange={(e) => setMonth(Number(e.target.value))} aria-label={t("profile.account.monthAriaLabel")} className={input}>
             {MONTH_KEYS.slice(0, lastMonth).map((key, i) => (
-              <option key={key} value={i + 1}>
-                {t(`profile.account.months.${key}`)}
-              </option>
+              <option key={key} value={i + 1}>{t(`profile.account.months.${key}`)}</option>
             ))}
           </select>
         )}
-        <select
-          value={year}
-          onChange={(e) => setYear(Number(e.target.value))}
-          aria-label={t("profile.account.yearAriaLabel")}
-          className={`${input} w-auto min-w-28`}
-        >
-          {years.map((y) => (
-            <option key={y} value={y}>
-              {y}
-            </option>
-          ))}
+        <select value={year} onChange={(e) => setYear(Number(e.target.value))} aria-label={t("profile.account.yearAriaLabel")} className={`${input} ${mode === "year" ? "col-span-2" : ""}`}>
+          {years.map((y) => <option key={y} value={y}>{y}</option>)}
         </select>
-        <button type="button" disabled={pending} onClick={downloadPdf} className={primary}>
-          {pending ? t("profile.account.preparing") : t("profile.account.downloadPdf")}
-        </button>
       </div>
-
-      <div className="border-t border-accent/20 pt-3">
-        <p className="mb-2 text-xs text-foreground-muted">{t("profile.account.jsonIntro")}</p>
-        <button type="button" disabled={pending} onClick={downloadJson} className={outline}>
-          {t("profile.account.downloadJson")}
-        </button>
-      </div>
+      <button type="button" disabled={pending} onClick={downloadPdf} className={`${primary} w-full`}>
+        {pending ? t("profile.account.preparing") : t("profile.account.downloadPdf")}
+      </button>
       <Notice feedback={feedback} />
-    </div>
-  );
-}
-
-export function AccountSettings({
-  userId,
-  email,
-  displayName,
-  avatarUrl,
-  memberSinceYear,
-}: {
-  userId: string;
-  email: string;
-  displayName: string;
-  avatarUrl: string | null;
-  memberSinceYear: number;
-}) {
-  const t = useT();
-  return (
-    <div className="rounded-2xl border-[1.5px] border-accent/40 bg-surface p-5">
-      <h2 className="mb-4 flex items-center gap-2 text-sm font-medium">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft">👤</span>
-        {t("profile.account.heading")}
-      </h2>
-
-      <div className="space-y-6">
-        <AvatarSection userId={userId} name={displayName} avatarUrl={avatarUrl} />
-
-        <div className="space-y-4 border-t border-accent/20 pt-5">
-          <div>
-            <label className="mb-1 block text-xs font-medium text-foreground-muted">{t("profile.account.emailLabel")}</label>
-            <input value={email} readOnly disabled className={`${input} opacity-70`} />
-          </div>
-          <NameSection initialName={displayName} />
-        </div>
-
-        <div className="border-t border-accent/20 pt-5">
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-            {t("profile.account.passwordHeading")}
-          </h3>
-          <PasswordSection />
-        </div>
-
-        <div className="border-t border-accent/20 pt-5">
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-            {t("profile.account.dataHeading")}
-          </h3>
-          <ExportSection sinceYear={memberSinceYear} />
-        </div>
-      </div>
     </div>
   );
 }

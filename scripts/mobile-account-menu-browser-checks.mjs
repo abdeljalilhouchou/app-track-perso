@@ -46,11 +46,36 @@ export async function checkMobileAccountMenu({ send, evaluate, navigatePage, rea
     await until(() => evaluate("location.pathname==='/profil/badges'&&!!document.querySelector('main h1')"), "badges page");
     assert.ok(await evaluate("!document.querySelector('.mobile-account-menu')"), "Menu closed after navigation");
     assert.ok(await evaluate("!document.querySelector('main input[type=email]')"), "badges page carries no account settings");
+    // Badges: level hero, every badge with its progress, filters by category.
+    await until(() => evaluate("!!document.querySelector('[data-badges-hero]')"), "badges hero");
+    const total = await evaluate("document.querySelectorAll('[data-badge]').length");
+    assert.equal(total, 28, "all 28 badges listed");
+    assert.ok(await evaluate("[...document.querySelectorAll('[data-badge]:not([data-unlocked])')].every((card) => card.querySelector('[role=progressbar]'))"), "locked badges show their progress");
+    await evaluate("document.querySelector('[data-badge-filter=sport]').click()");
+    await until(() => evaluate("document.querySelector('[data-badge-filter=sport]').getAttribute('aria-pressed')==='true'"), "sport filter on");
+    const sportCount = await evaluate("document.querySelectorAll('[data-badge]').length");
+    assert.ok(sportCount >= 10 && sportCount < total, `sport filter narrows the list: ${sportCount}`);
+    assert.ok(await evaluate("document.documentElement.scrollWidth - innerWidth <= 1"), "badges page has no horizontal overflow");
     if (width === 390 && language === "fr") await shot("badges-page");
+    await evaluate("document.querySelector('[data-badge-filter=all]').click()");
     await openMenu();
     await evaluate("[...document.querySelectorAll('.mobile-account-menu a')].find(a=>a.getAttribute('href')==='/profil/parametres').click()");
     await until(() => evaluate("location.pathname==='/profil/parametres'&&!!document.querySelector('main h1')"), "settings page");
-    if (width === 390 && language === "fr") await shot("settings-page");
+    // Settings: grouped sections, a reminder switch, sign-out, and no raw JSON export any more.
+    assert.ok(await evaluate("!!document.querySelector('[data-settings-identity]')"), "identity card");
+    assert.equal(await evaluate("document.querySelectorAll('main section[aria-labelledby]').length"), 7, "seven settings sections");
+    assert.ok(await evaluate("!!document.querySelector('[data-reminder-switch][role=switch]')"), "reminder switch");
+    assert.ok(await evaluate("!/JSON/.test(document.querySelector('main').innerText)"), "no JSON export");
+    assert.ok(await evaluate("[...document.querySelectorAll('main button')].some((b)=>b.closest('#settings-session, section[aria-labelledby=settings-session]'))"), "sign-out in settings");
+    assert.ok(await evaluate("document.documentElement.scrollWidth - innerWidth <= 1"), "settings page has no horizontal overflow");
+    if (width === 390 && language === "fr") {
+      await shot("settings-page");
+      await evaluate("document.querySelector('#settings-notifications').scrollIntoView({block:'start'})");
+      await shot("settings-page-middle");
+      await evaluate("scrollTo(0, document.documentElement.scrollHeight)");
+      await shot("settings-page-bottom");
+      await evaluate("scrollTo(0, 0)");
+    }
     // The back link returns to the profile overview, which no longer holds settings or badges.
     await evaluate("document.querySelector('main a[href=\"/profil\"]').click()");
     await until(() => evaluate("location.pathname==='/profil'"), "back to profile");

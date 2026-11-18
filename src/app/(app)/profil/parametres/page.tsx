@@ -2,9 +2,11 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/supabase/read-context";
 import { ReminderSettings } from "@/components/reminder-settings";
 import { ThemeSelector } from "@/components/theme-selector";
-import { AccountSettings } from "@/components/account-settings";
+import { EmailSetting, IdentityCard, NameSetting, PasswordSetting, ReportSetting, SettingsRow, SettingsSection } from "@/components/account-settings";
 import { LanguageSelector } from "@/components/language-selector";
 import { ProfileSubpageHeader } from "@/components/profile-subpage-header";
+import { SignOutButton } from "@/components/auth/sign-out-button";
+import { LogOutIcon } from "@/components/ui/nav-icons";
 import { Callout } from "@/components/ui/callout";
 import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
 
@@ -24,55 +26,56 @@ export default async function ProfilSettingsPage() {
   if (profileError) throw new Error("Impossible de charger le profil.");
 
   const displayName = profile?.display_name || user.email?.split("@")[0] || "toi";
+  const email = user.email ?? "";
+  const memberSinceYear = new Date(user.created_at).getFullYear();
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="mx-auto max-w-2xl space-y-6 animate-fade-in">
       <ProfileSubpageHeader title={dict.nav.settings} backLabel={dict.nav.profile} />
 
-      {/* These hints point at "Mon compte" and at the reminders further down: both live on this page. */}
+      <IdentityCard userId={user.id} name={displayName} email={email} avatarUrl={profile?.avatar_url ?? null} memberSinceYear={memberSinceYear} />
+
+      {/* Points at the Notifications section further down this page. */}
       {!profile?.reminder_time && (
         <Callout variant="tip" title={t("profile.calloutReminder.title")} dismissKey="profile-reminder" compact>
           {t("profile.calloutReminder.text")}
         </Callout>
       )}
-      {!profile?.avatar_url && (
-        <Callout variant="info" title={t("profile.calloutCustomize.title")} dismissKey="profile-avatar" compact>
-          {t("profile.calloutCustomize.text")}
-        </Callout>
-      )}
 
-      <AccountSettings
-        userId={user.id}
-        email={user.email ?? ""}
-        displayName={displayName}
-        avatarUrl={profile?.avatar_url ?? null}
-        memberSinceYear={new Date(user.created_at).getFullYear()}
-      />
+      <SettingsSection id="settings-profile" title={t("profile.settingsPage.profileSection")}>
+        <SettingsRow><NameSetting initialName={displayName} /></SettingsRow>
+        <SettingsRow><EmailSetting email={email} /></SettingsRow>
+      </SettingsSection>
 
-      <div className="rounded-2xl border-[1.5px] border-accent/40 bg-surface p-5">
-        <h2 className="mb-3 flex items-center gap-2 text-sm font-medium">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft">🎨</span>
-          {t("profile.appearanceHeading")}
-        </h2>
-        <ThemeSelector />
-      </div>
+      <SettingsSection id="settings-appearance" title={t("profile.settingsPage.appearanceSection")}>
+        <SettingsRow><ThemeSelector /></SettingsRow>
+      </SettingsSection>
 
-      <div className="rounded-2xl border-[1.5px] border-accent/40 bg-surface p-5">
-        <h2 className="mb-1 flex items-center gap-2 text-sm font-medium">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft">🌐</span>
-          {dict.language.title}
-        </h2>
-        <p className="mb-3 text-xs text-foreground-muted">{dict.language.description}</p>
-        <LanguageSelector />
-      </div>
+      <SettingsSection id="settings-language" title={t("profile.settingsPage.languageSection")}>
+        <SettingsRow><LanguageSelector /></SettingsRow>
+      </SettingsSection>
 
-      <div className="rounded-2xl border border-border bg-surface p-5">
-        <h2 className="mb-3 flex items-center gap-2 text-sm font-medium">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-soft">🔔</span>
-          {t("profile.reminders.heading")}
-        </h2>
-        <ReminderSettings initialTime={profile?.reminder_time ?? null} email={user.email ?? ""} />
-      </div>
+      <SettingsSection id="settings-notifications" title={t("profile.settingsPage.notificationsSection")}>
+        <SettingsRow><ReminderSettings initialTime={profile?.reminder_time ?? null} email={email} /></SettingsRow>
+      </SettingsSection>
+
+      <SettingsSection id="settings-security" title={t("profile.settingsPage.securitySection")}>
+        <SettingsRow className="py-2"><PasswordSetting /></SettingsRow>
+      </SettingsSection>
+
+      <SettingsSection id="settings-reports" title={t("profile.settingsPage.reportsSection")}>
+        <SettingsRow><ReportSetting sinceYear={memberSinceYear} /></SettingsRow>
+      </SettingsSection>
+
+      <SettingsSection id="settings-session" title={t("profile.settingsPage.sessionSection")}>
+        <SettingsRow className="space-y-2">
+          <SignOutButton className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-danger/40 text-sm font-semibold text-danger transition hover:bg-danger/10">
+            <LogOutIcon className="h-5 w-5" />
+            {dict.nav.signOut}
+          </SignOutButton>
+          <p className="text-center text-xs text-foreground-muted">{t("profile.settingsPage.signOutHint")}</p>
+        </SettingsRow>
+      </SettingsSection>
     </div>
   );
 }

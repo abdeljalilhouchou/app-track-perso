@@ -40,7 +40,7 @@ export function ThemeSelector() {
   const t = useT();
 
   return (
-    <div role="radiogroup" aria-label={t("profile.appearanceHeading")} className="grid gap-3 sm:grid-cols-3">
+    <div role="radiogroup" aria-label={t("profile.appearanceHeading")} className="grid grid-cols-3 gap-2 sm:gap-3">
       {OPTIONS.map(({ value, labelKey, hintKey, Icon, preview }) => {
         const selected = theme === value;
         const label = t(labelKey);
@@ -51,7 +51,7 @@ export function ThemeSelector() {
             role="radio"
             aria-checked={selected}
             onClick={() => setTheme(value)}
-            className="relative min-h-11 rounded-2xl border-[1.5px] p-3 text-start transition-colors"
+            className="relative min-h-11 rounded-2xl border-[1.5px] p-2 text-start transition-colors sm:p-3"
             style={{
               borderColor: selected ? "var(--accent)" : "var(--border)",
               background: selected ? "var(--accent-soft)" : "var(--surface)",
@@ -65,7 +65,7 @@ export function ThemeSelector() {
               />
             )}
             <div
-              className="mb-3 flex h-16 items-center justify-center gap-1.5 rounded-lg border border-border"
+              className="mb-2 flex h-12 items-center sm:mb-3 sm:h-16 justify-center gap-1.5 rounded-lg border border-border"
               style={preview}
             >
               {value === "system" ? (
@@ -77,11 +77,11 @@ export function ThemeSelector() {
                 <Mock dark={value === "dark"} />
               )}
             </div>
-            <div className="flex items-center gap-2">
-              <Icon className={`h-4.5 w-4.5 ${selected ? "text-accent" : "text-foreground-muted"}`} />
+            <div className="flex items-center justify-center gap-2 sm:justify-start">
+              <Icon aria-hidden className={`hidden h-4.5 w-4.5 shrink-0 sm:block ${selected ? "text-accent" : "text-foreground-muted"}`} />
               <div>
-                <p className="text-sm font-medium">{label}</p>
-                <p className="text-xs text-foreground-muted">{t(hintKey)}</p>
+                <p className="text-center text-xs font-medium sm:text-start sm:text-sm">{label}</p>
+                <p className="hidden text-xs text-foreground-muted sm:block">{t(hintKey)}</p>
               </div>
             </div>
           </button>

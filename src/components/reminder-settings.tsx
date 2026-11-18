@@ -50,35 +50,38 @@ export function ReminderSettings({ initialTime, email }: { initialTime: string |
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-3">
-        <label className="flex items-center gap-2 text-sm">
-          <span className="text-foreground-muted">{t("profile.reminders.timeLabel")}</span>
-          <input
-            type="time"
-            value={time}
-            onChange={(e) => handleTimeChange(e.target.value)}
-            className="rounded-lg border border-border bg-surface-muted px-2.5 py-1.5 text-sm outline-none focus:border-accent"
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p id="reminder-label" className="text-sm font-medium">{t("profile.settingsPage.reminderLabel")}</p>
+          <p className="text-xs text-foreground-muted">{enabled ? t("profile.settingsPage.reminderOn", { time }) : t("profile.settingsPage.reminderOff")}</p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={enabled}
+          aria-labelledby="reminder-label"
+          disabled={pending}
+          onClick={enabled ? handleDisable : handleEnable}
+          className="relative h-8 w-13 shrink-0 rounded-full transition-colors disabled:opacity-60"
+          style={{ background: enabled ? "var(--accent)" : "var(--surface-muted)", boxShadow: "inset 0 0 0 1px var(--border)" }}
+          data-reminder-switch
+        >
+          <span
+            aria-hidden
+            className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-[inset-inline-start] motion-reduce:transition-none ${enabled ? "start-6" : "start-1"}`}
           />
-        </label>
-
-        {enabled ? (
-          <button
-            onClick={handleDisable}
-            disabled={pending}
-            className="rounded-lg border border-border px-3.5 py-1.5 text-sm font-medium text-foreground-muted transition hover:bg-surface-muted disabled:opacity-60"
-          >
-            {t("profile.reminders.disable")}
-          </button>
-        ) : (
-          <button
-            onClick={handleEnable}
-            disabled={pending}
-            className="rounded-lg bg-accent px-3.5 py-1.5 text-sm font-medium text-on-accent transition hover:opacity-90 disabled:opacity-60"
-          >
-            {t("profile.reminders.enable")}
-          </button>
-        )}
+        </button>
       </div>
+
+      <label className="flex min-h-11 items-center justify-between gap-3 text-sm">
+        <span className="text-foreground-muted">{t("profile.reminders.timeLabel")}</span>
+        <input
+          type="time"
+          value={time}
+          onChange={(e) => handleTimeChange(e.target.value)}
+          className="min-h-11 rounded-xl border border-border bg-surface-muted px-3 text-sm outline-none focus:border-accent"
+        />
+      </label>
 
       <p className="text-xs text-foreground-muted">
         {enabled ? <EnabledDescription text={t("profile.reminders.descriptionEnabled", { email, time })} email={email} /> : t("profile.reminders.descriptionDisabled")}

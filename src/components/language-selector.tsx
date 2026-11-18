@@ -14,7 +14,7 @@ export function LanguageSelector() {
   const { language, setLanguage, t } = useLanguage();
 
   return (
-    <div role="radiogroup" aria-label={t("language.title")} className="grid gap-3 sm:grid-cols-3">
+    <div role="radiogroup" aria-label={t("language.title")} className="grid grid-cols-3 gap-2 sm:gap-3">
       {OPTIONS.map(({ value, label, flag }) => {
         const selected = language === value;
         return (
@@ -24,7 +24,7 @@ export function LanguageSelector() {
             role="radio"
             aria-checked={selected}
             onClick={() => setLanguage(value)}
-            className="relative flex items-center gap-2.5 rounded-2xl border-[1.5px] p-3 text-left transition-colors"
+            className="relative flex min-h-11 flex-col items-center gap-1.5 rounded-2xl border-[1.5px] p-3 text-center transition-colors sm:flex-row sm:gap-2.5 sm:text-start"
             style={{
               borderColor: selected ? "var(--accent)" : "var(--border)",
               background: selected ? "var(--accent-soft)" : "var(--surface)",
@@ -37,7 +37,7 @@ export function LanguageSelector() {
                 transition={{ type: "spring", stiffness: 400, damping: 32 }}
               />
             )}
-            <span className="text-2xl leading-none">{flag}</span>
+            <span aria-hidden className="text-2xl leading-none">{flag}</span>
             <p className={`text-sm font-medium ${selected ? "text-accent" : ""}`}>{label}</p>
           </button>
         );
