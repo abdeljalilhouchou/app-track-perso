@@ -1,88 +1,94 @@
 "use client";
 
-import { useActionState } from "react";
-import Link from "next/link";
-import { signUp } from "@/lib/actions/auth";
+import { useActionState, useState } from "react";
+import { signUp, type SignUpState } from "@/lib/actions/auth";
+import { AuthError, AuthLayout, AuthSwitch, PasswordInput, authField, authPrimary } from "@/components/auth/auth-layout";
 import { useAuthT } from "@/lib/i18n/use-auth-t";
 
+const MIN_PASSWORD = 6;
+
 export default function SignupPage() {
-  const [state, formAction, pending] = useActionState<{ error: string | null }, FormData>(
-    signUp,
-    { error: null }
-  );
+  const [state, formAction, pending] = useActionState<SignUpState, FormData>(signUp, { error: null, email: "", displayName: "" });
   const t = useAuthT();
+  const error = state.error === "failed" ? t("auth.signup.errorFailed") : state.error ? t("auth.signup.errorInvalid") : null;
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <Link href="/" className="text-2xl font-semibold tracking-tight">
-            track<span className="text-accent">.perso</span>
-          </Link>
-          <p className="mt-2 text-sm text-foreground-muted">{t("auth.signup.tagline")}</p>
+    <AuthLayout title={t("auth.signup.headline")} subtitle={t("auth.signup.subtitle")}>
+      {/* Remounted after each refusal so the kept values fill the fields again. */}
+      <form key={`${state.email}|${state.displayName}|${state.error}`} action={formAction} className="space-y-5">
+        <div className="space-y-2">
+          <label htmlFor="displayName" className="text-sm font-medium">{t("auth.signup.firstName")}</label>
+          <input
+            id="displayName"
+            name="displayName"
+            type="text"
+            required
+            maxLength={40}
+            autoComplete="given-name"
+            defaultValue={state.displayName}
+            className={authField}
+            placeholder={t("auth.signup.namePlaceholder")}
+          />
         </div>
 
-        <form action={formAction} className="space-y-4 rounded-2xl border border-border bg-surface p-6 shadow-sm">
-          <div className="space-y-1.5">
-            <label htmlFor="displayName" className="text-sm font-medium">{t("auth.signup.firstName")}</label>
-            <input
-              id="displayName"
-              name="displayName"
-              type="text"
-              required
-              autoComplete="name"
-              className="w-full rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-accent"
-              placeholder="Ton prenom"
-            />
-          </div>
+        <div className="space-y-2">
+          <label htmlFor="email" className="text-sm font-medium">{t("auth.signup.email")}</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            inputMode="email"
+            autoCapitalize="none"
+            spellCheck={false}
+            defaultValue={state.email}
+            aria-invalid={state.error ? true : undefined}
+            aria-describedby={error ? "signup-error" : undefined}
+            className={authField}
+            placeholder={t("auth.login.emailPlaceholder")}
+            dir="ltr"
+          />
+        </div>
 
-          <div className="space-y-1.5">
-            <label htmlFor="email" className="text-sm font-medium">{t("auth.signup.email")}</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              autoComplete="email"
-              className="w-full rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-accent"
-              placeholder="toi@exemple.com"
-            />
-          </div>
+        <div className="space-y-2">
+          <label htmlFor="password" className="text-sm font-medium">{t("auth.signup.password")}</label>
+          <PasswordWithHint invalid={state.error === "invalid"} errorId={error ? "signup-error" : null} />
+        </div>
 
-          <div className="space-y-1.5">
-            <label htmlFor="password" className="text-sm font-medium">{t("auth.signup.password")}</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              minLength={6}
-              autoComplete="new-password"
-              className="w-full rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-accent"
-              placeholder={t("auth.signup.passwordHint")}
-            />
-          </div>
+        {error && <AuthError id="signup-error">{error}</AuthError>}
 
-          {state.error && (
-            <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{state.error}</p>
-          )}
+        <button type="submit" disabled={pending} className={authPrimary}>
+          {pending && <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none" aria-hidden />}
+          {pending ? t("auth.signup.submitting") : t("auth.signup.submit")}
+        </button>
+      </form>
 
-          <button
-            type="submit"
-            disabled={pending}
-            className="w-full rounded-lg bg-accent px-3 py-2.5 text-sm font-medium text-on-accent transition hover:opacity-90 disabled:opacity-60"
-          >
-            {pending ? t("auth.signup.submitting") : t("auth.signup.submit")}
-          </button>
-        </form>
+      <AuthSwitch question={t("auth.signup.hasAccount")} href="/login" label={t("auth.signup.logInCta")} />
+    </AuthLayout>
+  );
+}
 
-        <p className="mt-6 text-center text-sm text-foreground-muted">
-          {t("auth.signup.hasAccount")}{" "}
-          <Link href="/login" className="font-medium text-accent hover:underline">
-            {t("auth.signup.logIn")}
-          </Link>
-        </p>
-      </div>
-    </div>
+/** The password field and its live length check; remounts with the form, so both reset together. */
+function PasswordWithHint({ invalid, errorId }: { invalid: boolean; errorId: string | null }) {
+  const t = useAuthT();
+  const [length, setLength] = useState(0);
+  const longEnough = length >= MIN_PASSWORD;
+  return (
+    <>
+      <PasswordInput
+        id="password"
+        autoComplete="new-password"
+        minLength={MIN_PASSWORD}
+        placeholder={t("auth.signup.passwordHint")}
+        invalid={invalid}
+        describedBy={["signup-password-hint", errorId ?? ""].filter(Boolean).join(" ")}
+        onValueChange={(value) => setLength(value.length)}
+      />
+      <p id="signup-password-hint" className="flex items-center gap-1.5 text-xs" style={{ color: longEnough ? "var(--success)" : "var(--foreground-muted)" }} aria-live="polite" data-signup-password-hint>
+        <span aria-hidden>{longEnough ? "✓" : "•"}</span>
+        {longEnough ? t("auth.signup.passwordOk") : t("auth.signup.passwordHint")}
+      </p>
+    </>
   );
 }

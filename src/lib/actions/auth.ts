@@ -22,13 +22,17 @@ export async function signIn(_prevState: SignInState, formData: FormData): Promi
   redirect("/dashboard");
 }
 
-export async function signUp(_prevState: { error: string | null }, formData: FormData) {
+export type SignUpState = { error: "invalid" | "failed" | null; email: string; displayName: string };
+
+/** Returns an error code the page translates, with the name and email so they survive a refusal. */
+export async function signUp(_prevState: SignUpState, formData: FormData): Promise<SignUpState> {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const displayName = String(formData.get("displayName") ?? "").trim();
+  const kept = { email: email.slice(0, 320), displayName: displayName.slice(0, 40) };
 
   if (!isValidEmail(email) || password.length < 6 || password.length > 1024 || displayName.length > 40) {
-    return { error: "Vérifie l’adresse e-mail, le mot de passe et le nom." };
+    return { error: "invalid", ...kept };
   }
 
   const supabase = await createClient();
@@ -38,7 +42,7 @@ export async function signUp(_prevState: { error: string | null }, formData: For
     options: { data: { display_name: displayName } },
   });
 
-  if (error) return { error: "Impossible de créer le compte avec ces informations." };
+  if (error) return { error: "failed", ...kept };
 
   redirect("/dashboard");
 }

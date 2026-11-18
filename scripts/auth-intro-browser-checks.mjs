@@ -102,4 +102,30 @@ export async function checkAuthIntro({ send, evaluate, navigatePage, ready, unti
   await shot("login-1440");
   await evaluate("localStorage.removeItem('language')");
   result.cases.push({ case: "login page" });
+
+  // 5. The sign-up page shares the frame: fields, live password check, reveal, Arabic. Nothing is submitted.
+  await send("Emulation.setDeviceMetricsOverride", { width: 375, height: 812, deviceScaleFactor: 1, mobile: true });
+  await navigatePage(`http://127.0.0.1:${appPort}/signup`);
+  await until(() => evaluate("!!document.querySelector('#displayName') && !!document.querySelector('#password')"), "sign-up page");
+  assert.equal(await evaluate("document.querySelector('main h1').textContent"), "Crée ton compte", "sign-up title");
+  assert.ok(await evaluate("!!document.querySelector('a[href=\"/login\"]')"), "link back to sign-in");
+  await evaluate("document.querySelector('#password').focus()");
+  await send("Input.insertText", { text: "abc" });
+  assert.ok(await evaluate("document.querySelector('[data-signup-password-hint]').textContent.includes('6 caractères')"), "hint asks for 6 characters");
+  await send("Input.insertText", { text: "def" });
+  await until(() => evaluate("document.querySelector('[data-signup-password-hint]').textContent.includes('Longueur suffisante')"), "hint confirms the length");
+  await evaluate("document.querySelector('[data-login-reveal]').click()");
+  assert.equal(await evaluate("document.querySelector('#password').type"), "text", "sign-up password can be shown");
+  assert.ok(await evaluate("document.documentElement.scrollWidth - innerWidth <= 1"), "sign-up has no horizontal overflow");
+  await shot("signup-375");
+  await evaluate("[...document.querySelectorAll('[data-login-language] [role=radio]')].find((b) => b.lang === 'ar').click()");
+  await until(() => evaluate("document.documentElement.dir === 'rtl' && document.querySelector('main h1').textContent === 'أنشئ حسابك'"), "sign-up in Arabic");
+  assert.ok(await evaluate("document.documentElement.scrollWidth - innerWidth <= 1"), "no overflow in Arabic sign-up");
+  await shot("signup-ar");
+  await evaluate("[...document.querySelectorAll('[data-login-language] [role=radio]')].find((b) => b.lang === 'fr').click()");
+  await send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
+  await pause(300);
+  await shot("signup-1440");
+  await evaluate("localStorage.removeItem('language')");
+  result.cases.push({ case: "sign-up page" });
 }
