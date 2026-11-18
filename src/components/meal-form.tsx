@@ -4,7 +4,8 @@ import { useActionToast } from "@/components/toast/use-action-toast";
 import { useMemo, useRef, useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { logMeal } from "@/lib/actions/nutrition";
-import { searchOpenFoodFacts, type OffResult } from "@/lib/actions/openfoodfacts";
+import { searchOpenFoodFacts, type BarcodeResult, type OffResult } from "@/lib/actions/openfoodfacts";
+import { BarcodeScanner } from "@/components/nutrition/barcode-scanner";
 import { computeMacros } from "@/lib/food-database";
 import { useClickOutside } from "@/lib/use-click-outside";
 import { useT } from "@/components/language-provider";
@@ -63,7 +64,9 @@ function fromOff(r: OffResult): SelectedFood {
   };
 }
 
-export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods?: Food[] }) {
+export type MealMoment = "petit-dejeuner" | "dejeuner" | "diner" | "collation";
+
+export function MealForm({ foods, quickFoods = [], initialMealType = "dejeuner", onAdded }: { foods: Food[]; quickFoods?: Food[]; initialMealType?: MealMoment; onAdded?: () => void }) {
   const t = useT();
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
@@ -80,7 +83,8 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<SelectedFood | null>(null);
   const [grams, setGrams] = useState(100);
-  const [mealType, setMealType] = useState<(typeof MEAL_TYPES)[number]["value"]>("dejeuner");
+  const [mealType, setMealType] = useState<(typeof MEAL_TYPES)[number]["value"]>(initialMealType);
+  const [scanning, setScanning] = useState(false);
   const [offResults, setOffResults] = useState<OffResult[] | null>(null);
   const [justAdded, setJustAdded] = useState(false);
 
@@ -111,6 +115,15 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
     setOffResults(null);
   }
 
+  function applyScanned(product: BarcodeResult) {
+    setScanning(false);
+    setSelected({ ...fromOff(product), icon: "🏷️", portion_grams: product.servingGrams, portion_label: null });
+    setGrams(product.servingGrams ?? 100);
+    setQuery(product.brand ? `${product.name} (${product.brand})` : product.name);
+    setOpen(false);
+    setOffResults(null);
+  }
+
   function runOffSearch() {
     const q = query.trim();
     if (q.length < 2) return;
@@ -131,6 +144,7 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
           });
           if (!r || r.error) return;
           reset();
+          onAdded?.();
           setJustAdded(true);
           setTimeout(() => setJustAdded(false), 1500);
         })
@@ -154,8 +168,11 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
       )}
 
       <div ref={ref} className="relative">
-        <label className="mb-1.5 block text-xs font-medium text-foreground-muted">{t("nutrition.mealForm.foodLabel")}</label>
+        <label htmlFor="meal-food" className="mb-1.5 block text-xs font-medium text-foreground-muted">{t("nutrition.mealForm.foodLabel")}</label>
+        <div className="flex gap-2">
         <input
+          id="meal-food"
+          autoComplete="off"
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
@@ -165,8 +182,14 @@ export function MealForm({ foods, quickFoods = [] }: { foods: Food[]; quickFoods
           }}
           onFocus={() => setOpen(true)}
           placeholder={foods.length > 0 ? t("nutrition.mealForm.placeholderWithFoods") : t("nutrition.mealForm.placeholderNoFoods")}
-          className="w-full rounded-xl border border-border bg-surface-muted px-3.5 py-2.5 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
+          className="min-h-12 min-w-0 flex-1 rounded-xl border border-border bg-surface-muted px-3.5 text-base outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/30"
         />
+        <button type="button" onClick={() => setScanning(true)} className="flex min-h-12 shrink-0 items-center gap-1.5 rounded-xl border border-border bg-surface px-3 text-sm font-semibold transition hover:bg-surface-muted" data-barcode-open>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" className="h-5 w-5" aria-hidden><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 8v8M10.5 8v8M14 8v8M17 8v8" /></svg>
+          {t("nutrition.v2.scan")}
+        </button>
+        </div>
+        {scanning && <BarcodeScanner onFound={applyScanned} onClose={() => setScanning(false)} />}
         <AnimatePresence>
           {open && matches.length > 0 && (
             <motion.div

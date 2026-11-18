@@ -15,6 +15,7 @@ const authIntro = process.argv.includes("--auth-intro");
 const sessionCards = process.argv.includes("--session-cards");
 const accountMenu = process.argv.includes("--account-menu");
 const mood = process.argv.includes("--mood");
+const nutrition = process.argv.includes("--nutrition");
 const exerciseExperienceV3 = process.argv.includes("--exercise-experience-v3");
 const exerciseMediaV3 = process.argv.includes("--exercise-media-v3") || exerciseExperienceV3;
 const exerciseMediaV2 = process.argv.includes("--exercise-media-v2") || exerciseMediaV3;
@@ -49,6 +50,15 @@ if (exerciseMediaV3) {
   templates.splice(0,templates.length,...DEFAULT_PROGRAM.map((program,index)=>({id:`44444444-4444-4444-8444-${String(index).padStart(12,"0")}`,user_id:uid,name:program.name,muscle_groups:program.muscleGroups,position:index,created_at:user.created_at})));
   tables.workout_template_exercises=DEFAULT_PROGRAM.flatMap((program,index)=>program.exercises.map((item,position)=>({id:`66666666-6666-4666-8666-${String(index*100+position).padStart(12,"0")}`,template_id:templates[index].id,user_id:uid,exercise_name:item.name,muscle_group:item.muscle,position,target_sets:item.sets,target_reps:item.reps})));
   for(const [index,item] of baseCatalog("fr").filter(item=>EXERCISE_V3_IDS.includes(item.key)).entries())tables.exercises.push({id:`99999999-9999-4999-8999-${String(index).padStart(12,"0")}`,user_id:uid,name:item.storedName,muscle_group:item.primary[0]});
+}
+if (nutrition) {
+  const day = (offset) => { const date = new Date(); date.setDate(date.getDate() - offset); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; };
+  Object.assign(profile, { goal_calories: 2200, goal_carbs: 250, goal_fat: 70 });
+  tables.foods = [["Riz basmati", "🍚", 350, 7, 78, 1], ["Poulet", "🍗", 165, 31, 0, 4], ["Flocons d’avoine", "🥣", 370, 13, 60, 7], ["Pomme", "🍎", 52, 0.3, 14, 0.2]]
+    .map(([name, icon, calories, protein, carbs, fat], index) => ({ id: `edededed-0000-4000-8000-${String(index).padStart(12, "0")}`, user_id: uid, name, icon, calories, protein, carbs, fat, fiber: 1, sugar: 2, sodium: 10, caffeine: 0, unit: "g", portion_label: null, portion_grams: null, created_at: user.created_at }));
+  // Six logged days out of the last seven, then two in the week before.
+  const rows = [[0, "petit-dejeuner", 2, 80], [0, "dejeuner", 0, 150], [0, "dejeuner", 1, 180], [1, "dejeuner", 0, 200], [1, "diner", 1, 250], [1, "collation", 3, 150], [2, "petit-dejeuner", 2, 90], [2, "diner", 1, 300], [3, "dejeuner", 0, 250], [4, "diner", 1, 200], [5, "dejeuner", 0, 300], [5, "diner", 1, 300], [8, "diner", 0, 400], [9, "dejeuner", 1, 300]];
+  tables.meal_entries = rows.map(([offset, meal_type, foodIndex, grams], index) => { const food = tables.foods[foodIndex]; const k = grams / 100; return { id: `efefefef-0000-4000-8000-${String(index).padStart(12, "0")}`, user_id: uid, entry_date: day(offset), occurred_at: `${day(offset)}T12:00:00Z`, meal_type, food_name: food.name, icon: food.icon, quantity_grams: grams, unit: "g", calories: Math.round(food.calories * k), protein: Math.round(food.protein * k * 10) / 10, carbs: Math.round(food.carbs * k * 10) / 10, fat: Math.round(food.fat * k * 10) / 10, fiber: 1, sugar: 2, sodium: 10, caffeine: 0, created_at: `${day(offset)}T12:00:00Z` }; });
 }
 if (mood) {
   const day = (offset) => { const date = new Date(); date.setDate(date.getDate() - offset); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; };
@@ -100,6 +110,7 @@ const mock = http.createServer((request, response) => {
   if (request.method === "OPTIONS") { response.end(); return; }
   requests.push({ method: request.method, resource: url.pathname, params: Object.fromEntries(url.searchParams) });
   if (url.pathname === "/auth/v1/user") { response.end(JSON.stringify(user)); return; }
+  if (url.pathname.startsWith("/api/v2/product/")) { const known = url.pathname.includes("3017620422003"); response.end(JSON.stringify(known ? { status: 1, product: { code: "3017620422003", product_name: "Pâte à tartiner QA", brands: "QA Foods", serving_quantity: 15, nutriments: { "energy-kcal_100g": 539, proteins_100g: 6.3, carbohydrates_100g: 57.5, fat_100g: 30.9, sugars_100g: 56.3, fiber_100g: 0, sodium_100g: 0.04 } } } : { status: 0 })); return; }
   // The reset-email request succeeds so the confirmation screen can be checked; nothing is stored.
   if (url.pathname === "/auth/v1/recover" && request.method === "POST") { response.end("{}"); return; }
   if (request.method !== "GET" && request.method !== "HEAD") { response.writeHead(405); response.end("{}"); return; }
@@ -126,7 +137,7 @@ const output = path.resolve(".next/qa");
 const designSystem = process.argv.includes("--design-system");
 await mkdir(output, { recursive: true });
 const browserProfile = await mkdtemp(path.join(output, "edge-"));
-const env = { ...process.env, NEXT_PUBLIC_SUPABASE_URL: `http://127.0.0.1:${mockPort}`, NEXT_PUBLIC_SUPABASE_ANON_KEY: "local-fixture-key", CALISTHENICS_SCHEMA_READY: sportModules ? "true" : "false", RUNNING_SCHEMA_READY: sportModules ? "true" : "false", NEXT_PUBLIC_PERFORMANCE_DEBUG: "true", PERFORMANCE_DEBUG: "true" };
+const env = { ...process.env, NEXT_PUBLIC_SUPABASE_URL: `http://127.0.0.1:${mockPort}`, NEXT_PUBLIC_SUPABASE_ANON_KEY: "local-fixture-key", CALISTHENICS_SCHEMA_READY: sportModules ? "true" : "false", RUNNING_SCHEMA_READY: sportModules ? "true" : "false", NEXT_PUBLIC_PERFORMANCE_DEBUG: "true", PERFORMANCE_DEBUG: "true", OPENFOODFACTS_BASE_URL: `http://127.0.0.1:${mockPort}` };
 if (designSystem) env.SPORT_UI_PREVIEW = "true";
 let appLog = "";
 const log = (data) => { appLog = (appLog + data).slice(-150000); };
@@ -212,7 +223,7 @@ try {
   await navigatePage(`http://127.0.0.1:${appPort}/sport`);
   await ready("/sport");
   console.log("Sport Hub loaded with local fixtures.");
-  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu && !authIntro && !sessionCards && !mood) {
+  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu && !authIntro && !sessionCards && !mood && !nutrition) {
   assert.ok(await evaluate("document.body.innerText.includes('QA Dos & Biceps')"));
   for (const width of [320, 360, 375, 390, 430, 768, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: width < 768 });
@@ -422,6 +433,10 @@ try {
   if (accountMenu) {
     const { checkMobileAccountMenu } = await import("./mobile-account-menu-browser-checks.mjs");
     await checkMobileAccountMenu({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, output, appPort });
+  }
+  if (nutrition) {
+    const { checkNutrition } = await import("./nutrition-browser-checks.mjs");
+    await checkNutrition({ send, evaluate, navigatePage, ready, until, pause, results, profile, output, appPort, setFixture: (value) => { fixtureState = value; } });
   }
   if (mood) {
     const { checkMood } = await import("./mood-browser-checks.mjs");

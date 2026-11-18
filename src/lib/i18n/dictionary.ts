@@ -186,7 +186,7 @@ const fr = {
     profile: { title: "Profil", subtitle: "Ta progression, tes badges, ton parcours." },
   },
   tabs: {
-    nutrition: { today: "Aujourd'hui", todayShort: "Aujourd'hui", journal: "Journal", journalShort: "Journal", recipes: "Recettes", recipesShort: "Recettes" },
+    nutrition: { today: "Aujourd'hui", todayShort: "Aujourd'hui", journal: "Journal", journalShort: "Journal", recipes: "Recettes", recipesShort: "Recettes", week: "Bilan", weekShort: "Bilan" },
     sport: { session: "Séance", sessionShort: "Séance", program: "Programme", programShort: "Prog.", progress: "Progression", progressShort: "Progr.", history: "Historique", historyShort: "Histor.", stats: "Stats", statsShort: "Stats" },
   },
   language: {
@@ -371,7 +371,7 @@ const en: Dictionary = {
     profile: { title: "Profile", subtitle: "Your progress, your badges, your journey." },
   },
   tabs: {
-    nutrition: { today: "Today", todayShort: "Today", journal: "Journal", journalShort: "Journal", recipes: "Recipes", recipesShort: "Recipes" },
+    nutrition: { today: "Today", todayShort: "Today", journal: "Journal", journalShort: "Journal", recipes: "Recipes", recipesShort: "Recipes", week: "Review", weekShort: "Review" },
     sport: { session: "Session", sessionShort: "Train", program: "Program", programShort: "Plan", progress: "Progress", progressShort: "Trend", history: "History", historyShort: "History", stats: "Stats", statsShort: "Stats" },
   },
   language: {
@@ -556,7 +556,7 @@ const ar: Dictionary = {
     profile: { title: "الملف الشخصي", subtitle: "تقدّمك، أوسمتك، مسيرتك." },
   },
   tabs: {
-    nutrition: { today: "اليوم", todayShort: "اليوم", journal: "السجلّ", journalShort: "السجلّ", recipes: "الوصفات", recipesShort: "وصفات" },
+    nutrition: { today: "اليوم", todayShort: "اليوم", journal: "السجلّ", journalShort: "السجلّ", recipes: "الوصفات", recipesShort: "وصفات", week: "الحصيلة", weekShort: "الحصيلة" },
     sport: { session: "الحصة", sessionShort: "حصة", program: "البرنامج", programShort: "برنامج", progress: "التقدّم", progressShort: "تقدّم", history: "السجلّ", historyShort: "السجلّ", stats: "إحصاءات", statsShort: "إحصاء" },
   },
   language: {

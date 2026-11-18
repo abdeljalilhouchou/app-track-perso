@@ -1,7 +1,6 @@
 import { format, subDays } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/supabase/read-context";
-import { MealForm } from "@/components/meal-form";
 import { NutritionJournal } from "@/components/nutrition-journal";
 import { NutritionGoalsCalculator } from "@/components/nutrition-goals-calculator";
 import { FoodSettings } from "@/components/food-settings";
@@ -10,14 +9,15 @@ import { MealTemplatesPanel } from "@/components/meal-templates";
 import { WaterTracker } from "@/components/water-tracker";
 import { WeightTracker } from "@/components/weight-tracker";
 import { WeeklyBarChart } from "@/components/charts/weekly-bar-chart";
-import { MacroRings } from "@/components/macro-rings";
+import { CalorieHero, TodayMeals } from "@/components/nutrition/nutrition-today";
+import { NutritionReview } from "@/components/nutrition/nutrition-review";
 import { NutritionTabs } from "@/components/nutrition-tabs";
 import { Callout } from "@/components/ui/callout";
 import { InViewFade } from "@/components/ui/in-view-fade";
 import { weeklyTotals } from "@/lib/weekly";
 import { buildRings, sumMeals } from "@/lib/nutrition-totals";
 import { SugarMeter } from "@/components/sugar-meter";
-import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
+import { getDictionary, getLanguage, getT } from "@/lib/i18n/get-dictionary";
 import { fetchAllRows } from "@/lib/paging";
 import { isValidIsoDate } from "@/lib/actions/validation";
 
@@ -40,6 +40,7 @@ export default async function NutritionPage({
   const [
     dict,
     t,
+    language,
     profileResult,
     meals,
     selectedDayMeals,
@@ -54,6 +55,7 @@ export default async function NutritionPage({
   ] = await Promise.all([
     getDictionary(),
     getT(),
+    getLanguage(),
     supabase.from("profiles").select("*").eq("id", user.id).single(),
     fetchAllRows((from, to) =>
       supabase
@@ -97,7 +99,7 @@ export default async function NutritionPage({
     fetchAllRows((from, to) =>
       supabase
         .from("meal_entries")
-        .select("entry_date, calories")
+        .select("entry_date, calories, protein, carbs, fat, meal_type, food_name, icon")
         .eq("user_id", user.id)
         .gte("entry_date", seventyDaysAgo)
         .order("entry_date", { ascending: true })
@@ -189,20 +191,19 @@ export default async function NutritionPage({
     carbs: t("nutrition.macroRings.carbs"),
     fat: t("nutrition.macroRings.fat"),
   };
-  const rings = buildRings(totals, profile, macroRingLabels);
   const selectedRings = buildRings(selectedTotals, profile, macroRingLabels);
   const SUGAR_LIMIT_G = profile?.sugar_limit_g ?? 50;
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="mx-auto max-w-4xl space-y-6 animate-fade-in">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-[1.5px] border-nutrition text-xl">
             🍽️
           </span>
           <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-nutrition">{new Intl.DateTimeFormat(language === "ar" ? "ar" : language === "en" ? "en-US" : "fr-FR", { weekday: "long", day: "numeric", month: "long" }).format(new Date(`${today}T12:00:00`))}</p>
             <h1 className="text-2xl font-semibold tracking-tight">{dict.pages.nutrition.title}</h1>
-            <p className="mt-0.5 text-sm text-foreground-muted">{dict.pages.nutrition.subtitle}</p>
           </div>
         </div>
         <FoodSettings foods={foods} />
@@ -212,17 +213,6 @@ export default async function NutritionPage({
         initialTab={date ? "journal" : "today"}
         today={
           <>
-            {!profile?.goal_calories && (
-              <Callout
-                variant="info"
-                title={t("nutrition.page.defineGoalsTitle")}
-                action={{ label: t("nutrition.page.defineGoalsAction"), href: "/nutrition?date=" + today }}
-              >
-                {t("nutrition.page.defineGoalsBodyPrefix")}
-                <strong>{t("tabs.nutrition.journal")}</strong>
-                {t("nutrition.page.defineGoalsBodySuffix")}
-              </Callout>
-            )}
             {profile?.goal_calories && totals.calories > profile.goal_calories * 1.15 && (
               <Callout variant="warning" title={t("nutrition.page.overGoalTitle")} dismissKey={`kcal-over:${today}`}>
                 {t("nutrition.page.overGoalBody", {
@@ -237,61 +227,34 @@ export default async function NutritionPage({
                 {t("nutrition.page.onTargetBody")}
               </Callout>
             )}
-            <Callout variant="tip" dismissKey="nutrition-off-tip" compact>
-              {t("nutrition.page.offTipPrefix")}« {t("nutrition.page.addFoodHeading")} »{t("nutrition.page.offTipMiddle")}
-              <strong>Open Food Facts</strong>
-              {t("nutrition.page.offTipSuffix")}
-            </Callout>
 
-            <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
-              <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                {t("nutrition.page.todayLabel")}
-              </p>
-              <MacroRings rings={rings} />
-            </div>
+            <CalorieHero
+              totals={totals}
+              goals={{ calories: profile?.goal_calories ?? null, protein: profile?.goal_protein ?? null, carbs: profile?.goal_carbs ?? null, fat: profile?.goal_fat ?? null }}
+              goalsHref={`/nutrition?date=${today}#goals`}
+            />
 
-            {caffeineMg > 0 && (
-              <div className="rounded-2xl border-[1.5px] border-mood/50 bg-surface p-5">
-                <div className="mb-3 flex items-center justify-between">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("nutrition.page.caffeineHeading")}</p>
-                  <span className="text-sm">
-                    <span
-                      className="font-semibold"
-                      style={{ color: caffeineMg > CAFFEINE_LIMIT_MG ? "var(--danger)" : "var(--foreground)" }}
-                    >
-                      {caffeineMg}
-                    </span>{" "}
-                    / {CAFFEINE_LIMIT_MG} mg
-                  </span>
+            <TodayMeals meals={meals} foods={foods} quickFoods={quickFoods} />
+
+            <section aria-labelledby="nutrition-extras" className="space-y-4">
+              <h2 id="nutrition-extras" className="px-1 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("nutrition.v2.extrasTitle")}</h2>
+              <WaterTracker ml={todayWater?.ml ?? 0} drinksMl={drinksMl} goalMl={profile?.water_goal_ml ?? 2000} />
+              {caffeineMg > 0 && (
+                <div className="rounded-2xl border border-border bg-surface p-5">
+                  <div className="mb-3 flex items-center justify-between">
+                    <p className="text-sm font-semibold">{t("nutrition.page.caffeineHeading")}</p>
+                    <span className="text-sm tabular-nums">
+                      <span className="font-semibold" style={{ color: caffeineMg > CAFFEINE_LIMIT_MG ? "var(--danger)" : "var(--foreground)" }}>{caffeineMg}</span> / {CAFFEINE_LIMIT_MG} mg
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-muted">
+                    <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(100, Math.round((caffeineMg / CAFFEINE_LIMIT_MG) * 100))}%`, background: caffeineMg > CAFFEINE_LIMIT_MG ? "var(--danger)" : "var(--mood)" }} />
+                  </div>
+                  <p className="mt-2 text-[11px] text-foreground-muted">{t("nutrition.page.caffeineLimitNote", { limit: CAFFEINE_LIMIT_MG, cups: Math.max(1, Math.round(CAFFEINE_LIMIT_MG / 100)) })}</p>
                 </div>
-                <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-muted">
-                  <div
-                    className="h-full rounded-full transition-all"
-                    style={{
-                      width: `${Math.min(100, Math.round((caffeineMg / CAFFEINE_LIMIT_MG) * 100))}%`,
-                      background: caffeineMg > CAFFEINE_LIMIT_MG ? "var(--danger)" : "var(--mood)",
-                    }}
-                  />
-                </div>
-                <p className="mt-2 text-[11px] text-foreground-muted">
-                  {t("nutrition.page.caffeineLimitNote", {
-                    limit: CAFFEINE_LIMIT_MG,
-                    cups: Math.max(1, Math.round(CAFFEINE_LIMIT_MG / 100)),
-                  })}
-                </p>
-              </div>
-            )}
-
-            {totals.sugar > 0 && <SugarMeter sugarG={totals.sugar} limitG={SUGAR_LIMIT_G} />}
-
-            <WaterTracker ml={todayWater?.ml ?? 0} drinksMl={drinksMl} goalMl={profile?.water_goal_ml ?? 2000} />
-
-            <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-                {t("nutrition.page.addFoodHeading")}
-              </p>
-              <MealForm foods={foods} quickFoods={quickFoods} />
-            </div>
+              )}
+              {totals.sugar > 0 && <SugarMeter sugarG={totals.sugar} limitG={SUGAR_LIMIT_G} />}
+            </section>
           </>
         }
         journal={
@@ -305,7 +268,7 @@ export default async function NutritionPage({
               sugarLimitG={SUGAR_LIMIT_G}
             />
 
-            <div className="rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
+            <div id="goals" className="scroll-mt-20 rounded-2xl border-[1.5px] border-nutrition/50 bg-surface p-5">
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">
                 {t("nutrition.page.dailyGoalsHeading")}
               </p>
@@ -322,6 +285,13 @@ export default async function NutritionPage({
 
             <WeightTracker logs={weightLogs ?? []} />
           </>
+        }
+        week={
+          <NutritionReview
+            today={today}
+            meals={recentMeals}
+            goals={{ calories: profile?.goal_calories ?? null, protein: profile?.goal_protein ?? null, carbs: profile?.goal_carbs ?? null, fat: profile?.goal_fat ?? null }}
+          />
         }
         recipes={<MealTemplatesPanel templates={templates ?? []} foods={foods ?? []} />}
       />
