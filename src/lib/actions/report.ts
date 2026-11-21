@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { fetchAllRows } from "@/lib/paging";
+import { keptDates } from "@/lib/habits-v2";
 import { buildReport, periodRange, type RawReport, type ReportData, type ReportPeriod } from "@/lib/report";
 
 const CHUNK = 60;
@@ -41,12 +42,12 @@ export async function getReport(period: ReportPeriod): Promise<{ data: ReportDat
         .select("display_name, goal_calories, goal_protein, goal_carbs, goal_fat")
         .eq("id", uid)
         .single(),
-      fetchAllRows((from, to) => supabase.from("habits").select("id, name, scheduled_days, created_at")
+      fetchAllRows((from, to) => supabase.from("habits").select("id, name, scheduled_days, created_at, kind, goal_value, target_per_week, joker_enabled")
         .eq("user_id", uid).order("id").range(from, to)),
       fetchAllRows((from, to) =>
         supabase
           .from("habit_logs")
-          .select("habit_id, log_date")
+          .select("habit_id, log_date, value, is_joker")
           .eq("user_id", uid)
           .gte("log_date", start)
           .lte("log_date", end)
@@ -107,7 +108,8 @@ export async function getReport(period: ReportPeriod): Promise<{ data: ReportDat
         fat: profile.data?.goal_fat ?? null,
       },
       habits,
-      habitLogs,
+      // Days really kept: check-ins, counters at their goal, days without a slip.
+      habitLogs: habits.flatMap((habit) => [...keptDates(habit, habitLogs, start, end, new Date().toISOString().slice(0, 10))].map((log_date) => ({ habit_id: habit.id, log_date }))),
       workouts: workoutRows,
       sets,
       moods,

@@ -6,6 +6,17 @@ import { createClient } from "@/lib/supabase/server";
 import { dbFail, fail, NOT_SIGNED_IN, ok, type ActionResult } from "@/lib/actions/result";
 import { computeNutritionTargets, type ActivityLevel, type NutritionGoal } from "@/lib/nutrition-calculator";
 import { DEFAULT_DRINKS, DEFAULT_FOODS, type SeedFood } from "@/lib/food-database";
+import { syncWaterHabits } from "@/lib/habit-auto-sync";
+
+/** Water habits follow the water goal; a failure there never fails the meal or water action. */
+async function syncWater(supabase: Awaited<ReturnType<typeof createClient>>, userId: string, date: string) {
+  try {
+    await syncWaterHabits(supabase, userId, date);
+    revalidatePath("/habits");
+  } catch {
+    // The habit catches up the next time water or a drink is logged.
+  }
+}
 import type { MealEntry } from "@/types/database";
 import { fetchAllRows } from "@/lib/paging";
 import { isFiniteInRange, isUuid, isValidIsoDate } from "@/lib/actions/validation";
@@ -84,6 +95,7 @@ export async function logMeal(formData: FormData): Promise<ActionResult> {
   });
   if (error) return dbFail(error);
 
+  if (unit === "ml") await syncWater(supabase, user.id, entry_date);
   revalidatePath("/nutrition");
 
   return ok;
@@ -94,8 +106,9 @@ export async function deleteMeal(id: string): Promise<ActionResult> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return fail(NOT_SIGNED_IN);
-  const { error: error2 } = await supabase.from("meal_entries").delete().eq("id", id).eq("user_id", user.id);
+  const { data: removed, error: error2 } = await supabase.from("meal_entries").delete().eq("id", id).eq("user_id", user.id).select("entry_date, unit").maybeSingle();
   if (error2) return dbFail(error2);
+  if (removed?.unit === "ml") await syncWater(supabase, user.id, removed.entry_date);
   revalidatePath("/nutrition");
 
   return ok;
@@ -451,6 +464,7 @@ export async function addWater(amountMl: number): Promise<ActionResult> {
     .upsert({ user_id: user.id, entry_date: today, ml: newMl }, { onConflict: "user_id,entry_date" });
   if (error10) return dbFail(error10);
 
+  await syncWater(supabase, user.id, today);
   revalidatePath("/nutrition");
   revalidatePath("/dashboard");
 
@@ -659,6 +673,7 @@ export async function logMealTemplate(templateId: string, mealType: string): Pro
   );
   if (error16) return dbFail(error16);
 
+  if (items.some((item) => item.unit === "ml")) await syncWater(supabase, user.id, entry_date);
   revalidatePath("/nutrition");
 
   return ok;

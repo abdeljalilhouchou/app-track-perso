@@ -10,7 +10,7 @@ import { addWater } from "@/lib/actions/nutrition";
 import { ConfettiBurst } from "@/components/ui/confetti-burst";
 import { useT } from "@/components/language-provider";
 
-type TodayHabit = { id: string; icon: string; name: string; color: string; done: boolean };
+type TodayHabit = { id: string; icon: string; name: string; color: string; done: boolean; kind?: "check" | "count" | "avoid" };
 
 const MOODS = [
   { value: 1, emoji: "😞" },
@@ -117,6 +117,19 @@ export function TodayPanel({
         <ul className="space-y-1.5">
           {habits.map((h) => {
             const done = doneMap[h.id];
+            // Counted and "avoid" habits have their own controls on the Habits page.
+            if (h.kind && h.kind !== "check") {
+              return (
+                <li key={h.id}>
+                  <Link href="/habits" className="flex w-full items-center gap-2.5 rounded-xl bg-surface-muted px-3 py-2 text-left text-sm transition-colors hover:bg-surface-muted/70">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-[1.5px] text-[11px] font-bold text-white" style={{ borderColor: h.color, background: done ? h.color : "transparent" }}>{done ? "✓" : ""}</span>
+                    <span>{h.icon}</span>
+                    <span className={`min-w-0 flex-1 truncate ${done ? "text-foreground-muted" : ""}`}>{h.name}</span>
+                    <span aria-hidden className="text-foreground-muted rtl:rotate-180">›</span>
+                  </Link>
+                </li>
+              );
+            }
             return (
               <li key={h.id}>
                 <motion.button

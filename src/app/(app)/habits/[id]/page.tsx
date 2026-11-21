@@ -10,6 +10,7 @@ import { MonthCalendar } from "@/components/month-calendar";
 import { CATEGORY_META, WEEKDAYS, categorySlug, weekdaySlug } from "@/lib/habit-categories";
 import { getT } from "@/lib/i18n/get-dictionary";
 import { fetchAllRows } from "@/lib/paging";
+import { keptDates } from "@/lib/habits-v2";
 
 export default async function HabitDetailPage({
   params,
@@ -36,11 +37,13 @@ export default async function HabitDetailPage({
   if (!habit) notFound();
 
   const allLogs = await fetchAllRows((from, to) =>
-    supabase.from("habit_logs").select("log_date, note, id").eq("habit_id", id).eq("user_id", user.id)
+    supabase.from("habit_logs").select("habit_id, log_date, note, id, value, is_joker").eq("habit_id", id).eq("user_id", user.id)
       .order("log_date").order("id").range(from, to)
   );
 
-  const loggedDates = new Set(allLogs.map((l) => l.log_date));
+  // Days really kept, whatever the kind of habit (counters at their goal, days without a slip).
+  const todayKey = format(new Date(), "yyyy-MM-dd");
+  const loggedDates = keptDates(habit, allLogs, habit.created_at.slice(0, 10), todayKey, todayKey);
   const notesByDate: Record<string, string> = {};
   for (const log of allLogs) {
     if (log.note) notesByDate[log.log_date] = log.note;

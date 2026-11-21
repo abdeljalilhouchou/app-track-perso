@@ -51,20 +51,33 @@ export const MOMENT_EMOJI_CHOICES = [
   "🎧", "🌳", "📸", "🛒", "🧹", "🐶", "🎮", "🍕", "🛌", "✨",
 ];
 
-export const SUGGESTED_HABITS: {
+export type HabitIdea = {
   /** Stable, language-independent slug used to look up the translated suggestion name. */
   key: string;
   icon: string;
   name: string;
   category: string;
   scheduledDays: number[];
-}[] = [
-  { key: "water", icon: "💧", name: "Boire de l'eau", category: "Santé", scheduledDays: [1, 2, 3, 4, 5, 6, 7] },
-  { key: "meditate", icon: "🧘", name: "Méditer", category: "Bien-être", scheduledDays: [1, 2, 3, 4, 5, 6, 7] },
-  { key: "read10", icon: "📚", name: "Lire 10 minutes", category: "Général", scheduledDays: [1, 2, 3, 4, 5, 6, 7] },
-  { key: "sport", icon: "🏃", name: "Faire du sport", category: "Sport", scheduledDays: [1, 3, 5] },
-  { key: "sleep", icon: "🛏️", name: "Dormir avant minuit", category: "Santé", scheduledDays: [1, 2, 3, 4, 5, 6, 7] },
-  { key: "journal", icon: "✍️", name: "Écrire son journal", category: "Bien-être", scheduledDays: [1, 2, 3, 4, 5, 6, 7] },
-  { key: "lessScreen", icon: "📵", name: "Moins d'écran le soir", category: "Bien-être", scheduledDays: [1, 2, 3, 4, 5, 6, 7] },
-  { key: "balanced", icon: "🥗", name: "Manger équilibré", category: "Santé", scheduledDays: [1, 2, 3, 4, 5] },
+  kind?: "check" | "count" | "avoid";
+  goal?: number;
+  /** Unit key under habits.v2 idea units, kept as text on the habit. */
+  unit?: { fr: string; en: string; ar: string };
+  moment?: "morning" | "afternoon" | "evening" | "any";
+  auto?: "sport" | "water" | "mood";
+  /** Times a week for a flexible habit. */
+  weekly?: number;
+  color?: string;
+};
+
+export const SUGGESTED_HABITS: HabitIdea[] = [
+  { key: "water", icon: "💧", name: "Boire de l'eau", category: "Santé", scheduledDays: [1, 2, 3, 4, 5, 6, 7], kind: "count", goal: 8, unit: { fr: "verres", en: "glasses", ar: "أكواب" }, moment: "any", auto: "water", color: "#38bdf8" },
+  { key: "meditate", icon: "🧘", name: "Méditer", category: "Bien-être", scheduledDays: [1, 2, 3, 4, 5, 6, 7], moment: "morning", color: "#a78bfa" },
+  { key: "read10", icon: "📚", name: "Lire 10 minutes", category: "Général", scheduledDays: [1, 2, 3, 4, 5, 6, 7], moment: "evening", color: "#a78bfa" },
+  { key: "sport", icon: "🏃", name: "Faire du sport", category: "Sport", scheduledDays: [1, 2, 3, 4, 5, 6, 7], weekly: 3, auto: "sport", moment: "any", color: "#34d399" },
+  { key: "sleep", icon: "🛏️", name: "Dormir avant minuit", category: "Santé", scheduledDays: [1, 2, 3, 4, 5, 6, 7], moment: "evening", color: "#38bdf8" },
+  { key: "journal", icon: "✍️", name: "Écrire son journal", category: "Bien-être", scheduledDays: [1, 2, 3, 4, 5, 6, 7], moment: "evening", color: "#fbbf24" },
+  { key: "lessScreen", icon: "📵", name: "Moins d'écran le soir", category: "Bien-être", scheduledDays: [1, 2, 3, 4, 5, 6, 7], moment: "evening", color: "#fb923c" },
+  { key: "balanced", icon: "🥗", name: "Manger équilibré", category: "Santé", scheduledDays: [1, 2, 3, 4, 5], moment: "any", color: "#34d399" },
+  { key: "noSmoking", icon: "🚭", name: "Pas de cigarette", category: "Santé", scheduledDays: [1, 2, 3, 4, 5, 6, 7], kind: "avoid", moment: "any", color: "#f472b6" },
+  { key: "mood", icon: "🙂", name: "Noter mon humeur", category: "Bien-être", scheduledDays: [1, 2, 3, 4, 5, 6, 7], auto: "mood", moment: "evening", color: "#fbbf24" },
 ];

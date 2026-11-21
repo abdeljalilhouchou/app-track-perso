@@ -46,6 +46,14 @@ export type Database = {
           position: number;
           archived: boolean;
           created_at: string;
+          kind: "check" | "count" | "avoid";
+          goal_value: number | null;
+          goal_unit: string | null;
+          moment: "morning" | "afternoon" | "evening" | "any";
+          reminder_time: string | null;
+          auto_source: "sport" | "water" | "mood" | null;
+          joker_enabled: boolean;
+          paused_at: string | null;
         };
         Insert: Partial<Database["public"]["Tables"]["habits"]["Row"]> & {
           user_id: string;
@@ -63,6 +71,8 @@ export type Database = {
           note: string | null;
           source: string | null;
           created_at: string;
+          value: number | null;
+          is_joker: boolean;
         };
         Insert: Partial<Database["public"]["Tables"]["habit_logs"]["Row"]> & {
           habit_id: string;

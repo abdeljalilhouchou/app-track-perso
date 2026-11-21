@@ -16,6 +16,7 @@ const sessionCards = process.argv.includes("--session-cards");
 const accountMenu = process.argv.includes("--account-menu");
 const mood = process.argv.includes("--mood");
 const nutrition = process.argv.includes("--nutrition");
+const habitsMode = process.argv.includes("--habits");
 const exerciseExperienceV3 = process.argv.includes("--exercise-experience-v3");
 const exerciseMediaV3 = process.argv.includes("--exercise-media-v3") || exerciseExperienceV3;
 const exerciseMediaV2 = process.argv.includes("--exercise-media-v2") || exerciseMediaV3;
@@ -50,6 +51,34 @@ if (exerciseMediaV3) {
   templates.splice(0,templates.length,...DEFAULT_PROGRAM.map((program,index)=>({id:`44444444-4444-4444-8444-${String(index).padStart(12,"0")}`,user_id:uid,name:program.name,muscle_groups:program.muscleGroups,position:index,created_at:user.created_at})));
   tables.workout_template_exercises=DEFAULT_PROGRAM.flatMap((program,index)=>program.exercises.map((item,position)=>({id:`66666666-6666-4666-8666-${String(index*100+position).padStart(12,"0")}`,template_id:templates[index].id,user_id:uid,exercise_name:item.name,muscle_group:item.muscle,position,target_sets:item.sets,target_reps:item.reps})));
   for(const [index,item] of baseCatalog("fr").filter(item=>EXERCISE_V3_IDS.includes(item.key)).entries())tables.exercises.push({id:`99999999-9999-4999-8999-${String(index).padStart(12,"0")}`,user_id:uid,name:item.storedName,muscle_group:item.primary[0]});
+}
+if (habitsMode) {
+  const day = (offset) => { const date = new Date(); date.setDate(date.getDate() - offset); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; };
+  const created = `${day(60)}T08:00:00Z`;
+  const base = { user_id: uid, archived: false, created_at: created, joker_enabled: true, paused_at: null, goal_value: null, goal_unit: null, reminder_time: null, auto_source: null, scheduled_days: [1, 2, 3, 4, 5, 6, 7], target_per_week: 7 };
+  tables.habits = [
+    { ...base, id: "a1a1a1a1-0000-4000-8000-000000000001", name: "Méditer 10 min", icon: "🧘", color: "#a78bfa", category: "Bien-être", kind: "check", moment: "morning", reminder_time: "07:00:00", position: 0 },
+    { ...base, id: "a1a1a1a1-0000-4000-8000-000000000002", name: "Boire de l'eau", icon: "💧", color: "#38bdf8", category: "Santé", kind: "count", goal_value: 8, goal_unit: "verres", moment: "any", auto_source: "water", position: 1 },
+    { ...base, id: "a1a1a1a1-0000-4000-8000-000000000003", name: "Pas de cigarette", icon: "🚭", color: "#f472b6", category: "Santé", kind: "avoid", moment: "any", position: 2 },
+    { ...base, id: "a1a1a1a1-0000-4000-8000-000000000004", name: "Courir 30 min", icon: "🏃", color: "#34d399", category: "Sport", kind: "check", moment: "afternoon", auto_source: "sport", target_per_week: 3, position: 3 },
+    { ...base, id: "a1a1a1a1-0000-4000-8000-000000000005", name: "Lire 20 pages", icon: "📚", color: "#a78bfa", category: "Général", kind: "check", moment: "evening", scheduled_days: [1, 2, 3, 4, 5], target_per_week: 5, position: 4 },
+    { ...base, id: "a1a1a1a1-0000-4000-8000-000000000006", name: "Douche froide", icon: "🚿", color: "#38bdf8", category: "Santé", kind: "check", moment: "morning", archived: true, paused_at: `${day(9)}T08:00:00Z`, position: 5 },
+  ];
+  const logs = [];
+  const add = (habit, offset, extra = {}) => logs.push({ id: `b2b2b2b2-0000-4000-8000-${String(logs.length).padStart(12, "0")}`, habit_id: tables.habits[habit].id, user_id: uid, log_date: day(offset), note: null, source: null, value: null, is_joker: false, created_at: `${day(offset)}T20:00:00Z`, ...extra });
+  // Meditation: every day for 3 weeks but yesterday, with last week's joker on day 9.
+  for (let i = 2; i <= 21; i++) add(0, i, i === 9 ? { is_joker: true } : {});
+  // Water: 5 of 8 glasses today, the goal on most days.
+  add(1, 0, { value: 5 }); for (let i = 1; i <= 14; i++) add(1, i, { value: i % 4 === 0 ? 3 : 8, source: i % 4 === 0 ? null : "water" });
+  // No cigarette: one slip 10 days ago.
+  add(2, 10);
+  // Running, 3 times a week.
+  for (const i of [1, 3, 5, 8, 10, 12, 15, 17]) add(3, i, { source: "sport" });
+  // Reading on weekdays, now and then.
+  for (const i of [1, 2, 4, 7, 8, 9, 11, 14]) { const d = new Date(); d.setDate(d.getDate() - i); if (d.getDay() >= 1 && d.getDay() <= 5) add(4, i); }
+  tables.habit_logs = logs;
+  tables.mood_entries = Array.from({ length: 21 }, (_, i) => ({ id: `c3c3c3c3-0000-4000-8000-${String(i).padStart(12, "0")}`, user_id: uid, entry_date: day(i + 1), mood_score: i === 0 || i > 20 ? 2 : (i + 1) % 9 === 0 ? 2 : 4, energy_level: 3, notes: null, created_at: `${day(i + 1)}T21:00:00Z` }));
+  tables.moments = [];
 }
 if (nutrition) {
   const day = (offset) => { const date = new Date(); date.setDate(date.getDate() - offset); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; };
@@ -228,7 +257,7 @@ try {
   await navigatePage(`http://127.0.0.1:${appPort}/sport`);
   await ready("/sport");
   console.log("Sport Hub loaded with local fixtures.");
-  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu && !authIntro && !sessionCards && !mood && !nutrition) {
+  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu && !authIntro && !sessionCards && !mood && !nutrition && !habitsMode) {
   assert.ok(await evaluate("document.body.innerText.includes('QA Dos & Biceps')"));
   for (const width of [320, 360, 375, 390, 430, 768, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: width < 768 });
@@ -438,6 +467,10 @@ try {
   if (accountMenu) {
     const { checkMobileAccountMenu } = await import("./mobile-account-menu-browser-checks.mjs");
     await checkMobileAccountMenu({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, output, appPort });
+  }
+  if (habitsMode) {
+    const { checkHabits } = await import("./habits-browser-checks.mjs");
+    await checkHabits({ send, evaluate, navigatePage, ready, until, pause, results, profile, output, appPort, setFixture: (value) => { fixtureState = value; } });
   }
   if (nutrition) {
     const { checkNutrition } = await import("./nutrition-browser-checks.mjs");

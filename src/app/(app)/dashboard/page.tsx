@@ -7,6 +7,7 @@ import { weeklyTotals } from "@/lib/weekly";
 import { buildInsights, computeWeekRecap } from "@/lib/dashboard";
 import { computeProfileStats, summarizeProgress } from "@/lib/profile-stats";
 import { BADGES } from "@/lib/gamification";
+import { keptDates } from "@/lib/habits-v2";
 import { WeeklyBarChart } from "@/components/charts/weekly-bar-chart";
 import { MoodLineChart } from "@/components/charts/mood-line-chart";
 import { InViewFade } from "@/components/ui/in-view-fade";
@@ -56,7 +57,7 @@ export default async function DashboardPage() {
         .order("position").order("id").range(from, to)
     ),
     fetchAllRows((from, to) =>
-      supabase.from("habit_logs").select("habit_id, log_date").eq("user_id", user.id).gte("log_date", since10w)
+      supabase.from("habit_logs").select("habit_id, log_date, value, is_joker").eq("user_id", user.id).gte("log_date", since10w)
         .order("log_date").order("habit_id").range(from, to)
     ),
     fetchAllRows((from, to) =>
@@ -88,11 +89,8 @@ export default async function DashboardPage() {
 
   const displayName = profile?.display_name || user.email?.split("@")[0] || "toi";
 
-  const logsByHabit = new Map<string, Set<string>>();
-  for (const log of habitLogs) {
-    if (!logsByHabit.has(log.habit_id)) logsByHabit.set(log.habit_id, new Set());
-    logsByHabit.get(log.habit_id)!.add(log.log_date);
-  }
+  // Days each habit was really kept (check-ins, counters at their goal, days without a slip).
+  const logsByHabit = new Map<string, Set<string>>(habits.map((h) => [h.id, keptDates(h, habitLogs, since10w, todayStr, todayStr)]));
 
   // Today
   const todayIsoDay = getISODay(today);
@@ -103,6 +101,7 @@ export default async function DashboardPage() {
       icon: h.icon,
       name: h.name,
       color: h.color,
+      kind: h.kind ?? "check",
       done: logsByHabit.get(h.id)?.has(todayStr) ?? false,
     }));
   const moodToday = moodEntries.find((e) => e.entry_date === todayStr)?.mood_score ?? null;

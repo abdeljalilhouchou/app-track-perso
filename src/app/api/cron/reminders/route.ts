@@ -2,7 +2,7 @@ import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { Resend } from "resend";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { computeStreak } from "@/lib/streak";
+import { currentStreak, dayState, indexLogs, isFlexible } from "@/lib/habits-v2";
 import { fetchAllRows } from "@/lib/paging";
 import { isValidTime, isValidTimezone } from "@/lib/actions/validation";
 
@@ -101,9 +101,9 @@ export async function GET(request: NextRequest) {
 
       const weekday = isoWeekday(todayLocal);
       const [habits, recentLogs, workoutsToday, moodResult, momentsToday] = await Promise.all([
-        fetchAllRows((from, to) => supabase.from("habits").select("id, name, icon, scheduled_days")
+        fetchAllRows((from, to) => supabase.from("habits").select("id, name, icon, scheduled_days, kind, goal_value, target_per_week, created_at, joker_enabled, reminder_time")
           .eq("user_id", profile.id).eq("archived", false).order("id").range(from, to)),
-        fetchAllRows((from, to) => supabase.from("habit_logs").select("habit_id, log_date")
+        fetchAllRows((from, to) => supabase.from("habit_logs").select("habit_id, log_date, value, is_joker")
           .eq("user_id", profile.id).order("log_date").order("habit_id").range(from, to)),
         fetchAllRows((from, to) => supabase.from("workouts").select("activity, duration_minutes, id")
           .eq("user_id", profile.id).eq("workout_date", todayLocal).order("id").range(from, to)),
@@ -113,15 +113,12 @@ export async function GET(request: NextRequest) {
       ]);
       if (moodResult.error) throw new Error("Reminder data query failed");
 
-      const logsByHabit = new Map<string, Set<string>>();
-      for (const log of recentLogs) {
-        if (!logsByHabit.has(log.habit_id)) logsByHabit.set(log.habit_id, new Set());
-        logsByHabit.get(log.habit_id)!.add(log.log_date);
-      }
-      const doneToday = new Set(recentLogs.filter((log) => log.log_date === todayLocal).map((log) => log.habit_id));
-      const scheduledToday = habits.filter((habit) => habit.scheduled_days.includes(weekday));
-      const pending = scheduledToday.filter((habit) => !doneToday.has(habit.id));
-      const doneHabits = scheduledToday.filter((habit) => doneToday.has(habit.id));
+      // Habits to avoid need no reminder; a counter is done at its goal; flexible habits are judged weekly.
+      const logIndex = indexLogs(recentLogs);
+      const stateToday = (habit: (typeof habits)[number]) => dayState(habit, logIndex.get(habit.id)?.get(todayLocal), todayLocal, todayLocal);
+      const scheduledToday = habits.filter((habit) => habit.kind !== "avoid" && !isFlexible(habit) && habit.scheduled_days.includes(weekday));
+      const pending = scheduledToday.filter((habit) => stateToday(habit) !== "done").sort((a, b) => (a.reminder_time ?? "99").localeCompare(b.reminder_time ?? "99"));
+      const doneHabits = scheduledToday.filter((habit) => stateToday(habit) === "done");
       step.pendingCount = pending.length;
 
       if (pending.length === 0) {
@@ -151,8 +148,9 @@ export async function GET(request: NextRequest) {
       for (const moment of momentsToday) doneRows.push(`<li>${escapeHtml(moment.icon)} ${escapeHtml(moment.text)}</li>`);
 
       const pendingRows = pending.map((habit) => {
-        const streak = computeStreak(logsByHabit.get(habit.id) ?? new Set());
-        const tip = streak >= 2 ? `🔥 série de ${streak} j — ne la casse pas !` : streak === 1 ? "🔥 continue sur ta lancée" : "à faire aujourd'hui";
+        const streak = currentStreak(habit, logIndex.get(habit.id), todayLocal);
+        const when = habit.reminder_time ? `⏰ ${habit.reminder_time.slice(0, 5)} · ` : "";
+        const tip = when + (streak >= 2 ? `🔥 série de ${streak} j — ne la casse pas !` : streak === 1 ? "🔥 continue sur ta lancée" : "à faire aujourd'hui");
         return habitRow(habit.icon, habit.name, tip);
       }).join("");
       const subject = pending.length === 1

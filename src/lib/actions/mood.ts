@@ -4,6 +4,18 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { dbFail, fail, NOT_SIGNED_IN, ok, type ActionResult } from "@/lib/actions/result";
 import { isFiniteInRange, isUuid, isValidIsoDate } from "@/lib/actions/validation";
+import { checkAutoHabits, uncheckAutoHabits } from "@/lib/habit-auto-sync";
+
+/** "Note my mood" habits follow the mood entries; a failure there never fails the mood action. */
+async function syncMoodHabits(supabase: Awaited<ReturnType<typeof createClient>>, userId: string, date: string, logged: boolean) {
+  try {
+    if (logged) await checkAutoHabits(supabase, userId, date, "mood");
+    else await uncheckAutoHabits(supabase, userId, date, "mood");
+    revalidatePath("/habits");
+  } catch {
+    // Caught up at the next mood entry.
+  }
+}
 
 export async function logMood(formData: FormData): Promise<ActionResult> {
   const entry_date = String(formData.get("entry_date") ?? "");
@@ -27,6 +39,7 @@ export async function logMood(formData: FormData): Promise<ActionResult> {
       { onConflict: "user_id,entry_date" }
     );
   if (error) return dbFail(error);
+  await syncMoodHabits(supabase, user.id, entry_date, true);
 
   revalidatePath("/humeur");
   revalidatePath("/dashboard");
@@ -59,6 +72,7 @@ export async function quickLogMood(entry_date: string, mood_score: number): Prom
     const { error: error3 } = await supabase.from("mood_entries").insert({ user_id: user.id, entry_date, mood_score, energy_level: 3 });
     if (error3) return dbFail(error3);
   }
+  await syncMoodHabits(supabase, user.id, entry_date, true);
 
   revalidatePath("/humeur");
   revalidatePath("/dashboard");
@@ -71,8 +85,9 @@ export async function deleteMoodEntry(id: string): Promise<ActionResult> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return fail(NOT_SIGNED_IN);
-  const { error: error4 } = await supabase.from("mood_entries").delete().eq("id", id).eq("user_id", user.id);
+  const { data: removed, error: error4 } = await supabase.from("mood_entries").delete().eq("id", id).eq("user_id", user.id).select("entry_date").maybeSingle();
   if (error4) return dbFail(error4);
+  if (removed) await syncMoodHabits(supabase, user.id, removed.entry_date, false);
   revalidatePath("/humeur");
   revalidatePath("/dashboard");
 

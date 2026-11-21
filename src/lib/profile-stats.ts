@@ -1,5 +1,6 @@
 import type { createClient } from "@/lib/supabase/server";
 import { computeStreak, longestStreakEver } from "@/lib/streak";
+import { indexLogs, logCountsAsDone, longestStreak } from "@/lib/habits-v2";
 import { fetchAllRows } from "@/lib/paging";
 import { BADGES, computeLevel, computePoints, type Stats } from "@/lib/gamification";
 import { isCalisthenicsSchemaReady } from "@/lib/calisthenics/config";
@@ -18,6 +19,7 @@ export async function computeProfileStats(supabase: Supabase, userId: string): P
     moodCounts,
     activeHabitCounts,
     allLogs,
+    habitRows,
     mealCounts,
     mealRows,
     profileGoals,
@@ -32,7 +34,10 @@ export async function computeProfileStats(supabase: Supabase, userId: string): P
     supabase.from("mood_entries").select("*", { count: "exact", head: true }).eq("user_id", userId),
     supabase.from("habits").select("*", { count: "exact", head: true }).eq("user_id", userId).eq("archived", false),
     fetchAllRows((from, to) =>
-      supabase.from("habit_logs").select("habit_id, log_date").eq("user_id", userId).order("id").range(from, to)
+      supabase.from("habit_logs").select("habit_id, log_date, value, is_joker").eq("user_id", userId).order("id").range(from, to)
+    ),
+    fetchAllRows((from, to) =>
+      supabase.from("habits").select("id, name, kind, goal_value, scheduled_days, target_per_week, created_at, joker_enabled").eq("user_id", userId).order("id").range(from, to)
     ),
     supabase.from("meal_entries").select("*", { count: "exact", head: true }).eq("user_id", userId),
     fetchAllRows((from, to) =>
@@ -64,12 +69,12 @@ export async function computeProfileStats(supabase: Supabase, userId: string): P
   const failed = [habitCounts, workoutCounts, moodCounts, activeHabitCounts, mealCounts, profileGoals, weightCounts, calisthenicsCounts, skillCounts].find((r) => r.error);
   if (failed?.error) throw new Error("Impossible de charger les statistiques du profil.");
 
-  const logsByHabit = new Map<string, Set<string>>();
-  for (const log of allLogs) {
-    if (!logsByHabit.has(log.habit_id)) logsByHabit.set(log.habit_id, new Set());
-    logsByHabit.get(log.habit_id)!.add(log.log_date);
-  }
-  const bestStreak = Math.max(0, ...Array.from(logsByHabit.values()).map((dates) => longestStreakEver(dates)));
+  // A slip on a habit to avoid, a joker or a counter short of its goal is not a check-in.
+  const today = new Date().toISOString().slice(0, 10);
+  const habitById = new Map(habitRows.map((habit) => [habit.id, habit]));
+  const keptLogs = allLogs.filter((log) => { const habit = habitById.get(log.habit_id); return habit ? logCountsAsDone(habit, log) : true; });
+  const logIndex = indexLogs(allLogs);
+  const bestStreak = Math.max(0, ...habitRows.map((habit) => longestStreak(habit, logIndex.get(habit.id), today)));
 
   const proteinByDate = new Map<string, number>();
   for (const m of mealRows) {
@@ -83,7 +88,7 @@ export async function computeProfileStats(supabase: Supabase, userId: string): P
   const distances = runRows.map((run) => Number(run.distance_km) || 0);
 
   return {
-    habitLogsCount: habitCounts.count ?? 0,
+    habitLogsCount: habitRows.length ? keptLogs.length : habitCounts.count ?? 0,
     workoutsCount: workoutCounts.count ?? 0,
     moodEntriesCount: moodCounts.count ?? 0,
     activeHabitsCount: activeHabitCounts.count ?? 0,
