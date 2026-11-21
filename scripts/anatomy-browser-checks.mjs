@@ -78,12 +78,15 @@ export async function checkAnatomy({ send, evaluate, navigatePage, ready, until,
   await evaluate("Array.from(document.querySelectorAll('#sport-panel-session li')).find(li=>li.textContent.includes('Rowing haltère unilatéral')).querySelector('button').click()");
   await until(() => evaluate("!!document.querySelector('[data-anatomy-open]')"), "pilot access");
   assert.equal(await evaluate("document.querySelectorAll('[data-anatomy-open]').length"), 1);
-  await evaluate("(() => { const card=document.querySelector('[data-anatomy-open]').closest('.rounded-2xl'); const inputs=card.querySelectorAll('input[type=number]'); for(const [index,value] of [[0,'22.5'],[1,'12']]) { Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(inputs[index],value); inputs[index].dispatchEvent(new Event('input',{bubbles:true})); } })()");
+  // Focus session: fill the set through the steppers' inputs, validate it, then come back from the rest.
+  await evaluate("(() => { for (const [selector,value] of [['[data-focus-stepper=kg] input','22.5'],['[data-focus-stepper=reps] input','12']]) { const input=document.querySelector(selector); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,value); input.dispatchEvent(new Event('input',{bubbles:true})); } })()");
   await until(() => evaluate("JSON.parse(localStorage.getItem('strength-draft-v1')||'{}').exercises?.[0]?.sets?.[0]?.reps==='12'"), "set values persisted");
-  await evaluate("document.querySelector('[data-anatomy-open]').closest('.rounded-2xl').querySelector('button[aria-pressed=false]').click()");
+  await evaluate("document.querySelector('[data-focus-validate]').click()");
   await until(() => evaluate("JSON.parse(localStorage.getItem('strength-draft-v1')||'{}').exercises?.[0]?.sets?.[0]?.done===true"), "validated series draft");
+  await evaluate("document.querySelector('[data-focus-ready]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-anatomy-open]')"), "back to the set");
   const draft = await evaluate("localStorage.getItem('strength-draft-v1')");
-  await evaluate("(() => { window.qaAnatomyInput=document.querySelector('input[aria-label=\"Nom de la séance\"]'); window.qaAnatomyTrigger=document.querySelector('[data-anatomy-open]'); window.qaRest=document.querySelector('p.text-2xl.tabular-nums'); window.qaRestBefore=window.qaRest?.textContent; })()");
+  await evaluate("(() => { window.qaAnatomyInput=document.querySelector('input[aria-label=\"Nom de la séance\"]'); window.qaAnatomyTrigger=document.querySelector('[data-anatomy-open]'); window.qaRest=document.querySelector('[data-focus-topbar] bdi'); window.qaRestBefore=window.qaRest?.textContent; })()");
   const readsBefore = requests.filter(request=>request.resource.startsWith("/rest/v1/")).length;
   const timerBegan = Date.now();
   await send("HeapProfiler.collectGarbage");
@@ -93,7 +96,7 @@ export async function checkAnatomy({ send, evaluate, navigatePage, ready, until,
   assert.equal(await evaluate(`document.querySelector('${stage}').dataset.meshCount`), "221");
   assert.ok(networkRequests.some(url=>url.includes("male-mobile.glb")));
   await pause(1400);
-  assert.ok(await evaluate("window.qaRest?.isConnected && window.qaRest.textContent!==window.qaRestBefore"), "Rest timer continues under the modal");
+  assert.ok(await evaluate("window.qaRest?.isConnected && window.qaRest.textContent!==window.qaRestBefore"), "Session clock continues under the modal");
   result.timerContinues = true;
   assert.equal(requests.filter(request=>request.resource.startsWith("/rest/v1/")).length, readsBefore, "Opening anatomy must not query or write Supabase tables");
   result.noSupabaseReadOrWriteOnOpen = true;
@@ -183,7 +186,8 @@ export async function checkAnatomy({ send, evaluate, navigatePage, ready, until,
   const timer = await evaluate("({before:window.qaRestBefore,after:window.qaRest?.textContent})");
   const seconds = value => { const match=String(value).match(/^(\d+):(\d+)$/);return match?Number(match[1])*60+Number(match[2]):0; };
   const elapsed = (Date.now()-timerBegan)/1000;
-  assert.ok(Math.abs(seconds(timer.after)-Math.max(0,seconds(timer.before)-elapsed))<2.5, JSON.stringify({timer,elapsed}));
+  // The session clock keeps running under the modal.
+  assert.ok(Math.abs(seconds(timer.after)-(seconds(timer.before)+elapsed))<2.5, JSON.stringify({timer,elapsed}));
   result.timerBeforeAfter = { ...timer, elapsedSeconds: elapsed, pausedOrReset: false };
   assert.ok(await evaluate("document.activeElement===window.qaAnatomyTrigger && document.querySelector('input[aria-label=\"Nom de la séance\"]')===window.qaAnatomyInput"));
   assert.equal(await evaluate("localStorage.getItem('strength-draft-v1')"),draft);

@@ -50,3 +50,13 @@ test("worked muscles count only done sets with reps", () => {
   ]);
   assert.deepEqual(result, [{ muscle: "Pectoraux", sets: 3 }, { muscle: "Épaules", sets: 1 }]);
 });
+
+test("program balance counts weekly sets per muscle and flags neglected main groups", () => {
+  const result = focus.programBalance([
+    { exercises: [{ muscle: "Pectoraux", sets: 4 }, { muscle: "Pectoraux", sets: 3 }, { muscle: "Triceps", sets: 3 }] },
+    { exercises: [{ muscle: "Dos", sets: 4 }, { muscle: "Dos", sets: 4 }, { muscle: "Biceps", sets: 3 }] },
+  ]);
+  assert.deepEqual(result.slice(0, 2), [{ muscle: "Dos", sets: 8, low: false }, { muscle: "Pectoraux", sets: 7, low: false }]);
+  assert.deepEqual(result.find((item) => item.muscle === "Quadriceps"), { muscle: "Quadriceps", sets: 0, low: true });
+  assert.ok(result.find((item) => item.muscle === "Triceps").low);
+});

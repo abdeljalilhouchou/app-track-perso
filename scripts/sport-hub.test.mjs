@@ -42,6 +42,7 @@ test("next-session suggestions reference existing templates and do not fabricate
 
 test("query shortcuts select real workspace panels and preserve legacy date behavior", () => {
   assert.equal(sportTabFromQuery("program"), "program");
+  assert.equal(sportTabFromQuery("stats"), "progress", "the old Stats tab opens Progress");
   assert.equal(sportTabFromQuery(["history", "session"]), "history");
   assert.equal(sportTabFromQuery("invalid", "2026-11-06"), "history");
   assert.equal(sportTabFromQuery(undefined), "session");

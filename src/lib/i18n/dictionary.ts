@@ -181,14 +181,14 @@ const fr = {
   },
   pages: {
     habits: { title: "Habitudes", subtitle: "Construis ta constance, un jour à la fois." },
-    sport: { title: "Sport", subtitle: "Musculation, programme et progression." },
+    sport: { title: "Musculation", subtitle: "Séance, programme et progrès." },
     nutrition: { title: "Nutrition", subtitle: "Journal alimentaire et macros du jour." },
     mood: { title: "Humeur", subtitle: "Comment te sens-tu aujourd'hui ?" },
     profile: { title: "Profil", subtitle: "Ta progression, tes badges, ton parcours." },
   },
   tabs: {
     nutrition: { today: "Aujourd'hui", todayShort: "Aujourd'hui", journal: "Journal", journalShort: "Journal", recipes: "Recettes", recipesShort: "Recettes", week: "Bilan", weekShort: "Bilan" },
-    sport: { session: "Séance", sessionShort: "Séance", program: "Programme", programShort: "Prog.", progress: "Progression", progressShort: "Progr.", history: "Historique", historyShort: "Histor.", stats: "Stats", statsShort: "Stats" },
+    sport: { session: "Séance", sessionShort: "Séance", program: "Programme", programShort: "Prog.", progress: "Progrès", progressShort: "Progrès", history: "Historique", historyShort: "Histor.", stats: "Stats", statsShort: "Stats" },
   },
   language: {
     title: "Langue",
@@ -367,7 +367,7 @@ const en: Dictionary = {
   },
   pages: {
     habits: { title: "Habits", subtitle: "Build your consistency, one day at a time." },
-    sport: { title: "Sport", subtitle: "Strength training, program and progress." },
+    sport: { title: "Strength", subtitle: "Session, program and progress." },
     nutrition: { title: "Nutrition", subtitle: "Food diary and today's macros." },
     mood: { title: "Mood", subtitle: "How are you feeling today?" },
     profile: { title: "Profile", subtitle: "Your progress, your badges, your journey." },
@@ -553,7 +553,7 @@ const ar: Dictionary = {
   },
   pages: {
     habits: { title: "العادات", subtitle: "ابنِ انتظامك، يومًا بعد يوم." },
-    sport: { title: "الرياضة", subtitle: "تمارين القوة، البرنامج والتقدّم." },
+    sport: { title: "تمارين القوة", subtitle: "الحصة والبرنامج والتقدّم." },
     nutrition: { title: "التغذية", subtitle: "سجلّ الطعام والعناصر الغذائية لليوم." },
     mood: { title: "المزاج", subtitle: "كيف تشعر اليوم؟" },
     profile: { title: "الملف الشخصي", subtitle: "تقدّمك، أوسمتك، مسيرتك." },

@@ -78,3 +78,16 @@ export function musclesWorked(exercises: FocusExercise[]) {
   }
   return [...counts].map(([muscle, sets]) => ({ muscle, sets })).sort((a, b) => b.sets - a.sets);
 }
+
+const MAJOR_GROUPS = ["Pectoraux", "Dos", "Épaules", "Quadriceps", "Ischio-jambiers"];
+export const LOW_WEEKLY_SETS = 6;
+
+/**
+ * Sets per week each muscle receives when every session of the program is done once,
+ * the main groups always listed (a missing one shows 0). Most worked first.
+ */
+export function programBalance(templates: { exercises: { muscle: string; sets: number }[] }[]) {
+  const sets = new Map<string, number>(MAJOR_GROUPS.map((group) => [group, 0]));
+  for (const template of templates) for (const exercise of template.exercises) sets.set(exercise.muscle, (sets.get(exercise.muscle) ?? 0) + exercise.sets);
+  return [...sets].map(([muscle, count]) => ({ muscle, sets: count, low: count < LOW_WEEKLY_SETS })).sort((a, b) => b.sets - a.sets);
+}

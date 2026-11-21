@@ -32,12 +32,11 @@ export function SportTabs({
     setActive(tab);
   }
 
-  const TABS: { id: SportTabId; label: string; icon: string }[] = [
-    { id: "session", label: t("tabs.sport.session"), icon: "🏋️" },
-    { id: "program", label: t("tabs.sport.program"), icon: "📋" },
-    { id: "progress", label: t("tabs.sport.progress"), icon: "📈" },
-    { id: "history", label: t("tabs.sport.history"), icon: "📅" },
-    { id: "stats", label: t("tabs.sport.stats"), icon: "📊" },
+  const TABS: { id: SportTabId; label: string }[] = [
+    { id: "session", label: t("tabs.sport.session") },
+    { id: "program", label: t("tabs.sport.program") },
+    { id: "progress", label: t("tabs.sport.progress") },
+    { id: "history", label: t("tabs.sport.history") },
   ];
 
   function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
@@ -64,7 +63,7 @@ export function SportTabs({
       <div
         role="tablist"
         aria-label={t("pages.sport.title")}
-        className="mb-6 grid w-full grid-cols-5 gap-1 rounded-xl border border-sport/40 bg-surface-muted p-1 sm:inline-grid sm:w-auto"
+        className="mb-5 grid w-full grid-cols-4 gap-1 rounded-2xl border border-border bg-surface p-1 sm:max-w-lg"
       >
         {TABS.map((tab, index) => (
           <button
@@ -78,24 +77,18 @@ export function SportTabs({
             tabIndex={active === tab.id ? 0 : -1}
             onClick={() => activate(tab.id)}
             onKeyDown={(event) => handleTabKeyDown(event, index)}
-            className="relative min-w-0 rounded-lg px-1 py-2 text-sm font-medium transition-colors sm:px-3.5"
-            style={{ color: active === tab.id ? "var(--on-accent)" : "var(--foreground-muted)" }}
+            className="relative min-h-[38px] min-w-0 rounded-xl px-1 text-[13px] font-semibold transition-colors"
+            style={{ color: active === tab.id ? "#062016" : "var(--foreground-muted)" }}
           >
             {active === tab.id && (
               <motion.span
                 layoutId="sport-tab-bg"
-                className="absolute inset-0 rounded-lg"
+                className="absolute inset-0 rounded-xl"
                 style={{ background: "var(--sport)" }}
                 transition={{ type: "spring", duration: 0.4, bounce: 0.15 }}
               />
             )}
-            <span className="relative flex flex-col items-center gap-0.5 sm:flex-row sm:justify-center sm:gap-1.5">
-              <span aria-hidden className="text-base leading-none">{tab.icon}</span>
-              <span aria-hidden className="w-full truncate text-center text-[10px] leading-tight sm:w-auto sm:text-sm">
-                <span className="sm:hidden">{t(`tabs.sport.${tab.id}Short`)}</span>
-                <span className="hidden sm:inline">{tab.label}</span>
-              </span>
-            </span>
+            <span aria-hidden className="relative block truncate text-center">{tab.label}</span>
           </button>
         ))}
       </div>

@@ -18,6 +18,12 @@ const mood = process.argv.includes("--mood");
 const nutrition = process.argv.includes("--nutrition") || process.argv.includes("--home");
 const home = process.argv.includes("--home");
 const musculation = process.argv.includes("--musculation");
+// These campaigns drove the old card-based strength session, replaced by the focus mode (--musculation covers it).
+const retired = ["--session-cards", "--exercise-premium-v4", "--exercise-media-v2", "--exercise-media-v3", "--exercise-experience-v3"].filter((flag) => process.argv.includes(flag));
+if (retired.length) {
+  console.error(`Retired campaign(s): ${retired.join(", ")}. The strength session is now checked by --musculation.`);
+  process.exit(2);
+}
 const habitsMode = process.argv.includes("--habits") || home;
 const exerciseExperienceV3 = process.argv.includes("--exercise-experience-v3");
 const exerciseMediaV3 = process.argv.includes("--exercise-media-v3") || exerciseExperienceV3;
@@ -64,6 +70,14 @@ if (musculation) {
   const pastId = "22222222-2222-4222-8222-000000000007";
   workouts.push({ id: pastId, user_id: uid, workout_date: pastDay, activity: templates[0].name, duration_minutes: 52, intensity: 3, notes: null, muscle_groups: templates[0].muscle_groups, template_id: templates[0].id, discipline: "strength", calisthenics_program_session_id: null, created_at: `${pastDay}T08:00:00Z` });
   for (let set = 1; set <= 4; set += 1) sets.push({ id: `33333333-3333-4333-8333-00000000000${set}`, user_id: uid, workout_id: pastId, exercise_name: "Développé couché barre", muscle_group: "Pectoraux", exercise_position: 0, set_number: set, reps: 8, weight_kg: 60, created_at: `${pastDay}T08:00:00Z` });
+  const older = new Date(); older.setDate(older.getDate() - 14);
+  const olderDay = `${older.getFullYear()}-${String(older.getMonth() + 1).padStart(2, "0")}-${String(older.getDate()).padStart(2, "0")}`;
+  const olderId = "22222222-2222-4222-8222-000000000014";
+  workouts.push({ id: olderId, user_id: uid, workout_date: olderDay, activity: templates[0].name, duration_minutes: 48, intensity: 4, notes: "QA note épaule", muscle_groups: templates[0].muscle_groups, template_id: templates[0].id, discipline: "strength", calisthenics_program_session_id: null, created_at: `${olderDay}T08:00:00Z` });
+  for (let set = 1; set <= 4; set += 1) sets.push({ id: `33333333-3333-4333-8333-00000000001${set}`, user_id: uid, workout_id: olderId, exercise_name: "Développé couché barre", muscle_group: "Pectoraux", exercise_position: 0, set_number: set, reps: 8, weight_kg: 57.5, created_at: `${olderDay}T08:00:00Z` });
+  workouts.sort((a, b) => b.workout_date.localeCompare(a.workout_date));
+  sets.sort((a, b) => a.created_at.localeCompare(b.created_at));
+  globalThis.qaMusculationDays = { pastDay, olderDay };
 }
 if (habitsMode) {
   const day = (offset) => { const date = new Date(); date.setDate(date.getDate() - offset); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; };

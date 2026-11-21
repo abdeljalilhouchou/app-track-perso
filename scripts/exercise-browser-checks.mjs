@@ -68,7 +68,7 @@ export async function checkExerciseLibrary({ send, evaluate, navigatePage, navig
   await send("Network.setBlockedURLs", { urls: ["https://*", "*one-arm-dumbbell-row.webp*"] });
   await send("Network.setCacheDisabled", { cacheDisabled: true });
   await go(detail);
-  await until(() => evaluate("!document.querySelector('[data-exercise-detail] img')"), "missing exercise image fallback");
+  await until(() => evaluate("!document.querySelector('[data-exercise-detail] > figure img')"), "missing exercise image fallback");
   assert.ok(await evaluate("document.querySelector('[data-exercise-detail] .sport-media').getBoundingClientRect().height>150"));
   await screenshot("exercise-image-fallback.png"); results.exerciseImageFallback = true;
   await send("Network.setBlockedURLs", { urls: ["https://*"] });

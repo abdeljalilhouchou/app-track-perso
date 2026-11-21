@@ -1,18 +1,14 @@
 import { format, startOfWeek, subDays } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser, getProfilePreferences } from "@/lib/supabase/read-context";
-import { WeeklyBarChart } from "@/components/charts/weekly-bar-chart";
-import { DayNavigator } from "@/components/journal/day-navigator";
 import { Callout } from "@/components/ui/callout";
-import { InViewFade } from "@/components/ui/in-view-fade";
 import { WorkoutForm } from "@/components/sport/workout-form";
-import { WeeklyGoal } from "@/components/sport/weekly-goal";
 import { SportTabs } from "@/components/sport/sport-tabs";
-import { ActivityBreakdown, SportHeatmap, SportRecords, SportTiles } from "@/components/sport/sport-overview";
 import { TodaySession } from "@/components/strength/today-session";
 import { ProgramManager } from "@/components/strength/program-manager";
-import { MuscleVolume, Progression } from "@/components/strength/progression";
-import { SessionList, type SessionItem } from "@/components/strength/session-list";
+import { ProgressView } from "@/components/strength/progress-view";
+import { HistoryView } from "@/components/strength/history-view";
+import type { SessionItem } from "@/components/strength/types";
 import type { CatalogItem, TemplateView } from "@/components/strength/types";
 import { computeSportStats } from "@/lib/sport-stats";
 import { computeStrengthData, suggestNextTemplate } from "@/lib/strength-stats";
@@ -20,8 +16,6 @@ import { muscleGroupI18nPath } from "@/lib/strength";
 import { fetchAllRows } from "@/lib/paging";
 import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
 import { isValidIsoDate } from "@/lib/actions/validation";
-import { isLanguage } from "@/lib/language";
-import { formatSportDate, sportWeeklyDuration } from "@/lib/sport-hub-data";
 import { SportLink, SportPageHeader } from "@/components/sport/ui/sport-primitives";
 import { sportTabFromQuery } from "@/lib/sport-navigation";
 
@@ -33,7 +27,6 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
   if (!user) return null;
 
   const today = format(new Date(), "yyyy-MM-dd");
-  const selectedDate = isValidIsoDate(requestedDate) ? requestedDate : today;
   const [dict, t, allWorkouts, profileResult, sets, templatesRaw, templateRows, catalogRaw] = await Promise.all([
     getDictionary(),
     getT(),
@@ -94,7 +87,6 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
   const all = allWorkouts.filter((workout) => workout.discipline !== "calisthenics" && workout.discipline !== "running");
 
   const weeklyGoal = profile?.sport_weekly_goal ?? 3;
-  const language = isLanguage(profile?.language) ? profile.language : "fr";
   const stats = computeSportStats(all, weeklyGoal);
 
   // Program
@@ -136,8 +128,22 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
     notes: w.notes,
     muscleGroups: w.muscle_groups ?? [],
   });
-  const selectedDaySessions = all.filter((w) => w.workout_date === selectedDate).map(toItem);
-  const recentSessions = all.slice(0, 12).map(toItem);
+  // Strength and the other activities logged here; calisthenics and running have their own pages.
+  const here = all.filter((w) => w.discipline !== "calisthenics" && w.discipline !== "running");
+  const historySessions = here.map(toItem);
+  const templateIdByWorkout = Object.fromEntries(here.map((w) => [w.id, w.template_id]));
+  const strengthWorkouts = here
+    .filter((w) => w.discipline === "strength" || w.template_id || strength.details[w.id])
+    .map((w) => ({ date: w.workout_date, minutes: w.duration_minutes, volume: strength.details[w.id]?.volume ?? null }));
+  // Exercises whose top load beat every earlier session, per workout.
+  const recordsByWorkout: Record<string, string[]> = {};
+  for (const exercise of strength.exercises) {
+    let best = 0;
+    exercise.sessions.forEach((session, index) => {
+      if (index > 0 && best > 0 && session.topWeight > best) (recordsByWorkout[session.workoutId] ??= []).push(exercise.name);
+      best = Math.max(best, session.topWeight);
+    });
+  }
 
   // Quick-pick chips for the cardio form: skip the names that come from the strength program
   // (the "free session" default name is user-facing and translated; all language variants are
@@ -150,8 +156,6 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
     "séance de musculation",
   ]);
   const cardioFavorites = stats.activities.filter((a) => !strengthNames.has(a.name.toLowerCase())).slice(0, 6);
-
-  const chartData = sportWeeklyDuration(all, language, 10);
 
   // Notes and warnings for the training week
   const yesterday = format(subDays(new Date(), 1), "yyyy-MM-dd");
@@ -213,65 +217,9 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
         lastByTemplate={lastByTemplate}
       />
     ),
-    program: <ProgramManager templates={templates} catalog={catalog} />,
-    progress: (
-      <>
-        <MuscleVolume weeklyMuscles={strength.weeklyMuscles} />
-        <Progression exercises={strength.exercises} />
-      </>
-    ),
-    history: (
-      <>
-        <div className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5">
-          <DayNavigator
-            selectedDate={selectedDate}
-            basePath="/sport/musculation"
-            markedDates={Array.from(new Set(all.map((w) => w.workout_date)))}
-            markColor="var(--sport)"
-          />
-          <div className="mb-3 mt-6">
-            <p className="text-lg font-semibold capitalize">
-              {formatSportDate(selectedDate, language, { weekday: "long", day: "numeric", month: "long" })}
-            </p>
-            <p className="text-xs text-foreground-muted">
-              {selectedDaySessions.length === 0
-                ? t("sport.page.noSessionsThatDay")
-                : t("sport.page.daySessionsCount", {
-                    count: selectedDaySessions.length,
-                    unit: t(selectedDaySessions.length > 1 ? "sport.common.sessionOther" : "sport.common.sessionOne"),
-                  })}
-            </p>
-          </div>
-          <SessionList
-            sessions={selectedDaySessions}
-            details={strength.details}
-            emptyLabel={t("sport.page.restDayEmpty")}
-            showDate={false}
-          />
-        </div>
-        <div>
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.page.recentSessionsTitle")}</h2>
-          <SessionList sessions={recentSessions} details={strength.details} emptyLabel={t("sport.common.noSessionsRecorded")} />
-        </div>
-      </>
-    ),
-    stats: (
-      <>
-        <SportTiles stats={stats} />
-        <div className="grid gap-4 lg:grid-cols-2">
-          <WeeklyGoal sessions={stats.thisWeek.sessions} goal={weeklyGoal} goalWeeks={stats.records.goalWeeks} />
-          <SportRecords stats={stats} />
-        </div>
-        <div className="grid gap-4 lg:grid-cols-2">
-          <InViewFade className="rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5">
-            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("sport.page.minutesPerWeekTitle")}</h2>
-            <WeeklyBarChart data={chartData} color="var(--sport)" unit="min" />
-          </InViewFade>
-          <ActivityBreakdown stats={stats} />
-        </div>
-        <SportHeatmap heat={stats.heat} />
-      </>
-    ),
+    program: <ProgramManager templates={templates} catalog={catalog} suggestedId={suggestedId} />,
+    progress: <ProgressView workouts={strengthWorkouts} exercises={strength.exercises} weeklyMuscles={strength.weeklyMuscles} weeklyGoal={weeklyGoal} />,
+    history: <HistoryView sessions={historySessions} details={strength.details} records={recordsByWorkout} openDate={isValidIsoDate(requestedDate) ? requestedDate : null} today={today} templateIds={templateIdByWorkout} />,
   };
 
   return (

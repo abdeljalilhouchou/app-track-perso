@@ -15,9 +15,9 @@ import {
 import { MUSCLE_GROUPS, exerciseKey, muscleColor, muscleGroupI18nPath } from "@/lib/strength";
 import { ExercisePicker } from "@/components/strength/exercise-picker";
 import { ExerciseGuideButton } from "@/components/sport/exercises/exercise-guide-button";
-import { ExerciseMuscleButton } from "@/components/sport/anatomy/exercise-muscle-button";
 import { ExerciseThumbnail } from "@/components/sport/exercises/exercise-thumbnail";
 import type { CatalogItem, TemplateView } from "@/components/strength/types";
+import { programBalance } from "@/lib/strength-focus";
 
 type Row = { name: string; muscle: string; sets: number; reps: number };
 
@@ -99,7 +99,7 @@ function TemplateEditor({
   }
 
   return (
-    <div className="space-y-4 rounded-2xl border-[1.5px] border-sport/50 bg-surface p-5">
+    <div className="space-y-4 rounded-3xl border-[1.5px] border-sport/50 bg-surface p-4">
       <input
         value={name}
         onChange={(e) => setName(e.target.value)}
@@ -222,122 +222,78 @@ function TemplateCard({
   index,
   total,
   catalog,
+  isNext,
 }: {
   template: TemplateView;
   index: number;
   total: number;
   catalog: CatalogItem[];
+  isNext: boolean;
 }) {
   const t = useT();
+  const f = (key: string, vars?: Record<string, string | number>) => t(`sport.focus.${key}`, vars);
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(isNext);
   const [editing, setEditing] = useState(false);
   const expanded = open || editing;
   const totalSets = template.exercises.reduce((s, e) => s + e.sets, 0);
 
   return (
-    <div className="rounded-2xl border-[1.5px] border-sport/50 bg-surface">
-      <div className="flex items-center gap-3 px-5 py-4">
-        <span
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold"
-          style={{ background: "color-mix(in srgb, var(--sport) 16%, transparent)", color: "var(--sport)" }}
-        >
+    <article className="overflow-hidden rounded-3xl bg-surface" style={{ border: isNext ? "1.5px solid color-mix(in srgb, var(--sport) 45%, var(--border))" : "1px solid var(--border)" }} data-template-card>
+      <div className="flex items-center gap-2.5 p-3.5">
+        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl text-[13px] font-extrabold" style={isNext ? { background: "var(--sport)", color: "#062016" } : { background: "var(--surface-muted)" }}>
           {index + 1}
         </span>
-        <button
-          type="button"
-          onClick={() => !editing && setOpen((o) => !o)}
-          aria-expanded={expanded}
-          className="min-w-0 flex-1 text-left"
-        >
-          <p className="truncate text-sm font-semibold">{template.name}</p>
-          <p className="mt-0.5 flex flex-wrap gap-x-2 text-xs">
-            {template.muscleGroups.map((g) => (
-              <span key={g} style={{ color: muscleColor(g) }}>
-                {muscleLabel(g, t)}
-              </span>
-            ))}
-            <span className="text-foreground-muted">
-              · {t("sport.programManager.templateSummary", { exercises: template.exercises.length, sets: totalSets })}
-            </span>
-          </p>
+        <button type="button" onClick={() => !editing && setOpen((o) => !o)} aria-expanded={expanded} className="min-w-0 flex-1 text-start">
+          <p className="truncate text-base font-bold">{template.name}</p>
+          <p className="mt-0.5 truncate text-xs text-foreground-muted">{f("templateStats", { exercises: template.exercises.length, sets: totalSets })}</p>
         </button>
-        <div className="flex shrink-0 items-center gap-1 text-foreground-muted">
-          <button
-            type="button"
-            disabled={pending || index === 0}
-            onClick={() => startTransition(async () => void (await run(() => moveTemplate(template.id, "up"))))}
-            aria-label={t("sport.programManager.moveSessionUpAria")}
-            className="rounded-md px-1.5 py-1 text-xs transition hover:bg-surface-muted disabled:opacity-30"
-          >
-            ▲
-          </button>
-          <button
-            type="button"
-            disabled={pending || index === total - 1}
-            onClick={() => startTransition(async () => void (await run(() => moveTemplate(template.id, "down"))))}
-            aria-label={t("sport.programManager.moveSessionDownAria")}
-            className="rounded-md px-1.5 py-1 text-xs transition hover:bg-surface-muted disabled:opacity-30"
-          >
-            ▼
-          </button>
+        <div className="flex shrink-0 items-center">
+          <button type="button" disabled={pending || index === 0} onClick={() => startTransition(async () => void (await run(() => moveTemplate(template.id, "up"))))} aria-label={t("sport.programManager.moveSessionUpAria")} className="grid h-10 w-9 place-items-center rounded-xl text-sm text-foreground-muted transition hover:bg-surface-muted disabled:opacity-30">▲</button>
+          <button type="button" disabled={pending || index === total - 1} onClick={() => startTransition(async () => void (await run(() => moveTemplate(template.id, "down"))))} aria-label={t("sport.programManager.moveSessionDownAria")} className="grid h-10 w-9 place-items-center rounded-xl text-sm text-foreground-muted transition hover:bg-surface-muted disabled:opacity-30">▼</button>
         </div>
       </div>
+      {template.muscleGroups.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 px-3.5 pb-3">
+          {template.muscleGroups.map((g) => (
+            <span key={g} className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold" style={{ background: `color-mix(in srgb, ${muscleColor(g)} 15%, transparent)`, color: `color-mix(in srgb, ${muscleColor(g)} 75%, var(--foreground))` }}>
+              {muscleLabel(g, t)}
+            </span>
+          ))}
+        </div>
+      )}
 
       <AnimatePresence initial={false}>
         {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.22, ease: "easeOut" }}
-            className="overflow-hidden"
-          >
-            <div className="px-5 pb-5">
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22, ease: "easeOut" }} className="overflow-hidden">
+            <div className="border-t border-border px-3.5 pb-3.5 pt-1">
               {editing ? (
-                <TemplateEditor catalog={catalog} initial={template} onDone={() => setEditing(false)} />
+                <div className="pt-2.5"><TemplateEditor catalog={catalog} initial={template} onDone={() => setEditing(false)} /></div>
               ) : (
                 <div className="space-y-3">
-                  <ul className="space-y-1.5">
-                    {template.exercises.map((e) => (
-                      <li key={e.name} className="flex items-center gap-3 rounded-xl bg-surface-muted px-3 py-2.5">
-                        <ExerciseThumbnail name={e.name} muscle={e.muscle} />
-                        <span className="h-6 w-1 shrink-0 rounded-full" style={{ background: muscleColor(e.muscle) }} />
+                  <ol>
+                    {template.exercises.map((e, i) => (
+                      <li key={`${e.name}-${i}`} className={`flex min-h-12 items-center gap-3 py-1.5 ${i ? "border-t border-border" : ""}`}>
+                        <span className="w-10 shrink-0 overflow-hidden rounded-lg empty:hidden"><ExerciseThumbnail name={e.name} muscle={e.muscle} /></span>
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2"><p className="min-w-0 truncate text-sm font-medium">{e.name}</p><ExerciseGuideButton name={e.name} /></div>
-                          <p className="text-[11px]" style={{ color: muscleColor(e.muscle) }}>
-                            {muscleLabel(e.muscle, t)}
-                          </p>
-                          <ExerciseMuscleButton name={e.name} muscle={e.muscle} />
+                          <div className="flex items-center gap-1.5"><p className="min-w-0 truncate text-sm font-medium">{e.name}</p><ExerciseGuideButton name={e.name} /></div>
+                          <p className="text-[11px]" style={{ color: muscleColor(e.muscle) }}>{muscleLabel(e.muscle, t)}</p>
                         </div>
-                        <span className="shrink-0 text-sm font-semibold" style={{ color: "var(--sport)" }}>
-                          {e.sets} × {e.reps}
-                        </span>
+                        <span className="shrink-0 text-[13px] tabular-nums text-foreground-muted">{e.sets} × {e.reps}</span>
                       </li>
                     ))}
-                  </ul>
-                  <div className="flex gap-3 text-xs">
-                    <button
-                      type="button"
-                      onClick={() => setEditing(true)}
-                      className="text-foreground-muted transition hover:text-foreground"
-                    >
+                  </ol>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button type="button" onClick={() => setEditing(true)} className="min-h-11 rounded-xl border border-border text-[13px] font-semibold transition hover:bg-surface-muted" data-template-edit>
                       {t("sport.programManager.edit")}
                     </button>
                     <ConfirmDeleteButton
                       disabled={pending}
-                      onConfirm={() =>
-                        startTransition(
-                          async () =>
-                            void (await run(() => deleteTemplate(template.id), {
-                              success: t("sport.programManager.templateDeletedToast", { name: template.name }),
-                            }))
-                        )
-                      }
+                      onConfirm={() => startTransition(async () => void (await run(() => deleteTemplate(template.id), { success: t("sport.programManager.templateDeletedToast", { name: template.name }) })))}
                       title={t("sport.common.confirmDeleteSessionTitle")}
                       message={t("sport.programManager.confirmDeleteTemplateMessage", { name: template.name })}
-                      className="text-foreground-muted transition hover:text-danger"
+                      className="min-h-11 w-full rounded-xl border border-border text-[13px] font-semibold text-danger transition hover:bg-surface-muted"
                     >
                       {t("sport.common.delete")}
                     </ConfirmDeleteButton>
@@ -348,83 +304,102 @@ function TemplateCard({
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </article>
   );
 }
 
-export function ProgramManager({ templates, catalog }: { templates: TemplateView[]; catalog: CatalogItem[] }) {
+export function ProgramManager({ templates, catalog, suggestedId = null }: { templates: TemplateView[]; catalog: CatalogItem[]; suggestedId?: string | null }) {
   const t = useT();
+  const f = (key: string, vars?: Record<string, string | number>) => t(`sport.focus.${key}`, vars);
   const [pending, startTransition] = useTransition();
   const run = useActionToast();
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const next = templates.find((tpl) => tpl.id === suggestedId) ?? null;
+  const balance = programBalance(templates);
+  const most = Math.max(1, ...balance.map((item) => item.sets));
+  const low = balance.filter((item) => item.low);
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">
-          {t("sport.programManager.myWeekTitle", {
-            count: templates.length,
-            unit: t(templates.length > 1 ? "sport.common.sessionOther" : "sport.common.sessionOne"),
-          })}
-        </p>
-        {!creating && (
-          <button
-            type="button"
-            onClick={() => setCreating(true)}
-            className="rounded-full border border-sport/40 px-3 py-1.5 text-xs font-medium text-foreground-muted transition hover:border-sport hover:text-sport"
-          >
-            {t("sport.programManager.newSession")}
-          </button>
-        )}
-      </div>
-
-      {creating && <TemplateEditor catalog={catalog} onDone={() => setCreating(false)} />}
-
-      {templates.length === 0 && !creating ? (
-        <div className="rounded-2xl border border-dashed border-sport/40 p-6 text-center">
-          <p className="text-sm text-foreground-muted">{t("sport.programManager.noSessions")}</p>
-          <button
-            type="button"
-            disabled={pending}
-            onClick={() =>
-              startTransition(async () => {
-                const r = await run(() => createDefaultProgram(), {
-                  success: t("sport.programManager.programCreatedToast"),
-                  failure: t("sport.common.programNotCreated"),
-                });
-                if (r?.error) setError(r.error);
-              })
-            }
-            className="mt-3 rounded-xl bg-sport px-4 py-2 text-sm font-semibold text-on-accent transition hover:opacity-90 disabled:opacity-60"
-          >
-            {pending ? t("sport.programManager.creating") : t("sport.common.createSplitButton")}
-          </button>
-          {error && <p className="mt-2 text-xs text-danger">{error}</p>}
-        </div>
-      ) : (
-        templates.map((tpl, i) => <TemplateCard key={tpl.id} template={tpl} index={i} total={templates.length} catalog={catalog} />)
+    <div className="mx-auto max-w-2xl space-y-5" data-program-manager>
+      {templates.length > 0 && (
+        <section aria-label={f("programLabel")} className="space-y-2.5 rounded-3xl border border-border bg-surface p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-xs text-foreground-muted">{f("programLabel")}</p>
+              <p className="mt-0.5 text-xl font-extrabold">{f(templates.length === 1 ? "rotationOne" : "rotation", { count: templates.length })}</p>
+            </div>
+            {next && <span className="shrink-0 rounded-full bg-sport-soft px-2.5 py-1 text-xs font-bold" style={{ color: "color-mix(in srgb, var(--sport) 62%, var(--foreground))" }}>{f("nextUpName", { name: next.name })}</span>}
+          </div>
+          <p className="text-[13px] text-foreground-muted">{f("rotationHint")}</p>
+        </section>
       )}
 
-      <p className="text-[11px] text-foreground-muted">{t("sport.programManager.orderHint")}</p>
+      <section aria-labelledby="program-templates" className="space-y-2.5">
+        <h2 id="program-templates" className="text-[15px] font-semibold">{f("templatesTitle")}</h2>
+        {creating && <TemplateEditor catalog={catalog} onDone={() => setCreating(false)} />}
+        {templates.length === 0 && !creating ? (
+          <div className="rounded-3xl border border-dashed border-border p-6 text-center">
+            <p className="text-sm text-foreground-muted">{t("sport.programManager.noSessions")}</p>
+            <button
+              type="button"
+              disabled={pending}
+              onClick={() =>
+                startTransition(async () => {
+                  const r = await run(() => createDefaultProgram(), { success: t("sport.programManager.programCreatedToast"), failure: t("sport.common.programNotCreated") });
+                  if (r?.error) setError(r.error);
+                })
+              }
+              className="mt-3 min-h-11 rounded-xl px-4 text-sm font-bold text-[#062016] disabled:opacity-60"
+              style={{ background: "var(--sport)" }}
+            >
+              {pending ? t("sport.programManager.creating") : t("sport.common.createSplitButton")}
+            </button>
+            {error && <p className="mt-2 text-xs text-danger">{error}</p>}
+          </div>
+        ) : (
+          templates.map((tpl, i) => <TemplateCard key={tpl.id} template={tpl} index={i} total={templates.length} catalog={catalog} isNext={tpl.id === suggestedId} />)
+        )}
+        {!creating && (
+          <button type="button" onClick={() => setCreating(true)} className="min-h-[52px] w-full rounded-3xl border-[1.5px] border-dashed border-border text-sm font-bold transition hover:bg-surface-muted" data-new-template>
+            {f("newTemplate")}
+          </button>
+        )}
+      </section>
+
+      {templates.length > 0 && (
+        <section aria-labelledby="program-balance" className="space-y-2.5" data-program-balance>
+          <div className="flex items-baseline justify-between gap-3">
+            <h2 id="program-balance" className="text-[15px] font-semibold">{f("balance")}</h2>
+            <span className="text-xs text-foreground-muted">{f("balanceScope")}</span>
+          </div>
+          <div className="space-y-2.5 rounded-3xl border border-border bg-surface p-3.5">
+            <ul className="space-y-2.5">
+              {balance.map((item) => (
+                <li key={item.muscle} className="grid grid-cols-[104px_minmax(0,1fr)_28px] items-center gap-2.5 text-[13px]">
+                  <span className="truncate">{muscleLabel(item.muscle, t)}</span>
+                  <span className="h-2 overflow-hidden rounded-full bg-surface-muted"><span className="block h-full rounded-full" style={{ width: `${Math.max(3, (item.sets / most) * 100)}%`, background: item.low ? "var(--nutrition)" : "var(--sport)" }} /></span>
+                  <span className="text-end font-bold tabular-nums" style={item.low ? { color: "color-mix(in srgb, var(--nutrition) 75%, var(--foreground))" } : undefined}>{item.sets}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="text-xs" style={{ color: low.length ? "color-mix(in srgb, var(--nutrition) 75%, var(--foreground))" : "var(--foreground-muted)" }}>
+              {low.length ? f("balanceLow", { muscles: low.map((item) => muscleLabel(item.muscle, t)).join(", ") }) : f("balanceOk")}
+            </p>
+          </div>
+        </section>
+      )}
 
       {catalog.length < 20 && (
-        <div className="rounded-2xl border border-dashed border-sport/40 p-4">
+        <div className="rounded-3xl border border-dashed border-border p-4">
           <p className="mb-2 text-sm text-foreground-muted">
-            {t("sport.programManager.catalogHint", {
-              count: catalog.length,
-              unit: t(catalog.length > 1 ? "sport.common.exerciseOther" : "sport.common.exerciseOne"),
-            })}
+            {t("sport.programManager.catalogHint", { count: catalog.length, unit: t(catalog.length > 1 ? "sport.common.exerciseOther" : "sport.common.exerciseOne") })}
           </p>
           <button
             type="button"
             disabled={pending}
-            onClick={() =>
-              startTransition(
-                async () => void (await run(() => seedDefaultExercises(), { success: t("sport.programManager.catalogImportedToast") }))
-              )
-            }
-            className="rounded-lg border border-sport/50 px-3.5 py-2 text-sm font-medium text-sport transition hover:bg-sport-soft disabled:opacity-60"
+            onClick={() => startTransition(async () => void (await run(() => seedDefaultExercises(), { success: t("sport.programManager.catalogImportedToast") })))}
+            className="min-h-11 rounded-xl border border-border px-3.5 text-sm font-semibold transition hover:bg-surface-muted disabled:opacity-60"
           >
             {pending ? t("sport.programManager.importing") : t("sport.programManager.importCatalogButton")}
           </button>
