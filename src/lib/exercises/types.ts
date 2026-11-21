@@ -23,6 +23,8 @@ export type LibraryExercise = {
   guideId: string | null; image?: SportImageSource; thumbnail?: SportImageSource; databaseId?: string;
   origin: "builtin" | "personal" | "calisthenics"; searchNames: string[];
   description?: string; instructions?: string;
+  /** When the user added it (personal exercises only). */
+  createdAt?: string;
 };
 export type PerformanceSet = { reps: number | null; weight: number | null; seconds?: number | null; assistance?: number | null; addedWeight?: number | null; variation?: string };
 export type GuidePerformance = {

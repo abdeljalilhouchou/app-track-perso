@@ -47,6 +47,7 @@ const tables = { profiles: [profile], workouts, workout_sets: sets, workout_temp
 if (exerciseLibrary) {
   sets[0].exercise_name = "Rowing haltère unilatéral";
   tables.exercises.push({ id: "55555555-5555-4555-8555-555555555555", user_id: uid, name: sets[0].exercise_name, muscle_group: "Dos" });
+  tables.exercises.push({ id: "55555555-5555-4555-8555-555555555556", user_id: uid, name: "QA tirage élastique", muscle_group: "Dos", created_at: "2026-11-02T10:00:00Z" });
   if (templates.length) tables.workout_template_exercises.push({ id: "66666666-6666-4666-8666-666666666666", template_id: templates[0].id, user_id: uid, exercise_name: sets[0].exercise_name, muscle_group: "Dos", position: 0, target_sets: 3, target_reps: 12 });
 }
 if (exerciseMedia) for (let index = 0; index < 10; index++) tables.exercises.push({ id: `77777777-7777-4777-8777-${String(index).padStart(12, "0")}`, user_id: uid, name: `QA personal ${index + 1}`, muscle_group: "Biceps" });

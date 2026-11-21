@@ -59,8 +59,9 @@ export async function checkAnatomyV3({ send, evaluate, go, until, click, open, c
 
   // Direct library access, without following the exercise link.
   await go("/sport/exercises");
-  assert.ok(await evaluate("!!document.querySelector('[data-exercise-results] [data-anatomy-open]')"));
-  await open(); await close(); result.entryPoints.push("library");
+  // The library cards announce the 3D view with a badge; it opens from the exercise page.
+  assert.ok(await evaluate("[...document.querySelectorAll('[data-exercise-results] [data-exercise-card=builtin]')].some((card) => card.innerText.includes('3D'))"));
+  result.entryPoints.push("library-badge");
   // The Program and History lists stay plain: the 3D viewer opens from the library and the live session.
 
   await go("/sport/exercises/strength-pull-over-haltere");

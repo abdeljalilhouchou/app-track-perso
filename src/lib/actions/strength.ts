@@ -345,3 +345,60 @@ export async function markTemplateDone(
   refresh();
   return { error: null, notice: syncNotice(checked) };
 }
+
+function cleanExercise(name: unknown, muscle: unknown) {
+  if (typeof name !== "string" || typeof muscle !== "string") return null;
+  const clean = name.trim().replace(/\s+/g, " ");
+  if (clean.length < 2 || clean.length > 100 || !(MUSCLE_GROUPS as readonly string[]).includes(muscle)) return null;
+  return { name: clean, muscle };
+}
+
+/** Adds an exercise of the user's own to the catalog. */
+export async function createExercise(name: string, muscle: string): Promise<Result & { id?: string }> {
+  const input = cleanExercise(name, muscle);
+  if (!input) return { error: "Indique un nom (2 à 100 caractères) et un muscle." };
+  const { supabase, user } = await currentUser();
+  if (!user) return { error: "Non connecté." };
+  const { data, error } = await supabase.from("exercises").insert({ user_id: user.id, name: input.name, muscle_group: input.muscle }).select("id").single();
+  if (error) return { error: error.code === "23505" ? "Un exercice porte déjà ce nom." : "Impossible de créer l’exercice." };
+  refresh();
+  revalidatePath("/sport/exercises");
+  return { error: null, id: data.id };
+}
+
+/**
+ * Renames or moves one of the user's exercises. Past sets and program lines carrying the
+ * old name follow, so its history and records stay attached to it.
+ */
+export async function updateExercise(id: string, name: string, muscle: string): Promise<Result> {
+  const input = cleanExercise(name, muscle);
+  if (!isUuid(id) || !input) return { error: "Indique un nom (2 à 100 caractères) et un muscle." };
+  const { supabase, user } = await currentUser();
+  if (!user) return { error: "Non connecté." };
+  const { data: current, error: readError } = await supabase.from("exercises").select("name").eq("id", id).eq("user_id", user.id).maybeSingle();
+  if (readError || !current) return { error: "Exercice introuvable." };
+  const { error } = await supabase.from("exercises").update({ name: input.name, muscle_group: input.muscle }).eq("id", id).eq("user_id", user.id);
+  if (error) return { error: error.code === "23505" ? "Un exercice porte déjà ce nom." : "Impossible de modifier l’exercice." };
+  if (current.name !== input.name) {
+    const [sets, lines] = await Promise.all([
+      supabase.from("workout_sets").update({ exercise_name: input.name }).eq("user_id", user.id).eq("exercise_name", current.name),
+      supabase.from("workout_template_exercises").update({ exercise_name: input.name }).eq("user_id", user.id).eq("exercise_name", current.name),
+    ]);
+    if (sets.error || lines.error) return { error: "L’exercice est renommé, mais son historique n’a pas pu suivre." };
+  }
+  refresh();
+  revalidatePath("/sport/exercises");
+  return { error: null };
+}
+
+/** Removes one of the user's exercises from the catalog; sessions already logged keep their sets. */
+export async function deleteExercise(id: string): Promise<Result> {
+  if (!isUuid(id)) return { error: "Exercice introuvable." };
+  const { supabase, user } = await currentUser();
+  if (!user) return { error: "Non connecté." };
+  const { error } = await supabase.from("exercises").delete().eq("id", id).eq("user_id", user.id);
+  if (error) return { error: "Impossible de supprimer l’exercice." };
+  refresh();
+  revalidatePath("/sport/exercises");
+  return { error: null };
+}

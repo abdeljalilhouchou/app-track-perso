@@ -37,7 +37,7 @@ export const loadExerciseCatalog = cache(async () => {
   const calisthenicsReady = isCalisthenicsSchemaReady();
   const [profile, personal, calisthenics] = await Promise.all([
     getProfilePreferences(),
-    fetchAllRows((from, to) => supabase.from("exercises").select("id,name,muscle_group").eq("user_id", user.id).order("name").order("id").range(from, to)),
+    fetchAllRows((from, to) => supabase.from("exercises").select("id,name,muscle_group,created_at").eq("user_id", user.id).order("name").order("id").range(from, to)),
     calisthenicsReady ? fetchAllRows((from, to) => supabase.from("calisthenics_exercises").select("*")
       .or(`user_id.is.null,user_id.eq.${user.id}`).order("exercise_key").order("id").range(from, to)) : Promise.resolve([] as CalisthenicsExercise[]),
   ]);
@@ -54,7 +54,7 @@ export const loadExerciseCatalog = cache(async () => {
     if (builtin) { builtin.databaseId = row.id; builtin.storedName = row.name; continue; }
     exercises.push(attachGuide({ key: `personal-${row.id}`, databaseId: row.id, name: row.name, storedName: row.name,
       discipline: "musculation", primary: [row.muscle_group], secondary: [], equipment: [], level: null,
-      guideId: null, origin: "personal", searchNames: [row.name] }, guideForName(row.name), language));
+      guideId: null, origin: "personal", searchNames: [row.name], createdAt: row.created_at }, guideForName(row.name), language));
   }
   for (const row of calisthenics) {
     const guide = row.user_id === null ? guides.find((item) => item.calisthenicsKeys?.includes(row.exercise_key)) : undefined;

@@ -43,6 +43,25 @@ export async function checkExerciseLibrary({ send, evaluate, navigatePage, navig
     backgrounds.push(await evaluate("getComputedStyle(document.body).backgroundColor"));
   }
   assert.notEqual(backgrounds[0], backgrounds[1]); results.exerciseSystemTheme = true;
+  // Colour families, the user's own exercises and the create / edit sheet (nothing saved).
+  assert.ok(await evaluate("!!document.querySelector('[data-exercise-family=back] [data-exercise-card=builtin]')"), "back family");
+  assert.ok(await evaluate("document.querySelector('[data-exercise-mine]').innerText.includes('QA tirage élastique') && document.querySelector('[data-exercise-mine]').innerText.includes('Créé par toi')"), "own exercises first");
+  await evaluate("[...document.querySelectorAll('[data-exercise-origin] button')][2].click()");
+  await until(() => evaluate("document.querySelectorAll('[data-exercise-results] [data-exercise-card=personal]').length === 1 && !document.querySelector('[data-exercise-results] [data-exercise-card=builtin]')"), "my exercises only");
+  await screenshot("exercise-library-mine.png");
+  await evaluate("document.querySelector('[data-exercise-edit]').click()");
+  await until(() => evaluate("document.querySelector('[data-exercise-name]')?.value === 'QA tirage élastique' && !!document.querySelector('[data-exercise-delete]')"), "edit sheet");
+  await evaluate("document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))");
+  await until(() => evaluate("!document.querySelector('[data-exercise-sheet]')"), "sheet closed");
+  await evaluate("document.querySelector('[data-exercise-create]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-exercise-sheet]') && document.querySelector('[data-exercise-save]').disabled"), "create sheet waits for a name");
+  await input('[data-exercise-name]', "QA nouveau");
+  await until(() => evaluate("!document.querySelector('[data-exercise-save]').disabled && document.querySelector('[data-exercise-sheet]').innerText.includes('QA nouveau')"), "live preview");
+  await screenshot("exercise-library-create.png");
+  await evaluate("document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))");
+  await until(() => evaluate("!document.querySelector('[data-exercise-sheet]')"), "create closed");
+  await evaluate("[...document.querySelectorAll('[data-exercise-origin] button')][0].click()");
+  results.exerciseLibraryV2 = true;
   await input('[data-exercise-library] input', "rowing haltere unilateral");
   await until(() => evaluate("document.querySelectorAll('[data-exercise-results] article').length===1"), "accent-insensitive search");
   await navigateLink(detail); await ready(detail);
@@ -57,7 +76,8 @@ export async function checkExerciseLibrary({ send, evaluate, navigatePage, navig
   assert.ok(await evaluate("document.querySelector('[data-exercise-results]').innerText.includes('Curl haltères')"));
   await evaluate("Array.from(document.querySelectorAll('[data-exercise-library] button')).find(button=>button.textContent.includes('Réinitialiser')).click()"); await pause(150);
   await select(4, "desc");
-  assert.ok(await evaluate("(() => { const names=Array.from(document.querySelectorAll('[data-exercise-results] h3')).map(el=>el.textContent); return names.every((name,i)=>!i||names[i-1].localeCompare(name,'fr')>=0); })()"));
+  // Cards are grouped by colour family; the order holds inside each family.
+  assert.ok(await evaluate("Array.from(document.querySelectorAll('[data-exercise-family]')).every((family) => { const names=Array.from(family.querySelectorAll('h3')).map(el=>el.textContent); return names.every((name,i)=>!i||names[i-1].localeCompare(name,'fr')>=0); })"));
   await input('[data-exercise-library] input', "zzzz-no-result");
   await until(() => evaluate("!document.querySelector('[data-exercise-results]')"), "empty search");
   await screenshot("exercise-empty.png");
