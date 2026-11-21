@@ -44,7 +44,13 @@ export function ProgressView({ workouts, exercises, weeklyMuscles, weeklyGoal }:
   const dates = workouts.map((workout) => workout.date);
   const grid = regularity(dates, weeklyGoal);
   const scale = Math.max(weeklyGoal + 1, ...grid.weeks.map((week) => week.total));
-  const most = Math.max(1, ...weeklyMuscles.flatMap((muscle) => [muscle.thisWeekSets, muscle.lastWeekSets]));
+  // Sets per muscle: an axis that always shows the 10–20 advised zone.
+  const axis = Math.max(24, ...weeklyMuscles.flatMap((muscle) => [muscle.thisWeekSets + 2, muscle.lastWeekSets + 2]));
+  const pct = (sets: number) => Math.min(100, (sets / axis) * 100);
+  const trained = weeklyMuscles.filter((muscle) => muscle.thisWeekSets > 0).sort((a, b) => b.thisWeekSets - a.thisWeekSets);
+  const untrained = weeklyMuscles.filter((muscle) => muscle.thisWeekSets === 0 && muscle.lastWeekSets > 0);
+  const setsNow = weeklyMuscles.reduce((sum, muscle) => sum + muscle.thisWeekSets, 0);
+  const setsDiff = setsNow - weeklyMuscles.reduce((sum, muscle) => sum + muscle.lastWeekSets, 0);
   const records = exercises
     .filter((item) => item.records.maxWeight && item.records.maxWeight.weight > 0)
     .sort((a, b) => b.records.maxWeight!.date.localeCompare(a.records.maxWeight!.date))
@@ -112,27 +118,71 @@ export function ProgressView({ workouts, exercises, weeklyMuscles, weeklyGoal }:
       <section aria-labelledby="progress-muscles" className="space-y-2.5" data-progress-muscles>
         <div className="flex items-baseline justify-between gap-3">
           <h2 id="progress-muscles" className="text-[15px] font-semibold">{f("setsPerMuscle")}</h2>
-          <span className="flex items-center gap-2 text-xs text-foreground-muted">
-            <span className="flex items-center gap-1"><span aria-hidden className="h-2 w-2 rounded-sm" style={{ background: "var(--sport)" }} />{f("thisWeekShort")}</span>
-            <span className="flex items-center gap-1"><span aria-hidden className="h-2 w-2 rounded-sm bg-border" />{f("lastWeekShort")}</span>
-          </span>
+          <span className="text-xs text-foreground-muted">{f("thisWeekShort")}</span>
         </div>
         {weeklyMuscles.length ? (
-          <ul className={`${card} space-y-2.5 p-3.5`}>
-            {weeklyMuscles.map((muscle) => (
-              <li key={muscle.muscle} className="grid grid-cols-[96px_minmax(0,1fr)_32px] items-center gap-2.5 text-[13px]">
-                <span className="truncate" style={{ color: `color-mix(in srgb, ${muscleColor(muscle.muscle)} 70%, var(--foreground))` }}>{muscleLabel(muscle.muscle)}</span>
-                <span className="flex flex-col gap-[3px]">
-                  <span className="block h-[7px] rounded-full" style={{ width: `${Math.max(2, (muscle.thisWeekSets / most) * 100)}%`, background: "var(--sport)" }} />
-                  <span className="block h-1 rounded-full bg-border" style={{ width: `${Math.max(2, (muscle.lastWeekSets / most) * 100)}%` }} />
-                </span>
-                <span className="text-end font-bold tabular-nums">{n.format(muscle.thisWeekSets)}</span>
-              </li>
-            ))}
-          </ul>
+          <div className={`${card} space-y-3.5 p-4`}>
+            <div className="flex items-end justify-between gap-3">
+              <div>
+                <p className="text-[30px] font-extrabold leading-none tracking-tight tabular-nums">{n.format(setsNow)} <span className="text-sm font-semibold text-foreground-muted">{f(setsNow === 1 ? "setsCountOne" : "setsCount", { count: "" }).trim()}</span></p>
+                <p className="mt-1.5 text-xs font-semibold" style={{ color: setsDiff > 0 ? "var(--success)" : setsDiff < 0 ? "color-mix(in srgb, var(--nutrition) 80%, var(--foreground))" : "var(--foreground-muted)" }}>
+                  {setsDiff === 0 ? f("sameLastWeek") : f("vsLastWeek", { arrow: setsDiff > 0 ? "▲" : "▼", count: n.format(Math.abs(setsDiff)) })}
+                </p>
+              </div>
+              <div className="flex flex-col items-end gap-1.5 text-[11px] text-foreground-muted">
+                <span className="flex items-center gap-1.5"><span aria-hidden className="h-2 w-[18px] rounded-[3px] border border-dashed" style={{ background: "color-mix(in srgb, var(--sport) 16%, transparent)", borderColor: "color-mix(in srgb, var(--sport) 50%, transparent)" }} />{f("zoneLegend")}</span>
+                <span className="flex items-center gap-1.5"><span aria-hidden className="h-3 w-0.5 rounded-sm bg-foreground" />{f("lastWeekLegend")}</span>
+              </div>
+            </div>
+            {trained.length > 0 && (
+              <ul className="space-y-3">
+                {trained.map((muscle) => {
+                  const diff = muscle.thisWeekSets - muscle.lastWeekSets;
+                  const low = muscle.thisWeekSets < 10;
+                  const color = muscleColor(muscle.muscle);
+                  return (
+                    <li key={muscle.muscle} className="grid grid-cols-[92px_minmax(0,1fr)_44px] items-center gap-2.5" aria-label={f("muscleRow", { muscle: muscleLabel(muscle.muscle), now: muscle.thisWeekSets, last: muscle.lastWeekSets })}>
+                      <span className="flex min-w-0 items-center gap-1.5 text-[13px] font-semibold"><span aria-hidden className="h-2 w-2 shrink-0 rounded-full" style={{ background: color }} /><span className="truncate">{muscleLabel(muscle.muscle)}</span></span>
+                      <span aria-hidden className="relative h-3 rounded-md bg-surface-muted">
+                        <span className="absolute inset-y-0 border-x border-dashed" style={{ insetInlineStart: `${pct(10)}%`, width: `${pct(20) - pct(10)}%`, background: "color-mix(in srgb, var(--sport) 10%, transparent)", borderColor: "color-mix(in srgb, var(--sport) 45%, transparent)" }} />
+                        <span className="absolute inset-y-0.5 start-0.5 rounded" style={{ width: `calc(${pct(muscle.thisWeekSets)}% - 4px)`, background: color }} />
+                        {muscle.lastWeekSets > 0 && <span className="absolute -inset-y-[3px] w-0.5 rounded-sm bg-foreground" style={{ insetInlineStart: `calc(${pct(muscle.lastWeekSets)}% - 1px)`, boxShadow: "0 0 0 2px var(--surface)" }} />}
+                      </span>
+                      <span className="text-end leading-tight">
+                        <span className="block text-base font-extrabold tabular-nums" style={low ? { color: "color-mix(in srgb, var(--nutrition) 85%, var(--foreground))" } : undefined}>{n.format(muscle.thisWeekSets)}</span>
+                        <span className="block text-[11px] font-semibold tabular-nums" style={{ color: diff > 0 ? "var(--success)" : diff < 0 ? "color-mix(in srgb, var(--nutrition) 80%, var(--foreground))" : "var(--foreground-muted)" }}>{diff === 0 ? "=" : `${diff > 0 ? "+" : "−"}${n.format(Math.abs(diff))}`}</span>
+                      </span>
+                    </li>
+                  );
+                })}
+                <li aria-hidden className="grid grid-cols-[92px_minmax(0,1fr)_44px] gap-2.5 text-[10px] text-foreground-muted">
+                  <span />
+                  <span className="relative h-3">
+                    <span className="absolute start-0">0</span>
+                    <span className="absolute -translate-x-1/2 rtl:translate-x-1/2" style={{ insetInlineStart: `${pct(10)}%` }}>{n.format(10)}</span>
+                    <span className="absolute -translate-x-1/2 rtl:translate-x-1/2" style={{ insetInlineStart: `${pct(20)}%` }}>{n.format(20)}</span>
+                  </span>
+                  <span />
+                </li>
+              </ul>
+            )}
+            {untrained.length > 0 && (
+              <div className={trained.length ? "border-t border-border pt-3" : ""} data-progress-untrained>
+                <p className="mb-2 text-xs text-foreground-muted">{f("notTrained")}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {untrained.map((muscle) => (
+                    <span key={muscle.muscle} className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-semibold">
+                      {muscleLabel(muscle.muscle)} <span className="font-medium text-foreground-muted">· {f("lastWeekCount", { count: n.format(muscle.lastWeekSets) })}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         ) : (
           <p className="rounded-3xl border border-dashed border-border p-5 text-center text-sm text-foreground-muted">{f("noMuscles")}</p>
         )}
+        {weeklyMuscles.length > 0 && <p className="text-[11px] leading-relaxed text-foreground-muted">{f("zoneNote")}</p>}
       </section>
 
       <section aria-labelledby="progress-regularity" className="space-y-2.5" data-progress-regularity>

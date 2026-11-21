@@ -147,6 +147,8 @@ export async function checkMusculation({ send, evaluate, navigatePage, ready, un
   assert.ok(/Séances 3/.test(kpis) && /Records battus 1/.test(kpis), `key figures (${kpis})`);
   assert.ok(await evaluate("document.querySelector('[data-progress-curve]').innerText.includes('+2,5 kg')"), "gain over the period");
   assert.equal(await evaluate("document.querySelectorAll('[data-progress-regularity] ol > li').length"), 12, "twelve weekly bars");
+  assert.ok(await evaluate("document.querySelector('[data-progress-muscles]').innerText.includes('zone conseillée 10–20')"), "advised zone legend");
+  assert.ok(await evaluate("document.querySelector('[data-progress-untrained]').innerText.includes('Pectoraux') && document.querySelector('[data-progress-untrained]').innerText.includes('4 la sem. passée')"), "untrained muscles with last week's sets");
   assert.ok(await evaluate("document.querySelector('[data-progress-regularity]').innerText.includes('objectif 3')"), "goal line labelled");
   assert.ok(await evaluate("document.querySelector('[data-progress-records]').innerText.includes('60 kg × 8')"), "personal record");
   await evaluate("document.querySelector('[role=radiogroup] [role=radio]').click()");
