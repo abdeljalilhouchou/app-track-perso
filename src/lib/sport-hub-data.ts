@@ -6,7 +6,10 @@ import { isLanguage, type Language } from "@/lib/language";
 import { computeSportStats } from "@/lib/sport-stats";
 import { formatLocalizedDate } from "@/lib/format-date";
 import type { Workout } from "@/types/database";
-import { summarizeHubTraining, type HubSet, type HubTemplate } from "@/lib/sport-hub";
+import { summarizeHubTraining, type HubTemplate } from "@/lib/sport-hub";
+import { buildSportOverview, type OverviewCaliSet, type OverviewRun, type OverviewSet, type OverviewTemplateExercise } from "@/lib/sport-overview";
+import { isRunningSchemaReady } from "@/lib/running/config";
+import { isCalisthenicsSchemaReady } from "@/lib/calisthenics/config";
 
 export async function loadSportHubData({ identifyStrength = false, dashboard = false }: { identifyStrength?: boolean; dashboard?: boolean } = {}) {
   const supabase = await createClient();
@@ -17,12 +20,12 @@ export async function loadSportHubData({ identifyStrength = false, dashboard = f
     ? fetchAllRows((from, to) =>
         supabase
           .from("workout_sets")
-          .select("id, workout_id, reps, weight_kg")
+          .select("id, workout_id, reps, weight_kg, exercise_name, muscle_group")
           .eq("user_id", user.id)
           .order("id", { ascending: true })
           .range(from, to)
       )
-    : Promise.resolve([] as HubSet[]);
+    : Promise.resolve([] as (OverviewSet & { id: string })[]);
 
   const templatesPromise = dashboard
     ? fetchAllRows((from, to) => supabase.from("workout_templates")
@@ -30,7 +33,22 @@ export async function loadSportHubData({ identifyStrength = false, dashboard = f
         .order("position").order("created_at").order("id").range(from, to))
     : Promise.resolve([] as HubTemplate[]);
 
-  const [workouts, setRows, profileResult, templates] = await Promise.all([
+  // Hub-only reads: the suggested session's exercises, runs and calisthenics sets (when those modules exist).
+  const templateExercisesPromise = dashboard
+    ? fetchAllRows((from, to) => supabase.from("workout_template_exercises")
+        .select("template_id, exercise_name, target_sets, target_reps, position").eq("user_id", user.id)
+        .order("position").order("id").range(from, to))
+    : Promise.resolve([] as OverviewTemplateExercise[]);
+  const runsPromise = dashboard && isRunningSchemaReady()
+    ? fetchAllRows((from, to) => supabase.from("running_sessions")
+        .select("workout_id, distance_km, duration_seconds").eq("user_id", user.id).order("workout_id").range(from, to))
+    : Promise.resolve([] as OverviewRun[]);
+  const caliSetsPromise = dashboard && isCalisthenicsSchemaReady()
+    ? fetchAllRows((from, to) => supabase.from("calisthenics_sets")
+        .select("workout_id, exercise_id, exercise_name, reps, hold_seconds").eq("user_id", user.id).order("id").range(from, to))
+    : Promise.resolve([] as OverviewCaliSet[]);
+
+  const [workouts, setRows, profileResult, templates, templateExercises, runs, caliSets] = await Promise.all([
     fetchAllRows((from, to) =>
       supabase
         .from("workouts")
@@ -44,6 +62,9 @@ export async function loadSportHubData({ identifyStrength = false, dashboard = f
     setRowsPromise,
     getProfilePreferences(),
     templatesPromise,
+    templateExercisesPromise,
+    runsPromise,
+    caliSetsPromise,
   ]);
 
   if (profileResult.error) throw new Error("Impossible de charger l’objectif sportif.");
@@ -52,13 +73,24 @@ export async function loadSportHubData({ identifyStrength = false, dashboard = f
   const language: Language = isLanguage(profileResult.data?.language) ? profileResult.data.language : "fr";
   const workoutSetIds = new Set(setRows.map((row) => row.workout_id));
 
+  const training = dashboard ? summarizeHubTraining(workouts as Workout[], setRows, templates) : null;
   return {
     workouts: workouts as Workout[],
     workoutSetIds,
     weeklyGoal,
     language,
     stats: computeSportStats(workouts, weeklyGoal),
-    training: dashboard ? summarizeHubTraining(workouts as Workout[], setRows, templates) : null,
+    training,
+    overview: training ? buildSportOverview({
+      workouts: workouts as Workout[],
+      sets: setRows as OverviewSet[],
+      setWorkoutIds: workoutSetIds,
+      nextTemplate: training.nextTemplate,
+      templateExercises: templateExercises as OverviewTemplateExercise[],
+      runs: runs as OverviewRun[],
+      caliSets: caliSets as OverviewCaliSet[],
+      weeklyGoal,
+    }) : null,
   };
 }
 

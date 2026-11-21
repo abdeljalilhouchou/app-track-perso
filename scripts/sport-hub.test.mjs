@@ -56,7 +56,7 @@ test("recent activity links keep discipline-specific details and encode user ide
 
 test("dashboard reads are owner-scoped and never query gated discipline tables", async () => {
   const calls = [];
-  const rows = { workouts: [workout("one")], workout_sets: [{ id: "set", workout_id: "one", reps: 12, weight_kg: 25 }], workout_templates: [{ id: "program", name: "Real program", muscle_groups: [] }] };
+  const rows = { workouts: [workout("one")], workout_sets: [{ id: "set", workout_id: "one", reps: 12, weight_kg: 25, exercise_name: "Rowing", muscle_group: "Dos" }], workout_templates: [{ id: "program", name: "Real program", muscle_groups: [] }], workout_template_exercises: [{ template_id: "program", exercise_name: "Rowing", target_sets: 3, target_reps: 10, position: 0 }] };
   const reader = sourceLoader({
     "@/lib/supabase/server": { createClient: async () => ({ from(table) {
       assert.ok(Object.hasOwn(rows, table), `Unexpected table ${table}`);
@@ -70,6 +70,8 @@ test("dashboard reads are owner-scoped and never query gated discipline tables",
   const result = await reader.loadSportHubData({ dashboard: true });
   assert.equal(result.stats.totalSessions, 1);
   assert.equal(result.training.nextTemplate.id, "program");
+  assert.equal(result.overview.next.exercises[0].name, "Rowing");
+  assert.ok(!calls.some((call) => call[0] === "running_sessions" || call[0] === "calisthenics_sets"), "Gated discipline tables stay unread");
   for (const table of Object.keys(rows)) assert.ok(calls.some((call) => call[0] === table && call[1] === "eq" && call[2] === "user_id" && call[3] === "owner"));
   calls.length = 0;
   await reader.loadSportHubData();

@@ -328,7 +328,12 @@ try {
         await until(() => evaluate(`document.documentElement.lang === '${language}' && document.documentElement.getAttribute('data-theme') === '${theme}'`), "hub locale/theme");
         assert.ok(await evaluate("!document.querySelector('[data-sport-context-navigation]')"));
         assert.ok(await evaluate("!document.body.innerText.includes('sport.hubDashboard.')"));
-        assert.ok(await evaluate("document.querySelector('.sport-hub-quick-stats .sport-stat-value').textContent.includes(new Intl.NumberFormat(document.documentElement.lang).format(300))"));
+        assert.ok(await evaluate("document.querySelector('.sport-hub-week-stats').textContent.includes(new Intl.NumberFormat(document.documentElement.lang).format(300) + ' kg')"));
+        assert.equal(await evaluate("document.querySelectorAll('[data-sport-plan] > li').length"), 7);
+        assert.ok(await evaluate("!!document.querySelector('[data-sport-plan] > li[data-state=today], [data-sport-plan] > li[data-state=done]')"));
+        assert.ok(await evaluate("!!document.querySelector('[data-sport-challenge] [role=progressbar]')"));
+        assert.ok(await evaluate("[...document.querySelectorAll('[data-sport-trend]')].length >= 1"));
+        assert.ok(await evaluate("[...document.querySelectorAll('img')].filter((img) => img.src.includes('images%2Fsport') || img.src.includes('/images/sport/')).length >= 4"));
         assert.equal(await evaluate("document.querySelectorAll('.sport-hub-disciplines > a').length"), 3);
         assert.ok(await evaluate("document.getElementById('sport-next-session').textContent.includes('QA Programme')"));
         for (const width of [320, 360, 375, 390, 430, 768, 1440]) {
@@ -354,12 +359,13 @@ try {
     profile.language = "fr"; profile.theme = "light";
     fixtureState = "no-sets";
     await navigatePage(`http://127.0.0.1:${appPort}/sport`); await ready("/sport");
-    assert.equal(await evaluate("document.querySelector('.sport-hub-quick-stats .sport-stat-value').textContent.trim()"), "—");
+    assert.ok(await evaluate("document.querySelector('.sport-hub-week-stats').textContent.includes('—')"));
     fixtureState = "empty";
     await navigatePage(`http://127.0.0.1:${appPort}/sport`); await ready("/sport");
     assert.ok(await evaluate("!document.body.innerText.includes('QA Dos & Biceps') && !document.body.innerText.includes('QA Programme')"));
-    assert.ok(await evaluate("!!document.querySelector('#sport-next-session .sport-empty-state')"));
-    assert.equal(await evaluate("document.querySelector('.sport-hub-week-stats .sport-stat-value').textContent.trim()"), "0");
+    assert.ok(await evaluate("!!document.querySelector('[data-sport-empty]') && !document.getElementById('sport-next-session')"));
+    assert.equal(await evaluate("document.querySelectorAll('[data-sport-start]').length"), 3);
+    assert.ok(await evaluate("document.querySelector('[data-sport-ring]').textContent.trim().startsWith('0')"));
     await pause(200);
     await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true }).then(({ data }) => writeFile(path.join(output, "hub-empty.png"), Buffer.from(data, "base64")));
     results.hubEmptyState = true; results.hubUnknownVolume = true;
