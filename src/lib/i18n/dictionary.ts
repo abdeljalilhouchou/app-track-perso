@@ -9,6 +9,7 @@ import { habitsAr, habitsEn, habitsFr } from "./modules/habits";
 import { sportAr, sportEn, sportFr } from "./modules/sport";
 import { nutritionAr, nutritionEn, nutritionFr } from "./modules/nutrition";
 import { moodAr, moodEn, moodFr } from "./modules/mood";
+import { homeAr, homeEn, homeFr } from "./modules/home";
 import {
   dashboardExtraAr,
   dashboardExtraEn,
@@ -200,6 +201,7 @@ const fr = {
   sport: sportFr,
   nutrition: nutritionFr,
   mood: moodFr,
+  home: homeFr,
   profile: profileFr,
 };
 
@@ -385,6 +387,7 @@ const en: Dictionary = {
   sport: sportEn,
   nutrition: nutritionEn,
   mood: moodEn,
+  home: homeEn,
   profile: profileEn,
 };
 
@@ -570,6 +573,7 @@ const ar: Dictionary = {
   sport: sportAr,
   nutrition: nutritionAr,
   mood: moodAr,
+  home: homeAr,
   profile: profileAr,
 };
 

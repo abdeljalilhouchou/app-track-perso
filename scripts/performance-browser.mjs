@@ -15,8 +15,9 @@ const authIntro = process.argv.includes("--auth-intro");
 const sessionCards = process.argv.includes("--session-cards");
 const accountMenu = process.argv.includes("--account-menu");
 const mood = process.argv.includes("--mood");
-const nutrition = process.argv.includes("--nutrition");
-const habitsMode = process.argv.includes("--habits");
+const nutrition = process.argv.includes("--nutrition") || process.argv.includes("--home");
+const home = process.argv.includes("--home");
+const habitsMode = process.argv.includes("--habits") || home;
 const exerciseExperienceV3 = process.argv.includes("--exercise-experience-v3");
 const exerciseMediaV3 = process.argv.includes("--exercise-media-v3") || exerciseExperienceV3;
 const exerciseMediaV2 = process.argv.includes("--exercise-media-v2") || exerciseMediaV3;
@@ -257,7 +258,7 @@ try {
   await navigatePage(`http://127.0.0.1:${appPort}/sport`);
   await ready("/sport");
   console.log("Sport Hub loaded with local fixtures.");
-  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu && !authIntro && !sessionCards && !mood && !nutrition && !habitsMode) {
+  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu && !authIntro && !sessionCards && !mood && !nutrition && !habitsMode && !home) {
   assert.ok(await evaluate("document.body.innerText.includes('QA Dos & Biceps')"));
   for (const width of [320, 360, 375, 390, 430, 768, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: width < 768 });
@@ -468,11 +469,14 @@ try {
     const { checkMobileAccountMenu } = await import("./mobile-account-menu-browser-checks.mjs");
     await checkMobileAccountMenu({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, output, appPort });
   }
-  if (habitsMode) {
+  if (home) {
+    const { checkHome } = await import("./home-browser-checks.mjs");
+    await checkHome({ send, evaluate, navigatePage, ready, until, pause, results, profile, output, appPort, setFixture: (value) => { fixtureState = value; } });
+  } else if (habitsMode) {
     const { checkHabits } = await import("./habits-browser-checks.mjs");
     await checkHabits({ send, evaluate, navigatePage, ready, until, pause, results, profile, output, appPort, setFixture: (value) => { fixtureState = value; } });
   }
-  if (nutrition) {
+  if (nutrition && !home) {
     const { checkNutrition } = await import("./nutrition-browser-checks.mjs");
     await checkNutrition({ send, evaluate, navigatePage, ready, until, pause, results, profile, output, appPort, setFixture: (value) => { fixtureState = value; } });
   }
