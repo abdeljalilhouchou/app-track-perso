@@ -9,7 +9,7 @@ import { MealTemplatesPanel } from "@/components/meal-templates";
 import { WaterTracker } from "@/components/water-tracker";
 import { WeightTracker } from "@/components/weight-tracker";
 import { WeeklyBarChart } from "@/components/charts/weekly-bar-chart";
-import { CalorieHero, TodayMeals } from "@/components/nutrition/nutrition-today";
+import { AddFoodButton, CalorieHero } from "@/components/nutrition/nutrition-today";
 import { NutritionReview } from "@/components/nutrition/nutrition-review";
 import { NutritionTabs } from "@/components/nutrition-tabs";
 import { Callout } from "@/components/ui/callout";
@@ -234,7 +234,7 @@ export default async function NutritionPage({
               goalsHref={`/nutrition?date=${today}#goals`}
             />
 
-            <TodayMeals meals={meals} foods={foods} quickFoods={quickFoods} />
+            <AddFoodButton foods={foods} quickFoods={quickFoods} />
 
             <section aria-labelledby="nutrition-extras" className="space-y-4">
               <h2 id="nutrition-extras" className="px-1 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("nutrition.v2.extrasTitle")}</h2>

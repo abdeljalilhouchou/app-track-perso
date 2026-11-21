@@ -1,25 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { deleteMeal } from "@/lib/actions/nutrition";
 import { MealForm, type MealMoment } from "@/components/meal-form";
-import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
-import { useActionToast } from "@/components/toast/use-action-toast";
 import { useT } from "@/components/language-provider";
-import type { Food, MealEntry } from "@/types/database";
+import type { Food } from "@/types/database";
 
 type Totals = { calories: number; protein: number; carbs: number; fat: number };
 type Goals = { calories: number | null; protein: number | null; carbs: number | null; fat: number | null };
 
-const MOMENTS: { value: MealMoment; key: string; icon: string }[] = [
-  { value: "petit-dejeuner", key: "petitDejeuner", icon: "🌅" },
-  { value: "dejeuner", key: "dejeuner", icon: "☀️" },
-  { value: "diner", key: "diner", icon: "🌙" },
-  { value: "collation", key: "collation", icon: "🍎" },
-];
-
-/** The moment that fits the time of day, so "Ajouter" lands in the right card. */
+/** The moment that fits the time of day, preselected in the add form. */
 function momentNow(): MealMoment {
   const hour = new Date().getHours();
   if (hour < 11) return "petit-dejeuner";
@@ -98,11 +88,9 @@ export function CalorieHero({ totals, goals, goalsHref }: { totals: Totals; goal
   );
 }
 
-/** Today's meals in one card per moment, each with its own add button, and the add sheet. */
-export function TodayMeals({ meals, foods, quickFoods }: { meals: MealEntry[]; foods: Food[]; quickFoods: Food[] }) {
+/** The one action of the Today tab: add a food, in a sheet preset to the current meal. The day's list is in the Journal tab. */
+export function AddFoodButton({ foods, quickFoods }: { foods: Food[]; quickFoods: Food[] }) {
   const t = useT();
-  const run = useActionToast();
-  const [pending, startTransition] = useTransition();
   const [sheet, setSheet] = useState<MealMoment | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -110,61 +98,8 @@ export function TodayMeals({ meals, foods, quickFoods }: { meals: MealEntry[]; f
     if (sheet) dialogRef.current?.showModal();
   }, [sheet]);
 
-  const label = (moment: (typeof MOMENTS)[number]) => t(`nutrition.mealTypes.${moment.key}`);
-
   return (
     <>
-      <div className="space-y-3" data-today-meals>
-        {MOMENTS.map((moment) => {
-          const entries = meals.filter((meal) => meal.meal_type === moment.value);
-          const calories = Math.round(entries.reduce((sum, meal) => sum + meal.calories, 0));
-          return (
-            <section key={moment.value} aria-labelledby={`moment-${moment.value}`} className="rounded-2xl border border-border bg-surface" data-moment={moment.value}>
-              <div className="flex items-center gap-3 p-4 pb-2">
-                <span aria-hidden className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-surface-muted text-lg">{moment.icon}</span>
-                <div className="min-w-0 flex-1">
-                  <h3 id={`moment-${moment.value}`} className="font-semibold">{label(moment)}</h3>
-                  <p className="text-xs text-foreground-muted">{entries.length ? `${calories} kcal · ${(entries.length === 1 ? t("nutrition.v2.entriesOne") : t("nutrition.v2.entriesCount", { count: entries.length }))}` : t("nutrition.v2.momentEmpty")}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setSheet(moment.value)}
-                  aria-label={t("nutrition.v2.addTo", { meal: label(moment).toLowerCase() })}
-                  className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-border text-xl font-semibold text-accent transition hover:bg-surface-muted"
-                >
-                  +
-                </button>
-              </div>
-              {entries.length > 0 && (
-                <ul className="divide-y divide-border px-4 pb-2">
-                  {entries.map((meal) => (
-                    <li key={meal.id} className="flex items-center gap-3 py-2.5" data-meal-entry>
-                      <span aria-hidden className="text-lg">{meal.icon}</span>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">{meal.food_name}</p>
-                        <p className="text-xs tabular-nums text-foreground-muted">
-                          {meal.quantity_grams}{meal.unit} · {t("nutrition.common.proteinAbbrev")} {meal.protein} · {t("nutrition.common.carbsAbbrev")} {meal.carbs} · {t("nutrition.common.fatAbbrev")} {meal.fat}
-                        </p>
-                      </div>
-                      <span className="shrink-0 text-sm font-semibold tabular-nums">{Math.round(meal.calories)}</span>
-                      <ConfirmDeleteButton
-                        disabled={pending}
-                        onConfirm={() => startTransition(async () => void (await run(() => deleteMeal(meal.id), { success: t("nutrition.mealList.deleteSuccess", { name: meal.food_name }), failure: t("nutrition.common.deleteFailure") })))}
-                        title={t("nutrition.mealList.deleteTitle")}
-                        message={t("nutrition.mealList.deleteMessage", { name: meal.food_name })}
-                        className="grid h-11 w-9 shrink-0 place-items-center text-foreground-muted hover:text-danger"
-                      >
-                        ✕
-                      </ConfirmDeleteButton>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-          );
-        })}
-      </div>
-
       <div className="sticky bottom-[calc(3.5rem+env(safe-area-inset-bottom)+0.75rem)] z-10 md:bottom-4">
         <button
           type="button"

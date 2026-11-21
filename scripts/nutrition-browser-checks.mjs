@@ -27,7 +27,7 @@ export async function checkNutrition({ send, evaluate, navigatePage, ready, unti
   for (const [language, theme, width] of [["fr", "dark", 375], ["fr", "light", 320], ["ar", "dark", 390], ["en", "light", 1440]]) {
     profile.language = language; profile.theme = theme;
     await size(width); await go("/nutrition");
-    await until(() => evaluate("!!document.querySelector('[data-calorie-hero]') && document.querySelectorAll('[data-moment]').length === 4"), "today tab rendered");
+    await until(() => evaluate("!!document.querySelector('[data-calorie-hero]') && !!document.querySelector('[data-add-food]')"), "today tab rendered");
     await noOverflow(`${language}/${theme}/${width}`);
     await shot(`today-${language}-${theme}-${width}`);
     result.cases.push({ language, theme, width });
@@ -39,8 +39,8 @@ export async function checkNutrition({ send, evaluate, navigatePage, ready, unti
   await until(() => evaluate("!!document.querySelector('[data-calories-left]')"), "calories left");
   const left = await evaluate("Number(document.querySelector('[data-calories-left]').textContent)");
   assert.ok(left > 0 && left < 2200, `calories left against a 2200 kcal goal: ${left}`);
-  assert.equal(await evaluate("document.querySelectorAll('[data-moment=\"dejeuner\"] [data-meal-entry]').length"), 2, "two lunch entries today");
-  assert.ok(await evaluate("document.querySelector('[data-moment=\"diner\"]').innerText.includes('Rien pour l’instant')"), "empty dinner card says so");
+  // The day's list lives in the Journal tab only.
+  assert.equal(await evaluate("document.querySelectorAll('[data-meal-entry], [data-moment]').length"), 0, "no meal list on the Today tab");
   assert.equal(await evaluate("document.querySelectorAll('[data-add-food]').length"), 1, "one primary add action");
 
   // The add sheet, with a barcode typed by hand (the headless browser has no camera).
@@ -69,6 +69,10 @@ export async function checkNutrition({ send, evaluate, navigatePage, ready, unti
   await shot("scanned-fr-dark-375");
   await evaluate("document.querySelector('[data-add-food-sheet] button[aria-label=\"Fermer\"]').click()");
   await until(() => evaluate("!document.querySelector('dialog[data-add-food-sheet]')"), "sheet closes");
+
+  // Today's meals are listed in the Journal tab.
+  await tab("journal");
+  await until(() => evaluate("['Flocons', 'Riz basmati', 'Poulet'].every((name) => document.querySelector('#nutrition-panel').innerText.includes(name))"), "today's meals in the journal");
 
   // The review tab.
   await tab("week");
