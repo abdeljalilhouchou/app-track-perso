@@ -87,6 +87,51 @@ export async function checkNutrition({ send, evaluate, navigatePage, ready, unti
   await evaluate("document.querySelector('[data-review-bars]').scrollIntoView({ block: 'center' })");
   await shot("review-30-fr-dark-375");
 
+  // The food base: search, filters, a food sheet with the calorie check, and a new food filled online or by scan.
+  await tab("today");
+  await evaluate("document.querySelector('[data-food-base-open]').click()");
+  await until(() => evaluate("document.querySelectorAll('[data-food-row]').length === 5"), "food base lists five foods");
+  assert.equal(await evaluate("document.querySelector('[data-food-row]').dataset.foodRow"), "Poulet", "most used food first");
+  assert.ok(await evaluate("!!document.querySelector('[data-food-chip=\"Fruits\"]') && document.querySelector('[data-food-chip=\"Viandes & volailles\"]').textContent.startsWith('Viandes')"), "category chips");
+  assert.ok(await evaluate("[...document.querySelectorAll('[data-food-chip=mine]')].length === 1"), "own foods chip");
+  await noOverflow("food base");
+  await shot("foodbase-list-fr-dark-375");
+  await evaluate("document.querySelector('[data-food-chip=\"Fruits\"]').click()");
+  await until(() => evaluate("document.querySelectorAll('[data-food-row]').length === 1 && document.querySelector('[data-food-row]').dataset.foodRow === 'Pomme'"), "fruits filter");
+  await evaluate("document.querySelector('[data-food-chip=all]').click()");
+  await evaluate("document.querySelector('[data-food-search]').focus()");
+  await send("Input.insertText", { text: "flocons d'avoine".replace("'", "’") });
+  await until(() => evaluate("document.querySelectorAll('[data-food-row]').length === 1"), "search by name");
+  await evaluate("document.querySelector('[data-food-search]').select();");
+  await send("Input.insertText", { text: "zzz" });
+  await until(() => evaluate("!!document.querySelector('[data-food-empty] button')"), "create from an empty search");
+  await evaluate("document.querySelector('[data-food-search]').select();");
+  await send("Input.insertText", { text: "msemen" });
+  await until(() => evaluate("document.querySelectorAll('[data-food-row]').length === 1"), "own food found");
+  await evaluate("document.querySelector('[data-food-row]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-food-sheet] [data-food-mismatch]')"), "calorie check flags the own food");
+  await shot("foodbase-sheet-fr-dark-375");
+  await evaluate("document.querySelector('[data-food-mismatch] button').click()");
+  await until(() => evaluate("document.querySelector('[data-food-field=calories]').value === '289' && !document.querySelector('[data-food-mismatch]')"), "computed calories applied");
+  await evaluate("document.querySelector('[data-food-sheet] button[aria-label=\"Retour à la liste\"]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-food-new]')"), "back to the list");
+  await evaluate("document.querySelector('[data-food-new]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-food-fill]')"), "new food sheet");
+  await evaluate("document.querySelector('[data-food-online-query]').focus()");
+  await send("Input.insertText", { text: "pâte à tartiner" });
+  await evaluate("document.querySelector('[data-food-online-search]').click()");
+  await until(() => evaluate("[...document.querySelectorAll('[data-food-fill] li button')].length === 1"), "online result");
+  await evaluate("document.querySelector('[data-food-fill] li button').click()");
+  await until(() => evaluate("!!document.querySelector('[data-food-prefilled]') && document.querySelector('[data-food-field=name]').value.startsWith('Pâte à tartiner QA') && document.querySelector('[data-food-field=calories]').value === '539'"), "values filled from the online product");
+  await noOverflow("food sheet");
+  await shot("foodbase-new-fr-dark-375");
+  // Tools are tucked away in a menu.
+  await evaluate("document.querySelector('[data-food-sheet] button[aria-label=\"Retour à la liste\"]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-food-tools]')"), "tools menu");
+  await evaluate("document.querySelector('[data-food-tools] summary').click()");
+  assert.ok(await evaluate("document.querySelector('[data-food-tools]').innerText.includes('Corriger les valeurs manquantes')"), "repair tool in the menu");
+  await evaluate("document.querySelector('[data-food-base]').closest('[role=dialog]')?.querySelector('button[aria-label=Fermer]')?.click()");
+
   // No data at all.
   setFixture("empty");
   await go("/nutrition");

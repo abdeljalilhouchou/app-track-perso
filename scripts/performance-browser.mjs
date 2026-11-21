@@ -54,8 +54,9 @@ if (exerciseMediaV3) {
 if (nutrition) {
   const day = (offset) => { const date = new Date(); date.setDate(date.getDate() - offset); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; };
   Object.assign(profile, { goal_calories: 2200, goal_carbs: 250, goal_fat: 70 });
-  tables.foods = [["Riz basmati", "🍚", 350, 7, 78, 1], ["Poulet", "🍗", 165, 31, 0, 4], ["Flocons d’avoine", "🥣", 370, 13, 60, 7], ["Pomme", "🍎", 52, 0.3, 14, 0.2]]
-    .map(([name, icon, calories, protein, carbs, fat], index) => ({ id: `edededed-0000-4000-8000-${String(index).padStart(12, "0")}`, user_id: uid, name, icon, calories, protein, carbs, fat, fiber: 1, sugar: 2, sodium: 10, caffeine: 0, unit: "g", portion_label: null, portion_grams: null, created_at: user.created_at }));
+  // The last one is the user's own, with calories that do not match its macros.
+  tables.foods = [["Riz basmati", "🍚", 350, 7, 78, 1, "Féculents"], ["Poulet", "🍗", 165, 31, 0, 4, "Viandes & volailles"], ["Flocons d’avoine", "🥣", 370, 13, 60, 7, "Féculents"], ["Pomme", "🍎", 52, 0.3, 14, 0.2, "Fruits"], ["Msemen QA", "🫓", 100, 25, 0, 21, "Autres"]]
+    .map(([name, icon, calories, protein, carbs, fat, category], index) => ({ id: `edededed-0000-4000-8000-${String(index).padStart(12, "0")}`, user_id: uid, name, icon, category, calories, protein, carbs, fat, fiber: 1, sugar: 2, sodium: 10, caffeine: 0, unit: "g", portion_label: null, portion_grams: null, created_at: user.created_at }));
   // Six logged days out of the last seven, then two in the week before.
   const rows = [[0, "petit-dejeuner", 2, 80], [0, "dejeuner", 0, 150], [0, "dejeuner", 1, 180], [1, "dejeuner", 0, 200], [1, "diner", 1, 250], [1, "collation", 3, 150], [2, "petit-dejeuner", 2, 90], [2, "diner", 1, 300], [3, "dejeuner", 0, 250], [4, "diner", 1, 200], [5, "dejeuner", 0, 300], [5, "diner", 1, 300], [8, "diner", 0, 400], [9, "dejeuner", 1, 300]];
   tables.meal_entries = rows.map(([offset, meal_type, foodIndex, grams], index) => { const food = tables.foods[foodIndex]; const k = grams / 100; return { id: `efefefef-0000-4000-8000-${String(index).padStart(12, "0")}`, user_id: uid, entry_date: day(offset), occurred_at: `${day(offset)}T12:00:00Z`, meal_type, food_name: food.name, icon: food.icon, quantity_grams: grams, unit: "g", calories: Math.round(food.calories * k), protein: Math.round(food.protein * k * 10) / 10, carbs: Math.round(food.carbs * k * 10) / 10, fat: Math.round(food.fat * k * 10) / 10, fiber: 1, sugar: 2, sodium: 10, caffeine: 0, created_at: `${day(offset)}T12:00:00Z` }; });
@@ -110,6 +111,7 @@ const mock = http.createServer((request, response) => {
   if (request.method === "OPTIONS") { response.end(); return; }
   requests.push({ method: request.method, resource: url.pathname, params: Object.fromEntries(url.searchParams) });
   if (url.pathname === "/auth/v1/user") { response.end(JSON.stringify(user)); return; }
+  if (url.pathname === "/cgi/search.pl") { response.end(JSON.stringify({ products: [{ code: "3017620422003", product_name: "Pâte à tartiner QA", brands: "QA Foods", nutriments: { "energy-kcal_100g": 539, proteins_100g: 6.3, carbohydrates_100g: 57.5, fat_100g: 30.9, sugars_100g: 56.3, fiber_100g: 0, sodium_100g: 0.04 } }] })); return; }
   if (url.pathname.startsWith("/api/v2/product/")) { const known = url.pathname.includes("3017620422003"); response.end(JSON.stringify(known ? { status: 1, product: { code: "3017620422003", product_name: "Pâte à tartiner QA", brands: "QA Foods", serving_quantity: 15, nutriments: { "energy-kcal_100g": 539, proteins_100g: 6.3, carbohydrates_100g: 57.5, fat_100g: 30.9, sugars_100g: 56.3, fiber_100g: 0, sodium_100g: 0.04 } } } : { status: 0 })); return; }
   // The reset-email request succeeds so the confirmation screen can be checked; nothing is stored.
   if (url.pathname === "/auth/v1/recover" && request.method === "POST") { response.end("{}"); return; }

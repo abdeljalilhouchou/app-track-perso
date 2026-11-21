@@ -20,6 +20,7 @@ import { SugarMeter } from "@/components/sugar-meter";
 import { getDictionary, getLanguage, getT } from "@/lib/i18n/get-dictionary";
 import { fetchAllRows } from "@/lib/paging";
 import { isValidIsoDate } from "@/lib/actions/validation";
+import { DEFAULT_DRINKS, DEFAULT_FOODS } from "@/lib/food-database";
 
 export default async function NutritionPage({
   searchParams,
@@ -52,6 +53,7 @@ export default async function NutritionPage({
     todayWaterResult,
     templatesRaw,
     templateItems,
+    usageRows,
   ] = await Promise.all([
     getDictionary(),
     getT(),
@@ -143,6 +145,16 @@ export default async function NutritionPage({
         .order("id", { ascending: true })
         .range(from, to)
     ),
+    // How often each food was eaten over four months, to sort the food base by use.
+    fetchAllRows((from, to) =>
+      supabase
+        .from("meal_entries")
+        .select("food_name")
+        .eq("user_id", user.id)
+        .gte("entry_date", fourMonthsAgo)
+        .order("id", { ascending: true })
+        .range(from, to)
+    ),
   ]);
 
   if (profileResult.error) throw new Error("Impossible de charger les objectifs nutritionnels.");
@@ -160,6 +172,12 @@ export default async function NutritionPage({
     ...template,
     meal_template_items: itemsByTemplate.get(template.id) ?? [],
   }));
+
+  const usage: Record<string, number> = {};
+  for (const row of usageRows) usage[row.food_name] = (usage[row.food_name] ?? 0) + 1;
+  // Foods whose name is not in the starter lists were created by the user.
+  const defaultNames = new Set([...DEFAULT_FOODS, ...DEFAULT_DRINKS].map((food) => food.name.toLowerCase()));
+  const customIds = foods.filter((food) => !defaultNames.has(food.name.toLowerCase())).map((food) => food.id);
 
   const totals = sumMeals(meals);
   const selectedTotals = sumMeals(selectedDayMeals);
@@ -206,7 +224,7 @@ export default async function NutritionPage({
             <h1 className="text-2xl font-semibold tracking-tight">{dict.pages.nutrition.title}</h1>
           </div>
         </div>
-        <FoodSettings foods={foods} />
+        <FoodSettings foods={foods} usage={usage} customIds={customIds} />
       </div>
 
       <NutritionTabs
