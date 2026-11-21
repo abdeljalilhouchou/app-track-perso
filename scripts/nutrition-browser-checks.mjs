@@ -22,11 +22,6 @@ export async function checkNutrition({ send, evaluate, navigatePage, ready, unti
     await evaluate(`document.querySelector('[data-nutrition-tab=${id}]').click()`);
     await until(() => evaluate(`document.querySelector('[data-nutrition-tab=${id}]').getAttribute('aria-selected') === 'true'`), `${id} tab`);
   };
-  const typeInto = async (selector, text) => {
-    await evaluate(`document.querySelector(${JSON.stringify(selector)}).focus()`);
-    await evaluate(`document.querySelector(${JSON.stringify(selector)}).select?.()`);
-    await send("Input.insertText", { text });
-  };
 
   // Visual matrix of the "Aujourd'hui" tab.
   for (const [language, theme, width] of [["fr", "dark", 375], ["fr", "light", 320], ["ar", "dark", 390], ["en", "light", 1440]]) {
@@ -53,14 +48,16 @@ export async function checkNutrition({ send, evaluate, navigatePage, ready, unti
   await until(() => evaluate("!!document.querySelector('dialog[data-add-food-sheet][open]')"), "add sheet open");
   await evaluate("document.querySelector('[data-barcode-open]').click()");
   await until(() => evaluate("!!document.querySelector('dialog[data-barcode-scanner][open]')"), "scanner open");
-  await typeInto("#barcode-manual", "0000000000000");
-  await evaluate("document.querySelector('[data-barcode-scanner] form button[type=submit]').click()");
+  // The fake camera films EAN-13 4006381333931, unknown to the stand-in: the scanner reads it by itself.
   try {
-    await until(() => evaluate("document.querySelector('[data-barcode-scanner] [role=alert]')?.textContent.includes('introuvable')"), "unknown barcode explained", 10000);
+    await until(() => evaluate("document.querySelector('[data-barcode-scanner] [role=alert]')?.textContent.includes('4006381333931')"), "camera reads the barcode", 30000);
   } catch (error) {
-    const state = await evaluate("JSON.stringify({ value: document.querySelector('#barcode-manual')?.value, active: document.activeElement?.id, text: document.querySelector('[data-barcode-scanner]')?.innerText, disabled: document.querySelector('[data-barcode-scanner] form button[type=submit]')?.disabled })");
+    const state = await evaluate("JSON.stringify({ text: document.querySelector('[data-barcode-scanner]')?.innerText, video: !!document.querySelector('[data-barcode-scanner] video'), playing: document.querySelector('[data-barcode-scanner] video')?.readyState })");
     throw new Error(`${error.message} :: ${state}`);
   }
+  assert.equal(await evaluate("document.querySelector('#barcode-manual').value"), "4006381333931", "the read code is shown in the field");
+  // Which reader decoded it: the browser's own, or ZXing (iPhone, Windows).
+  result.barcodeReader = await evaluate("typeof BarcodeDetector === 'function' ? 'native' : 'zxing'");
   await shot("scanner-fr-dark-375");
   await evaluate("const i=document.querySelector('#barcode-manual'); i.focus(); i.select();");
   await send("Input.insertText", { text: "3017620422003" });

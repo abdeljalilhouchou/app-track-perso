@@ -16,16 +16,50 @@ function detectorClass(): BarcodeDetectorConstructor | null {
   return typeof candidate === "function" ? candidate : null;
 }
 
+type Decode = (video: HTMLVideoElement) => Promise<string | null>;
+
 /**
- * Reads a product barcode with the back camera where the browser can (Chrome and Edge on
- * Android, recent desktop Chrome), and always offers typing the code. The camera stops as
+ * The browser's own reader where it has one (Chrome and Edge on Android, Chrome on Mac);
+ * elsewhere (iPhone, Windows) ZXing decodes frames drawn on a canvas. ZXing is only
+ * downloaded in that case, when the scanner opens.
+ */
+async function makeDecoder(): Promise<Decode> {
+  const Native = detectorClass();
+  if (Native) {
+    const detector = new Native({ formats: FORMATS });
+    return async (video) => (await detector.detect(video).catch(() => []))[0]?.rawValue ?? null;
+  }
+  const [{ BrowserMultiFormatReader }, { BarcodeFormat, DecodeHintType }] = await Promise.all([import("@zxing/browser"), import("@zxing/library")]);
+  const hints = new Map<number, unknown>([
+    [DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.EAN_13, BarcodeFormat.EAN_8, BarcodeFormat.UPC_A, BarcodeFormat.UPC_E]],
+    [DecodeHintType.TRY_HARDER, true],
+  ]);
+  const reader = new BrowserMultiFormatReader(hints);
+  const canvas = document.createElement("canvas");
+  return async (video) => {
+    const width = Math.min(960, video.videoWidth);
+    if (!width) return null;
+    canvas.width = width;
+    canvas.height = Math.round((video.videoHeight / video.videoWidth) * width);
+    canvas.getContext("2d", { willReadFrequently: true })?.drawImage(video, 0, 0, canvas.width, canvas.height);
+    try {
+      return reader.decodeFromCanvas(canvas).getText();
+    } catch {
+      return null; // No barcode in this frame.
+    }
+  };
+}
+
+/**
+ * Reads a product barcode with the back camera on any browser that gives camera access,
+ * and always offers typing the code. The camera stops as
  * soon as a code is read or the dialog closes.
  */
 export function BarcodeScanner({ onFound, onClose }: { onFound: (product: BarcodeResult) => void; onClose: () => void }) {
   const t = useT();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [camera, setCamera] = useState<"starting" | "on" | "unsupported" | "denied">(() => (detectorClass() ? "starting" : "unsupported"));
+  const [camera, setCamera] = useState<"starting" | "on" | "unsupported" | "denied">(() => (typeof navigator !== "undefined" && typeof navigator.mediaDevices?.getUserMedia === "function" ? "starting" : "unsupported"));
   const [code, setCode] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -50,14 +84,13 @@ export function BarcodeScanner({ onFound, onClose }: { onFound: (product: Barcod
   };
 
   useEffect(() => {
-    const Detector = detectorClass();
-    if (!Detector) return;
+    if (typeof navigator.mediaDevices?.getUserMedia !== "function") return;
     let stream: MediaStream | null = null;
     let frame = 0;
     let stopped = false;
-    const detector = new Detector({ formats: FORMATS });
+    const decoder = makeDecoder();
 
-    navigator.mediaDevices?.getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false })
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false })
       .then(async (media) => {
         if (stopped) { media.getTracks().forEach((track) => track.stop()); return; }
         stream = media;
@@ -66,13 +99,14 @@ export function BarcodeScanner({ onFound, onClose }: { onFound: (product: Barcod
         video.srcObject = media;
         await video.play().catch(() => {});
         setCamera("on");
+        const decode = await decoder;
         const scan = async () => {
           if (stopped) return;
           if (!busy.current && video.readyState >= 2) {
-            const found = await detector.detect(video).catch(() => []);
-            if (found[0]?.rawValue && !stopped) {
+            const value = await decode(video);
+            if (value && !stopped) {
               stream?.getTracks().forEach((track) => track.stop());
-              lookUp(found[0].rawValue);
+              lookUp(value);
               return;
             }
           }

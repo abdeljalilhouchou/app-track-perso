@@ -155,7 +155,10 @@ if (production) {
 }
 const app = spawn(process.execPath, [require.resolve("next/dist/bin/next"), production ? "start" : "dev", "--hostname", "127.0.0.1", "--port", String(appPort)], { env, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
 app.stdout.on("data", log); app.stderr.on("data", log);
-const browser = spawn(edge, ["--headless=new", "--disable-gpu", ...(anatomy || exerciseMedia || exercisePremiumV4 || authIntro ? ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : []), "--disable-extensions", "--disable-background-networking", "--no-first-run", "--no-default-browser-check", `--remote-debugging-port=${debugPort}`, `--user-data-dir=${browserProfile}`, "about:blank"], { windowsHide: true, stdio: "ignore" });
+// The Meals campaign gives Edge a fake camera filming an EAN-13, so the scanner reads a real code.
+// Written outside .next, which the production build clears.
+const fakeCamera = nutrition ? await (await import("./qa-barcode.mjs")).writeBarcodeVideo("4006381333931", path.join(await mkdtemp(path.join((await import("node:os")).tmpdir(), "qa-camera-")), "barcode.mjpeg")) : null;
+const browser = spawn(edge, ["--headless=new", "--disable-gpu", ...(fakeCamera ? ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream", `--use-file-for-fake-video-capture=${fakeCamera}`] : []), ...(anatomy || exerciseMedia || exercisePremiumV4 || authIntro ? ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : []), "--disable-extensions", "--disable-background-networking", "--no-first-run", "--no-default-browser-check", `--remote-debugging-port=${debugPort}`, `--user-data-dir=${browserProfile}`, "about:blank"], { windowsHide: true, stdio: "ignore" });
 let socket;
 let inspectPage;
 let capturePage;
