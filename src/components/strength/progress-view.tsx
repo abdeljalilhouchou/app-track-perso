@@ -43,6 +43,7 @@ export function ProgressView({ workouts, exercises, weeklyMuscles, weeklyGoal }:
   const curve = exercise ? exerciseCurve(exercise, days) : null;
   const dates = workouts.map((workout) => workout.date);
   const grid = regularity(dates, weeklyGoal);
+  const scale = Math.max(weeklyGoal + 1, ...grid.weeks.map((week) => week.total));
   const most = Math.max(1, ...weeklyMuscles.flatMap((muscle) => [muscle.thisWeekSets, muscle.lastWeekSets]));
   const records = exercises
     .filter((item) => item.records.maxWeight && item.records.maxWeight.weight > 0)
@@ -139,13 +140,35 @@ export function ProgressView({ workouts, exercises, weeklyMuscles, weeklyGoal }:
           <h2 id="progress-regularity" className="text-[15px] font-semibold">{f("regularity")}</h2>
           <span className="text-xs text-foreground-muted">{f("regularityScope")}</span>
         </div>
-        <div className={`${card} p-3.5`}>
-          <div className="grid grid-flow-col grid-cols-12 grid-rows-7 gap-1" aria-hidden>
-            {grid.weeks.flatMap((week) => week.days.map((cell) => (
-              <span key={cell.date} className="aspect-square rounded-[4px]" style={{ background: cell.future ? "transparent" : cell.count ? (cell.count > 1 ? "color-mix(in srgb, var(--sport) 60%, white)" : "var(--sport)") : "var(--surface-muted)" }} />
-            )))}
+        <div className={`${card} space-y-4 p-4`}>
+          <dl className="grid grid-cols-3 gap-2">
+            {[[f("goalReachedWeeks"), f("goalReachedValue", { count: n.format(grid.goalWeeks) })], [f("currentStreak"), f("streakValue", { count: n.format(grid.streak) })], [f("weeklyAverage"), f("averageValue", { count: n.format(grid.average) })]].map(([label, value]) => (
+              <div key={label} className="min-w-0 rounded-2xl bg-surface-muted px-2.5 py-2">
+                <dt className="truncate text-[11px] text-foreground-muted">{label}</dt>
+                <dd className="mt-0.5 truncate text-[15px] font-extrabold tabular-nums">{value}</dd>
+              </div>
+            ))}
+          </dl>
+          <div className="relative h-[132px]" role="img" aria-label={f("regularitySummary", { count: n.format(grid.total), goal: n.format(grid.goalWeeks) })}>
+            <div aria-hidden className="absolute inset-x-0 border-t border-dashed" style={{ bottom: `${(weeklyGoal / scale) * 100}%`, borderColor: "color-mix(in srgb, var(--sport) 55%, transparent)" }}>
+              <span className="absolute -top-[18px] end-0 rounded bg-surface px-1 text-[10px] font-semibold" style={{ color: "color-mix(in srgb, var(--sport) 62%, var(--foreground))" }}>{f("goalLine", { count: n.format(weeklyGoal) })}</span>
+            </div>
+            <ol className="absolute inset-0 grid grid-cols-12 items-end gap-1.5">
+              {grid.weeks.map((week, index) => {
+                const reached = week.total >= weeklyGoal;
+                const current = index === grid.weeks.length - 1;
+                return (
+                  <li key={week.start} className="flex h-full flex-col justify-end" title={f("weekBar", { date: formatLocalizedDate(week.start, language, { day: "numeric", month: "short" }), count: n.format(week.total) })}>
+                    {week.total > 0 && <span className="mb-0.5 text-center text-[10px] font-bold tabular-nums text-foreground-muted">{n.format(week.total)}</span>}
+                    <span className="block rounded-md" style={{ height: week.total ? `${Math.max(6, (week.total / scale) * 100)}%` : "3px", background: week.total === 0 ? "var(--surface-muted)" : reached ? "var(--sport)" : "color-mix(in srgb, var(--sport) 35%, var(--surface-muted))", outline: current ? "1.5px solid var(--foreground)" : undefined, outlineOffset: current ? 2 : undefined }} />
+                  </li>
+                );
+              })}
+            </ol>
           </div>
-          <p className="mt-2.5 text-xs text-foreground-muted">{f("regularitySummary", { count: n.format(grid.total), goal: n.format(grid.goalWeeks) })}</p>
+          <div className="grid grid-cols-12 gap-1.5 text-[10px] text-foreground-muted" aria-hidden>
+            {grid.weeks.map((week, index) => <span key={week.start} className="text-center">{index % 4 === 0 || index === 11 ? formatLocalizedDate(week.start, language, { day: "numeric", month: "short" }).replace(".", "") : ""}</span>)}
+          </div>
         </div>
       </section>
 

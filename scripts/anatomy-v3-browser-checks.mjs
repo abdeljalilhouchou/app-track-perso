@@ -61,24 +61,7 @@ export async function checkAnatomyV3({ send, evaluate, go, until, click, open, c
   await go("/sport/exercises");
   assert.ok(await evaluate("!!document.querySelector('[data-exercise-results] [data-anatomy-open]')"));
   await open(); await close(); result.entryPoints.push("library");
-  await go("/sport/musculation?tab=program");
-  const programButton = "document.querySelector('#sport-panel-program [data-anatomy-open]')";
-  if (!await evaluate(`!!(${programButton})`)) {
-    await evaluate("document.querySelector('#sport-tab-program')?.click()");
-  }
-  await until(() => evaluate("!!document.querySelector('#sport-panel-program button[aria-expanded]')"), "program card");
-  await evaluate("document.querySelector('#sport-panel-program button[aria-expanded=false]')?.click()");
-  await until(() => evaluate("!!document.querySelector('#sport-panel-program [data-anatomy-open]')"), "program anatomy access");
-  await click("#sport-panel-program [data-anatomy-open]");
-  await until(() => evaluate("document.querySelector('[data-anatomy-status]')?.dataset.anatomyStatus==='ready'"), "program WebGL ready");
-  await close();result.entryPoints.push("program");
-  await evaluate("document.querySelector('#sport-tab-history')?.click()");
-  await until(() => evaluate("!!document.querySelector('#sport-panel-history')"), "history panel");
-  await evaluate("document.querySelector('#sport-panel-history button[aria-expanded]')?.click()");
-  await until(() => evaluate("!!document.querySelector('#sport-panel-history [data-anatomy-open]')"), "history anatomy access");
-  await click("#sport-panel-history [data-anatomy-open]");
-  await until(() => evaluate("document.querySelector('[data-anatomy-status]')?.dataset.anatomyStatus==='ready'"), "history WebGL ready");
-  await close();result.entryPoints.push("history");
+  // The Program and History lists stay plain: the 3D viewer opens from the library and the live session.
 
   await go("/sport/exercises/strength-pull-over-haltere");
   assert.ok(!await evaluate("!!document.querySelector('[data-anatomy-open]')"));

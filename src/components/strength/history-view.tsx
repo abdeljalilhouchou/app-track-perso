@@ -8,8 +8,6 @@ import { addDays, format, parseISO, startOfWeek, subWeeks } from "date-fns";
 import { useLanguage } from "@/components/language-provider";
 import { useActionToast } from "@/components/toast/use-action-toast";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
-import { ExerciseGuideButton } from "@/components/sport/exercises/exercise-guide-button";
-import { ExerciseMuscleButton } from "@/components/sport/anatomy/exercise-muscle-button";
 import { SportIcon } from "@/components/sport/ui/sport-icons";
 import { DRAFT_EVENT, DRAFT_KEY, type Draft } from "@/components/strength/session-logger";
 import type { SessionItem } from "@/components/strength/types";
@@ -155,11 +153,10 @@ export function HistoryView({ sessions, details, records, openDate, today, templ
                           {detail?.exercises.map((exercise, index) => (
                             <div key={`${exercise.name}-${index}`} className={`py-2.5 ${index ? "border-t border-border" : ""}`}>
                               <div className="flex items-center justify-between gap-2">
-                                <span className="flex min-w-0 items-center gap-1.5"><span className="truncate text-sm font-semibold">{exercise.name}</span><ExerciseGuideButton name={exercise.name} /></span>
+                                <span className="min-w-0 truncate text-sm font-semibold">{exercise.name}</span>
                                 {recordNames.includes(exercise.name) ? <span className="shrink-0 text-[11px] font-bold" style={{ color: "color-mix(in srgb, var(--mood) 70%, var(--foreground))" }}>★ {f("record")}</span> : null}
                               </div>
                               <bdi className="mt-0.5 block text-xs tabular-nums text-foreground-muted">{exercise.sets.map((set) => (set.weight > 0 ? `${n.format(set.weight)}×${n.format(set.reps)}` : `${n.format(set.reps)} reps`)).join(" · ")}</bdi>
-                              <div className="focus-quick mt-1.5 empty:hidden"><ExerciseMuscleButton name={exercise.name} muscle={exercise.muscle} label={t("sport.library.muscles3D")} /></div>
                             </div>
                           ))}
                           {(session.notes || session.intensity) && (

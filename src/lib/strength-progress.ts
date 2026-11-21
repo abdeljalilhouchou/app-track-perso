@@ -69,5 +69,10 @@ export function regularity(dates: string[], weeklyGoal: number, now = new Date()
   const total = weeks.reduce((sum, week) => sum + week.total, 0);
   // The current week counts once it has reached the goal.
   const goalWeeks = weeks.filter((week) => week.total >= weeklyGoal).length;
-  return { weeks, total, goalWeeks };
+  // Weeks in a row reaching the goal, ending with this week when it is already reached, else last week.
+  let streak = 0;
+  for (let index = weeks[11].total >= weeklyGoal ? 11 : 10; index >= 0 && weeks[index].total >= weeklyGoal; index -= 1) streak += 1;
+  // The average leaves out the current, unfinished week.
+  const average = Math.round((weeks.slice(0, 11).reduce((sum, week) => sum + week.total, 0) / 11) * 10) / 10;
+  return { weeks, total, goalWeeks, streak, average };
 }

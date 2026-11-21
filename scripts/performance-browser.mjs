@@ -296,10 +296,18 @@ try {
   console.log("Seven viewport widths passed.");
   await send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
   for (const route of ["/sport/musculation", "/sport/calendar", "/sport/stats", "/sport/calisthenics", "/sport/running", "/sport"]) {
+    // Musculation's compact header has no section menu: leave it through the hub.
+    if (route === "/sport/calendar") { await navigateLink("/sport"); await ready("/sport"); }
     await navigateLink(route);
     await ready(route);
     results.navigation.push(route);
     console.log(`Navigation passed: ${route}`);
+    if (route === "/sport/calendar" && hub) {
+      await evaluate("(() => { const summary = document.querySelector('.sport-context-picker summary'); summary.click(); summary.focus(); })()");
+      await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
+      await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
+      assert.ok(await evaluate("!document.querySelector('.sport-context-picker').open && document.activeElement === document.querySelector('.sport-context-picker summary')"));
+    }
     if (route === "/sport/musculation") {
       await until(() => evaluate("(() => { const button = Array.from(document.querySelectorAll('button')).find(button => button.textContent.includes('Séance libre')); if (!button) return false; const key = Object.keys(button).find(key => key.startsWith('__reactProps$')); return !!key && typeof button[key].onClick === 'function'; })()"), "workout controls hydrated", 30000);
       await evaluate("Array.from(document.querySelectorAll('button')).find(button => button.textContent.includes('Séance libre')).click()");
@@ -314,14 +322,9 @@ try {
       assert.ok(await evaluate("window.qaDraftInput === document.querySelector('input[aria-label=\"Nom de la séance\"]') && window.qaDraftInput.value === 'QA draft'"));
       results.draftPreservedAcrossTabs = true;
       if (hub) {
-        await evaluate("(() => { const summary = document.querySelector('.sport-context-picker summary'); summary.click(); summary.focus(); })()");
-        await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
-        await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
-        assert.ok(await evaluate("!document.querySelector('.sport-context-picker').open && document.activeElement === document.querySelector('.sport-context-picker summary')"));
-        await navigateLink("/sport/musculation?tab=program");
-        await until(() => evaluate("document.getElementById('sport-tab-program').getAttribute('aria-selected') === 'true'"), "program query shortcut", 30000);
-        await navigateLink("/sport/musculation?tab=history");
-        await until(() => evaluate("document.getElementById('sport-tab-history').getAttribute('aria-selected') === 'true'"), "history query shortcut", 30000);
+        // Musculation has its own compact header instead of the section picker.
+        assert.ok(await evaluate("!!document.querySelector('[data-strength-header]') && getComputedStyle(document.querySelector('[data-sport-context-navigation]')).display === 'none'"));
+        await evaluate("document.getElementById('sport-tab-history').click()");
         await evaluate("document.getElementById('sport-tab-session').click()");
         assert.ok(await evaluate("window.qaDraftInput === document.querySelector('input[aria-label=\"Nom de la séance\"]') && window.qaDraftInput.value === 'QA draft'"));
         results.queryNavigationPreservesDraft = true;

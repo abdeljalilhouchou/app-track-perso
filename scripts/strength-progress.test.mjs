@@ -41,4 +41,8 @@ test("regularity covers twelve weeks ending this week and counts goal weeks", ()
   assert.equal(result.total, 5);
   assert.equal(result.goalWeeks, 1);
   assert.ok(result.weeks[11].days[6].future);
+  assert.equal(result.streak, 1, "this week reached the goal");
+  const steady = progress.regularity(["2026-11-03", "2026-11-04", "2026-11-05", "2026-11-10", "2026-11-11", "2026-11-12", "2026-11-17"], 3, now);
+  assert.equal(steady.streak, 2, "this week not reached yet: the streak ends last week");
+  assert.equal(steady.average, 0.5);
 });

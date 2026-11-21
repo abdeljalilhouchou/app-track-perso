@@ -137,6 +137,7 @@ export async function checkMusculation({ send, evaluate, navigatePage, ready, un
   await size(390);
   await navigatePage(`http://127.0.0.1:${appPort}/sport/musculation?tab=stats`); await ready("/sport/musculation");
   assert.equal(await evaluate("document.querySelectorAll('[role=tablist] [role=tab]').length"), 4, "four tabs");
+  assert.ok(await evaluate("document.querySelector('[data-strength-header] h1').textContent === 'Musculation' && getComputedStyle(document.querySelector('[data-sport-context-navigation]')).display === 'none'"), "compact header");
   await until(() => evaluate("document.getElementById('sport-tab-progress').getAttribute('aria-selected') === 'true'"), "stats opens progress");
 
   // Progress.
@@ -145,7 +146,8 @@ export async function checkMusculation({ send, evaluate, navigatePage, ready, un
   const kpis = await evaluate("document.querySelector('[data-progress-kpis]').innerText.replace(/\\s+/g, ' ')");
   assert.ok(/Séances 3/.test(kpis) && /Records battus 1/.test(kpis), `key figures (${kpis})`);
   assert.ok(await evaluate("document.querySelector('[data-progress-curve]').innerText.includes('+2,5 kg')"), "gain over the period");
-  assert.equal(await evaluate("document.querySelectorAll('[data-progress-regularity] .grid > span').length"), 84, "twelve weeks of days");
+  assert.equal(await evaluate("document.querySelectorAll('[data-progress-regularity] ol > li').length"), 12, "twelve weekly bars");
+  assert.ok(await evaluate("document.querySelector('[data-progress-regularity]').innerText.includes('objectif 3')"), "goal line labelled");
   assert.ok(await evaluate("document.querySelector('[data-progress-records]').innerText.includes('60 kg × 8')"), "personal record");
   await evaluate("document.querySelector('[role=radiogroup] [role=radio]').click()");
   await until(() => evaluate("document.querySelector('[role=radiogroup] [role=radio]').getAttribute('aria-checked') === 'true'"), "four weeks");
@@ -158,6 +160,7 @@ export async function checkMusculation({ send, evaluate, navigatePage, ready, un
   assert.equal(await evaluate("document.querySelectorAll('[data-template-card]').length"), 3);
   assert.ok(await evaluate("document.querySelector('[data-program-manager]').innerText.includes('Suivant : Dos & Biceps')"), "next session named");
   assert.ok(await evaluate("document.querySelectorAll('[data-program-balance] li').length >= 5"), "balance per muscle");
+  assert.ok(await evaluate("!document.querySelector('[data-program-manager] [data-exercise-thumbnail], [data-program-manager] .exercise-guide-button')"), "plain exercise rows");
   await noOverflow("program 390");
   await shot("program-fr-dark-390");
 
@@ -175,6 +178,7 @@ export async function checkMusculation({ send, evaluate, navigatePage, ready, un
   await navigatePage(`http://127.0.0.1:${appPort}/sport/musculation?date=${record}`); await ready("/sport/musculation");
   await until(() => evaluate("document.getElementById('sport-tab-history').getAttribute('aria-selected') === 'true' && !!document.querySelector('[data-history-detail]')"), "date link opens that session");
   assert.ok(await evaluate("document.querySelector('[data-history-detail]').innerText.includes('60×8')"), "sets detail");
+  assert.ok(await evaluate("!document.querySelector('[data-history-detail] button.exercise-guide-button, [data-history-detail] [data-anatomy-open]')"), "no per-exercise buttons");
   await shot("history-open-fr-dark-390");
   await click("[data-history-redo]");
   await until(() => evaluate("document.getElementById('sport-tab-session').getAttribute('aria-selected') === 'true' && !!document.querySelector('[data-session-resume]')"), "redo prepares the session");

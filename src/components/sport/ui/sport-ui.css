@@ -293,3 +293,5 @@
 body[data-strength-focus] .sport-ui .sport-page-header,
 body[data-strength-focus] .sport-ui [data-focus-hide] { display: none; }
 .sport-ui .focus-quick .sport-button { min-height: 36px; padding: .375rem .75rem; font-size: .75rem; border-radius: .75rem; }
+/* Musculation draws its own compact header: the section row steps aside there. */
+.sport-ui:has([data-strength-header]) [data-sport-context-navigation] { display: none; }

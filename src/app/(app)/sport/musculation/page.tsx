@@ -16,7 +16,8 @@ import { muscleGroupI18nPath } from "@/lib/strength";
 import { fetchAllRows } from "@/lib/paging";
 import { getDictionary, getT } from "@/lib/i18n/get-dictionary";
 import { isValidIsoDate } from "@/lib/actions/validation";
-import { SportLink, SportPageHeader } from "@/components/sport/ui/sport-primitives";
+import Link from "next/link";
+import { SportIcon } from "@/components/sport/ui/sport-icons";
 import { sportTabFromQuery } from "@/lib/sport-navigation";
 
 export default async function SportPage({ searchParams }: { searchParams: Promise<{ date?: string | string[]; tab?: string | string[] }> }) {
@@ -223,8 +224,21 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
   };
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <SportPageHeader title={dict.pages.sport.title} description={dict.pages.sport.subtitle} icon="strength" actions={<SportLink href="/sport/exercises?discipline=musculation" icon="exercise">{t("sport.library.library")}</SportLink>} />
+    <div className="space-y-5 animate-fade-in">
+      <header className="flex items-center gap-3" data-strength-header data-focus-hide>
+        <Link href="/sport" prefetch={false} aria-label={t("sport.focus.backToSport")} className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-border bg-surface transition hover:bg-surface-muted">
+          <SportIcon name="chevron" className="sport-context-back-icon h-4 w-4" />
+        </Link>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-xs font-semibold" style={{ color: "color-mix(in srgb, var(--sport) 62%, var(--foreground))" }}>
+            {t("sport.focus.headerWeek", { done: stats.thisWeek.sessions, goal: weeklyGoal })}
+          </p>
+          <h1 className="truncate text-[26px] font-bold leading-tight tracking-tight">{dict.pages.sport.title}</h1>
+        </div>
+        <Link href="/sport/exercises?discipline=musculation" prefetch={false} className="flex h-11 shrink-0 items-center gap-2 rounded-2xl border border-border bg-surface px-3.5 text-[13px] font-semibold transition hover:bg-surface-muted">
+          <SportIcon name="exercise" className="h-[18px] w-[18px]" /><span>{t("sport.library.library")}</span>
+        </Link>
+      </header>
 
       {notes}
 

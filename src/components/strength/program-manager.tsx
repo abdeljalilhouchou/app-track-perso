@@ -14,8 +14,6 @@ import {
 } from "@/lib/actions/strength";
 import { MUSCLE_GROUPS, exerciseKey, muscleColor, muscleGroupI18nPath } from "@/lib/strength";
 import { ExercisePicker } from "@/components/strength/exercise-picker";
-import { ExerciseGuideButton } from "@/components/sport/exercises/exercise-guide-button";
-import { ExerciseThumbnail } from "@/components/sport/exercises/exercise-thumbnail";
 import type { CatalogItem, TemplateView } from "@/components/strength/types";
 import { programBalance } from "@/lib/strength-focus";
 
@@ -274,13 +272,13 @@ function TemplateCard({
                 <div className="space-y-3">
                   <ol>
                     {template.exercises.map((e, i) => (
-                      <li key={`${e.name}-${i}`} className={`flex min-h-12 items-center gap-3 py-1.5 ${i ? "border-t border-border" : ""}`}>
-                        <span className="w-10 shrink-0 overflow-hidden rounded-lg empty:hidden"><ExerciseThumbnail name={e.name} muscle={e.muscle} /></span>
+                      <li key={`${e.name}-${i}`} className={`flex min-h-12 items-center gap-3 py-2 ${i ? "border-t border-border" : ""}`}>
+                        <span aria-hidden className="h-7 w-1 shrink-0 rounded-full" style={{ background: muscleColor(e.muscle) }} />
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-1.5"><p className="min-w-0 truncate text-sm font-medium">{e.name}</p><ExerciseGuideButton name={e.name} /></div>
-                          <p className="text-[11px]" style={{ color: muscleColor(e.muscle) }}>{muscleLabel(e.muscle, t)}</p>
+                          <p className="truncate text-sm font-semibold">{e.name}</p>
+                          <p className="text-[11px] text-foreground-muted">{muscleLabel(e.muscle, t)}</p>
                         </div>
-                        <span className="shrink-0 text-[13px] tabular-nums text-foreground-muted">{e.sets} × {e.reps}</span>
+                        <span className="shrink-0 text-[13px] font-semibold tabular-nums">{e.sets} × {e.reps}</span>
                       </li>
                     ))}
                   </ol>
