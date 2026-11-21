@@ -1,0 +1,125 @@
+import assert from "node:assert/strict";
+import path from "node:path";
+import { writeFile } from "node:fs/promises";
+
+/**
+ * Musculation, Session tab: the before-session hero and the focus-mode session (set,
+ * steppers, plates, rest, options, finish). Read-only: the session is never saved.
+ */
+export async function checkMusculation({ send, evaluate, navigatePage, ready, until: waitUntil, pause, results, profile, output, appPort }) {
+  const result = results.musculation = { cases: [], screenshots: [] };
+  const until = (check, label, timeout = 20000) => waitUntil(check, label, timeout);
+  const size = (width, height = width < 768 ? 844 : 1000) => send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: width < 768 });
+  const go = async () => { await navigatePage(`http://127.0.0.1:${appPort}/sport/musculation`); await ready("/sport/musculation"); };
+  const shot = async (name) => {
+    await pause(350);
+    const { data } = await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true });
+    await writeFile(path.join(output, `musculation-${name}.png`), Buffer.from(data, "base64"));
+    result.screenshots.push(`musculation-${name}.png`);
+  };
+  const click = (selector) => evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
+  const draft = () => evaluate("JSON.parse(localStorage.getItem('strength-draft-v1') || 'null')");
+  const noOverflow = async (context) => assert.ok(await evaluate("document.documentElement.scrollWidth - innerWidth <= 1"), `No horizontal overflow (${context})`);
+
+  await evaluate("localStorage.removeItem('strength-draft-v1')");
+  for (const [language, theme, width] of [["fr", "dark", 390], ["fr", "light", 320], ["ar", "dark", 390], ["en", "light", 1280]]) {
+    profile.language = language; profile.theme = theme;
+    await size(width); await go();
+    await until(() => evaluate("!!document.querySelector('[data-session-hero]')"), "session hero");
+    await noOverflow(`before ${language}/${theme}/${width}`);
+    await shot(`before-${language}-${theme}-${width}`);
+    result.cases.push({ language, theme, width });
+  }
+
+  profile.language = "fr"; profile.theme = "dark";
+  await size(390); await go();
+  await until(() => evaluate("!!document.querySelector('[data-session-hero]')"), "session hero");
+  assert.equal(await evaluate("document.querySelectorAll('[data-program-strip] li').length"), 3, "three program sessions");
+  assert.ok(await evaluate("document.querySelector('[data-session-hero]').innerText.includes('Dos & Biceps') && /Séance du jour/i.test(document.querySelector('[data-session-hero]').innerText)"), "the program's next session is shown");
+  await evaluate("document.querySelectorAll('[data-program-strip] button')[0].click()");
+  await until(() => evaluate("document.querySelector('#session-of-day').textContent.includes('Pectoraux')"), "pick the session done last week");
+  const firstRow = await evaluate("document.querySelector('[data-hero-exercise]').innerText.replace(/\\s+/g, ' ')");
+  assert.ok(firstRow.includes("60 kg") && firstRow.includes("↑ 62,5 kg"), `last load and today's aim (${firstRow})`);
+  assert.ok(await evaluate("/Dernière fois/.test(document.querySelector('[data-session-hero]').innerText)"), "last time line");
+
+
+  // Start: focus mode.
+  await click("[data-start-session]");
+  await until(() => evaluate("!!document.querySelector('[data-focus-card]')"), "focus card");
+  assert.ok(await evaluate("document.querySelector('#focus-exercise').textContent.includes('Développé couché barre')"));
+  assert.equal(await evaluate("document.querySelector('[data-focus-stepper=kg] input').value"), "62,5", "load prefilled with today's aim");
+  assert.equal(await evaluate("document.querySelector('[data-focus-stepper=reps] input').value"), "8", "reps prefilled with the target");
+  assert.ok(await evaluate("document.querySelector('[data-focus-hints]').innerText.includes('20 + 1,25')"), "plates per side for a barbell");
+  assert.ok(await evaluate("document.querySelector('[data-focus-hints]').innerText.includes('60 × 8')"), "last time for this set");
+  assert.equal(await evaluate("document.querySelectorAll('[data-focus-sets] li').length"), 4);
+  await noOverflow("focus 390");
+  await shot("focus-fr-dark-390");
+
+  await evaluate("document.querySelector('[data-focus-stepper=kg] button').click()");
+  await until(() => evaluate("document.querySelector('[data-focus-stepper=kg] input').value === '65'"), "+2,5 kg");
+  await evaluate("document.querySelector('[data-focus-stepper=reps] button:last-of-type').click()");
+  await until(() => evaluate("document.querySelector('[data-focus-stepper=reps] input').value === '7'"), "−1 rep");
+  await click("[data-focus-validate]");
+  await until(() => evaluate("!!document.querySelector('[data-focus-rest]')"), "rest view");
+  const saved = await draft();
+  assert.deepEqual(saved.exercises[0].sets[0], { weight: "65", reps: "7", done: true }, "the validated set is kept in the draft");
+  assert.ok(await evaluate("document.querySelector('[data-focus-rest]').innerText.includes('Série 1 enregistrée')"));
+  assert.ok(await evaluate("document.querySelector('[data-focus-topbar]').innerText.includes('1 série ·')"));
+  await shot("rest-fr-dark-390");
+  await click("[data-focus-ready]");
+  await until(() => evaluate("!!document.querySelector('[data-focus-card]')"), "back to the set");
+  assert.equal(await evaluate("document.querySelector('[data-focus-sets] [data-set-state=current]').textContent.includes('2')"), true, "set 2 is current");
+  assert.equal(await evaluate("document.querySelector('[data-focus-stepper=kg] input').value"), "65", "set 2 starts from set 1");
+
+  // Correct set 1: it becomes the current set again.
+  await click("[data-focus-sets] [data-set-state=done]");
+  await until(() => evaluate("document.querySelector('[data-focus-validate]').textContent.includes('1')"), "set 1 reopened");
+  await click("[data-focus-validate]");
+  await until(() => evaluate("!!document.querySelector('[data-focus-rest]')"), "rest again");
+  await click("[data-focus-ready]");
+
+  // Options sheet: add then remove a set.
+  await click("[data-focus-options]");
+  await until(() => evaluate("!!document.querySelector('[data-focus-options-sheet]')"), "options sheet");
+  await click("[data-focus-add-set]");
+  await until(async () => (await draft()).exercises[0].sets.length === 5, "set added");
+  await click("[data-focus-remove-set]");
+  await until(async () => (await draft()).exercises[0].sets.length === 4, "set removed");
+  await shot("options-fr-dark-390");
+  await evaluate("document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))");
+  await until(() => evaluate("!document.querySelector('[data-focus-options-sheet]')"), "options closed");
+
+  // Next exercise from the navigation.
+  await evaluate("document.querySelector('[data-focus-nav] > button:last-of-type').click()");
+  await until(() => evaluate("document.querySelector('#focus-exercise').textContent.includes('incliné')"), "next exercise");
+  assert.ok(await evaluate("document.querySelector('[data-focus-hints]').innerText.includes('Première fois')"), "no history for this one");
+
+  // Finish view, then back without saving.
+  await click("[data-focus-finish]");
+  await until(() => evaluate("!!document.querySelector('[data-focus-finish-view]')"), "finish view");
+  assert.ok(await evaluate("document.querySelector('[data-focus-finish-view]').innerText.includes('Pectoraux')"), "muscles worked");
+  assert.ok(await evaluate("document.querySelectorAll('[data-focus-finish-view] [role=radio]').length === 5"), "five feelings");
+  await noOverflow("finish 390");
+  await shot("finish-fr-dark-390");
+  await evaluate("[...document.querySelectorAll('[data-focus-finish-view] button')].at(-1).click()");
+  await until(() => evaluate("!!document.querySelector('[data-focus-card]')"), "back to the session");
+
+  // Resume after a reload.
+  await go();
+  await until(() => evaluate("!!document.querySelector('[data-session-resume]')"), "resume banner");
+  await evaluate("document.querySelector('[data-session-resume] button').click()");
+  await until(() => evaluate("!!document.querySelector('[data-focus-card]')"), "resumed");
+  assert.ok(await evaluate("document.querySelector('#focus-exercise').textContent.includes('Développé couché barre')"), "resumes on the first exercise left open");
+  assert.equal(await evaluate("document.querySelectorAll('[data-focus-sets] [data-set-state=done]').length"), 1, "with its done set");
+  for (const [language, theme, width] of [["ar", "dark", 390], ["en", "light", 320]]) {
+    profile.language = language; profile.theme = theme;
+    await size(width); await go();
+    await until(() => evaluate("!!document.querySelector('[data-session-resume]')"), "resume banner");
+    await evaluate("document.querySelector('[data-session-resume] button').click()");
+    await until(() => evaluate("!!document.querySelector('[data-focus-card]')"), "focus card");
+    await noOverflow(`focus ${language}/${width}`);
+    await shot(`focus-${language}-${theme}-${width}`);
+  }
+  await evaluate("localStorage.removeItem('strength-draft-v1')");
+  console.log("Musculation: session hero, focus mode, rest, options and finish passed.");
+}

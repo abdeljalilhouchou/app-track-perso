@@ -17,6 +17,7 @@ const accountMenu = process.argv.includes("--account-menu");
 const mood = process.argv.includes("--mood");
 const nutrition = process.argv.includes("--nutrition") || process.argv.includes("--home");
 const home = process.argv.includes("--home");
+const musculation = process.argv.includes("--musculation");
 const habitsMode = process.argv.includes("--habits") || home;
 const exerciseExperienceV3 = process.argv.includes("--exercise-experience-v3");
 const exerciseMediaV3 = process.argv.includes("--exercise-media-v3") || exerciseExperienceV3;
@@ -52,6 +53,17 @@ if (exerciseMediaV3) {
   templates.splice(0,templates.length,...DEFAULT_PROGRAM.map((program,index)=>({id:`44444444-4444-4444-8444-${String(index).padStart(12,"0")}`,user_id:uid,name:program.name,muscle_groups:program.muscleGroups,position:index,created_at:user.created_at})));
   tables.workout_template_exercises=DEFAULT_PROGRAM.flatMap((program,index)=>program.exercises.map((item,position)=>({id:`66666666-6666-4666-8666-${String(index*100+position).padStart(12,"0")}`,template_id:templates[index].id,user_id:uid,exercise_name:item.name,muscle_group:item.muscle,position,target_sets:item.sets,target_reps:item.reps})));
   for(const [index,item] of baseCatalog("fr").filter(item=>EXERCISE_V3_IDS.includes(item.key)).entries())tables.exercises.push({id:`99999999-9999-4999-8999-${String(index).padStart(12,"0")}`,user_id:uid,name:item.storedName,muscle_group:item.primary[0]});
+}
+if (musculation) {
+  const load = sourceLoader();
+  const { DEFAULT_PROGRAM } = load("src/lib/strength.ts");
+  templates.splice(0, templates.length, ...DEFAULT_PROGRAM.slice(0, 3).map((program, index) => ({ id: `44444444-4444-4444-8444-${String(index).padStart(12, "0")}`, user_id: uid, name: program.name, muscle_groups: program.muscleGroups, position: index, created_at: user.created_at })));
+  tables.workout_template_exercises = DEFAULT_PROGRAM.slice(0, 3).flatMap((program, index) => program.exercises.map((item, position) => ({ id: `66666666-6666-4666-8666-${String(index * 100 + position).padStart(12, "0")}`, template_id: templates[index].id, user_id: uid, exercise_name: item.name, muscle_group: item.muscle, position, target_sets: item.sets, target_reps: item.reps })));
+  const past = new Date(); past.setDate(past.getDate() - 7);
+  const pastDay = `${past.getFullYear()}-${String(past.getMonth() + 1).padStart(2, "0")}-${String(past.getDate()).padStart(2, "0")}`;
+  const pastId = "22222222-2222-4222-8222-000000000007";
+  workouts.push({ id: pastId, user_id: uid, workout_date: pastDay, activity: templates[0].name, duration_minutes: 52, intensity: 3, notes: null, muscle_groups: templates[0].muscle_groups, template_id: templates[0].id, discipline: "strength", calisthenics_program_session_id: null, created_at: `${pastDay}T08:00:00Z` });
+  for (let set = 1; set <= 4; set += 1) sets.push({ id: `33333333-3333-4333-8333-00000000000${set}`, user_id: uid, workout_id: pastId, exercise_name: "Développé couché barre", muscle_group: "Pectoraux", exercise_position: 0, set_number: set, reps: 8, weight_kg: 60, created_at: `${pastDay}T08:00:00Z` });
 }
 if (habitsMode) {
   const day = (offset) => { const date = new Date(); date.setDate(date.getDate() - offset); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; };
@@ -258,7 +270,7 @@ try {
   await navigatePage(`http://127.0.0.1:${appPort}/sport`);
   await ready("/sport");
   console.log("Sport Hub loaded with local fixtures.");
-  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu && !authIntro && !sessionCards && !mood && !nutrition && !habitsMode && !home) {
+  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu && !authIntro && !sessionCards && !mood && !nutrition && !habitsMode && !home && !musculation) {
   assert.ok(await evaluate("document.body.innerText.includes('QA Dos & Biceps')"));
   for (const width of [320, 360, 375, 390, 430, 768, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: width < 768 });
@@ -493,6 +505,10 @@ try {
   if (exercisePremiumV4) {
     const { checkExercisePremiumV4 } = await import("./exercise-premium-v4-browser-checks.mjs");
     await checkExercisePremiumV4({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, output, appPort });
+  }
+  if (musculation) {
+    const { checkMusculation } = await import("./musculation-browser-checks.mjs");
+    await checkMusculation({ send, evaluate, navigatePage, ready, until, pause, results, profile, requests, output, appPort });
   }
   if (exerciseExperienceV3) {
     const { checkExerciseExperience } = await import("./exercise-experience-v3-browser-checks.mjs");

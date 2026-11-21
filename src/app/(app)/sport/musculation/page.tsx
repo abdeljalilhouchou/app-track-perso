@@ -114,6 +114,10 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
   for (const w of all) {
     if (w.template_id && w.workout_date >= weekStart && !doneThisWeek[w.template_id]) doneThisWeek[w.template_id] = w.workout_date;
   }
+  const lastByTemplate: Record<string, { date: string; minutes: number }> = {};
+  for (const w of all) {
+    if (w.template_id && !lastByTemplate[w.template_id]) lastByTemplate[w.template_id] = { date: w.workout_date, minutes: w.duration_minutes };
+  }
   const suggestedId = suggestNextTemplate(
     templates.map((tpl) => tpl.id),
     all
@@ -164,7 +168,7 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
   };
 
   const notes = (
-    <div className="space-y-2.5">
+    <div className="space-y-2.5" data-focus-hide>
       {overlap.length > 0 && (
         <Callout variant="warning" title={t("sport.page.restWarningTitle")} dismissKey={`sport-rest:${today}`} compact>
           {t("sport.page.restWarningPrefix")} <strong>{overlap.map(muscleLabel).join(", ")}</strong> {t("sport.page.restWarningSuffix")}
@@ -206,6 +210,7 @@ export default async function SportPage({ searchParams }: { searchParams: Promis
         catalog={catalog}
         today={today}
         cardio={<WorkoutForm today={today} favorites={cardioFavorites} />}
+        lastByTemplate={lastByTemplate}
       />
     ),
     program: <ProgramManager templates={templates} catalog={catalog} />,

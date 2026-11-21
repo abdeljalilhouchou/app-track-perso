@@ -8,6 +8,7 @@
 import { runningExtraAr, runningExtraEn, runningExtraFr } from "./running";
 import { sportUiAr, sportUiEn, sportUiFr } from "./sport-ui";
 import { sportHubAr, sportHubEn, sportHubFr } from "./sport-hub";
+import { strengthFocusAr, strengthFocusEn, strengthFocusFr } from "./strength-focus";
 import { exerciseLibraryAr, exerciseLibraryEn, exerciseLibraryFr } from "./exercise-library";
 
 const calisthenicsExtraFr = {
@@ -44,6 +45,7 @@ const calisthenicsExtraAr = {
 export const sportFr = {
   library: exerciseLibraryFr,
   hubDashboard: sportHubFr,
+  focus: strengthFocusFr,
   ui: sportUiFr,
   runningUi: runningExtraFr,
   calisthenicsUi: {
@@ -405,6 +407,7 @@ export const sportFr = {
 export const sportEn = {
   library: exerciseLibraryEn,
   hubDashboard: sportHubEn,
+  focus: strengthFocusEn,
   ui: sportUiEn,
   runningUi: runningExtraEn,
   calisthenicsUi: {
@@ -766,6 +769,7 @@ export const sportEn = {
 export const sportAr = {
   library: exerciseLibraryAr,
   hubDashboard: sportHubAr,
+  focus: strengthFocusAr,
   ui: sportUiAr,
   runningUi: runningExtraAr,
   calisthenicsUi: {
