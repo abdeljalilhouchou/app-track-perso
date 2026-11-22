@@ -99,7 +99,6 @@ export function SportTabs({
           id={`sport-panel-${tab.id}`}
           role="tabpanel"
           aria-labelledby={`sport-tab-${tab.id}`}
-          tabIndex={0}
           hidden={active !== tab.id}
           className={active === tab.id ? "animate-fade-in space-y-6" : "space-y-6"}
         >

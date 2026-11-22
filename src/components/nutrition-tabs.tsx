@@ -98,7 +98,6 @@ export function NutritionTabs({
         id="nutrition-panel"
         role="tabpanel"
         aria-labelledby={`nutrition-tab-${active}`}
-        tabIndex={0}
         className="space-y-6"
       >
         {content}

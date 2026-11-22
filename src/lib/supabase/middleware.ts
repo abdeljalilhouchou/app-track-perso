@@ -23,9 +23,10 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // getClaims checks the session token's signature locally (no Auth server round trip
+  // with asymmetric signing keys) and refreshes an expired session like getUser did.
+  const { data } = await supabase.auth.getClaims();
+  const user = data?.claims ?? null;
 
   const isAuthRoute =
     request.nextUrl.pathname.startsWith("/login") ||

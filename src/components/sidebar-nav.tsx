@@ -53,6 +53,8 @@ export function SidebarNav({ displayName, avatarUrl }: { displayName: string; av
             <Link
               key={href}
               href={href}
+              // The main pages load in full ahead of the tap; a save clears this cache.
+              prefetch
               aria-label={label}
               aria-current={active ? "page" : undefined}
               className={`relative flex min-w-0 min-h-14 flex-col items-center justify-center gap-1 rounded-xl px-0.5 transition-colors duration-150 focus-visible:z-10 ${
@@ -87,6 +89,7 @@ export function SidebarNav({ displayName, avatarUrl }: { displayName: string; av
               <Link
                 key={href}
                 href={href}
+                prefetch
                 aria-current={active ? "page" : undefined}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
                   active
