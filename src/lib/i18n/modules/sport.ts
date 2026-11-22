@@ -9,6 +9,7 @@ import { runningExtraAr, runningExtraEn, runningExtraFr } from "./running";
 import { sportUiAr, sportUiEn, sportUiFr } from "./sport-ui";
 import { sportHubAr, sportHubEn, sportHubFr } from "./sport-hub";
 import { strengthFocusAr, strengthFocusEn, strengthFocusFr } from "./strength-focus";
+import { caliFocusAr, caliFocusEn, caliFocusFr } from "./cali-focus";
 import { exerciseLibraryAr, exerciseLibraryEn, exerciseLibraryFr } from "./exercise-library";
 
 const calisthenicsExtraFr = {
@@ -49,6 +50,7 @@ export const sportFr = {
   ui: sportUiFr,
   runningUi: runningExtraFr,
   calisthenicsUi: {
+    v3: caliFocusFr,
     ...calisthenicsExtraFr,
     navigationLabel: "Navigation Calisthenics",
     weekVolume: "Volume cette semaine", weekStreak: "Série en cours", repsLabel: "reps", weeksLabel: "sem.",
@@ -411,6 +413,7 @@ export const sportEn = {
   ui: sportUiEn,
   runningUi: runningExtraEn,
   calisthenicsUi: {
+    v3: caliFocusEn,
     ...calisthenicsExtraEn,
     navigationLabel: "Calisthenics navigation",
     weekVolume: "Volume this week", weekStreak: "Current streak", repsLabel: "reps", weeksLabel: "wk",
@@ -773,6 +776,7 @@ export const sportAr = {
   ui: sportUiAr,
   runningUi: runningExtraAr,
   calisthenicsUi: {
+    v3: caliFocusAr,
     ...calisthenicsExtraAr,
     navigationLabel: "تنقل الكاليستنكس",
     weekVolume: "الحجم هذا الأسبوع", weekStreak: "السلسلة الحالية", repsLabel: "تكرار", weeksLabel: "أسبوع",

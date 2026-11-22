@@ -533,6 +533,7 @@ function Stepper({ label, hint, value, inputMode, ariaLabel, plusLabel, minusLab
     <button type="button" onClick={() => onStep(1)} aria-label={plusLabel} className="min-h-12 border-b border-border text-base font-bold transition active:bg-border">{plusText}</button>
     <label className="flex flex-col items-center px-1 pb-2 pt-2.5">
       <input
+        data-big-number
         value={value}
         onChange={(event) => onChange(event.target.value.replace(/[^0-9.,]/g, ""))}
         inputMode={inputMode}

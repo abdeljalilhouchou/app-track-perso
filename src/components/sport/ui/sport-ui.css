@@ -250,32 +250,8 @@
 .sport-ui .run-row-date strong { font-size: 1.125rem; }
 
 /* Calisthenics: session exercise card (src/components/sport/calisthenics/cali-exercise-card.tsx). */
-.sport-ui .cali-card { display: flex; flex-direction: column; gap: .75rem; padding: .875rem; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); }
-.sport-ui .cali-card[data-done] { border-color: color-mix(in srgb, var(--sport) 45%, var(--border)); }
 .sport-ui .cali-card-head { display: flex; gap: .75rem; align-items: flex-start; }
 .sport-ui .cali-card-icon { width: 56px; height: 56px; flex-shrink: 0; border-radius: 16px; display: grid; place-items: center; font-size: 1.375rem; font-weight: 700; color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--surface-muted)); }
-.sport-ui .cali-sets { display: grid; grid-template-columns: 30px minmax(0, 1fr) minmax(0, 1fr) 46px 28px; gap: 6px; align-items: center; }
-.sport-ui .cali-sets[data-mode="hold"] { grid-template-columns: 30px minmax(0, 1fr) 46px 28px; }
-.sport-ui .cali-col { font-size: .625rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; text-align: center; color: var(--foreground-muted); }
-.sport-ui .cali-set-number { display: grid; place-items: center; min-height: 32px; border-radius: 9px; font-size: .8125rem; font-weight: 600; color: var(--foreground-muted); }
-.sport-ui .cali-set-number[data-done] { color: var(--sport-ink); background: var(--sport-soft); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sport) 45%, transparent); }
-.sport-ui .cali-input { width: 100%; min-width: 0; min-height: 46px; box-sizing: border-box; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-muted); color: var(--foreground); text-align: center; font-size: 1rem; font-weight: 650; font-variant-numeric: tabular-nums; }
-.sport-ui .cali-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
-.sport-ui .cali-input.is-small { min-height: 40px; font-size: .875rem; font-weight: 500; text-align: start; padding: 0 .625rem; }
-.sport-ui .cali-hold { display: grid; grid-template-columns: minmax(0, 1fr) 46px; gap: 6px; }
-.sport-ui .cali-timer { min-height: 46px; border-radius: 12px; border: 1.5px solid var(--sport); background: transparent; color: var(--sport-ink); font-size: .8125rem; font-weight: 700; cursor: pointer; }
-.sport-ui .cali-timer[data-running] { background: var(--sport); color: #062016; }
-.sport-ui .cali-check { min-height: 46px; border-radius: 12px; border: 1.5px solid var(--sport); background: transparent; color: var(--sport-ink); font-size: 1.125rem; font-weight: 800; cursor: pointer; }
-.sport-ui .cali-check[aria-pressed="true"] { background: var(--sport); color: #062016; animation: exercise-set-pop 220ms cubic-bezier(.3, 1.4, .5, 1); }
-.sport-ui .cali-remove { min-height: 44px; border: 0; background: transparent; color: var(--foreground-muted); opacity: .7; cursor: pointer; }
-.sport-ui .cali-check:focus-visible, .sport-ui .cali-timer:focus-visible, .sport-ui .cali-remove:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.sport-ui .cali-options > summary { min-height: 40px; display: flex; align-items: center; font-size: .8125rem; font-weight: 600; color: var(--foreground-muted); cursor: pointer; }
-.sport-ui .cali-add-set { min-height: 46px; border-radius: 14px; border: 1.5px solid color-mix(in srgb, var(--accent) 60%, var(--border)); background: var(--accent-soft); color: color-mix(in srgb, var(--accent) 80%, var(--foreground)); font-size: .875rem; font-weight: 700; cursor: pointer; }
-.sport-ui .cali-rest { position: sticky; bottom: calc(3.5rem + env(safe-area-inset-bottom) + 92px); z-index: 6; display: flex; align-items: center; gap: .75rem; padding: .75rem .875rem; border-radius: 18px; background: color-mix(in srgb, var(--sport) 14%, var(--surface)); border: 1px solid color-mix(in srgb, var(--sport) 40%, var(--border)); box-shadow: 0 10px 30px rgba(0, 0, 0, .25); }
-.sport-ui .cali-footer { position: sticky; bottom: calc(3.5rem + env(safe-area-inset-bottom) + .75rem); z-index: 5; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .625rem; padding: .5rem; border-radius: 22px; background: var(--surface); border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0, 0, 0, .25); }
-.sport-ui .cali-footer .module-secondary { background: var(--surface-muted); }
-@media (min-width: 768px) { .sport-ui .cali-rest { bottom: 104px; } .sport-ui .cali-footer { bottom: 1rem; } }
-@media (prefers-reduced-motion: reduce) { .sport-ui .cali-check[aria-pressed="true"] { animation: none; } }
 /* Calisthenics: skill ladder. */
 .sport-ui .cali-ladder { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .875rem; }
 .sport-ui .cali-ladder li { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: .75rem; align-items: start; }
@@ -284,10 +260,6 @@
 .sport-ui .cali-ladder li[data-state="current"] .cali-ladder-dot { border: 2px solid var(--accent); background: var(--accent-soft); color: color-mix(in srgb, var(--accent) 80%, var(--foreground)); }
 .sport-ui .cali-ladder-current { padding: .625rem .75rem; margin-top: -.375rem; border-radius: 14px; background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--border)); }
 /* Calisthenics: library rows. */
-.sport-ui .cali-lib-row { display: flex; align-items: center; gap: .75rem; padding: .625rem .875rem; min-height: 64px; }
-.sport-ui .cali-lib-row + .cali-lib-row { border-top: 1px solid var(--border); }
-.sport-ui .cali-lib-add { width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--sport) 45%, var(--border)); background: transparent; color: var(--sport-ink); font-size: 1.25rem; font-weight: 700; cursor: pointer; }
-.sport-ui .cali-lib-add:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* Strength focus session: the page header and notices step aside, quick actions stay compact. */
 body[data-strength-focus] .sport-ui .sport-page-header,

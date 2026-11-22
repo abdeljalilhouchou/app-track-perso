@@ -36,9 +36,9 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
     for (const [language, theme, width] of [["fr", "dark", 375], ["fr", "light", 320], ["ar", "dark", 390], ["en", "light", 1440]]) {
       profile.language = language; profile.theme = theme;
       await size(width); await go(`/sport/${discipline}`);
-      await until(() => evaluate("document.querySelectorAll('[data-module-tab]').length >= 4"), "module tabs rendered");
+      await until(() => evaluate("document.querySelectorAll('[data-module-tab], [data-cali-tab]').length >= 4"), "module tabs rendered");
       await noOverflow(`${discipline} ${language}/${theme}/${width}`);
-      if (width < 1024) {
+      if (width < 1024 && discipline === "running") {
         const columns = await evaluate("getComputedStyle(document.querySelector('.module-stats, .sport-stat-grid')).gridTemplateColumns.split(' ').length");
         assert.equal(columns, 2, `Two stat columns on phones (${discipline} ${width}px)`);
       }
@@ -81,45 +81,61 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   assert.equal(await evaluate("[...document.querySelectorAll('form label')].filter((l) => /Minutes|Secondes/.test(l.textContent)).length"), 4, "mm:ss fields for both targets");
   await shot("running-goals-fr-dark-375");
 
-  // Calisthenics interactions.
+  // Calisthenics: four tabs, the session of the day, the focus session, program, progress and history.
+  await evaluate("localStorage.removeItem('track-perso:calisthenics-session-v1')");
   await go("/sport/calisthenics");
-  await until(() => evaluate("document.querySelectorAll('[data-module-tab]').length === 5"), "calisthenics has 5 sections");
-  assert.equal(await evaluate("document.querySelectorAll('.module-primary').length"), 1, "One primary action on the Calisthenics overview");
-  assert.ok(await evaluate("!!document.querySelector('[data-cali-start-next]')"), "next program session suggested");
-  assert.ok(await evaluate("document.body.innerText.includes('Séance A') || document.body.innerText.includes('Séance B')"), "suggested session named");
-  assert.ok(await evaluate("/Semaine [0-9]+/i.test(document.querySelector('.sport-module-eyebrow').textContent)"), "calisthenics week eyebrow");
-  await shot("calisthenics-overview-detail-fr-dark-375");
-  // Starting the suggested session fills the draft and opens the session tab.
-  await evaluate("document.querySelector('[data-cali-start-next]').click()");
-  await until(() => evaluate("document.querySelectorAll('[data-cali-card]').length === 2"), "two exercise cards in the session");
-  assert.equal(await evaluate("document.querySelector('[data-module-tab=\"session\"]').getAttribute('aria-pressed')"), "true", "session tab opened");
-  await evaluate("document.querySelector('[data-cali-card] .cali-check').click()");
-  await until(() => evaluate("!!document.querySelector('.cali-rest')"), "rest timer starts after a set");
-  assert.ok(await evaluate("document.querySelector('[data-cali-card] .cali-check').getAttribute('aria-pressed') === 'true'"), "set marked done");
-  assert.ok(await evaluate("!!document.querySelector('.cali-footer .module-primary')"), "finish action in the footer");
-  assert.ok(await evaluate("/^[0-9]+:[0-9]{2}$/.test(document.querySelector('[data-cali-elapsed]').textContent)"), "session clock running");
-  await noOverflow("calisthenics session");
-  await shot("calisthenics-session-fr-dark-375");
-  await evaluate("[...document.querySelectorAll('.cali-rest button')].pop().click()");
-  await until(() => evaluate("!document.querySelector('.cali-rest')"), "rest can be skipped");
-  // The session tab still carries the history.
-  assert.ok(await evaluate("document.body.innerText.includes('Full body')"), "history visible under the session tab");
-  await tab("exercises");
-  const groups = await evaluate("[...document.querySelectorAll('.sport-group-heading')].map((h) => h.firstChild.textContent)");
-  assert.ok(groups.length >= 2, `library grouped by category: ${JSON.stringify(groups)}`);
-  assert.ok(await evaluate("[...document.querySelectorAll('.sport-group-heading')].every((h) => h.id && document.querySelector(`[aria-labelledby=\"${h.id}\"]`))"), "each group is labelled");
-  assert.ok(await evaluate("document.querySelectorAll('[data-cali-exercise] .cali-lib-add').length >= 2"), "each exercise can be added");
+  await until(() => evaluate("document.querySelectorAll('[data-cali-tab]').length === 4"), "calisthenics has 4 tabs");
+  assert.ok(await evaluate("document.querySelector('[data-strength-header]').innerText.includes('cette semaine')"), "week count in the header");
+  await until(() => evaluate("!!document.querySelector('[data-cali-hero]')"), "session of the day");
+  assert.ok(await evaluate("/Séance [AB]/.test(document.querySelector('[data-cali-hero]').innerText)"), "suggested session named");
+  assert.ok(await evaluate("!!document.querySelector('[data-cali-skill]')"), "skill in progress");
+  await noOverflow("calisthenics before");
+  await shot("calisthenics-before-fr-dark-375");
+  await evaluate("document.querySelector('[data-cali-start]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-focus-card]')"), "focus session");
+  if (await evaluate("!!document.querySelector('[data-focus-manual]')")) await evaluate("document.querySelector('[data-focus-manual]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-focus-validate]')"), "a set to validate");
+  await evaluate("document.querySelector('[data-focus-stepper] button').click()");
+  await noOverflow("calisthenics focus");
+  await shot("calisthenics-focus-fr-dark-375");
+  await evaluate("document.querySelector('[data-focus-validate]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-focus-rest]')"), "rest after a set");
+  await shot("calisthenics-rest-fr-dark-375");
+  await evaluate("document.querySelector('[data-focus-ready]').click()");
+  await until(() => evaluate("document.querySelectorAll('[data-focus-sets] [data-set-state=done]').length === 1 || document.querySelectorAll('[data-focus-nav] button[aria-current]').length === 1"), "set kept as done");
+  assert.ok(await evaluate("JSON.parse(localStorage.getItem('track-perso:calisthenics-session-v1')).items.some((item) => item.sets.some((set) => set.done))"), "the done set is in the draft");
+  await evaluate("document.querySelector('[data-focus-options]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-focus-options-sheet]')"), "options sheet");
+  await evaluate("document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))");
+  await until(() => evaluate("!document.querySelector('[data-focus-options-sheet]')"), "options closed");
+  await evaluate("document.querySelector('[data-focus-finish]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-focus-finish-view]')"), "finish view");
+  await shot("calisthenics-finish-fr-dark-375");
+  await evaluate("[...document.querySelectorAll('[data-focus-finish-view] button')].at(-1).click()");
+  await until(() => evaluate("!!document.querySelector('[data-focus-card]')"), "back to the session");
+  await evaluate("document.querySelector('[data-cali-exercises-link]').click()");
+  await until(() => evaluate("document.querySelectorAll('[data-cali-exercise] .cali-lib-add').length >= 2"), "each exercise can be added");
   await noOverflow("calisthenics exercises");
   await shot("calisthenics-exercises-fr-dark-375");
-  await tab("progress");
+  await evaluate("document.querySelector('[data-cali-tab=program]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-cali-program-card]')"), "program sessions");
+  assert.ok(await evaluate("!!document.querySelector('[data-cali-program-balance]')"), "program balance");
+  await noOverflow("calisthenics program");
+  await shot("calisthenics-program-fr-dark-375");
+  await evaluate("document.querySelector('[data-cali-tab=progress]').click()");
   await until(() => evaluate("!!document.querySelector('[data-cali-ladder]')"), "skill ladder");
-  assert.ok(await evaluate("document.body.innerText.includes('Handstand')"), "skills visible under progress");
   assert.ok(await evaluate("document.querySelector('[data-cali-ladder] [data-state=\"current\"]') !== null"), "current step highlighted");
   assert.ok(await evaluate("!!document.querySelector('[data-cali-advance] .module-primary')"), "next step offered after three results on the current one");
-  assert.ok(await evaluate("!!document.querySelector('[data-cali-ladder] + div, .module-bars')"), "recent results chart");
-  assert.ok(await evaluate("document.body.innerText.toLowerCase().includes(\"calendrier d'activité\")"), "calisthenics activity calendar");
+  assert.equal(await evaluate("document.querySelectorAll('[data-cali-kpis] .grid > div').length"), 4, "four key figures");
+  assert.ok(await evaluate("!!document.querySelector('[data-cali-week-balance]')"), "week balance");
   await noOverflow("calisthenics progress");
   await shot("calisthenics-progress-fr-dark-375");
+  await evaluate("document.querySelector('[data-cali-tab=history]').click()");
+  await until(() => evaluate("document.querySelectorAll('[data-cali-history-session]').length >= 1"), "history sessions");
+  await evaluate("document.querySelector('[data-cali-history-session] button').click()");
+  await until(() => evaluate("!!document.querySelector('[data-cali-history-detail]') && !!document.querySelector('[data-cali-redo]')"), "history detail");
+  await noOverflow("calisthenics history");
+  await shot("calisthenics-history-fr-dark-375");
   // Leave no draft behind for the next checks.
   await evaluate("localStorage.removeItem('track-perso:calisthenics-session-v1')");
 
@@ -132,11 +148,8 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   assert.ok(await evaluate("!!document.querySelector('.sport-empty-state')"), "running uses the shared empty state");
   await shot("running-empty-fr-dark-375");
   await go("/sport/calisthenics");
-  await until(() => evaluate("!!document.querySelector('.sport-empty-state')"), "calisthenics empty state");
-  assert.ok(await evaluate("!!document.querySelector('.sport-empty-state button')"), "empty state has a create action");
-  // An empty screen offers its action once; it must not repeat the empty state's wording.
-  assert.equal(await evaluate("[...document.querySelectorAll('button')].filter((b) => b.textContent.trim() === 'Commencer une séance').length"), 1, "One start action on the empty Calisthenics overview");
-  assert.equal(await evaluate("(document.body.innerText.match(/Commence par enregistrer/g) || []).length"), 1, "The empty wording appears once");
+  await until(() => evaluate("document.body.innerText.includes('Commence ta pratique')"), "calisthenics empty state");
+  assert.equal(await evaluate("document.querySelectorAll('[data-cali-free]').length"), 1, "one free session action");
   await noOverflow("calisthenics empty");
   await shot("calisthenics-empty-fr-dark-375");
   setFixture("normal");

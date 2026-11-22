@@ -211,6 +211,10 @@ body {
   textarea {
     font-size: 16px !important;
   }
+  /* Session steppers show their number large; they stay well above 16px. */
+  input[data-big-number] {
+    font-size: var(--big-number, 46px) !important;
+  }
 }
 
 @keyframes toast-shrink {

@@ -16,6 +16,8 @@ import type {
 
 export type CalisthenicsData = {
   language: Language;
+  /** Sessions a week the user aims for, shared with the Sport hub. */
+  weeklyGoal: number;
   exercises: CalisthenicsExercise[];
   programs: (CalisthenicsProgram & {
     sessions: (CalisthenicsProgramSession & { exercises: CalisthenicsProgramExercise[] })[];
@@ -56,6 +58,7 @@ export async function loadCalisthenicsData(): Promise<CalisthenicsData | null> {
 
   return {
     language: isLanguage(profile.data?.language) ? profile.data.language : "fr",
+    weeklyGoal: profile.data?.sport_weekly_goal ?? 3,
     exercises,
     programs: programs.map((program) => ({
       ...program,
