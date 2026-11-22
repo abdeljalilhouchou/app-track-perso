@@ -93,7 +93,8 @@ export async function checkExerciseLibrary({ send, evaluate, navigatePage, navig
   await screenshot("exercise-image-fallback.png"); results.exerciseImageFallback = true;
   await send("Network.setBlockedURLs", { urls: ["https://*"] });
   await go("/sport/exercises/strength-squat");
-  assert.ok(await evaluate("document.body.innerText.includes('reste à documenter') && !document.querySelector('.muscle-zone-primary')"));
+  // The squat now has its full guide: the page renders it instead of the "to document" notice.
+  assert.ok(await evaluate("!!document.querySelector('[data-exercise-detail]') && !document.body.innerText.includes('reste à documenter')"));
   results.exerciseAmbiguousVariant = true;
   // Open the guide from the live session while retaining the same draft DOM.
   profile.theme = "light";
