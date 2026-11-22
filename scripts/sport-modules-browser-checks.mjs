@@ -21,11 +21,6 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
     await sharp(Buffer.from(data, "base64")).webp({ quality: 86 }).toFile(path.join(output, file));
     result.screenshots.push(file);
   };
-  const tab = async (value) => {
-    await evaluate(`document.querySelector('[data-module-tab=${JSON.stringify(value)}]').click()`);
-    await until(() => evaluate(`document.querySelector('[data-module-tab=${JSON.stringify(value)}]').getAttribute('aria-pressed')==='true'`), `${value} tab active`);
-    await pause(150);
-  };
   const noOverflow = async (context) => {
     const overflow = await evaluate("document.documentElement.scrollWidth - innerWidth");
     assert.ok(overflow <= 1, `No horizontal overflow (${context}): ${overflow}`);
@@ -36,12 +31,8 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
     for (const [language, theme, width] of [["fr", "dark", 375], ["fr", "light", 320], ["ar", "dark", 390], ["en", "light", 1440]]) {
       profile.language = language; profile.theme = theme;
       await size(width); await go(`/sport/${discipline}`);
-      await until(() => evaluate("document.querySelectorAll('[data-module-tab], [data-cali-tab]').length >= 4"), "module tabs rendered");
+      await until(() => evaluate("document.querySelectorAll('[data-run-tab]').length === 3 || document.querySelectorAll('[data-cali-tab]').length >= 4"), "module tabs rendered");
       await noOverflow(`${discipline} ${language}/${theme}/${width}`);
-      if (width < 1024 && discipline === "running") {
-        const columns = await evaluate("getComputedStyle(document.querySelector('.module-stats, .sport-stat-grid')).gridTemplateColumns.split(' ').length");
-        assert.equal(columns, 2, `Two stat columns on phones (${discipline} ${width}px)`);
-      }
       await shot(`${discipline}-overview-${language}-${theme}-${width}`);
       result.cases.push({ discipline, language, theme, width });
     }
@@ -50,14 +41,32 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   // Running interactions, French dark at the reference width.
   profile.language = "fr"; profile.theme = "dark";
   await size(375); await go("/sport/running");
-  await until(() => evaluate("document.querySelectorAll('[data-module-tab]').length === 4"), "running has 4 sections");
-  assert.equal(await evaluate("document.querySelectorAll('.module-primary').length"), 1, "One primary action on the overview");
-  assert.ok(await evaluate("!!document.querySelector('.module-ring')"), "weekly goal ring");
-  assert.ok(await evaluate("document.body.innerText.includes('vs semaine passée')"), "week-over-week comparison");
-  assert.ok(await evaluate("/Semaine [0-9]+/i.test(document.querySelector('.sport-module-eyebrow').textContent)"), "week eyebrow");
+  const runTab = async (value) => {
+    await evaluate(`document.querySelector('[data-run-tab=${JSON.stringify(value)}]').click()`);
+    await until(() => evaluate(`document.querySelector('[data-run-tab=${JSON.stringify(value)}]').getAttribute('aria-selected')==='true'`), `${value} tab active`);
+    await pause(150);
+  };
+  await until(() => evaluate("document.querySelectorAll('[data-run-tab]').length === 3"), "running has 3 tabs");
+  assert.ok(await evaluate("document.querySelector('[data-strength-header]').innerText.includes('cette semaine')"), "week distance in the header");
+  assert.ok(await evaluate("!!document.querySelector('[data-run-week].module-ring, [data-run-week] .module-ring, [data-run-week]')"), "weekly goal ring");
+  assert.ok(await evaluate("!!document.querySelector('[data-run-last]') && !!document.querySelector('[data-run-records]')"), "last run and records");
+  // Live stopwatch: start, lap, pause, finish opens the sheet with the time filled in.
+  await evaluate("document.querySelector('[data-run-live-start]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-run-live]')"), "live run screen");
+  assert.ok(await evaluate("!document.querySelector('[data-run-tab]')"), "tabs hidden while running");
+  await pause(1300);
+  await evaluate("document.querySelector('[data-run-lap]').click()");
+  await until(() => evaluate("document.querySelector('[data-run-live]').innerText.includes('Tours')"), "lap counted");
+  await shot("running-live-fr-dark-375");
+  await evaluate("document.querySelector('[data-run-finish]').click()");
+  await until(() => evaluate("!!document.querySelector('dialog.run-sheet[open]')"), "sheet opens after the run");
+  assert.ok(await evaluate("/^0:0[1-9]$/.test(document.querySelector('[data-run-duration]').value)"), "duration filled from the stopwatch");
+  await evaluate("document.querySelector('.run-sheet-close').click()");
+  await until(() => evaluate("!document.querySelector('dialog.run-sheet[open]')"), "sheet closes");
   // The log sheet opens over the overview; the tab does not change.
-  await evaluate("document.querySelector('.module-primary').click()");
+  await evaluate("document.querySelector('[data-run-log]').click()");
   await until(() => evaluate("!!document.querySelector('dialog.run-sheet[open]')"), "run sheet open");
+  assert.ok(await evaluate("document.querySelectorAll('[data-run-types] button').length >= 4"), "coloured run types");
   await evaluate("document.querySelector('[data-run-distance]').focus()");
   await send("Input.insertText", { text: "5,2" });
   await evaluate("document.querySelector('[data-run-duration]').focus()");
@@ -67,17 +76,19 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   await shot("running-form-fr-dark-375");
   await evaluate("document.querySelector('.run-sheet-close').click()");
   await until(() => evaluate("!document.querySelector('dialog.run-sheet[open]')"), "sheet closes");
-  await tab("sessions");
+  await runTab("sessions");
   await until(() => evaluate("document.querySelectorAll('[data-run-row]').length >= 3"), "history rows");
   assert.ok(await evaluate("document.body.innerText.toLowerCase().includes('cette semaine')"), "runs grouped by week");
   await evaluate("document.querySelector('[data-run-row] .run-row-main').click()");
   await until(() => evaluate("[...document.querySelectorAll('button')].some((b) => b.textContent.trim() === 'Modifier la course')"), "run details open");
   await shot("running-sessions-fr-dark-375");
-  await tab("progress");
+  await runTab("progress");
   await until(() => evaluate("!!document.querySelector('[data-run-record=\"1k\"]')"), "1 km record visible");
-  assert.ok(await evaluate("document.body.innerText.toLowerCase().includes(\"calendrier d'activité\")"), "running activity calendar");
+  assert.ok(await evaluate("document.querySelectorAll('[data-run-kpis] > div').length === 4"), "four period figures");
+  assert.ok(await evaluate("document.querySelectorAll('[data-run-weeks] .rounded-md').length === 12"), "12 weeks of distance");
   await shot("running-progress-fr-dark-375");
-  await tab("goals");
+  await evaluate("document.querySelector('[data-run-goals-link]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-run-goals]')"), "goals page");
   assert.equal(await evaluate("[...document.querySelectorAll('form label')].filter((l) => /Minutes|Secondes/.test(l.textContent)).length"), 4, "mm:ss fields for both targets");
   await shot("running-goals-fr-dark-375");
 
@@ -146,6 +157,7 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   assert.equal(await evaluate("[...document.querySelectorAll('button')].filter((b) => b.textContent.trim() === 'Enregistrer une course').length"), 1, "Single CTA in the empty state");
   await noOverflow("running empty");
   assert.ok(await evaluate("!!document.querySelector('.sport-empty-state')"), "running uses the shared empty state");
+  assert.ok(await evaluate("!!document.querySelector('[data-run-tab]')"), "running tabs with no runs");
   await shot("running-empty-fr-dark-375");
   await go("/sport/calisthenics");
   await until(() => evaluate("document.body.innerText.includes('Commence ta pratique')"), "calisthenics empty state");

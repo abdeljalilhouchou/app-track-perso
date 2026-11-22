@@ -506,7 +506,6 @@ export function CalisthenicsWorkspace({ data, initialSessionId }: { data: Calist
         <div className="flex items-baseline justify-between gap-3"><h2 className="text-[15px] font-semibold">{w("skills")}</h2><button type="button" onClick={() => setSkillForm(blankSkill())} className="min-h-10 text-[13px] font-semibold" style={{ color: ink }}>{w("newSkill")}</button></div>
         {data.skills.length > 0 && <CaliSkills
           skills={data.skills}
-          records={records}
           onEdit={(skill) => setSkillForm({ id: skill.id, name: skill.name, skillKey: skill.skill_key, currentStep: skill.current_step, targetStep: skill.target_step, progressionSteps: [...skill.progression_steps], measurementType: skill.measurement_type, startedOn: skill.started_on ?? "", notes: skill.notes })}
           onDelete={(skill) => window.confirm(c("deleteConfirm")) && runMutation(() => deleteCalisthenicsSkill(skill.id))}
           onAdvance={(skill) => runMutation(() => saveCalisthenicsSkill({ id: skill.id, name: skill.name, skillKey: skill.skill_key, currentStep: skill.current_step + 1, targetStep: Math.max(skill.target_step, skill.current_step + 1), progressionSteps: [...skill.progression_steps], measurementType: skill.measurement_type, startedOn: skill.started_on || null, notes: skill.notes }))}
@@ -570,11 +569,21 @@ function SkillLogger({ skill, label, dateLabel, resultLabel, notesLabel, submitL
   const [notes, setNotes] = useState("");
   const t = useT();
   const c = (key: string) => t(`sport.calisthenicsUi.${key}`);
-  return <form className="mt-4 grid gap-2 rounded-xl border border-border p-3 sm:grid-cols-2" onSubmit={(event) => {
+  return <form className="grid gap-3 rounded-2xl border border-border bg-surface p-3.5 sm:grid-cols-2" data-cali-logger onSubmit={(event) => {
     event.preventDefault();
     onSave({ skillId: skill.id, date: logDate, stepIndex, reps: skill.measurement_type === "reps" ? Number(value) : null, holdSeconds: skill.measurement_type === "hold" ? Number(value) : null, notes });
     setValue(""); setNotes("");
-  }}><p className="text-xs font-semibold sm:col-span-2">{label}</p><Field label={dateLabel}><input type="date" className={controlClass} value={logDate} onChange={(event) => setLogDate(event.target.value)} /></Field><Field label={c("currentStep")}><select className={controlClass} value={stepIndex} onChange={(event) => setStepIndex(Number(event.target.value))}>{skill.progression_steps.map((step, index) => <option key={index} value={index}>{step}</option>)}</select></Field><Field label={resultLabel}><input required type="number" inputMode="numeric" min={1} max={skill.measurement_type === "hold" ? 7200 : 500} className={controlClass} value={value} onChange={(event) => setValue(event.target.value)} /></Field><Field label={notesLabel}><input maxLength={1000} className={controlClass} value={notes} onChange={(event) => setNotes(event.target.value)} /></Field><button className={`${buttonClass} sm:col-span-2`} disabled={busy}>{submitLabel}</button></form>;
+  }}>
+    <p className="text-sm font-bold sm:col-span-2">{label}</p>
+    <label className="flex flex-col items-center gap-1 rounded-2xl border-[1.5px] p-3 sm:col-span-2" style={{ borderColor: "var(--habit)", background: "color-mix(in srgb, var(--habit) 8%, var(--surface))" }}>
+      <span className="text-[11px] font-bold uppercase tracking-wide text-foreground-muted">{resultLabel}</span>
+      <input required type="number" inputMode="numeric" min={1} max={skill.measurement_type === "hold" ? 7200 : 500} value={value} onChange={(event) => setValue(event.target.value)} placeholder="0" data-big-number className="w-full bg-transparent text-center text-[44px] font-black tabular-nums outline-none" />
+    </label>
+    <Field label={c("currentStep")}><select className={controlClass} value={stepIndex} onChange={(event) => setStepIndex(Number(event.target.value))}>{skill.progression_steps.map((step, index) => <option key={index} value={index}>{step}</option>)}</select></Field>
+    <Field label={dateLabel}><input type="date" className={controlClass} value={logDate} onChange={(event) => setLogDate(event.target.value)} /></Field>
+    <Field label={notesLabel} className="sm:col-span-2"><input maxLength={1000} className={controlClass} value={notes} onChange={(event) => setNotes(event.target.value)} /></Field>
+    <button className="min-h-12 rounded-xl text-sm font-bold sm:col-span-2 disabled:opacity-50" style={{ background: "var(--habit)", color: "#1a1033" }} disabled={busy}>{submitLabel}</button>
+  </form>;
 }
 
 function updateProgramExercise(form: ProgramForm, sessionIndex: number, exerciseIndex: number, patch: Partial<ProgramForm["sessions"][number]["exercises"][number]>): ProgramForm {

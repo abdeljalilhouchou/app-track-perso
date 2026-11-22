@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, type FormEvent } from "react";
 import { useT } from "@/components/language-provider";
-import { ModuleChips } from "@/components/sport/ui/module-kit";
+import { RUN_TYPE_COLORS } from "@/lib/running/colors";
 import type { Language } from "@/lib/language";
 import { calculateRunningMetrics, formatPace, parseDuration, RUN_TYPES, type RunType } from "@/lib/running/stats";
-import { formatClock, formatKm } from "./format";
+import { formatKm } from "./format";
 
 export type RunForm = {
   date: string; name: string; runType: RunType; distance: string; duration: string;
@@ -16,10 +16,10 @@ export const readDistance = (text: string) => Number(text.trim().replace(",", ".
 
 /**
  * Log or edit a run, in a sheet over the current tab: it rises from the bottom on a
- * phone and opens as a dialog on wider screens. The workspace owns the form and the
- * stopwatch, so closing the sheet loses neither.
+ * phone and opens as a dialog on wider screens. The workspace owns the form, so closing
+ * the sheet does not lose it; the live stopwatch fills the duration before it opens.
  */
-export function RunFormSheet({ form, update, editing, saving, error, maxDate, language, stopwatch, onSubmit, onClose }: {
+export function RunFormSheet({ form, update, editing, saving, error, maxDate, language, onSubmit, onClose }: {
   form: RunForm;
   update: <K extends keyof RunForm>(key: K, value: RunForm[K]) => void;
   editing: boolean;
@@ -27,7 +27,6 @@ export function RunFormSheet({ form, update, editing, saving, error, maxDate, la
   error: string | null;
   maxDate: string;
   language: Language;
-  stopwatch: { elapsedMs: number; running: boolean; start: () => void; pause: () => void; reset: () => void };
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   onClose: () => void;
 }) {
@@ -45,7 +44,6 @@ export function RunFormSheet({ form, update, editing, saving, error, maxDate, la
   const seconds = parseDuration(form.duration);
   const distance = readDistance(form.distance);
   const metrics = seconds && distance > 0 ? calculateRunningMetrics(distance, seconds) : null;
-  const elapsed = Math.floor(stopwatch.elapsedMs / 1000);
 
   return <dialog ref={dialog} className="sport-ui run-sheet" aria-labelledby="run-sheet-title" onCancel={(event) => { event.preventDefault(); onClose(); }}>
     <form onSubmit={onSubmit} className="run-sheet-form">
@@ -62,7 +60,9 @@ export function RunFormSheet({ form, update, editing, saving, error, maxDate, la
 
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">{r("runTypeLabel")}</p>
-          <ModuleChips label={r("runTypeLabel")} value={form.runType} options={RUN_TYPES.map((type) => ({ value: type, label: r(`runTypes.${type}`) }))} onChange={(value) => update("runType", value)} />
+          <div role="group" aria-label={r("runTypeLabel")} className="flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none]" data-run-types>
+            {RUN_TYPES.map((type) => { const active = form.runType === type; const color = RUN_TYPE_COLORS[type]; return <button key={type} type="button" aria-pressed={active} onClick={() => update("runType", type)} className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold" style={active ? { border: `1.5px solid ${color}`, background: `color-mix(in srgb, ${color} 18%, var(--surface))` } : { border: "1px solid var(--border)", color: "var(--foreground-muted)" }}><span aria-hidden className="h-2 w-2 rounded-full" style={{ background: color }} />{r(`runTypes.${type}`)}</button>; })}
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-2.5">
@@ -105,24 +105,10 @@ export function RunFormSheet({ form, update, editing, saving, error, maxDate, la
           </div>
         </details>
 
-        <details className="run-more" open={stopwatch.running || stopwatch.elapsedMs > 0 || undefined}>
-          <summary>{r("useStopwatch")}</summary>
-          <div className="space-y-3 pt-3">
-            <p aria-live="polite" className="text-center text-4xl font-bold tabular-nums" style={{ color: "var(--sport-ink)" }}>{formatClock(elapsed)}</p>
-            <div className="grid grid-cols-3 gap-2">
-              {stopwatch.running
-                ? <button type="button" className="module-secondary" onClick={stopwatch.pause}>{r("pauseTimer")}</button>
-                : <button type="button" className="module-secondary" onClick={stopwatch.start}>{r(elapsed > 0 ? "resumeTimer" : "startTimer")}</button>}
-              <button type="button" className="module-secondary" onClick={stopwatch.reset}>{r("resetTimer")}</button>
-              <button type="button" className="module-secondary" disabled={elapsed < 1 || stopwatch.running} onClick={() => update("duration", formatClock(elapsed))}>{r("useTimer")}</button>
-            </div>
-            <p className="text-xs text-foreground-muted">{r("timerHint")}</p>
-          </div>
-        </details>
       </div>
 
       <div className="run-sheet-foot">
-        <button type="submit" className="module-primary" disabled={saving}>{saving ? r("saving") : r(editing ? "updateRun" : "saveRunFull")}</button>
+        <button type="submit" className="min-h-[54px] w-full rounded-2xl text-base font-extrabold disabled:opacity-50" style={{ background: "var(--water)", color: "#04202f" }} disabled={saving}>{saving ? r("saving") : r(editing ? "updateRun" : "saveRunFull")}</button>
       </div>
     </form>
   </dialog>;

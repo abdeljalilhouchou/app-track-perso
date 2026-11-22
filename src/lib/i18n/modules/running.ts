@@ -22,6 +22,21 @@ export const runningExtraFr = {
   goalsTitle: "Tes objectifs Running", weeklyDistanceGoal: "Distance hebdomadaire (km)", weeklyRunsGoal: "Courses par semaine", monthlyDistanceGoal: "Distance mensuelle (km)", target5k: "Temps cible sur 5 km", target10k: "Temps cible sur 10 km", goalsHint: "Les objectifs restent facultatifs. Laisse un champ vide pour ne pas le suivre.", saveGoals: "Enregistrer les objectifs", goalsSaved: "Objectifs enregistrés.", clearGoals: "Retirer tous les objectifs", progressGoal: "Progression", weekGoal: "Objectif hebdomadaire", monthGoal: "Objectif mensuel",
   intensityValues: { 1: "Très facile", 2: "Facile", 3: "Modérée", 4: "Difficile", 5: "Très difficile" },
   errorValidation: "Vérifie les valeurs saisies : la date doit être passée ou aujourd’hui, et la distance et la durée doivent être valides.", errorSchema: "La base de données Running n’est pas encore prête. Vérifie la migration avant d’activer le module.", errorAuth: "Ta session a expiré. Reconnecte-toi puis réessaie.", errorOwnership: "Cette course n’existe pas ou ne t’appartient pas.", errorGeneric: "L’action n’a pas abouti. Réessaie dans un instant.", errorGoals: "Vérifie les limites indiquées pour chacun des objectifs.", saveSuccess: "Course enregistrée.", updateSuccess: "Course mise à jour.", deleteSuccess: "Course supprimée.",
+  v3: {
+    weekGoal: "{done} / {goal} km cette semaine", weekPlain: "{done} km cette semaine", goals: "Objectifs",
+    tabCourse: "Course", tabProgress: "Progrès", tabHistory: "Historique",
+    goRun: "Partir courir", logRun: "Noter une course", runsOf: "{done} / {goal}",
+    lastRun: "Dernière course · {when}", record: "★ Record {label}",
+    goalTime: "Objectif {distance} en {time}", toGain: "Plus que {time} à gagner, soit {perKm} s par km.", goalDone: "Objectif atteint : bravo.",
+    weekDays: "Cette semaine", recordsTitle: "Tes records", seeAll: "Tout voir",
+    live: "En cours", cancel: "Annuler", lap: "Tour", laps: "Tours", lastLap: "Dernier tour", lapN: "Tour {n}", pause: "Pause", resume: "Reprendre", finish: "Terminer",
+    runningTime: "temps de course", noGps: "Pas de GPS : à l’arrêt, tu saisis la distance et l’allure se calcule.",
+    kpiDistance: "Distance", kpiRuns: "Sorties", kpiPace: "Allure moyenne", kpiTime: "Temps", vsBefore: "vs période préc.", samePeriod: "= période préc.",
+    distanceWeeks: "Distance par semaine", goalKm: "objectif {km} km", typesTitle: "Types de sorties", longest: "Plus longue", newRecord: "nouveau",
+    volume: "Volume", times: "Chronos visés", yourRecord: "Ton record", goalLabel: "Objectif", pacePer: "soit {pace} /km",
+    nearly: "Plus que {time} : tu y es presque.", decrease: "Diminuer {label}", increase: "Augmenter {label}", nowWeek: "{value} cette semaine", nowMonth: "{value} ce mois-ci",
+    backRunning: "Running", noRecord: "Pas encore de course sur cette distance.", paceUp: "Plus la courbe monte, plus tu cours vite.",
+  },
 };
 
 export const runningExtraEn = {
@@ -48,6 +63,21 @@ export const runningExtraEn = {
   goalsTitle: "Your Running goals", weeklyDistanceGoal: "Weekly distance (km)", weeklyRunsGoal: "Runs per week", monthlyDistanceGoal: "Monthly distance (km)", target5k: "Target 5 km time", target10k: "Target 10 km time", goalsHint: "Goals are optional. Leave a field empty to skip tracking it.", saveGoals: "Save goals", goalsSaved: "Goals saved.", clearGoals: "Remove all goals", progressGoal: "Progress", weekGoal: "Weekly goal", monthGoal: "Monthly goal",
   intensityValues: { 1: "Very easy", 2: "Easy", 3: "Moderate", 4: "Hard", 5: "Very hard" },
   errorValidation: "Check your entries: the date must be today or earlier, and distance and duration must be valid.", errorSchema: "The Running database is not ready yet. Verify the migration before enabling the module.", errorAuth: "Your session expired. Sign in and try again.", errorOwnership: "This run does not exist or does not belong to you.", errorGeneric: "The action could not be completed. Try again shortly.", errorGoals: "Check the allowed range for each goal.", saveSuccess: "Run saved.", updateSuccess: "Run updated.", deleteSuccess: "Run deleted.",
+  v3: {
+    weekGoal: "{done} / {goal} km this week", weekPlain: "{done} km this week", goals: "Goals",
+    tabCourse: "Run", tabProgress: "Progress", tabHistory: "History",
+    goRun: "Go running", logRun: "Log a run", runsOf: "{done} / {goal}",
+    lastRun: "Last run · {when}", record: "★ {label} record",
+    goalTime: "Goal: {distance} in {time}", toGain: "{time} left to gain, {perKm} s per km.", goalDone: "Goal reached: well done.",
+    weekDays: "This week", recordsTitle: "Your records", seeAll: "See all",
+    live: "Running", cancel: "Cancel", lap: "Lap", laps: "Laps", lastLap: "Last lap", lapN: "Lap {n}", pause: "Pause", resume: "Resume", finish: "Finish",
+    runningTime: "running time", noGps: "No GPS: when you stop, type the distance and the pace is worked out.",
+    kpiDistance: "Distance", kpiRuns: "Runs", kpiPace: "Average pace", kpiTime: "Time", vsBefore: "vs previous period", samePeriod: "= previous period",
+    distanceWeeks: "Distance per week", goalKm: "goal {km} km", typesTitle: "Kinds of runs", longest: "Longest", newRecord: "new",
+    volume: "Volume", times: "Target times", yourRecord: "Your record", goalLabel: "Goal", pacePer: "that is {pace} /km",
+    nearly: "Only {time} to go: almost there.", decrease: "Decrease {label}", increase: "Increase {label}", nowWeek: "{value} this week", nowMonth: "{value} this month",
+    backRunning: "Running", noRecord: "No run at this distance yet.", paceUp: "The higher the line, the faster you run.",
+  },
 };
 
 export const runningExtraAr = {
@@ -74,4 +104,19 @@ export const runningExtraAr = {
   goalsTitle: "أهداف الجري", weeklyDistanceGoal: "المسافة الأسبوعية (كم)", weeklyRunsGoal: "الجولات أسبوعيًا", monthlyDistanceGoal: "المسافة الشهرية (كم)", target5k: "الوقت المستهدف لـ5 كم", target10k: "الوقت المستهدف لـ10 كم", goalsHint: "الأهداف اختيارية. اترك الحقل فارغًا لتجاهل تتبعه.", saveGoals: "حفظ الأهداف", goalsSaved: "تم حفظ الأهداف.", clearGoals: "إزالة كل الأهداف", progressGoal: "التقدم", weekGoal: "الهدف الأسبوعي", monthGoal: "الهدف الشهري",
   intensityValues: { 1: "سهل جدًا", 2: "سهل", 3: "متوسط", 4: "صعب", 5: "صعب جدًا" },
   errorValidation: "تحقق من القيم: يجب أن يكون التاريخ اليوم أو قبله، وأن تكون المسافة والمدة صحيحتين.", errorSchema: "قاعدة بيانات الجري غير جاهزة بعد. تحقق من الترحيل قبل تفعيل الوحدة.", errorAuth: "انتهت صلاحية الجلسة. سجّل الدخول وحاول مجددًا.", errorOwnership: "هذه الجولة غير موجودة أو لا تخصك.", errorGeneric: "تعذر إكمال العملية. حاول مرة أخرى قريبًا.", errorGoals: "تحقق من الحدود المسموح بها لكل هدف.", saveSuccess: "تم حفظ الجولة.", updateSuccess: "تم تحديث الجولة.", deleteSuccess: "تم حذف الجولة.",
+  v3: {
+    weekGoal: "{done} / {goal} كم هذا الأسبوع", weekPlain: "{done} كم هذا الأسبوع", goals: "الأهداف",
+    tabCourse: "الجري", tabProgress: "التقدّم", tabHistory: "السجل",
+    goRun: "انطلق للجري", logRun: "سجّل جريًا", runsOf: "{done} / {goal}",
+    lastRun: "آخر جري · {when}", record: "★ رقم {label}",
+    goalTime: "الهدف {distance} في {time}", toGain: "تبقّى {time}، أي {perKm} ث لكل كم.", goalDone: "تم بلوغ الهدف، أحسنت.",
+    weekDays: "هذا الأسبوع", recordsTitle: "أرقامك القياسية", seeAll: "عرض الكل",
+    live: "جارٍ", cancel: "إلغاء", lap: "لفة", laps: "اللفات", lastLap: "آخر لفة", lapN: "اللفة {n}", pause: "إيقاف مؤقت", resume: "استئناف", finish: "إنهاء",
+    runningTime: "وقت الجري", noGps: "بدون GPS: عند التوقف تُدخل المسافة وتُحسب الوتيرة.",
+    kpiDistance: "المسافة", kpiRuns: "الخرجات", kpiPace: "متوسط الوتيرة", kpiTime: "الوقت", vsBefore: "مقارنة بالفترة السابقة", samePeriod: "= الفترة السابقة",
+    distanceWeeks: "المسافة في الأسبوع", goalKm: "الهدف {km} كم", typesTitle: "أنواع الخرجات", longest: "الأطول", newRecord: "جديد",
+    volume: "الحجم", times: "الأزمنة المستهدفة", yourRecord: "رقمك القياسي", goalLabel: "الهدف", pacePer: "أي {pace} /كم",
+    nearly: "تبقّى {time} فقط: أوشكت.", decrease: "إنقاص {label}", increase: "زيادة {label}", nowWeek: "{value} هذا الأسبوع", nowMonth: "{value} هذا الشهر",
+    backRunning: "الجري", noRecord: "لا جري على هذه المسافة بعد.", paceUp: "كلما ارتفع الخط، كنت أسرع.",
+  },
 };
