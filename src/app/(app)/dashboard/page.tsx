@@ -140,13 +140,15 @@ export default async function DashboardPage() {
   const goalsHref = `/nutrition?date=${todayStr}#goals`;
 
   return (
-    <div className="mx-auto max-w-2xl space-y-5 animate-fade-in" data-home>
+    <div className="page-shell space-y-5 animate-fade-in" data-home>
       <header>
         <p className="text-xs font-semibold uppercase tracking-wide text-accent first-letter:uppercase">{dateLabel}</p>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight">{t(isNew ? "home.welcome" : "home.hello", { name: displayName })}</h1>
         {isNew && <p className="mt-1.5 text-sm text-foreground-muted">{t("home.start.intro")}</p>}
       </header>
 
+      <div className="home-columns">
+      <div className="space-y-5" data-home-main>
       {isNew ? (
         <StartCard hasHabit={habits.length > 0} hasGoals={Boolean(kcalGoal)} goalsHref={goalsHref} />
       ) : (
@@ -166,8 +168,12 @@ export default async function DashboardPage() {
         </>
       )}
 
+      </div>
+      <div className="space-y-5" data-home-side>
       <QuickActions />
       <ModuleTiles data={tiles} />
+      </div>
+      </div>
 
       {isNew ? (
         <p className="rounded-3xl border border-border bg-surface p-4 text-sm leading-relaxed text-foreground-muted">{t("home.start.later")}</p>

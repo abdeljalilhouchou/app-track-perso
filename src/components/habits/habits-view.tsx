@@ -38,7 +38,7 @@ export function HabitsView({ habits, paused, logs, moods, today, todayLabel }: {
   const open = (next: Omit<NonNullable<Sheet>, "key">) => setSheet({ ...next, key: Date.now() });
 
   return (
-    <div className="mx-auto max-w-2xl space-y-5 animate-fade-in" data-habits-view>
+    <div className="page-shell space-y-5 animate-fade-in" data-habits-view>
       <header className="flex items-end justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide first-letter:uppercase" style={{ color: "var(--habit)" }}>{todayLabel}</p>
@@ -130,7 +130,8 @@ function TodayTab({ habits, index, today, onEdit, onOpenProgress }: {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="habits-columns">
+      <div className="space-y-5" data-habits-aside>
       {review && reviewHidden !== review.start && (
         <section aria-labelledby="habits-review" className="space-y-3 rounded-3xl border border-border bg-surface p-4" data-habits-review>
           <div className="flex items-center justify-between gap-2">
@@ -170,6 +171,8 @@ function TodayTab({ habits, index, today, onEdit, onOpenProgress }: {
         </div>
       </section>
 
+      </div>
+      <div className="space-y-5" data-habits-main>
       <div className="space-y-6">
         {MOMENT_ORDER.map((moment) => {
           const list = due.filter((habit) => (habit.moment ?? "any") === moment);
@@ -199,7 +202,7 @@ function TodayTab({ habits, index, today, onEdit, onOpenProgress }: {
           </div>
         </details>
       )}
-
+      </div>
     </div>
   );
 }

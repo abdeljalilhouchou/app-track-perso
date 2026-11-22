@@ -308,3 +308,15 @@ input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
 }
+
+/* Desktop: every page shares one width, and wide screens use two columns. */
+.page-shell { margin-inline: auto; width: 100%; max-width: 70rem; }
+.home-columns, .habits-columns { display: flex; flex-direction: column; gap: 1.25rem; }
+@media (min-width: 1280px) {
+  .home-columns { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+  .habits-columns { display: grid; grid-template-columns: minmax(0, 23rem) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+  [data-habits-aside] { position: sticky; top: 1.5rem; }
+  [data-sport-dashboard]:not([data-sport-empty]) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; align-items: start; }
+  [data-sport-dashboard]:not([data-sport-empty]) > * { grid-column: 1 / -1; margin-top: 0 !important; }
+  [data-sport-dashboard] > [data-sport-week], [data-sport-dashboard] > [data-sport-next] { grid-column: auto; }
+}

@@ -92,7 +92,7 @@ export default async function HumeurPage({ searchParams }: { searchParams: Promi
   const hasEntries = allEntries.length > 0;
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 animate-fade-in">
+    <div className="page-shell space-y-6 animate-fade-in">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide first-letter:uppercase" style={{ color: "var(--mood-text)" }}>{formatDay(today, language)}</p>

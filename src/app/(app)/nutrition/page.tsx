@@ -213,7 +213,7 @@ export default async function NutritionPage({
   const SUGAR_LIMIT_G = profile?.sugar_limit_g ?? 50;
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 animate-fade-in">
+    <div className="page-shell space-y-6 animate-fade-in">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border-[1.5px] border-nutrition text-xl">

@@ -52,7 +52,7 @@ export function SportDashboard({ data, t }: { data: HubData; t: Translator }) {
     </span>}
   </header>;
 
-  if (!overview.hasWorkouts) return <div className="mx-auto max-w-2xl space-y-5" data-sport-dashboard data-sport-empty>
+  if (!overview.hasWorkouts) return <div className="page-shell space-y-5" data-sport-dashboard data-sport-empty>
     {header}
     <section aria-label={h("goal")} className={`${card} flex items-center gap-4 p-4`}>
       <Ring done={0} goal={weeklyGoal} size={80} n={n} label={h("ringSessions")} />
@@ -84,7 +84,7 @@ export function SportDashboard({ data, t }: { data: HubData; t: Translator }) {
 
   const { week } = overview;
   const missing = Math.max(0, weeklyGoal - week.sessions);
-  return <div className="mx-auto max-w-2xl space-y-6" data-sport-dashboard>
+  return <div className="page-shell space-y-6" data-sport-dashboard>
     {header}
 
     <section aria-label={h("thisWeek")} className={`${card} space-y-5 p-[18px]`} data-sport-week>
@@ -246,7 +246,7 @@ function NextSession({ overview, t, h, n }: { overview: SportOverview; t: Transl
     <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgb(0 0 0 / 0.15) 0%, rgb(0 0 0 / 0.4) 45%, rgb(0 0 0 / 0.85) 100%)" }} />
     <div className="absolute inset-x-[18px] bottom-3 text-white">{children}</div>
   </div>;
-  return <section id="sport-next-session" aria-labelledby="sport-next-title" className="flex scroll-mt-6 flex-col gap-3.5 overflow-hidden rounded-3xl px-[18px] pb-[18px]" style={{ background: "color-mix(in srgb, var(--sport) 7%, var(--surface))", border: "1.5px solid color-mix(in srgb, var(--sport) 45%, var(--border))" }}>
+  return <section id="sport-next-session" data-sport-next aria-labelledby="sport-next-title" className="flex scroll-mt-6 flex-col gap-3.5 overflow-hidden rounded-3xl px-[18px] pb-[18px]" style={{ background: "color-mix(in srgb, var(--sport) 7%, var(--surface))", border: "1.5px solid color-mix(in srgb, var(--sport) 45%, var(--border))" }}>
     {next ? <>
       {banner(<>
         <span className="mb-2 inline-block rounded-full bg-black/65 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-[#6ee7b7]">{h("nextEyebrow", { discipline: t("sport.hub.nav.strength") })}</span>

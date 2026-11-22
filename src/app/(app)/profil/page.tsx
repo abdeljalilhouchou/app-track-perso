@@ -39,7 +39,7 @@ export default async function ProfilPage() {
   ];
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="page-shell space-y-8 animate-fade-in">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">{dict.pages.profile.title}</h1>
         <p className="mt-1 text-sm text-foreground-muted">{dict.pages.profile.subtitle}</p>
