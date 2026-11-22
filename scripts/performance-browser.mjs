@@ -138,6 +138,9 @@ if (sportModules) {
     workouts.push({ id, user_id: uid, workout_date: day(offset), activity: name, duration_minutes: Math.round(seconds / 60), intensity: 3, notes: index === 0 ? "Bonnes sensations." : null, muscle_groups: [], template_id: null, discipline: "running", created_at: `${day(offset)}T08:00:00Z` });
     tables.running_sessions.push({ workout_id: id, user_id: uid, name, run_type, distance_km: km, duration_seconds: seconds, elevation_gain_m: elevation, average_heart_rate: 152, cadence_spm: null, created_at: `${day(offset)}T08:00:00Z` });
   }
+  // The latest run was tracked with the GPS: a loop of about 6.2 km and its splits.
+  const loop = Array.from({ length: 241 }, (_, i) => { const angle = (i / 240) * 2 * Math.PI; return [Math.round((48.85 + 0.00888 * Math.sin(angle)) * 1e5) / 1e5, Math.round((2.35 + 0.0135 * Math.cos(angle) * (1 + 0.15 * Math.sin(3 * angle))) * 1e5) / 1e5, Math.round((i / 240) * 2232)]; });
+  Object.assign(tables.running_sessions[0], { gps_route: loop, km_splits: [372, 360, 365, 351, 370, 375], pause_seconds: 40 });
   tables.running_goals = [{ user_id: uid, weekly_distance_km: 20, weekly_runs: 3, monthly_distance_km: 80, target_5k_seconds: 1500, target_10k_seconds: 3300, created_at: user.created_at, updated_at: user.created_at }];
   const texts = { fr: "Garde le corps gainé du début à la fin.", en: "Keep the body braced throughout.", ar: "حافظ على شد الجسم طوال التمرين." };
   tables.calisthenics_exercises = [["pompes", "push", "Pectoraux", "beginner", "reps", "Pompes", "Push-ups", "تمارين الضغط"], ["tractions", "pull", "Dos", "intermediate", "reps", "Tractions", "Pull-ups", "العقلة"], ["gainage", "core", "Abdominaux", "beginner", "hold", "Gainage", "Plank", "البلانك"]]

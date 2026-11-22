@@ -7,6 +7,8 @@ import { RUN_TYPE_COLORS } from "@/lib/running/colors";
 import type { Language } from "@/lib/language";
 import { calculateRunningMetrics, formatPace, type RunningRun, type RunType } from "@/lib/running/stats";
 import { formatClock, formatKm, localeOf } from "./format";
+import { RunRoute, SplitBars } from "./run-route";
+import { privacyTrim } from "@/lib/running/gps";
 
 const PAGE = 20;
 const BLUE_TEXT = "color-mix(in srgb, var(--water) 70%, var(--foreground))";
@@ -67,11 +69,13 @@ export function RunningHistory({ runs, language, expandedId, onToggle, onEdit, o
               <span className="w-11 shrink-0 text-center"><span className="block text-[11px] uppercase text-foreground-muted">{weekday.format(day).replace(".", "")}</span><span className="block text-xl font-extrabold">{day.getDate()}</span></span>
               <span className="min-w-0 flex-1 text-start">
                 <span className="block truncate text-[15px] font-semibold">{run.name || r(`runTypes.${run.run_type}`)}</span>
-                <span className="mt-1 flex items-center gap-1.5"><span className="shrink-0 rounded-full px-1.5 py-px text-[10px] font-bold" style={tagStyle(run.run_type)}>{r(`runTypes.${run.run_type}`)}</span><span className="truncate text-xs text-foreground-muted tabular-nums">{formatClock(run.duration_seconds)}</span></span>
+                <span className="mt-1 flex items-center gap-1.5"><span className="shrink-0 rounded-full px-1.5 py-px text-[10px] font-bold" style={tagStyle(run.run_type)}>{r(`runTypes.${run.run_type}`)}</span>{run.gps_route && <span className="shrink-0 rounded-full px-1.5 py-px text-[10px] font-bold" style={{ background: "color-mix(in srgb, var(--water) 14%, transparent)", color: BLUE_TEXT }} data-run-gps-tag>{r("v3.gps.tag")}</span>}<span className="truncate text-xs text-foreground-muted tabular-nums">{formatClock(run.duration_seconds)}</span></span>
               </span>
               <span className="shrink-0 text-end"><span className="block text-[17px] font-extrabold tabular-nums">{formatKm(run.distance_km, language)} km</span><span className="block text-xs font-semibold tabular-nums" style={{ color: BLUE_TEXT }}>{formatPace(metrics?.paceSecondsPerKm)} /km</span></span>
             </button>
             {open && <div className="space-y-3 border-t border-surface-muted px-3.5 pb-3.5 pt-3">
+              {run.gps_route && privacyTrim(run.gps_route).length > 1 && <div className="overflow-hidden rounded-2xl" style={{ background: "radial-gradient(90% 90% at 50% 40%, color-mix(in srgb, var(--water) 10%, transparent), var(--surface-muted) 75%)" }}><RunRoute route={run.gps_route} width={330} height={170} label={r("v3.gps.trace")} className="block h-auto w-full" /></div>}
+              {run.km_splits && run.km_splits.length > 1 && <div data-run-splits><SplitBars vertical splits={run.km_splits} label={(n) => r("v3.gps.kmN", { n })} /><p className="mt-1.5 text-xs text-foreground-muted">{r("v3.gps.splitsHint")}</p></div>}
               <dl className="grid grid-cols-4 gap-2 text-center text-sm">
                 <div><dt className="text-[11px] text-foreground-muted">{r("speed")}</dt><dd className="mt-0.5 font-semibold">{formatKm(metrics?.speedKmh ?? 0, language)} {r("kmPerHour")}</dd></div>
                 <div><dt className="text-[11px] text-foreground-muted">{r("feeling")}</dt><dd className="mt-0.5 font-semibold">{run.intensity}/5</dd></div>

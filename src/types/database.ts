@@ -432,6 +432,8 @@ export type Database = {
           run_type: "easy" | "endurance" | "long" | "tempo" | "interval" | "recovery" | "free" | "race";
           distance_km: number; duration_seconds: number; elevation_gain_m: number | null;
           average_heart_rate: number | null; cadence_spm: number | null; created_at: string;
+          /** Present once migration 0022 is applied; null for runs logged by hand. */
+          gps_route?: [number, number, number][] | null; km_splits?: number[] | null; pause_seconds?: number | null;
         };
         Insert: Partial<Database["public"]["Tables"]["running_sessions"]["Row"]> & { workout_id: string; user_id: string; run_type: "easy" | "endurance" | "long" | "tempo" | "interval" | "recovery" | "free" | "race"; distance_km: number; duration_seconds: number };
         Update: Partial<Database["public"]["Tables"]["running_sessions"]["Row"]>;

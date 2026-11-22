@@ -7,8 +7,10 @@ import { isFiniteInRange, isUuid } from "@/lib/actions/validation";
 import { checkSportHabits, uncheckSportHabits } from "@/lib/sport-habit-sync";
 import { isRunningSchemaReady } from "@/lib/running/config";
 import { validateRunningSessionInput, type RunningSessionInput } from "@/lib/running/validation";
+import { validateGpsRunData } from "@/lib/running/gps";
 
-export type SaveRunningInput = RunningSessionInput;
+/** `gps`: the route, splits and pauses of a run tracked with the GPS (new runs only). */
+export type SaveRunningInput = RunningSessionInput & { gps?: unknown };
 
 export type RunningGoalsInput = {
   weeklyDistanceKm: unknown;
@@ -30,7 +32,7 @@ function runningDbFail(error: { message: string; code?: string }): ActionResult 
   return fail("generic");
 }
 
-export async function saveRunningSession(input: SaveRunningInput): Promise<ActionResult & { workoutId?: string }> {
+export async function saveRunningSession(input: SaveRunningInput): Promise<ActionResult & { workoutId?: string; routeSaved?: boolean }> {
   if (!isRunningSchemaReady()) return fail("schema");
   const value = validateRunningSessionInput(input);
   if (!value) return fail("validation");
@@ -64,10 +66,20 @@ export async function saveRunningSession(input: SaveRunningInput): Promise<Actio
   });
   if (error) return runningDbFail(error);
 
+  // The route goes in a second write: before migration 0022 the run is still saved, without it.
+  let routeSaved: boolean | undefined;
+  const gps = input.gps === undefined ? null : validateGpsRunData(input.gps);
+  if (gps && savedId) {
+    const { error: routeError } = await supabase.from("running_sessions")
+      .update({ gps_route: gps.route, km_splits: gps.splits, pause_seconds: gps.pauseSeconds })
+      .eq("workout_id", savedId).eq("user_id", user.id);
+    routeSaved = !routeError;
+  } else if (input.gps !== undefined) routeSaved = false;
+
   if (previousDate && previousDate !== date) await uncheckSportHabits(supabase, user.id, previousDate);
   await checkSportHabits(supabase, user.id, date);
   revalidateRunningViews();
-  return { error: null, workoutId: savedId };
+  return { error: null, workoutId: savedId, routeSaved };
 }
 
 export async function deleteRunningSession(workoutId: string): Promise<ActionResult> {

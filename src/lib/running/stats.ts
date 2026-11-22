@@ -1,3 +1,4 @@
+import { bestEffort, type RoutePoint } from "./gps";
 import { format, parseISO, startOfMonth, startOfWeek, subMonths, subWeeks } from "date-fns";
 
 export const RUN_TYPES = ["easy", "endurance", "long", "tempo", "interval", "recovery", "free", "race"] as const;
@@ -19,6 +20,10 @@ export type RunningRun = {
   average_heart_rate: number | null;
   cadence_spm: number | null;
   created_at: string;
+  /** GPS runs only: [latitude, longitude, moving seconds] points and seconds per km. */
+  gps_route?: RoutePoint[] | null;
+  km_splits?: number[] | null;
+  pause_seconds?: number | null;
 };
 
 export type RunningGoals = {
@@ -120,8 +125,13 @@ export function computeRunningStats(runs: RunningRun[], goals: RunningGoals | nu
   }
   const comparableRecord = (targetKm: number) => {
     const toleranceKm = targetKm * 0.01;
-    return validRuns
-      .filter((run) => Math.abs(run.distance_km - targetKm) <= toleranceKm)
+    // A run of about the target distance, or the fastest stretch of that distance inside a GPS run.
+    const efforts = validRuns.flatMap((run): RunningRun[] => {
+      if (!run.gps_route || run.distance_km < targetKm) return [];
+      const seconds = bestEffort(run.gps_route, targetKm * 1000);
+      return seconds ? [{ ...run, distance_km: targetKm, duration_seconds: seconds }] : [];
+    });
+    return [...validRuns.filter((run) => Math.abs(run.distance_km - targetKm) <= toleranceKm), ...efforts]
       .sort((a, b) => a.duration_seconds - b.duration_seconds)[0] ?? null;
   };
 

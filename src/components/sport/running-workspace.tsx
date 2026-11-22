@@ -12,13 +12,14 @@ import { RunningOverview } from "@/components/sport/running/running-overview";
 import { RunningHistory } from "@/components/sport/running/running-history";
 import { RunningProgress } from "@/components/sport/running/running-progress";
 import { RunLive } from "@/components/sport/running/run-live";
+import { RunGps, type GpsSavePayload } from "@/components/sport/running/run-gps";
 import { readDistance, RunFormSheet, type RunForm } from "@/components/sport/running/run-form-sheet";
 import { formatClock, formatKm } from "@/components/sport/running/format";
 import type { Language } from "@/lib/language";
 import type { RunningGoal } from "@/types/database";
 import { computeRunningStats, parseDuration, type RunningGoals, type RunningRun } from "@/lib/running/stats";
 
-type Section = "overview" | "sessions" | "progress" | "goals" | "live";
+type Section = "overview" | "sessions" | "progress" | "goals" | "live" | "gps";
 
 function todayKey() {
   const now = new Date();
@@ -193,6 +194,18 @@ export function RunningWorkspace({ initialRuns, initialGoals, language, initialD
   const weekLine = goals?.weekly_distance_km ? w("weekGoal", { done: formatKm(stats.thisWeek.distanceKm, language), goal: formatKm(goals.weekly_distance_km, language) }) : w("weekPlain", { done: formatKm(stats.thisWeek.distanceKm, language) });
   const tabs: { id: Section; label: string }[] = [{ id: "overview", label: w("tabCourse") }, { id: "progress", label: w("tabProgress") }, { id: "sessions", label: w("tabHistory") }];
   const startLive = () => { stopwatch.reset(); setLaps([]); timerStartedAt.current = Date.now(); setTimerRunning(true); setSection("live"); };
+  const onSaveGps = async (payload: GpsSavePayload) => {
+    try {
+      const result = await saveRunningSession({ date: todayKey(), name: "", notes: "", ...payload });
+      if (result.error) return r(messageFor(result.error));
+      setStatus({ key: result.routeSaved === false ? "v3.gps.routeNotSaved" : "saveSuccess", error: false });
+      setSection("overview");
+      router.refresh();
+      return null;
+    } catch {
+      return r("errorGeneric");
+    }
+  };
   const finishLive = () => {
     stopwatch.pause();
     const seconds = Math.floor((timerBaseMs.current) / 1000);
@@ -208,7 +221,7 @@ export function RunningWorkspace({ initialRuns, initialGoals, language, initialD
 
   return (
     <div className="mx-auto max-w-2xl space-y-5" data-run-workspace style={{ "--sport": "var(--water)", "--sport-soft": "color-mix(in srgb, var(--water) 14%, var(--surface))", "--sport-ink": "color-mix(in srgb, var(--water) 62%, var(--foreground))", "--sport-action": "var(--water)" } as CSSProperties}>
-      {section !== "live" && <>
+      {section !== "live" && section !== "gps" && <>
         <header className="flex items-center gap-3" data-strength-header>
           <Link href={section === "goals" ? "#" : "/sport"} onClick={(event) => { if (section === "goals") { event.preventDefault(); setSection("overview"); } }} prefetch={false} aria-label={section === "goals" ? w("backRunning") : t("sport.focus.backToSport")} className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-border bg-surface transition hover:bg-surface-muted"><SportIcon name="chevron" className="sport-context-back-icon h-4 w-4" /></Link>
           <div className="min-w-0 flex-1">
@@ -223,12 +236,13 @@ export function RunningWorkspace({ initialRuns, initialGoals, language, initialD
         {status && <SportStatusMessage error={status.error} onDismiss={() => setStatus(null)} dismissLabel={t("sport.ui.dismissStatus")}>{r(status.key)}</SportStatusMessage>}
       </>}
 
+      {section === "gps" && <RunGps language={language} previousBest1k={stats.comparable1k?.duration_seconds ?? null} onExit={() => setSection("overview")} onNoGps={(runType) => { update("runType", runType); startLive(); }} onSave={onSaveGps} />}
       {section === "live" && <span hidden data-strength-header />}
       {section === "live" && <RunLive elapsedMs={elapsedMs} running={timerRunning} laps={laps} runType={r(`runTypes.${form.runType}`)} onPause={stopwatch.pause} onResume={stopwatch.start} onLap={() => setLaps((current) => [...current, timerBaseMs.current + (timerStartedAt.current !== null ? Date.now() - timerStartedAt.current : 0)])} onCancel={() => { stopwatch.reset(); setLaps([]); setSection("overview"); }} onFinish={finishLive} />}
 
       {section === "overview" && (runs.length === 0
-        ? <SportEmptyState icon="running" title={r("noRuns")} description={r("noRunsBody")} action={<div className="flex flex-wrap justify-center gap-2"><SportButton onClick={openNewRun}>{r("startRun")}</SportButton><button type="button" onClick={startLive} className="sport-button sport-button-secondary">{w("goRun")}</button></div>} />
-        : <RunningOverview stats={stats} goals={goals} runs={runs} language={language} today={today} onLogRun={openNewRun} onStartLive={startLive} onOpenRun={(run) => { setExpandedId(run.workout_id); setSection("sessions"); }} onGoTo={setSection} />)}
+        ? <SportEmptyState icon="running" title={r("noRuns")} description={r("noRunsBody")} action={<div className="flex flex-wrap justify-center gap-2"><SportButton onClick={openNewRun}>{r("startRun")}</SportButton><button type="button" onClick={() => setSection("gps")} className="sport-button sport-button-secondary">{w("goRun")}</button></div>} />
+        : <RunningOverview stats={stats} goals={goals} runs={runs} language={language} today={today} onLogRun={openNewRun} onStartLive={() => setSection("gps")} onOpenRun={(run) => { setExpandedId(run.workout_id); setSection("sessions"); }} onGoTo={setSection} />)}
 
       {section === "sessions" && (runs.length === 0
         ? <SportEmptyState icon="running" title={r("noRuns")} description={r("noRunsBody")} action={<SportButton onClick={openNewRun}>{r("startRun")}</SportButton>} />

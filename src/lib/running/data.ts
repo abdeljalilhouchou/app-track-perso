@@ -42,6 +42,9 @@ export async function loadRunningData(): Promise<{ runs: RunningRun[]; goals: Ru
         elevation_gain_m: session.elevation_gain_m,
         average_heart_rate: session.average_heart_rate,
         cadence_spm: session.cadence_spm,
+        gps_route: session.gps_route ?? null,
+        km_splits: session.km_splits ?? null,
+        pause_seconds: session.pause_seconds ?? null,
         created_at: workout.created_at,
       }];
     });

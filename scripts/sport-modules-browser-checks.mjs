@@ -51,7 +51,10 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   assert.ok(await evaluate("!!document.querySelector('[data-run-week].module-ring, [data-run-week] .module-ring, [data-run-week]')"), "weekly goal ring");
   assert.ok(await evaluate("!!document.querySelector('[data-run-last]') && !!document.querySelector('[data-run-records]')"), "last run and records");
   // Live stopwatch: start, lap, pause, finish opens the sheet with the time filled in.
+  // Without GPS: the start screen hands over to the plain stopwatch.
   await evaluate("document.querySelector('[data-run-live-start]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-run-gps-nogps], [data-run-gps-nogps-main]')"), "GPS start screen");
+  await evaluate("document.querySelector('[data-run-gps-nogps], [data-run-gps-nogps-main]').click()");
   await until(() => evaluate("!!document.querySelector('[data-run-live]')"), "live run screen");
   assert.ok(await evaluate("!document.querySelector('[data-run-tab]')"), "tabs hidden while running");
   await pause(1300);
@@ -81,6 +84,8 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   assert.ok(await evaluate("document.body.innerText.toLowerCase().includes('cette semaine')"), "runs grouped by week");
   await evaluate("document.querySelector('[data-run-row] .run-row-main').click()");
   await until(() => evaluate("[...document.querySelectorAll('button')].some((b) => b.textContent.trim() === 'Modifier la course')"), "run details open");
+  assert.ok(await evaluate("!!document.querySelector('[data-run-row] [data-run-gps-tag]')"), "GPS run tagged");
+  assert.ok(await evaluate("!!document.querySelector('[data-run-row] svg[role=img] path') && document.querySelectorAll('[data-run-splits] li').length === 6"), "GPS route and km splits in the details");
   await shot("running-sessions-fr-dark-375");
   await runTab("progress");
   await until(() => evaluate("!!document.querySelector('[data-run-record=\"1k\"]')"), "1 km record visible");
@@ -91,6 +96,36 @@ export async function checkSportModules({ send, evaluate, navigatePage, ready, u
   await until(() => evaluate("!!document.querySelector('[data-run-goals]')"), "goals page");
   assert.equal(await evaluate("[...document.querySelectorAll('form label')].filter((l) => /Minutes|Secondes/.test(l.textContent)).length"), 4, "mm:ss fields for both targets");
   await shot("running-goals-fr-dark-375");
+
+  // GPS run with a simulated position: start screen, live distance, in-app lock, summary.
+  await send("Browser.grantPermissions", { permissions: ["geolocation"] }).catch(() => {});
+  const place = (metres) => send("Emulation.setGeolocationOverride", { latitude: 48.85 + metres / 111195, longitude: 2.35, accuracy: 5 });
+  await place(0);
+  await go("/sport/running");
+  await until(() => evaluate("!!document.querySelector('[data-run-live-start]')"), "overview back");
+  await evaluate("document.querySelector('[data-run-live-start]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-run-gps-start]')"), "GPS start screen");
+  await until(() => evaluate("document.querySelector('[data-gps-signal]').dataset.gpsSignal === 'ready'"), "GPS ready", 15000);
+  await shot("running-gps-start-fr-dark-375");
+  await evaluate("document.querySelector('[data-run-gps-go]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-run-gps-live]')"), "GPS live screen");
+  for (let step = 1; step <= 12; step++) { await pause(1000); await place(step * 6); }
+  await until(() => evaluate("parseFloat(document.querySelector('[data-run-gps-distance]').textContent.replace(',', '.')) >= 0.04"), "distance from the GPS", 8000);
+  await shot("running-gps-live-fr-dark-375");
+  await evaluate("document.querySelector('[data-run-gps-lock]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-run-gps-locked]')"), "screen locked");
+  await shot("running-gps-locked-fr-dark-375");
+  await evaluate("(() => { const input = document.querySelector('[data-run-gps-unlock]'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, '100'); input.dispatchEvent(new Event('input', { bubbles: true })); })()");
+  await pause(100);
+  await evaluate("document.querySelector('[data-run-gps-unlock]').dispatchEvent(new PointerEvent('pointerup', { bubbles: true }))");
+  await until(() => evaluate("!document.querySelector('[data-run-gps-locked]')"), "slide unlocks");
+  await evaluate("document.querySelector('[data-run-gps-finish]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-run-gps-finish-screen]')"), "GPS summary");
+  assert.ok(await evaluate("!!document.querySelector('[data-run-gps-save]')"), "summary can be saved");
+  await shot("running-gps-finish-fr-dark-375");
+  await evaluate("window.confirm = () => true; document.querySelector('[data-run-gps-discard]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-run-tabs]')"), "back to Running after discarding");
+  await send("Emulation.clearGeolocationOverride");
 
   // Calisthenics: four tabs, the session of the day, the focus session, program, progress and history.
   await evaluate("localStorage.removeItem('track-perso:calisthenics-session-v1')");
