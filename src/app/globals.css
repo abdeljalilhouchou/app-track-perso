@@ -320,3 +320,9 @@ input[type="password"]::-ms-clear {
   [data-sport-dashboard]:not([data-sport-empty]) > * { grid-column: 1 / -1; margin-top: 0 !important; }
   [data-sport-dashboard] > [data-sport-week], [data-sport-dashboard] > [data-sport-next] { grid-column: auto; }
 }
+@media (min-width: 1280px) {
+  /* Habits › Progress: the month and the per-habit list side by side, so the day cells stay small. */
+  [data-habits-progress] { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; align-items: start; }
+  [data-habits-progress] > * { margin-top: 0 !important; }
+  [data-habits-progress] > :nth-child(-n + 2) { grid-column: 1 / -1; }
+}

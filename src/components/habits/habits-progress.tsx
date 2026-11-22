@@ -44,7 +44,7 @@ export function HabitsProgress({ habits, index, moods, today }: {
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         <div className="rounded-2xl border border-border bg-surface p-4" data-habits-stat="rate">
           <p className="text-xs text-foreground-muted">{p("rate")}</p>
           <p className="mt-1.5 text-2xl font-bold tabular-nums">{stats.rate === null ? "—" : `${stats.rate} %`}</p>
