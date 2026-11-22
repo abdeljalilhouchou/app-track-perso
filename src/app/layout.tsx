@@ -5,6 +5,7 @@ import "./globals.css";
 import { themeInitScript } from "@/lib/theme";
 import { languageInitScript } from "@/lib/language";
 import { AuthTransitionProvider } from "@/components/auth/auth-transition";
+import { PwaRegister } from "@/components/pwa/pwa-register";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,10 +20,19 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "track.perso — Habitudes, sport, humeur",
   description: "Suis tes habitudes, ton sport et ton humeur au même endroit.",
+  applicationName: "track.perso",
+  // Opened from the iPhone home screen: full screen, content under the status bar
+  // (the layout already pads for the safe areas).
+  appleWebApp: { capable: true, title: "track.perso", statusBarStyle: "black-translucent" },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
   viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f7f7fb" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0b10" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -36,7 +46,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script dangerouslySetInnerHTML={{ __html: languageInitScript }} />
       </head>
-      <body className="min-h-full flex flex-col"><AuthTransitionProvider>{children}</AuthTransitionProvider></body>
+      <body className="min-h-full flex flex-col"><AuthTransitionProvider>{children}</AuthTransitionProvider><PwaRegister /></body>
     </html>
   );
 }
