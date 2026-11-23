@@ -48,6 +48,22 @@ export async function checkHome({ send, evaluate, navigatePage, ready, until: wa
   await shot("quick-add-fr-dark-375");
   await evaluate("document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))");
   await until(() => evaluate("!document.querySelector('[data-quick-add-panel]')"), "quick add closes");
+  // "My night" from the quick add: the sheet works out the time asleep.
+  await evaluate("document.querySelector('[data-quick-add]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-quick-sleep]')"), "night tile");
+  await evaluate("document.querySelector('[data-quick-sleep]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-sleep-sheet]')"), "sleep sheet opens");
+  assert.ok(await evaluate("document.querySelector('[data-sleep-total]').textContent.includes(' h ')"), "time asleep shown");
+  await shot("sleep-sheet-fr-dark-375");
+  await evaluate("document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))");
+  await until(() => evaluate("!document.querySelector('[data-sleep-sheet]')"), "sleep sheet closes");
+  await go("/sommeil");
+  await until(() => evaluate("!!document.querySelector('[data-sleep-page]')"), "sleep page");
+  assert.ok(await evaluate("document.querySelector('[data-sleep-last]').innerText.includes('7 h 25')"), "last night");
+  assert.equal(await evaluate("document.querySelectorAll('[data-sleep-bar]').length"), 7, "seven nights");
+  assert.ok(await evaluate("document.querySelector('[data-sleep-links]').innerText.includes('Humeur')"), "mood link shown with enough nights");
+  await shot("sleep-page-fr-dark-375");
+  await go("/dashboard");
   await evaluate("document.querySelector('[data-home-tiles]').scrollIntoView({ block: 'start' })");
   await shot("tiles-fr-dark-375");
 

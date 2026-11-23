@@ -51,7 +51,7 @@ export type Database = {
           goal_unit: string | null;
           moment: "morning" | "afternoon" | "evening" | "any";
           reminder_time: string | null;
-          auto_source: "sport" | "water" | "mood" | null;
+          auto_source: "sport" | "water" | "mood" | "sleep" | null;
           joker_enabled: boolean;
           paused_at: string | null;
         };
@@ -424,6 +424,15 @@ export type Database = {
         };
         Insert: Partial<Database["public"]["Tables"]["calisthenics_skill_logs"]["Row"]> & { user_id: string; skill_id: string; logged_on: string; step_index: number; step_name: string };
         Update: Partial<Database["public"]["Tables"]["calisthenics_skill_logs"]["Row"]>;
+        Relationships: [];
+      };
+      sleep_logs: {
+        Row: {
+          id: string; user_id: string; wake_date: string; bedtime: string; wake_time: string;
+          duration_minutes: number; quality: number; tags: string[]; created_at: string; updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["sleep_logs"]["Row"]> & { user_id: string; wake_date: string; bedtime: string; wake_time: string; duration_minutes: number; quality: number };
+        Update: Partial<Database["public"]["Tables"]["sleep_logs"]["Row"]>;
         Relationships: [];
       };
       running_sessions: {

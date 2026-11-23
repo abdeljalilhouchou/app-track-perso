@@ -496,3 +496,21 @@ input[type="password"]::-ms-clear {
 @media (prefers-reduced-motion: reduce) { .app-star, .app-dust, .app-stars-nebula { animation: none; } .app-dust { display: none; } }
 /* The top bar and the menus let the sky show through. */
 .mobile-topbar, .mobile-bottom-nav { background-color: var(--chrome) !important; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+
+/* Sleep: the "how did you sleep?" sheet, always night-coloured, and the page's small moon. */
+.sleep-sheet {
+  position: fixed; z-index: 71; left: 0; right: 0; bottom: 0;
+  max-height: 92dvh; overflow-y: auto; box-sizing: border-box;
+  display: flex; flex-direction: column; gap: 18px;
+  padding: 10px 18px calc(env(safe-area-inset-bottom) + 22px);
+  border-radius: 28px 28px 0 0; border-top: 1px solid #2f2a5c;
+  background: linear-gradient(180deg, #1a1640 0%, #121219 55%); color: #ededf2;
+  animation: sleep-sheet-in .22s ease-out;
+}
+@media (min-width: 768px) { .sleep-sheet { left: 50%; right: auto; bottom: 50%; width: 440px; transform: translate(-50%, 50%); border-radius: 28px; border: 1px solid #2f2a5c; animation: none; } }
+@keyframes sleep-sheet-in { from { transform: translateY(40px); opacity: 0; } }
+.sleep-time::-webkit-calendar-picker-indicator { display: none; }
+.sleep-time::-webkit-datetime-edit { padding: 0; }
+.sleep-time { --big-number: 30px; min-width: 0; padding: 0; width: 100%; border: 0; background: transparent; color: #ededf2; font-weight: 900; letter-spacing: -.03em; outline: none; color-scheme: dark; }
+.sleep-mini-moon { position: absolute; right: 18px; top: 16px; width: 46px; height: 46px; border-radius: 50%; background: radial-gradient(circle at 34% 32%, #fffaf0, #f7e7bd 45%, #e4c98a); box-shadow: 0 0 30px rgba(245,212,138,.45); animation: sky-float 7s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .sleep-sheet, .sleep-mini-moon { animation: none; } }

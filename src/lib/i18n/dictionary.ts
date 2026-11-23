@@ -10,6 +10,7 @@ import { sportAr, sportEn, sportFr } from "./modules/sport";
 import { nutritionAr, nutritionEn, nutritionFr } from "./modules/nutrition";
 import { moodAr, moodEn, moodFr } from "./modules/mood";
 import { homeAr, homeEn, homeFr } from "./modules/home";
+import { sleepAr, sleepEn, sleepFr } from "./modules/sleep";
 import {
   dashboardExtraAr,
   dashboardExtraEn,
@@ -202,6 +203,7 @@ const fr = {
   nutrition: nutritionFr,
   mood: moodFr,
   home: homeFr,
+  sleep: sleepFr,
   profile: profileFr,
 };
 
@@ -388,6 +390,7 @@ const en: Dictionary = {
   nutrition: nutritionEn,
   mood: moodEn,
   home: homeEn,
+  sleep: sleepEn,
   profile: profileEn,
 };
 
@@ -574,6 +577,7 @@ const ar: Dictionary = {
   nutrition: nutritionAr,
   mood: moodAr,
   home: homeAr,
+  sleep: sleepAr,
   profile: profileAr,
 };
 

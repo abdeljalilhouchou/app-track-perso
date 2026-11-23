@@ -107,6 +107,9 @@ if (habitsMode) {
   tables.habit_logs = logs;
   tables.mood_entries = Array.from({ length: 21 }, (_, i) => ({ id: `c3c3c3c3-0000-4000-8000-${String(i).padStart(12, "0")}`, user_id: uid, entry_date: day(i + 1), mood_score: i === 0 || i > 20 ? 2 : (i + 1) % 9 === 0 ? 2 : 4, energy_level: 3, notes: null, created_at: `${day(i + 1)}T21:00:00Z` }));
   tables.moments = [];
+  // Ten nights: longer ones before good-mood days, a late screen on the short ones.
+  tables.sleep_logs = [[1, "23:40", "07:05", 445, 4, []], [2, "00:50", "06:40", 350, 2, ["lateScreen"]], [3, "23:10", "07:20", 490, 5, []], [4, "23:55", "07:00", 425, 4, []], [5, "01:20", "06:50", 330, 2, ["lateScreen", "lateCoffee"]], [6, "23:30", "07:15", 465, 4, []], [7, "00:40", "06:30", 350, 3, ["lateScreen"]], [8, "23:20", "07:10", 470, 4, []], [9, "00:30", "06:45", 375, 3, []], [10, "23:45", "07:30", 465, 4, []]]
+    .map(([offset, bedtime, wake_time, duration_minutes, quality, tags], index) => ({ id: `d4d4d4d4-0000-4000-8000-${String(index).padStart(12, "0")}`, user_id: uid, wake_date: day(offset - 1), bedtime: `${bedtime}:00`, wake_time: `${wake_time}:00`, duration_minutes, quality, tags, created_at: `${day(offset - 1)}T07:30:00Z`, updated_at: `${day(offset - 1)}T07:30:00Z` }));
 }
 if (nutrition) {
   const day = (offset) => { const date = new Date(); date.setDate(date.getDate() - offset); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; };

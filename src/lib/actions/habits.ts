@@ -10,7 +10,7 @@ import { addDays, canUseJoker, indexLogs, weekStart } from "@/lib/habits-v2";
 const HABIT_COLORS = ["#38bdf8", "#a78bfa", "#34d399", "#fb923c", "#fbbf24", "#f472b6"];
 const KINDS = ["check", "count", "avoid"] as const;
 const MOMENTS = ["morning", "afternoon", "evening", "any"] as const;
-const AUTO_SOURCES = ["sport", "water", "mood"] as const;
+const AUTO_SOURCES = ["sport", "water", "mood", "sleep"] as const;
 
 function parseScheduledDays(formData: FormData): number[] | null {
   const raw = formData.get("scheduled_days");

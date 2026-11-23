@@ -10,7 +10,7 @@ import type { Habit } from "@/types/database";
 
 type Kind = "check" | "count" | "avoid";
 type Moment = "morning" | "afternoon" | "evening" | "any";
-type Auto = "" | "sport" | "water" | "mood";
+type Auto = "" | "sport" | "water" | "mood" | "sleep";
 type Frequency = "daily" | "days" | "weekly";
 
 export const HABIT_PALETTE = ["#38bdf8", "#a78bfa", "#34d399", "#fb923c", "#fbbf24", "#f472b6"];
@@ -229,7 +229,7 @@ export function HabitSheet({ open, onClose, habit, idea }: { open: boolean; onCl
               <label className="flex min-h-16 items-center gap-3 px-3.5">
                 <span className="flex-1"><span className="block text-sm font-semibold">{v("auto")}</span><span className="block text-xs text-foreground-muted">{v("autoHint")}</span></span>
                 <select value={draft.auto} onChange={(event) => set("auto", event.target.value as Auto)} className="min-h-10 max-w-40 rounded-xl border border-border bg-surface-muted px-2 text-sm" data-habit-auto>
-                  {(["", "sport", "water", "mood"] as const).map((value) => <option key={value} value={value}>{v(`autoOptions.${value || "none"}`)}</option>)}
+                  {(["", "sport", "water", "mood", "sleep"] as const).map((value) => <option key={value} value={value}>{v(`autoOptions.${value || "none"}`)}</option>)}
                 </select>
               </label>
             )}

@@ -17,6 +17,10 @@ import {
   UserCircleIcon,
 } from "@/components/ui/nav-icons";
 
+function MoonIcon({ className }: { className?: string }) {
+  return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>;
+}
+
 export function SidebarNav({ displayName, avatarUrl }: { displayName: string; avatarUrl: string | null }) {
   const pathname = usePathname();
   const t = useT();
@@ -27,13 +31,14 @@ export function SidebarNav({ displayName, avatarUrl }: { displayName: string; av
     { href: "/sport", label: t("nav.sport"), shortLabel: t("nav.sportShort"), Icon: ActivityIcon },
     { href: "/nutrition", label: t("nav.nutrition"), shortLabel: t("nav.nutritionShort"), Icon: UtensilsIcon },
     { href: "/humeur", label: t("nav.mood"), shortLabel: t("nav.moodShort"), Icon: SmileIcon },
+    { href: "/sommeil", label: t("sleep.title"), shortLabel: t("sleep.title"), Icon: MoonIcon },
     { href: "/profil", label: t("nav.profile"), shortLabel: t("nav.profile"), Icon: UserCircleIcon },
   ];
   const primaryLinks = links.filter((link) => link.href !== "/profil");
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   // Mood is reached from the "+" in the middle of the floating menu.
-  const mobileLinks = primaryLinks.filter((link) => link.href !== "/humeur");
+  const mobileLinks = primaryLinks.filter((link) => link.href !== "/humeur" && link.href !== "/sommeil");
   const tab = ({ href, label, shortLabel, Icon }: (typeof links)[number]) => {
         const active = isActive(href);
         return (

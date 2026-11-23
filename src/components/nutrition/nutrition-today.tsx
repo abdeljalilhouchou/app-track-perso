@@ -98,6 +98,16 @@ export function AddFoodButton({ foods, quickFoods }: { foods: Food[]; quickFoods
     if (sheet) dialogRef.current?.showModal();
   }, [sheet]);
 
+  // "Add a food" from the quick add lands here with ?add=1: open the sheet straight away.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("add") !== "1") return;
+    url.searchParams.delete("add");
+    window.history.replaceState(null, "", url);
+    const timer = window.setTimeout(() => setSheet(momentNow()));
+    return () => window.clearTimeout(timer);
+  }, []);
+
   return (
     <>
       <div className="sticky bottom-[calc(5.75rem+env(safe-area-inset-bottom)+0.75rem)] z-10 md:bottom-4">

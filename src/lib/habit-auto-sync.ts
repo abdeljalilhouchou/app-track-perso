@@ -1,7 +1,7 @@
 import type { createClient } from "@/lib/supabase/server";
 
 type Client = Awaited<ReturnType<typeof createClient>>;
-export type AutoSource = "sport" | "water" | "mood";
+export type AutoSource = "sport" | "water" | "mood" | "sleep";
 
 /**
  * Checks, for `date`, every active habit set to be checked by `source` (a sport session, the

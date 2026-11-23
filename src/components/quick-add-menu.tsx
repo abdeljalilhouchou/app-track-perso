@@ -5,20 +5,22 @@ import Link from "next/link";
 import { useT } from "@/components/language-provider";
 import { useActionToast } from "@/components/toast/use-action-toast";
 import { addWater } from "@/lib/actions/nutrition";
+import { SleepSheet } from "@/components/sleep/sleep-sheet";
 
 const PATHS = {
-  meal: <><path d="M3 2v7c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2V2" /><path d="M7 2v20" /><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7" /></>,
+  night: <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />,
   mood: <><circle cx="12" cy="12" r="9" /><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01" /></>,
-  sport: <path d="M22 12h-4l-3 9L9 3l-3 9H2" />,
+  food: <><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></>,
   water: <path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z" />,
 };
 const Icon = ({ name, color }: { name: keyof typeof PATHS; color: string }) => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>{PATHS[name]}</svg>;
 
-/** The centre "+" of the floating menu: opens the quick add (meal, mood, workout, +250 ml of water). */
+/** The centre "+" of the floating menu: log last night, note the mood, add a food, or +250 ml of water. */
 export function QuickAddMenu() {
   const t = useT();
   const run = useActionToast();
   const [open, setOpen] = useState(false);
+  const [sleep, setSleep] = useState(false);
   const [pending, startTransition] = useTransition();
 
   useEffect(() => {
@@ -28,7 +30,8 @@ export function QuickAddMenu() {
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
-  const tile = "flex min-h-[84px] flex-col items-center justify-center gap-2 rounded-2xl border border-border bg-surface text-sm font-semibold transition active:scale-[.98] disabled:opacity-60";
+  const tile = "flex min-h-[92px] flex-col items-center justify-center gap-1 rounded-2xl border border-border bg-surface px-2 text-center text-sm font-bold transition active:scale-[.98] disabled:opacity-60";
+  const hint = "text-[11px] font-medium text-foreground-muted";
   const close = () => setOpen(false);
 
   return <>
@@ -40,12 +43,13 @@ export function QuickAddMenu() {
       <div id="quick-add-panel" role="dialog" aria-label={t("home.quick.label")} className="quick-add-panel md:hidden" data-quick-add-panel>
         <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground-muted">{t("home.quick.label")}</p>
         <div className="grid grid-cols-2 gap-2.5">
-          <Link href="/nutrition" onClick={close} className={tile}><Icon name="meal" color="var(--nutrition)" />{t("home.quick.meal")}</Link>
-          <Link href="/humeur#checkin" onClick={close} className={tile}><Icon name="mood" color="var(--mood)" />{t("home.quick.mood")}</Link>
-          <Link href="/sport" onClick={close} className={tile}><Icon name="sport" color="var(--sport)" />{t("home.quick.sport")}</Link>
-          <button type="button" disabled={pending} onClick={() => startTransition(async () => { await run(() => addWater(250), { success: t("home.todo.waterAdded") }); close(); })} className={tile}><Icon name="water" color="var(--water)" />{t("home.quick.water")} · 250 ml</button>
+          <button type="button" onClick={() => { close(); setSleep(true); }} className={tile} style={{ borderColor: "color-mix(in srgb, #818cf8 40%, var(--border))", background: "color-mix(in srgb, #818cf8 10%, var(--surface))" }} data-quick-sleep><Icon name="night" color="#818cf8" />{t("sleep.quick.night")}<span className={hint}>{t("sleep.quick.nightHint")}</span></button>
+          <Link href="/humeur#checkin" onClick={close} className={tile}><Icon name="mood" color="var(--mood)" />{t("home.quick.mood")}<span className={hint}>{t("sleep.quick.moodHint")}</span></Link>
+          <Link href="/nutrition?add=1" onClick={close} className={tile}><Icon name="food" color="var(--nutrition)" />{t("sleep.quick.food")}<span className={hint}>{t("sleep.quick.foodHint")}</span></Link>
+          <button type="button" disabled={pending} onClick={() => startTransition(async () => { await run(() => addWater(250), { success: t("home.todo.waterAdded") }); close(); })} className={tile}><Icon name="water" color="var(--water)" />{t("home.quick.water")}<span className={hint}>{t("sleep.quick.waterHint")}</span></button>
         </div>
       </div>
     </>}
+    {sleep && <SleepSheet onClose={() => setSleep(false)} />}
   </>;
 }
