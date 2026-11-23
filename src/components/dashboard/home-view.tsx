@@ -21,43 +21,6 @@ const useHour = () => useSyncExternalStore(subscribeHour, () => new Date().getHo
 
 export type DayBar = { key: "habits" | "meals" | "water" | "mood"; share: number; value: string; muted?: boolean };
 
-export function DayCard({ pct, done, total, bars }: { pct: number; done: number; total: number; bars: DayBar[] }) {
-  const { t } = useLanguage();
-  const radius = 46;
-  const circumference = 2 * Math.PI * radius;
-  const title = !total ? "none" : pct >= 100 ? "great" : pct >= 50 ? "good" : "start";
-  const colors = { habits: "var(--habit)", meals: "var(--nutrition)", water: "var(--water)", mood: "var(--mood)" };
-  return (
-    <section aria-label={t("home.day.label")} className={`${card} space-y-4 p-5`} style={{ borderColor: "color-mix(in srgb, var(--accent) 35%, var(--border))" }} data-home-day>
-      <div className="flex items-center gap-5">
-        <div className="relative h-[108px] w-[108px] shrink-0">
-          <svg width="108" height="108" viewBox="0 0 108 108" aria-hidden>
-            <circle cx="54" cy="54" r={radius} fill="none" stroke="var(--surface-muted)" strokeWidth="10" />
-            <circle cx="54" cy="54" r={radius} fill="none" stroke="var(--accent)" strokeWidth="10" strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={circumference * (1 - pct / 100)} transform="rotate(-90 54 54)" className="transition-[stroke-dashoffset] duration-700 motion-reduce:transition-none" />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-[28px] font-bold leading-none tabular-nums" data-home-pct>{pct} %</span>
-            <span className="mt-1 text-[11px] text-foreground-muted">{t("home.day.label")}</span>
-          </div>
-        </div>
-        <div className="min-w-0 space-y-1.5">
-          <p className="font-semibold">{t(`home.day.title.${title}`)}</p>
-          {total > 0 && <p className="text-sm text-foreground-muted">{t("home.day.count", { done, total })}</p>}
-        </div>
-      </div>
-      <div className="grid grid-cols-4 gap-2">
-        {bars.map((bar) => (
-          <div key={bar.key} className="min-w-0 space-y-1.5">
-            <p className="truncate text-[11px] text-foreground-muted">{t(`home.day.${bar.key}`)}</p>
-            <div className="h-1.5 overflow-hidden rounded-full bg-surface-muted"><div className="h-full rounded-full" style={{ width: `${Math.min(100, bar.share * 100)}%`, background: colors[bar.key] }} /></div>
-            <p className={`truncate text-xs font-semibold tabular-nums ${bar.muted ? "text-foreground-muted" : ""}`}>{bar.value}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 export function NextActions({ today, habits, moodLogged, waterMl, waterGoal, mealsLogged, sportDone, sportGoal, isoWeekday }: {
   today: string;
   habits: PendingHabit[];

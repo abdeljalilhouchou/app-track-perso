@@ -3,6 +3,7 @@
 export const homeFr = {
   hello: "Bonjour {name}",
   welcome: "Bienvenue {name}",
+  sky: { morning: "Bonjour {name}", afternoon: "Bon après-midi {name}", evening: "Bonsoir {name}", left: "Encore {count} petites choses et ta journée est complète.", leftOne: "Encore une petite chose et ta journée est complète.", done: "Journée complète : bravo !", none: "Rien de prévu aujourd’hui : profite.", dayPct: "{pct} % de ta journée", sport: "Sport {done}/{goal} cette semaine" },
   day: {
     label: "ta journée",
     title: { great: "Tout est fait, bravo", good: "Belle journée, il en reste un peu", start: "La journée commence", none: "Rien de prévu pour l’instant" },
@@ -46,6 +47,7 @@ export const homeFr = {
 export const homeEn: typeof homeFr = {
   hello: "Hello {name}",
   welcome: "Welcome {name}",
+  sky: { morning: "Good morning {name}", afternoon: "Good afternoon {name}", evening: "Good evening {name}", left: "{count} small things left and your day is complete.", leftOne: "One small thing left and your day is complete.", done: "Day complete: well done!", none: "Nothing planned today: enjoy.", dayPct: "{pct} % of your day", sport: "Sport {done}/{goal} this week" },
   day: {
     label: "your day",
     title: { great: "All done, well done", good: "Nice day, a little left", start: "The day is starting", none: "Nothing planned yet" },
@@ -89,6 +91,7 @@ export const homeEn: typeof homeFr = {
 export const homeAr: typeof homeFr = {
   hello: "مرحبًا {name}",
   welcome: "أهلًا بك {name}",
+  sky: { morning: "صباح الخير {name}", afternoon: "مساء الخير {name}", evening: "مساء الخير {name}", left: "بقيت {count} أشياء صغيرة لتكتمل يومك.", leftOne: "بقي شيء صغير واحد لتكتمل يومك.", done: "اكتمل يومك: أحسنت!", none: "لا شيء مخطط اليوم: استمتع.", dayPct: "{pct} % من يومك", sport: "الرياضة {done}/{goal} هذا الأسبوع" },
   day: {
     label: "يومك",
     title: { great: "أنجزت كل شيء، أحسنت", good: "يوم جميل، بقي القليل", start: "اليوم يبدأ", none: "لا شيء مخطط بعد" },

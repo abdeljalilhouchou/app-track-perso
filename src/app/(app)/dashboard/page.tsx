@@ -6,7 +6,8 @@ import { computeProfileStats, summarizeProgress } from "@/lib/profile-stats";
 import { BADGES } from "@/lib/gamification";
 import { addDays, currentStreak, dayState, indexLogs, isFlexible, jokerLeftThisWeek, keptDates, weekStart as habitWeekStart } from "@/lib/habits-v2";
 import { dayProgress, type PendingHabit } from "@/lib/home";
-import { DayCard, ModuleTiles, NextActions, QuickActions, StartCard, type TilesData } from "@/components/dashboard/home-view";
+import { ModuleTiles, NextActions, QuickActions, StartCard, type DayBar, type TilesData } from "@/components/dashboard/home-view";
+import { SkyHero } from "@/components/dashboard/sky-hero";
 import { getLanguage, getT } from "@/lib/i18n/get-dictionary";
 import { fetchAllRows } from "@/lib/paging";
 
@@ -139,13 +140,26 @@ export default async function DashboardPage() {
   const isNew = habits.length === 0 && meals.length === 0 && moodEntries.length === 0 && workouts.length === 0;
   const goalsHref = `/nutrition?date=${todayStr}#goals`;
 
+  const dayBars: DayBar[] = [
+              { key: "habits", share: dueToday.length ? habitsDone / dueToday.length : 0, value: `${habitsDone}/${dueToday.length}`, muted: !dueToday.length },
+              { key: "meals", share: kcalGoal ? kcal / kcalGoal : todayMeals.length ? 1 : 0, value: `${number(kcal)} kcal`, muted: !todayMeals.length },
+              { key: "water", share: waterMl / waterGoal, value: `${number(waterMl / 1000, 1)} / ${number(waterGoal / 1000, 1)} L` },
+              { key: "mood", share: moodToday !== null ? 1 : 0, value: moodToday !== null ? t("home.day.logged") : t("home.day.toLog"), muted: moodToday === null },
+            ];
+
   return (
     <div className="page-shell space-y-5 animate-fade-in" data-home>
-      <header>
-        <p className="text-xs font-semibold uppercase tracking-wide text-accent first-letter:uppercase">{dateLabel}</p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight">{t(isNew ? "home.welcome" : "home.hello", { name: displayName })}</h1>
-        {isNew && <p className="mt-1.5 text-sm text-foreground-muted">{t("home.start.intro")}</p>}
-      </header>
+      <SkyHero
+        dateLabel={dateLabel}
+        name={displayName}
+        isNew={isNew}
+        pct={day.pct}
+        done={day.done}
+        total={day.total}
+        sportDone={weekWorkouts.length}
+        sportGoal={sportGoal}
+        bars={dayBars}
+      />
 
       <div className="home-columns">
       <div className="space-y-5" data-home-main>
@@ -153,17 +167,6 @@ export default async function DashboardPage() {
         <StartCard hasHabit={habits.length > 0} hasGoals={Boolean(kcalGoal)} goalsHref={goalsHref} />
       ) : (
         <>
-          <DayCard
-            pct={day.pct}
-            done={day.done}
-            total={day.total}
-            bars={[
-              { key: "habits", share: dueToday.length ? habitsDone / dueToday.length : 0, value: `${habitsDone}/${dueToday.length}`, muted: !dueToday.length },
-              { key: "meals", share: kcalGoal ? kcal / kcalGoal : todayMeals.length ? 1 : 0, value: `${number(kcal)} kcal`, muted: !todayMeals.length },
-              { key: "water", share: waterMl / waterGoal, value: `${number(waterMl / 1000, 1)} / ${number(waterGoal / 1000, 1)} L` },
-              { key: "mood", share: moodToday !== null ? 1 : 0, value: moodToday !== null ? t("home.day.logged") : t("home.day.toLog"), muted: moodToday === null },
-            ]}
-          />
           <NextActions today={todayStr} habits={pendingHabits} moodLogged={moodToday !== null} waterMl={waterMl} waterGoal={waterGoal} mealsLogged={todayMeals.length} sportDone={weekWorkouts.length} sportGoal={sportGoal} isoWeekday={isoDay} />
         </>
       )}
