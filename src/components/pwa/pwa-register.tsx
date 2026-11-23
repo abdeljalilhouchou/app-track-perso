@@ -47,7 +47,7 @@ export function PwaRegister() {
   const text = TEXT[lang] ?? TEXT.fr;
   const dismiss = () => { setHint(false); try { localStorage.setItem(HINT_KEY, "1"); } catch {} };
 
-  return <div role="dialog" aria-label={text.title} className="fixed inset-x-3 z-[60] mx-auto flex max-w-md items-start gap-3 rounded-2xl border border-border bg-surface p-3.5 shadow-2xl" style={{ bottom: "calc(3.5rem + env(safe-area-inset-bottom) + 12px)" }} data-pwa-hint>
+  return <div role="dialog" aria-label={text.title} className="fixed inset-x-3 z-[60] mx-auto flex max-w-md items-start gap-3 rounded-2xl border border-border bg-surface p-3.5 shadow-2xl" style={{ bottom: "calc(6rem + env(safe-area-inset-bottom) + 12px)" }} data-pwa-hint>
     {/* eslint-disable-next-line @next/next/no-img-element -- a fixed 40px icon, no optimisation needed */}
     <img src="/icons/icon-192.png" alt="" width={40} height={40} className="h-10 w-10 shrink-0 rounded-[10px]" />
     <div className="min-w-0 flex-1">

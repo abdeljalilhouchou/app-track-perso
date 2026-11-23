@@ -100,7 +100,7 @@ export function AddFoodButton({ foods, quickFoods }: { foods: Food[]; quickFoods
 
   return (
     <>
-      <div className="sticky bottom-[calc(3.5rem+env(safe-area-inset-bottom)+0.75rem)] z-10 md:bottom-4">
+      <div className="sticky bottom-[calc(5.75rem+env(safe-area-inset-bottom)+0.75rem)] z-10 md:bottom-4">
         <button
           type="button"
           onClick={() => setSheet(momentNow())}

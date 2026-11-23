@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar } from "@/components/avatar";
 import { MobileAccountMenu } from "@/components/mobile-account-menu";
 import { useT } from "@/components/language-provider";
+import { QuickAddMenu } from "@/components/quick-add-menu";
 import {
   HomeIcon,
   SparkleIcon,
@@ -31,6 +32,36 @@ export function SidebarNav({ displayName, avatarUrl }: { displayName: string; av
   const primaryLinks = links.filter((link) => link.href !== "/profil");
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
+  // Mood is reached from the "+" in the middle of the floating menu.
+  const mobileLinks = primaryLinks.filter((link) => link.href !== "/humeur");
+  const tab = ({ href, label, shortLabel, Icon }: (typeof links)[number]) => {
+        const active = isActive(href);
+        return (
+          <Link
+            key={href}
+            href={href}
+            // The main pages load in full ahead of the tap; a save clears this cache.
+            prefetch
+            aria-label={label}
+            aria-current={active ? "page" : undefined}
+            className={`relative flex min-w-0 min-h-[58px] flex-col items-center justify-center gap-1 rounded-xl px-0.5 transition-colors duration-150 focus-visible:z-10 ${
+              active ? "text-accent" : "text-foreground-muted hover:text-foreground"
+            }`}
+          >
+            <span aria-hidden className={`absolute inset-x-4 top-0 h-[3px] rounded-b-full transition-colors ${active ? "bg-accent" : "bg-transparent"}`} />
+            <span aria-hidden>
+              <Icon className="relative h-5 w-5" />
+            </span>
+            <span
+              aria-hidden
+              className="relative max-w-full truncate text-[10px] font-medium leading-tight"
+            >
+              {shortLabel}
+            </span>
+          </Link>
+        );
+      };
+
   return (
     <>
       {/* Mobile top bar */}
@@ -45,35 +76,11 @@ export function SidebarNav({ displayName, avatarUrl }: { displayName: string; av
       {/* Mobile bottom tab bar */}
       <nav
         aria-label={t("nav.primaryNavigation")}
-        className="mobile-bottom-nav fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 items-stretch border-t border-border bg-surface px-1 md:hidden"
+        className="mobile-bottom-nav md:hidden"
       >
-        {primaryLinks.map(({ href, label, shortLabel, Icon }) => {
-          const active = isActive(href);
-          return (
-            <Link
-              key={href}
-              href={href}
-              // The main pages load in full ahead of the tap; a save clears this cache.
-              prefetch
-              aria-label={label}
-              aria-current={active ? "page" : undefined}
-              className={`relative flex min-w-0 min-h-14 flex-col items-center justify-center gap-1 rounded-xl px-0.5 transition-colors duration-150 focus-visible:z-10 ${
-                active ? "text-accent" : "text-foreground-muted hover:text-foreground"
-              }`}
-            >
-              <span aria-hidden className={`absolute inset-x-2 top-0 h-0.5 rounded-b-full transition-colors ${active ? "bg-accent" : "bg-transparent"}`} />
-              <span aria-hidden>
-                <Icon className="relative h-5 w-5" />
-              </span>
-              <span
-                aria-hidden
-                className="relative max-w-full truncate text-[10px] font-medium leading-tight"
-              >
-                {shortLabel}
-              </span>
-            </Link>
-          );
-        })}
+        {mobileLinks.slice(0, 2).map(tab)}
+        <QuickAddMenu />
+        {mobileLinks.slice(2).map(tab)}
       </nav>
 
       {/* Desktop sidebar */}

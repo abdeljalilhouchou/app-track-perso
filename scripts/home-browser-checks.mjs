@@ -41,6 +41,13 @@ export async function checkHome({ send, evaluate, navigatePage, ready, until: wa
   assert.ok(await evaluate("!!document.querySelector('[data-home-level]')"), "level strip");
   assert.ok(!(await evaluate("!!document.querySelector('.recharts-wrapper')")), "no big charts on home any more");
   await shot("top-fr-dark-375");
+  // Floating menu: the "+" opens the quick add, Escape closes it.
+  await evaluate("document.querySelector('[data-quick-add]').click()");
+  await until(() => evaluate("!!document.querySelector('[data-quick-add-panel]')"), "quick add opens");
+  assert.equal(await evaluate("document.querySelectorAll('[data-quick-add-panel] a, [data-quick-add-panel] button').length"), 4, "meal, mood, workout and water");
+  await shot("quick-add-fr-dark-375");
+  await evaluate("document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))");
+  await until(() => evaluate("!document.querySelector('[data-quick-add-panel]')"), "quick add closes");
   await evaluate("document.querySelector('[data-home-tiles]').scrollIntoView({ block: 'start' })");
   await shot("tiles-fr-dark-375");
 

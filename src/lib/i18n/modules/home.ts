@@ -23,7 +23,7 @@ export const homeFr = {
     sportTitle: "Encore {count} séance(s) cette semaine", sportHint: "{done} sur {goal} prévues", sportCta: "Ouvrir",
     habitDone: "« {name} » cochée", waterAdded: "+250 ml d’eau",
   },
-  quick: { label: "Ajout rapide", meal: "Repas", mood: "Humeur", sport: "Séance", water: "Eau" },
+  quick: { close: "Fermer", label: "Ajout rapide", meal: "Repas", mood: "Humeur", sport: "Séance", water: "Eau" },
   tiles: {
     label: "Modules",
     habits: "Habitudes", habitsValue: "{done} / {total} faites", joker: "Joker de la semaine dispo", noHabits: "Aucune habitude", createFirst: "Créer la première",
@@ -67,7 +67,7 @@ export const homeEn: typeof homeFr = {
     sportTitle: "{count} more session(s) this week", sportHint: "{done} of {goal} planned", sportCta: "Open",
     habitDone: "“{name}” checked", waterAdded: "+250 ml of water",
   },
-  quick: { label: "Quick add", meal: "Meal", mood: "Mood", sport: "Workout", water: "Water" },
+  quick: { close: "Close", label: "Quick add", meal: "Meal", mood: "Mood", sport: "Workout", water: "Water" },
   tiles: {
     label: "Modules",
     habits: "Habits", habitsValue: "{done} / {total} done", joker: "This week’s joker is free", noHabits: "No habits", createFirst: "Create the first",
@@ -111,7 +111,7 @@ export const homeAr: typeof homeFr = {
     sportTitle: "تبقّت {count} حصة هذا الأسبوع", sportHint: "{done} من {goal} مخططة", sportCta: "فتح",
     habitDone: "تم إنجاز «{name}»", waterAdded: "+250 مل من الماء",
   },
-  quick: { label: "إضافة سريعة", meal: "وجبة", mood: "المزاج", sport: "حصة", water: "ماء" },
+  quick: { close: "إغلاق", label: "إضافة سريعة", meal: "وجبة", mood: "المزاج", sport: "حصة", water: "ماء" },
   tiles: {
     label: "الوحدات",
     habits: "العادات", habitsValue: "{done} / {total} منجزة", joker: "جوكر الأسبوع متاح", noHabits: "لا توجد عادات", createFirst: "أنشئ الأولى",
