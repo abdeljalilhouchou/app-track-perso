@@ -408,3 +408,51 @@ input[type="password"]::-ms-clear {
   .sky-text { padding: 36px 40px 0; min-height: 280px; }
   .sky-counters { padding: 0 24px; gap: 12px; }
 }
+
+/* App background: nebula, twinkling stars and rising dust behind every signed-in page. */
+:root {
+  --stars-glow: radial-gradient(120% 60% at 50% 0%, #ecebff 0%, rgba(236,235,255,0) 70%);
+  --stars-nebula: rgba(196,181,253,.38);
+  --stars-nebula-2: rgba(147,197,253,.28);
+  --stars-star: #a5b4fc;
+  --stars-dust-a: rgba(129,140,248,.45);
+  --stars-dust-b: rgba(236,72,153,.3);
+  --stars-dust-c: rgba(56,189,248,.35);
+  --chrome: rgba(255,255,255,.72);
+}
+:root[data-theme="dark"] {
+  --stars-glow: radial-gradient(120% 60% at 50% 0%, #17153a 0%, rgba(23,21,58,0) 70%);
+  --stars-nebula: rgba(129,140,248,.2);
+  --stars-nebula-2: rgba(167,139,250,.14);
+  --stars-star: #fff;
+  --stars-dust-a: rgba(199,210,254,.8);
+  --stars-dust-b: rgba(196,181,253,.75);
+  --stars-dust-c: rgba(125,211,252,.6);
+  --chrome: rgba(11,11,16,.62);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --stars-glow: radial-gradient(120% 60% at 50% 0%, #17153a 0%, rgba(23,21,58,0) 70%);
+    --stars-nebula: rgba(129,140,248,.2);
+    --stars-nebula-2: rgba(167,139,250,.14);
+    --stars-star: #fff;
+    --stars-dust-a: rgba(199,210,254,.8);
+    --stars-dust-b: rgba(196,181,253,.75);
+    --stars-dust-c: rgba(125,211,252,.6);
+    --chrome: rgba(11,11,16,.62);
+  }
+}
+.app-stars { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: var(--stars-glow); }
+.app-stars-nebula { position: absolute; left: 30%; top: 12%; width: 70vmax; height: 40vmax; max-width: 900px; max-height: 520px; border-radius: 50%; background: var(--stars-nebula); filter: blur(60px); animation: stars-nebula 34s ease-in-out infinite; }
+.app-stars-nebula-2 { left: -20%; top: 55%; background: var(--stars-nebula-2); animation-duration: 46s; animation-direction: reverse; }
+.app-star { position: absolute; border-radius: 50%; background: var(--stars-star); box-shadow: 0 0 6px var(--stars-star); animation: stars-twinkle 3.6s ease-in-out infinite; }
+.app-dust { position: absolute; bottom: -12px; border-radius: 50%; animation: stars-rise linear infinite; }
+.app-dust-a { background: var(--stars-dust-a); }
+.app-dust-b { background: var(--stars-dust-b); }
+.app-dust-c { background: var(--stars-dust-c); }
+@keyframes stars-twinkle { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+@keyframes stars-rise { from { transform: translateY(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } to { transform: translateY(-105vh); opacity: 0; } }
+@keyframes stars-nebula { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(40px, -30px) rotate(10deg); } }
+@media (prefers-reduced-motion: reduce) { .app-star, .app-dust, .app-stars-nebula { animation: none; } .app-dust { display: none; } }
+/* The top bar and the menus let the sky show through. */
+.mobile-topbar, .mobile-bottom-nav { background-color: var(--chrome) !important; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }

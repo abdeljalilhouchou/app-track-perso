@@ -9,6 +9,7 @@ import { isTheme } from "@/lib/theme";
 import { isLanguage } from "@/lib/language";
 import { MotionConfig } from "framer-motion";
 import { PerformanceMetrics } from "@/components/performance-metrics";
+import { AppStars } from "@/components/app-stars";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -28,6 +29,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <ThemeProvider initialTheme={theme}>
       <LanguageProvider initialLanguage={language}>
         <MotionConfig reducedMotion="user">
+          <AppStars />
           <div className="app-shell flex min-h-dvh min-w-0 flex-col md:flex-row">
             {process.env.NEXT_PUBLIC_PERFORMANCE_DEBUG === "true" && <PerformanceMetrics />}
             <SidebarNav displayName={displayName} avatarUrl={profile?.avatar_url ?? null} />
