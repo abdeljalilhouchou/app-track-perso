@@ -514,3 +514,16 @@ input[type="password"]::-ms-clear {
 .sleep-time { --big-number: 30px; min-width: 0; padding: 0; width: 100%; border: 0; background: transparent; color: #ededf2; font-weight: 900; letter-spacing: -.03em; outline: none; color-scheme: dark; }
 .sleep-mini-moon { position: absolute; right: 18px; top: 16px; width: 46px; height: 46px; border-radius: 50%; background: radial-gradient(circle at 34% 32%, #fffaf0, #f7e7bd 45%, #e4c98a); box-shadow: 0 0 30px rgba(245,212,138,.45); animation: sky-float 7s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .sleep-sheet, .sleep-mini-moon { animation: none; } }
+
+/* Glass cards: translucent over the starry sky, with a glow in the page's colour (--glow). */
+.glass-card {
+  --glow: var(--accent);
+  position: relative; overflow: hidden; border-radius: 26px;
+  border: 1px solid color-mix(in srgb, var(--glow) 32%, var(--border));
+  background: linear-gradient(160deg, color-mix(in srgb, var(--glow) 15%, transparent), color-mix(in srgb, var(--surface) 80%, transparent) 55%);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .16), inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+.glass-card::before { content: ""; position: absolute; right: -50px; top: -60px; width: 190px; height: 190px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--glow) 30%, transparent), transparent 70%); pointer-events: none; }
+.glass-card > * { position: relative; }
+.glass-card.glow-left::before { right: auto; left: -50px; }

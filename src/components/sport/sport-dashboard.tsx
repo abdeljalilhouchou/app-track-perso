@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { addDays, format, getISOWeek, startOfWeek } from "date-fns";
 import { WeeklyGoal } from "./weekly-goal";
 import { SportIcon, type SportIconName } from "./ui/sport-icons";
@@ -87,9 +87,9 @@ export function SportDashboard({ data, t }: { data: HubData; t: Translator }) {
   return <div className="page-shell space-y-6" data-sport-dashboard>
     {header}
 
-    <section aria-label={h("thisWeek")} className={`${card} space-y-5 p-[18px]`} data-sport-week>
+    <section aria-label={h("thisWeek")} className="glass-card glow-left space-y-5 p-[18px]" style={{ "--glow": "var(--sport)" } as CSSProperties} data-sport-week>
       <div className="flex items-center gap-5">
-        <Ring done={week.sessions} goal={weeklyGoal} size={96} n={n} label={h("ringSessions")} />
+        <Ring done={week.sessions} goal={weeklyGoal} size={108} n={n} label={h("ringSessions")} />
         <dl className="sport-hub-week-stats min-w-0 flex-1 space-y-2.5">
           <Figure label={h("time")} value={duration(week.minutes, n, t)} change={week.minutesChange === null ? null : { value: week.minutesChange, text: duration(Math.abs(week.minutesChange), n, t) }} h={h} />
           <Figure label={h("volumeShort")} value={week.volume === null ? "—" : `${n.format(Math.round(week.volume))} kg`} change={week.volumeChange === null ? null : { value: week.volumeChange, text: `${n.format(Math.abs(week.volumeChange))} %` }} empty={week.volume === null} h={h} />
@@ -199,11 +199,12 @@ function Ring({ done, goal, size, n, label }: { done: number; goal: number; size
   const share = goal > 0 ? Math.min(1, done / goal) : 0;
   return <div className="relative shrink-0" style={{ width: size, height: size }} data-sport-ring>
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden>
+      <defs><linearGradient id="sport-ring-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#6ee7b7" /><stop offset="1" stopColor="#059669" /></linearGradient></defs>
       <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="var(--surface-muted)" strokeWidth={stroke} />
-      {share > 0 && <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="var(--sport)" strokeWidth={stroke} strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={circumference * (1 - share)} transform={`rotate(-90 ${size / 2} ${size / 2})`} />}
+      {share > 0 && <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="url(#sport-ring-grad)" strokeWidth={stroke} strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={circumference * (1 - share)} transform={`rotate(-90 ${size / 2} ${size / 2})`} />}
     </svg>
     <div className="absolute inset-0 flex flex-col items-center justify-center">
-      <bdi dir="ltr" className="whitespace-nowrap text-2xl font-bold leading-none tabular-nums">{n.format(done)}<span className="text-sm font-medium text-foreground-muted">/{n.format(goal)}</span></bdi>
+      <bdi dir="ltr" className="whitespace-nowrap text-[28px] font-black leading-none tabular-nums">{n.format(done)}<span className="text-sm font-medium text-foreground-muted">/{n.format(goal)}</span></bdi>
       <span className="mt-1 text-[11px] text-foreground-muted">{label}</span>
     </div>
   </div>;

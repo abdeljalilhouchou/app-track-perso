@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition, type ReactNode } from "react";
+import { useRef, useState, useTransition, type CSSProperties, type ReactNode } from "react";
 import { Reorder } from "framer-motion";
 import { useLanguage } from "@/components/language-provider";
 import { useActionToast } from "@/components/toast/use-action-toast";
@@ -133,7 +133,7 @@ function TodayTab({ habits, index, today, onEdit, onOpenProgress }: {
     <div className="habits-columns">
       <div className="space-y-5" data-habits-aside>
       {review && reviewHidden !== review.start && (
-        <section aria-labelledby="habits-review" className="space-y-3 rounded-3xl border border-border bg-surface p-4" data-habits-review>
+        <section aria-labelledby="habits-review" className="glass-card space-y-3 p-[18px]" style={{ "--glow": "var(--habit)" } as CSSProperties} data-habits-review>
           <div className="flex items-center justify-between gap-2">
             <h2 id="habits-review" className="text-xs font-semibold uppercase tracking-wide text-foreground-muted">
               {t("habits.v2.review.title", { range: `${Number(review.start.slice(8))}–${Number(review.end.slice(8))}/${review.end.slice(5, 7)}` })}
@@ -141,31 +141,32 @@ function TodayTab({ habits, index, today, onEdit, onOpenProgress }: {
             <button type="button" onClick={() => hideReview(review.start)} aria-label={t("habits.v2.review.hide")} className="-me-2 grid h-9 w-9 place-items-center rounded-xl text-foreground-muted hover:bg-surface-muted">×</button>
           </div>
           <div className="flex items-baseline gap-2.5">
-            <span className="text-3xl font-bold tabular-nums">{review.rate} %</span>
+            <span className="text-[44px] font-black leading-none tracking-tight tabular-nums">{review.rate}<span className="text-2xl">%</span></span>
             {review.delta !== null && review.delta !== 0 && (
-              <span className="text-sm font-semibold" style={{ color: review.delta > 0 ? "var(--success)" : "var(--danger)" }}>
+              <span className="rounded-full px-2.5 py-0.5 text-xs font-extrabold" style={{ color: review.delta > 0 ? "var(--success)" : "var(--danger)", background: `color-mix(in srgb, ${review.delta > 0 ? "var(--success)" : "var(--danger)"} 16%, transparent)` }}>
                 {review.delta > 0 ? "▲" : "▼"} {t("habits.v2.review.points", { sign: "", value: Math.abs(review.delta) })}
               </span>
             )}
           </div>
           <div className="grid grid-cols-2 gap-2">
-            {review.best && <div className="rounded-2xl p-3" style={{ background: "color-mix(in srgb, var(--success) 12%, var(--surface))" }}><p className="text-[11px]" style={{ color: "var(--success)" }}>{t("habits.v2.review.top")}</p><p className="truncate text-sm font-semibold">{review.best.name} · {review.best.done}/{review.best.expected}</p></div>}
-            {review.weakest && <div className="rounded-2xl p-3" style={{ background: "color-mix(in srgb, var(--nutrition) 12%, var(--surface))" }}><p className="text-[11px]" style={{ color: "var(--nutrition)" }}>{t("habits.v2.review.weak")}</p><p className="truncate text-sm font-semibold">{review.weakest.name} · {review.weakest.done}/{review.weakest.expected}</p></div>}
+            {review.best && <div className="rounded-2xl border p-3" style={{ background: "color-mix(in srgb, var(--success) 10%, transparent)", borderColor: "color-mix(in srgb, var(--success) 25%, transparent)" }}><p className="flex items-center gap-1 text-[11px] font-bold" style={{ color: "var(--success)" }}><span aria-hidden>↗</span>{t("habits.v2.review.top")}</p><p className="mt-1 truncate text-[13.5px] font-bold">{review.best.name}</p><p className="text-xs text-foreground-muted tabular-nums">{review.best.done}/{review.best.expected}</p></div>}
+            {review.weakest && <div className="rounded-2xl border p-3" style={{ background: "color-mix(in srgb, var(--nutrition) 10%, transparent)", borderColor: "color-mix(in srgb, var(--nutrition) 25%, transparent)" }}><p className="flex items-center gap-1 text-[11px] font-bold" style={{ color: "var(--nutrition)" }}><span aria-hidden>↘</span>{t("habits.v2.review.weak")}</p><p className="mt-1 truncate text-[13.5px] font-bold">{review.weakest.name}</p><p className="text-xs text-foreground-muted tabular-nums">{review.weakest.done}/{review.weakest.expected}</p></div>}
           </div>
           <button type="button" onClick={onOpenProgress} className="text-sm font-semibold" style={{ color: "var(--habit)" }}>{t("habits.v2.review.details")} ›</button>
         </section>
       )}
 
-      <section className="flex items-center gap-4 rounded-3xl border border-border bg-surface p-4" data-habits-summary>
-        <div className="relative h-[76px] w-[76px] shrink-0">
-          <svg width="76" height="76" viewBox="0 0 76 76" aria-hidden>
-            <circle cx="38" cy="38" r="32" fill="none" stroke="var(--surface-muted)" strokeWidth="8" />
-            <circle cx="38" cy="38" r="32" fill="none" stroke="var(--habit)" strokeWidth="8" strokeLinecap="round" strokeDasharray={201} strokeDashoffset={201 * (1 - ratio)} transform="rotate(-90 38 38)" className="transition-[stroke-dashoffset] duration-700 motion-reduce:transition-none" />
+      <section className="glass-card glow-left flex items-center gap-4 p-[18px]" style={{ "--glow": "var(--habit)" } as CSSProperties} data-habits-summary>
+        <div className="relative h-[84px] w-[84px] shrink-0">
+          <svg width="84" height="84" viewBox="-4 -4 84 84" aria-hidden>
+            <defs><linearGradient id="habit-ring-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#c4b5fd" /><stop offset="1" stopColor="#7c3aed" /></linearGradient></defs>
+            <circle cx="38" cy="38" r="32" fill="none" stroke="var(--surface-muted)" strokeWidth="9" />
+            <circle cx="38" cy="38" r="32" fill="none" stroke="url(#habit-ring-grad)" strokeWidth="9" strokeLinecap="round" strokeDasharray={201} strokeDashoffset={201 * (1 - ratio)} transform="rotate(-90 38 38)" className="transition-[stroke-dashoffset] duration-700 motion-reduce:transition-none" />
           </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-xl font-bold tabular-nums"><span>{doneCount}<span className="text-xs font-medium text-foreground-muted">/{due.length}</span></span></span>
+          <span className="absolute inset-0 flex items-center justify-center text-2xl font-black tabular-nums"><span>{doneCount}<span className="text-xs font-medium text-foreground-muted">/{due.length}</span></span></span>
         </div>
         <div className="min-w-0 space-y-1.5">
-          <p className="font-semibold">{!due.length ? t("habits.v2.noneToday") : remaining === 0 ? t("habits.v2.allDone") : remaining === 1 ? t("habits.v2.remainingOne") : t("habits.v2.remaining", { count: remaining })}</p>
+          <p className="text-[17px] font-extrabold">{!due.length ? t("habits.v2.noneToday") : remaining === 0 ? t("habits.v2.allDone") : remaining === 1 ? t("habits.v2.remainingOne") : t("habits.v2.remaining", { count: remaining })}</p>
           {streaks[0] && streaks[0].value > 0 && <p className="truncate text-xs text-foreground-muted">{t("habits.v2.bestStreak", { value: t("habits.v2.card.streakDays", { count: streaks[0].value }), name: streaks[0].name })}</p>}
           {jokerLeft && <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold" style={{ background: "color-mix(in srgb, #38bdf8 14%, var(--surface))", color: "#38bdf8" }}>◆ {t("habits.v2.jokerAvailable")}</span>}
         </div>
