@@ -1,3 +1,5 @@
+import Link from "next/link";
+import type { CSSProperties } from "react";
 import { format, getISODay, startOfWeek, subDays, subWeeks } from "date-fns";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/supabase/read-context";
@@ -175,6 +177,19 @@ export default async function DashboardPage() {
       <div className="space-y-5" data-home-side>
       <QuickActions />
       <ModuleTiles data={tiles} />
+      {!isNew && (
+        // Monday and Tuesday the review opens as a story; the rest of the week, as the page.
+        <Link href={isoDay <= 2 ? "/bilan?story=1" : "/bilan"} className="glass-card glow-left flex items-center gap-3.5 p-4 transition hover:brightness-105" style={{ "--glow": "var(--accent)" } as CSSProperties} data-home-review>
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-accent-soft text-accent" aria-hidden>
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg>
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-bold">{isoDay <= 2 ? t("review.home.ready") : t("review.home.title")}</span>
+            <span className="block truncate text-xs text-foreground-muted">{t("review.home.hint")}</span>
+          </span>
+          <span className="shrink-0 text-sm font-bold text-accent">{t("review.home.open")}</span>
+        </Link>
+      )}
       </div>
       </div>
 

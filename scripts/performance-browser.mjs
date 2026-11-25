@@ -15,7 +15,8 @@ const authIntro = process.argv.includes("--auth-intro");
 const sessionCards = process.argv.includes("--session-cards");
 const accountMenu = process.argv.includes("--account-menu");
 const mood = process.argv.includes("--mood");
-const nutrition = process.argv.includes("--nutrition") || process.argv.includes("--home");
+const reviewMode = process.argv.includes("--review");
+const nutrition = process.argv.includes("--nutrition") || process.argv.includes("--home") || process.argv.includes("--review");
 const home = process.argv.includes("--home");
 const musculation = process.argv.includes("--musculation");
 // These campaigns drove the old card-based strength session, replaced by the focus mode (--musculation covers it).
@@ -24,7 +25,7 @@ if (retired.length) {
   console.error(`Retired campaign(s): ${retired.join(", ")}. The strength session is now checked by --musculation.`);
   process.exit(2);
 }
-const habitsMode = process.argv.includes("--habits") || home;
+const habitsMode = process.argv.includes("--habits") || home || reviewMode;
 const exerciseExperienceV3 = process.argv.includes("--exercise-experience-v3");
 const exerciseMediaV3 = process.argv.includes("--exercise-media-v3") || exerciseExperienceV3;
 const exerciseMediaV2 = process.argv.includes("--exercise-media-v2") || exerciseMediaV3;
@@ -126,6 +127,20 @@ if (mood) {
   // Twelve mood check-ins over two weeks: sport on the good days, stress on the hard ones; none today.
   tables.mood_entries = [[1, 4, 4, "Bonne séance #sport #friends"], [2, 5, 4, "#sport #nature"], [3, 2, 2, "Journée chargée #work #stress"], [4, 3, 3, null], [5, 4, 3, "#sport"], [6, 2, 2, "#stress #sleep"], [8, 3, 3, "#work"], [9, 5, 5, "Week-end au grand air #sport #nature"], [10, 2, 3, "#stress"], [11, 3, 3, null], [12, 4, 4, "#friends"], [13, 3, 2, "#sleep"]]
     .map(([offset, mood_score, energy_level, notes], index) => ({ id: `cdcdcdc0-0000-4000-8000-${String(index).padStart(12, "0")}`, user_id: uid, entry_date: day(offset), mood_score, energy_level, notes, created_at: `${day(offset)}T21:00:00Z` }));
+}
+if (reviewMode) {
+  const day = (offset) => { const date = new Date(); date.setDate(date.getDate() - offset); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; };
+  // Last week's Monday, as the review opens on it, and three runs that week.
+  const now = new Date(); const iso = now.getDay() === 0 ? 7 : now.getDay();
+  const monday = iso + 6;
+  tables.running_sessions = [];
+  for (const [index, offset, km, seconds] of [[0, monday - 1, 6.2, 2232], [1, monday - 3, 8.4, 2900], [2, monday - 5, 5.1, 1750]]) {
+    const id = `abcdabcd-0000-4000-8000-${String(index).padStart(12, "0")}`;
+    workouts.push({ id, user_id: uid, workout_date: day(offset), activity: "Course QA", duration_minutes: Math.round(seconds / 60), intensity: 3, notes: null, muscle_groups: [], template_id: null, discipline: "running", created_at: `${day(offset)}T08:00:00Z` });
+    tables.running_sessions.push({ workout_id: id, user_id: uid, name: "Course QA", run_type: "easy", distance_km: km, duration_seconds: seconds, elevation_gain_m: 0, average_heart_rate: null, cadence_spm: null, created_at: `${day(offset)}T08:00:00Z` });
+  }
+  tables.weekly_goals = [{ user_id: uid, week_start: day(monday), goal_key: "sport", target: 3, created_at: user.created_at, updated_at: user.created_at }];
+  globalThis.qaReviewMonday = day(monday);
 }
 if (sportModules) {
   const day = (offset) => { const date = new Date(); date.setDate(date.getDate() - offset); return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; };
@@ -257,7 +272,7 @@ try {
       if (!task) return;
       if (message.error) task.reject(new Error(JSON.stringify(message.error))); else task.resolve(message.result);
     } else if (message.method === "Network.requestWillBeSent") networkRequests.push(message.params.request.url);
-    else if (message.method === "Runtime.exceptionThrown") results.consoleErrors.push(message.params.exceptionDetails.text);
+    else if (message.method === "Runtime.exceptionThrown") results.consoleErrors.push([message.params.exceptionDetails.text, message.params.exceptionDetails.exception?.description].filter(Boolean).join(" "));
     else if (message.method === "Runtime.consoleAPICalled" && message.params.type === "error") results.consoleErrors.push(message.params.args.map((arg) => arg.value ?? arg.description).join(" "));
   };
   await send("Page.enable"); await send("Runtime.enable"); await send("Network.enable");
@@ -291,7 +306,7 @@ try {
   await navigatePage(`http://127.0.0.1:${appPort}/sport`);
   await ready("/sport");
   console.log("Sport Hub loaded with local fixtures.");
-  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu && !authIntro && !sessionCards && !mood && !nutrition && !habitsMode && !home && !musculation) {
+  if (!anatomyOnly && !exerciseMedia && !exercisePremiumV4 && !sportModules && !accountMenu && !authIntro && !sessionCards && !mood && !nutrition && !habitsMode && !home && !musculation && !reviewMode) {
   assert.ok(await evaluate("document.body.innerText.includes('QA Dos & Biceps')"));
   for (const width of [320, 360, 375, 390, 430, 768, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: width < 768 });
@@ -514,13 +529,17 @@ try {
   if (home) {
     const { checkHome } = await import("./home-browser-checks.mjs");
     await checkHome({ send, evaluate, navigatePage, ready, until, pause, results, profile, output, appPort, setFixture: (value) => { fixtureState = value; } });
-  } else if (habitsMode) {
+  } else if (habitsMode && !reviewMode) {
     const { checkHabits } = await import("./habits-browser-checks.mjs");
     await checkHabits({ send, evaluate, navigatePage, ready, until, pause, results, profile, output, appPort, setFixture: (value) => { fixtureState = value; } });
   }
-  if (nutrition && !home) {
+  if (nutrition && !home && !reviewMode) {
     const { checkNutrition } = await import("./nutrition-browser-checks.mjs");
     await checkNutrition({ send, evaluate, navigatePage, ready, until, pause, results, profile, output, appPort, setFixture: (value) => { fixtureState = value; } });
+  }
+  if (reviewMode) {
+    const { checkReview } = await import("./review-browser-checks.mjs");
+    await checkReview({ send, evaluate, navigatePage, ready, until, pause, results, profile, output, appPort });
   }
   if (mood) {
     const { checkMood } = await import("./mood-browser-checks.mjs");
@@ -540,7 +559,7 @@ try {
   }
   results.writes = requests.filter((request) => !["GET", "HEAD"].includes(request.method) && !(authIntro && ["/auth/v1/logout", "/auth/v1/token", "/auth/v1/recover"].includes(request.resource)));
   assert.deepEqual(results.writes, []);
-  if (!sportModules) assert.ok(!requests.some((request) => /calisthenics_|running_/.test(request.resource)), "Disabled disciplines queried their schema");
+  if (!sportModules && !reviewMode) assert.ok(!requests.some((request) => /calisthenics_|running_/.test(request.resource)), "Disabled disciplines queried their schema");
   assert.deepEqual(results.consoleErrors, []);
   await pause(500);
   await send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false }).then(({ data }) => writeFile(path.join(output, "sport-ar-system.png"), Buffer.from(data, "base64")));

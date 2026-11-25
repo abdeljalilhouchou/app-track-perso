@@ -435,6 +435,12 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["sleep_logs"]["Row"]>;
         Relationships: [];
       };
+      weekly_goals: {
+        Row: { user_id: string; week_start: string; goal_key: string; target: number; created_at: string; updated_at: string };
+        Insert: Partial<Database["public"]["Tables"]["weekly_goals"]["Row"]> & { user_id: string; week_start: string; goal_key: string; target: number };
+        Update: Partial<Database["public"]["Tables"]["weekly_goals"]["Row"]>;
+        Relationships: [];
+      };
       running_sessions: {
         Row: {
           workout_id: string; user_id: string; name: string;

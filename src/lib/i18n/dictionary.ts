@@ -11,6 +11,7 @@ import { nutritionAr, nutritionEn, nutritionFr } from "./modules/nutrition";
 import { moodAr, moodEn, moodFr } from "./modules/mood";
 import { homeAr, homeEn, homeFr } from "./modules/home";
 import { sleepAr, sleepEn, sleepFr } from "./modules/sleep";
+import { reviewAr, reviewEn, reviewFr } from "./modules/review";
 import {
   dashboardExtraAr,
   dashboardExtraEn,
@@ -204,6 +205,7 @@ const fr = {
   mood: moodFr,
   home: homeFr,
   sleep: sleepFr,
+  review: reviewFr,
   profile: profileFr,
 };
 
@@ -391,6 +393,7 @@ const en: Dictionary = {
   mood: moodEn,
   home: homeEn,
   sleep: sleepEn,
+  review: reviewEn,
   profile: profileEn,
 };
 
@@ -578,6 +581,7 @@ const ar: Dictionary = {
   mood: moodAr,
   home: homeAr,
   sleep: sleepAr,
+  review: reviewAr,
   profile: profileAr,
 };
 
