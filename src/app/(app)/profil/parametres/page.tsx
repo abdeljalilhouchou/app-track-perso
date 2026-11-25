@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/supabase/read-context";
 import { ReminderSettings } from "@/components/reminder-settings";
@@ -56,6 +57,15 @@ export default async function ProfilSettingsPage() {
       </SettingsSection>
 
       <SettingsSection id="settings-notifications" title={t("profile.settingsPage.notificationsSection")}>
+        <SettingsRow>
+          <Link href="/profil/notifications" className="-m-1 flex min-h-11 items-center gap-3 rounded-xl p-1 transition hover:bg-surface-muted" data-settings-push>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-semibold">{t("notify.row")}</span>
+              <span className="block text-xs text-foreground-muted">{t("notify.rowHint")}</span>
+            </span>
+            <span aria-hidden className="text-lg text-foreground-muted rtl:rotate-180">›</span>
+          </Link>
+        </SettingsRow>
         <SettingsRow><ReminderSettings initialTime={profile?.reminder_time ?? null} email={email} /></SettingsRow>
       </SettingsSection>
 

@@ -10,6 +10,7 @@ import { addDays, currentStreak, dayState, indexLogs, isFlexible, jokerLeftThisW
 import { dayProgress, type PendingHabit } from "@/lib/home";
 import { ModuleTiles, NextActions, QuickActions, StartCard, type DayBar, type TilesData } from "@/components/dashboard/home-view";
 import { SkyHero } from "@/components/dashboard/sky-hero";
+import { PushInvite } from "@/components/notifications/push-invite";
 import { getLanguage, getT } from "@/lib/i18n/get-dictionary";
 import { fetchAllRows } from "@/lib/paging";
 
@@ -165,6 +166,7 @@ export default async function DashboardPage() {
 
       <div className="home-columns">
       <div className="space-y-5" data-home-main>
+      {!isNew && <PushInvite />}
       {isNew ? (
         <StartCard hasHabit={habits.length > 0} hasGoals={Boolean(kcalGoal)} goalsHref={goalsHref} />
       ) : (

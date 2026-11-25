@@ -556,3 +556,8 @@ input[type="password"]::-ms-clear {
 @keyframes story-pop { 0% { opacity: 0; transform: scale(.6); } 70% { transform: scale(1.06); } }
 @keyframes story-glow { 50% { opacity: .75; transform: scale(1.1); } }
 @media (prefers-reduced-motion: reduce) { .review-ring, .review-bar, .review-story-glow, .story-rise, .story-rise2, .story-rise3, .story-pop { animation: none; } }
+
+/* Notifications: the bell of the invite card rings now and then. */
+.push-bell svg { transform-origin: 50% 10%; animation: push-ring 2.6s ease-in-out infinite; }
+@keyframes push-ring { 0%, 50%, 100% { transform: rotate(0); } 10% { transform: rotate(14deg); } 20% { transform: rotate(-12deg); } 30% { transform: rotate(8deg); } 40% { transform: rotate(-4deg); } }
+@media (prefers-reduced-motion: reduce) { .push-bell svg { animation: none; } }

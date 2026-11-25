@@ -435,6 +435,24 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["sleep_logs"]["Row"]>;
         Relationships: [];
       };
+      push_subscriptions: {
+        Row: { id: string; user_id: string; endpoint: string; p256dh: string; auth: string; created_at: string };
+        Insert: Partial<Database["public"]["Tables"]["push_subscriptions"]["Row"]> & { user_id: string; endpoint: string; p256dh: string; auth: string };
+        Update: Partial<Database["public"]["Tables"]["push_subscriptions"]["Row"]>;
+        Relationships: [];
+      };
+      notification_settings: {
+        Row: { user_id: string; enabled: boolean; timezone: string; kinds: Json; quiet_on: boolean; quiet_from: string; quiet_to: string; cap_on: boolean; updated_at: string };
+        Insert: Partial<Database["public"]["Tables"]["notification_settings"]["Row"]> & { user_id: string };
+        Update: Partial<Database["public"]["Tables"]["notification_settings"]["Row"]>;
+        Relationships: [];
+      };
+      notification_log: {
+        Row: { user_id: string; kind: string; local_date: string; sent_at: string };
+        Insert: Partial<Database["public"]["Tables"]["notification_log"]["Row"]> & { user_id: string; kind: string; local_date: string };
+        Update: Partial<Database["public"]["Tables"]["notification_log"]["Row"]>;
+        Relationships: [];
+      };
       weekly_goals: {
         Row: { user_id: string; week_start: string; goal_key: string; target: number; created_at: string; updated_at: string };
         Insert: Partial<Database["public"]["Tables"]["weekly_goals"]["Row"]> & { user_id: string; week_start: string; goal_key: string; target: number };
