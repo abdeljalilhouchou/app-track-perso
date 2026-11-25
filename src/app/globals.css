@@ -179,6 +179,9 @@ body {
   border: 1px solid var(--border);
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.28);
 }
+@media (min-width: 48rem) {
+  .mobile-bottom-nav { display: none; }
+}
 .quick-add-button {
   position: relative;
   z-index: 60;
@@ -527,3 +530,7 @@ input[type="password"]::-ms-clear {
 .glass-card::before { content: ""; position: absolute; right: -50px; top: -60px; width: 190px; height: 190px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--glow) 30%, transparent), transparent 70%); pointer-events: none; }
 .glass-card > * { position: relative; }
 .glass-card.glow-left::before { right: auto; left: -50px; }
+
+/* Mood: the holographic head always sits on its own night stage, in both themes. */
+.holo-stage { --tint: #fbbf24; position: relative; display: block; overflow: hidden; background: radial-gradient(80% 60% at 50% 42%, color-mix(in srgb, var(--tint) 22%, transparent), #05050b 72%); border: 1px solid color-mix(in srgb, var(--tint) 35%, #262636); transition: background .8s, border-color .8s; }
+.holo-stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(180deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px); }

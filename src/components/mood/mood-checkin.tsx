@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, type CSSProperties } from "react";
 import Link from "next/link";
 import { logMood } from "@/lib/actions/mood";
 import { useActionToast } from "@/components/toast/use-action-toast";
 import { useToast } from "@/components/toast/toast-provider";
 import { useLanguage } from "@/components/language-provider";
 import { composeMoodNote, MOOD_TAGS, parseMoodNote, type MoodTag } from "@/lib/mood-tags";
-import { formatDay, MOOD_COLOR, MOOD_EMOJI } from "./mood-scale";
+import { formatDay } from "./mood-scale";
+import { HoloFace } from "./holo-face";
+import { HOLO_MOODS } from "@/lib/holo-face";
 
 export type CheckinEntry = { mood_score: number; energy_level: number; notes: string | null } | null;
 
@@ -63,7 +65,7 @@ function Summary({ entry, onEdit }: { entry: NonNullable<CheckinEntry>; onEdit: 
   const { text, tags } = parseMoodNote(entry.notes);
   return (
     <div className="mt-4 flex items-start gap-4" data-mood-summary>
-      <span aria-hidden className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl text-4xl" style={{ background: `color-mix(in srgb, ${MOOD_COLOR[entry.mood_score]} 18%, var(--surface))` }}>{MOOD_EMOJI[entry.mood_score]}</span>
+      <span className="holo-stage h-24 w-24 shrink-0 rounded-2xl" style={{ "--tint": HOLO_MOODS[entry.mood_score]?.color } as CSSProperties}><HoloFace score={entry.mood_score} compact label={t(`mood.v2.moodLevels.l${entry.mood_score}`)} /></span>
       <div className="min-w-0 flex-1">
         <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "var(--mood-text)" }}>{t("mood.v2.doneTitle")}</p>
         <p className="mt-0.5 text-lg font-semibold">{t(`mood.v2.moodLevels.l${entry.mood_score}`)}</p>
@@ -109,7 +111,12 @@ function CheckinForm({ date, existing, onSaved }: { date: string; existing: Chec
   return (
     <form className="mt-5 space-y-6" onSubmit={(event) => { event.preventDefault(); submit(); }}>
       <fieldset>
-        <legend className="mb-3 text-sm font-medium">{t("mood.v2.moodQuestion")}</legend>
+        <legend className="sr-only">{t("mood.v2.moodQuestion")}</legend>
+        <div className="holo-stage mb-3 rounded-3xl" style={{ "--tint": HOLO_MOODS[mood]?.color } as CSSProperties} data-holo-stage>
+          <HoloFace score={mood} label={t("mood.v2.holoLabel")} />
+          <span className="pointer-events-none absolute end-4 top-3 text-[11px] text-white/60">{t("mood.v2.holoHint")}</span>
+          <p className={`pointer-events-none absolute inset-x-0 bottom-4 px-4 text-center font-black text-white ${mood ? "text-[28px]" : "text-base text-white/80"}`} style={{ textShadow: `0 0 24px ${HOLO_MOODS[mood]?.color}` }} aria-live="polite">{mood ? t(`mood.v2.moodLevels.l${mood}`) : t("mood.v2.holoPick")}</p>
+        </div>
         <div role="radiogroup" aria-label={t("mood.v2.moodQuestion")} className="grid grid-cols-5 gap-2">
           {LEVELS.map((level) => {
             const selected = mood === level;
@@ -120,14 +127,15 @@ function CheckinForm({ date, existing, onSaved }: { date: string; existing: Chec
                 role="radio"
                 aria-checked={selected}
                 onClick={() => setMood(level)}
-                className="flex min-h-20 flex-col items-center justify-center gap-1 rounded-2xl border-[1.5px] px-1 transition motion-safe:active:scale-95"
+                className="flex min-h-16 flex-col items-center justify-center gap-2 rounded-2xl border-[1.5px] px-1 transition motion-safe:active:scale-95"
                 style={{
-                  borderColor: selected ? MOOD_COLOR[level] : "var(--border)",
-                  background: selected ? `color-mix(in srgb, ${MOOD_COLOR[level]} 16%, var(--surface))` : "var(--surface)",
+                  borderColor: selected ? HOLO_MOODS[level].color : "var(--border)",
+                  background: selected ? `color-mix(in srgb, ${HOLO_MOODS[level].color} 16%, var(--surface))` : "var(--surface)",
+                  transform: selected ? "translateY(-3px)" : undefined,
                 }}
                 data-mood-level={level}
               >
-                <span aria-hidden className={`text-3xl leading-none transition-transform ${selected ? "motion-safe:scale-110" : "opacity-70"}`}>{MOOD_EMOJI[level]}</span>
+                <span aria-hidden className="h-3 w-3 rounded-full" style={{ background: HOLO_MOODS[level].color, boxShadow: `0 0 12px ${HOLO_MOODS[level].color}` }} />
                 <span className={`text-[11px] leading-tight ${selected ? "font-semibold" : "text-foreground-muted"}`}>{t(`mood.v2.moodLevels.l${level}`)}</span>
               </button>
             );
